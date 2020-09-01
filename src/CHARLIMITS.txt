@@ -1,0 +1,24 @@
+The character limits as of the 1.1 save file format are based on analysis
+of the 1.0 format, the original game save format, and on-screen limitations.
+
+what            freesynd    original     freesynd
+                1.0 format  game saves   1.1 format
+===================================================
+slot name       25          19/20/31 *   31
+agent name      15          10/13 *      13
+company name    17          16           16
+user name       17          16           16
+research        15          ??/15 *      15
+
+NOTES:
+The original game slot names had 20 characters on screen, 20 characters
+written to file, but only 19 characters read.  There is room for 31
+characters on screen.
+
+The original game agent name lists tops out at 10 characters, but there is
+room on screen for 13.  Agent names themselves were not stored in the original
+save files.
+
+I don't yet know how research information is stored in the original save
+files, but there is room on screen for 15 characters.
+

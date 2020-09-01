@@ -1,0 +1,190 @@
+FreeSynd 0.8 : Release Notes
+----------------------------
+
+Description
+-----------
+This is a prelimary release for testing and development purposes.
+
+Changes
+-------
+  * German translation has been updated (thanks to Maik Wagner)
+  * Added default values to weapon parameters and removed unused keys in config file (weapons.dat)
+
+Fixed Bugs
+----------
+  * In mission Siberia, train was wrongly displayed
+
+Features added
+----------
+  * Trains now moves and player agents can get on/off
+  * Persuaded peds follow their leader in cars and trains
+  * When player agents shoot on a vehicle, the driver is ejected
+  * Energy Shield is now fully usable
+
+Known issues with this release
+------------------------------
+  * Agent AI is partially operational.
+  * PathFinding requires improvement (path smoothing)
+  * Trains that moves North/South have a buggy display (it flickers)
+  * Not all weapons correctly function.
+
+History
+-------
+ v0.7.5
+ ------
+  * When player changes its color, if an enemy syndicate already had that
+    color, change the enemy color.
+  * Mission ownership on map menu changes to simulate syndicate fighting for terrotories.
+  * Animation for animated windows
+  * Agent's life is now restored automatically if he wears an upgraded chest
+
+ v0.7.1
+ ------
+  * Code refactoring
+  * All tabs coverted to spaces
+  * Better animation for impact or detonating explosions
+  * Clicking on map/minimap
+  * Enemy agents on some maps were without weapons
+  * Circle in minimap is more precise and is fully drawn
+  * Agent with chest mod ver > 1 will explode when killed (Ctrl + D)
+  * Time bomb can be detonated by shot
+
+ v0.7
+ ----
+  * Vehicle creates explosion and damages everything nearby
+  * Added sound effects for gauss, timebomb, mission failed
+  * Police officer will warn armed pedestrian and shoot after 5 sec
+  * Rewritten Z coord setup and use, due to removal of Z lowering in pedmanager
+  * Rewritten PedInstance::animate
+  * Better animation switching for pedestrians
+  * 3517737 : Incorrect handling of agent switching, with selected weapon
+  * Pathfinding out of memory/segfault error
+  * Modifier keys where not passed to the key event
+  * Next and previous button in the briefing where not updated correctly
+  * Access card will identify agent as police officer, also opens large doors
+  * Selection markers (1,2,3,4), to identify selected agent
+  * Sound effects added "Selected", "Mission failed", "Police warning"
+  * Gameplay minimap fully implemented
+
+ v0.6
+ ----
+  * CMake is used instead of autotools, used to generate Makefile for Unix's
+  and project files for MSVC++
+  * Reload button functional(mentor66)
+  * Weapons: flamethrower, laser, gauss, minigun, uzi, shotgun, time bomb,
+ persuadetron (animation only)
+  * 3241136 : freesynd.exe has stopped working
+  * Brief minimap not showing enemy agents
+  * 3336699 : Made save files portable between byte orders.
+  * 3283536 : Manage separate directory for syndicate and freesynd
+  * 3337516 : Standardize text fields in configure and loadsave menus
+  * 3202739 : keyboard type management
+  * 3461415 : Cycle only through available missions in map menu
+  * 3473415 : Junction balls are not animated
+  * It's now possible to define an acceleration key for a button by
+    inserting a '&' caracter before the letter in the button label in the
+    language file. Works only for letters.
+  * Menus are now created when first accessed not all once.
+  * In the Map menu, pressing PageUp or PageDown increases/decreases tax from 10%
+
+ v0.5
+ ----
+  * Correct positioning by Z axis for all objects
+  * Bug, too small space allocated for enhance/info cost values, destructor
+ for Mission class was not able to deallocate briefing string
+  * Vehicles have people set inside
+  * Only driver is able to drive vehicle
+  * If vehicle is destroyed people leave it
+  * People are armed, but enemy agents are not armed correctly
+  * In missions, at start, where weapons are on floor, weapons should be
+  visible now
+  * Small doors will open and close
+  * Vehicles will not move if they are destroyed
+  * Project is now buld with autoconf/automake
+  * Map menu is now completly functional
+  * Neon signs are correctly setup on mission load
+  * Correct animations for people/vehicles on damage recieved
+  * Instant damage, damage types
+  * Energy shield will not protect from Hit, Explosion
+  * Use of freesynd.ini file to specify application configuration
+  * Use of language files
+  * Added minimap to briefmenu
+  * Fixed, selection for agents killed during gameplay is not possible now
+  * Added information about killed during mission to Debrief menu
+  * When agent is killed during mission he will be removed from agents list
+  * Added description to mission brief in 3 more languages
+  * Z checking for inRange checking
+  * Trees animations : normal, burning, damaged now in use
+  * 3005295 : The tax rate for the region cannot be altered by player
+  * 3031032 : Rewrite animation generation procedures
+  * 3272545 : Team button not selected when clicking on inventory item
+  * 3043686 : Game time
+  * 3072653 : Use libsyndicate data info
+  * 3086469 : Tax influence on countries status
+  * 3081550 : Minimap basic
+  * 3086471 : Implements Reseach functionnality
+  * 3086955 : Possibility to load/save game
+ 
+ v0.4
+ ----
+  * Minimap drawing is fixed, should be better now
+  * Map can be scrolled with arrow keys and scrolling is like original game
+  * People, objects will not move to unwalkable surfaces
+  * When weapon is dropped while moving, ped will stop moving
+  * Static objects: added 4 windows, large doors, added 2 animations
+    to doors, 1 animation to trees
+  * Static objects animation setup method rewritten,
+    animations require adjusting and add new objects correctly
+  * While vehicle was moving if ped went out, vehicle continued to move
+  * Game time is visible in the Map menu but not fully implemented
+  * People and vehicles pathfinding was rewritten
+  * Fixed highlights in select menu: was possible to highlight more than
+    one element, also weapon highlight was not working
+  * Added correct recognition for clicks on scrollable map
+  * 3029839 : Mouse position is not used on a new Menu
+  * 3029837 : Menu animation doesn't stop mouse or keyboard events
+  * 2307181 : #include <cstdlib> missing (it was simply closed, fix 
+              was done somewhere between 0.2 - 0.3 release and was not
+              closed)
+  * 3052202 : cppcheck warnings and errors(only third error is important)(tlh2000)
+  * 3052210 : fixed warnings and resource leak(tlh2000)
+  * 3005299 : Finished missions can be played again
+  * 2669454 : Double highlight on weapon list in Team Selection menu
+
+  v0.3
+  ----
+  * Cursors are now available in a png file
+  * Music files (ogg and mp3) have been moved to data/music
+  * Ability to turn music and sound on/off during a game
+  * In debug mode, adds the -m argument to start directly the
+    game on a given mission
+  * Fixed agents selection in gameplay menu
+  * Fixed ranks for weapons, as in some weapons variable data
+    "w_rank" took place of variable "w_anim"
+  * Rewritten animation for people
+  * Added trees
+  * Small fix to "path walking"
+  * Added animation to selectors
+  * Added divider between selectors and weapons
+  * Mission message system changed, added few new
+  * It was possible to shoot dead, fixed
+  * Small fix to mouse display during menus switch
+  * Group positioning is now like in original, on dest reached
+  * 1565270 : Graphical glitches with cars
+  * 2661059 : Automatic selecting next weapon after running 
+              out of ammo
+  * 3005276 : Absent agent can drop weapon in a mission
+  * 1744508 : Dead Agents still move if given a pickup-weapon
+              or enter-car command.
+  * 2661069 : On game screen when clicking on the screen to move
+              agent(s) selected coordinates are not exactly the
+              same that expected.
+  * 3017274 : When an agent kills a moving enemy, this enemy
+              keeps on moving to his destination.
+  * 3005280 : Dropped weapon does not appear on the ground
+
+  v0.2
+  ----
+    * The first level is "playable".
+    * Most of the menus are complete and functional.
+    * Sound and music are operational.

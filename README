@@ -1,0 +1,109 @@
+FreeSynd 0.8
+------------
+FreeSynd is a free, cross-platform reimplementation of engine for the classic
+Bullfrog game "Syndicate". For more information see:
+    http://freesynd.sourceforge.net/
+
+License information
+-------------------
+FreeSynd is released under the GNU General Public License, version 2.
+See the file "COPYING" for information on this license.
+
+Thanks to Tomasz Lis for some preliminary work on the level files. His code is
+used under GNU General Public License, version 2 or later with permission from
+author.
+
+Some code is based on "libsyndicate" library by Paul Chavent. It is
+re-licensed under GNU General Public License, version 2. The original license
+and code are located in svn under "libsyndicate".
+
+The ConfigFile class is based on code from Richard J. Wagner. For License
+information, see comments in the files src/utils/configfile.*
+
+Freesynd includes UTF8-CPP, a library by Nemanja Trifunovic for handling UTF-8 string.
+It is freely available. See license in the utils/utf8.h and utils/utf8/*.h files.
+
+Class CRC32 from NetworkDLS, see license in utils/ccrc32.h and utils/ccrc32.cpp.
+
+
+What's new in this release?
+---------------------------
+See the file "NEWS".
+
+Installing the game
+-------------------
+See the file "INSTALL" for information on how to install the game.
+
+Running under Linux
+--------------------
+After installing the game, type "freesynd".
+
+Running under Windows
+---------------------
+Just double click freesynd.exe and enjoy.
+
+Running under Mac OS X
+----------------------
+Just double click the FreeSynd application.
+
+Configuration
+-------------
+Edit the freesynd.ini file to configure the game. The location of the file
+and a description of the options can be found in the file INSTALL under the
+heading "Configuring FreeSynd".
+ 
+Commands
+--------
+-- Mission Selection:
+ * 0     : Puts the selector on first mission.
+ * Left  : Puts the selector on the next mission.
+ * Right : Puts the selector on the previous mission.
+ * + / - : Increase / decrease tax rate on selected country by 1%.
+           If control key is held while clicking with the mouse on the button , the rates will change by 10%.
+           (Rates above 30% will downgrade the population status to rebellious
+           and the mission will have to be played again. Rates below 30% will
+           upgrade the population status to "very happy".)
+ * Page Up / Page Down : Increase / decrease tax rate on selected country by 10%.
+ 
+-- Agent Selection Menu:
+ * Right Click on agents number: (de-)activates agent
+ * Right Click and drag selected weapon to required agent number to exchange
+ 
+-- In game:
+ * F1  : Turns music on/off.
+ * F2  : Turns game sounds on/off.
+ * F5 - F12 : each key selects/deselects one item in the inventory.
+	Pressing CTRL-Fx to select a Medikit will apply Medikit on all selected agents
+	that own one.
+	Pressing CTRL-Fx to select an EnergyShield will select an Energy Shield on all selected agents
+	that own one.
+ * 1-4 : Numeric key selects the corresponding agent.
+ * 0   : Key 0 selects all agents or selects only the leader.
+ * Left,Right,Up,Down : Scrolls the map.
+ * P   : Pauses Game
+ * Ctrl + D           : Autodestruction of selected agent(s), if equipped
+ with mod chest v2 or v3 will explode damaging everything nearby
+ * Left Click on item in invetory : (de)selects, activates item
+	Left Click + CTRL to select a Medikit will apply Medikit on all selected agents
+	that own one.
+ * Right Click on item in invetory : drops item from inventory to ground
+ * Left Click on item on map : orders agent(s) to pickup
+ * Left Click on vehicle : orders agent(s) to get inside or leave it,
+ if already inside
+ 
+ 
+ Experimental, these commands are added into execution queue:
+ * Ctrl + Left Click  : Sets a waypoint for the selected agents.
+ * Ctrl + Right Click  : Sets a target to shoot for the selected agents.
+ 
+ 
+-- Debug Mode :
+ * Alt  : shows agents walk path, if over an object shows its id and
+major type
+ * Shift : mouse coordinates are printed
+
+Contact
+-------
+If you find a bug or would like to help the development of FreeSynd, please 
+stop by the sourceforge project bug tracker, drop us an email or visit the
+forums.

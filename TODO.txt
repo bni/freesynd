@@ -1,0 +1,87 @@
+Gameplay:
+---------
+ - Complete mission tree : finishing a mission gives access to other missions
+ - Mission objectives : implements all possible objectives
+ - Correct identification of object types during mission load, includes
+vehicles, static objects :
+====
+ vehicles - there are different types of them: the gray one - people/agents drive
+them, police cars, ambulance, military heavy vehicle, firefighters, carbage collector,
+train (it is multiple vehichles) should work as one - they need to have defined:
+their type in main_type_, health should be checked to know how much health we
+have per type, their animation should be defined and not loaded as we do now,
+there are destroyed vehicles in game from start, as I use states, they should
+have proper state set if destroyed, the attribute health is good but states are
+easier to check in bulk with one varible single check instead of different variables
+and multiple checks;
+ statics - I have added hack for advertisement boards to draw them, it should be removed
+and special attribute added to draw them at the end instead of that,
+trash bin/phone booth should be desctrutable with proper animation.
+====
+
+ - Adding properties to:
+   vehicle: max people can hold; speed per type; damage can inflict/recieve per type;
+radius of damage when destroyed
+   people: add IPA levels and their modification through gameplay menu and influence
+of these levels on different properties of people - inteligence, viewing range(?),
+ health recovery(?); mods properties should affect IPAs; damage
+recieved modifier, if we don't want to recalculate all the time;
+weapon range modifier(?);
+ - static objects: damage recieve value; destructable or not
+ 
+ A.I:
+----
+ - A.L. - this one is complex
+ - pathfinding directional, vehicles, for peds driving in the city
+ - vehicle pathfinding needs to be tested on all maps and improved
+(Greenland not working)
+ - damage inflicted by vehicles/weapons, variate by type of damage and range
+ - state of vehicles/people/objects should change correctly due to gameplay:
+   switch of state due to damage
+   change in behavior due to persuade - test all
+
+ - instant damage to objects(handleDamage for all destructable)
+ 
+IHM:
+----
+ - animation for objects need to be fixed, to correctly represent every stage
+of event/state:
+====
+   different objects burn : phone booth, trash bin (, mail box?)
+   we need to draw agents hair with color defined in cofmenu and of enemy
+agents with color on map, also there seems to be grouping and enemies on
+map have different hair color, should they be hostile?
+====
+
+ - map drawing still buggy:
+====
+object positioning during drawing;
+tiles drawing order
+====
+
+ - add sound effects (needs "compare testing" against original syndicate)
+====
+
+New features:
+-------------
+ - write mission editor, create new mission files using editor, based on original
+game mission files.
+ - map editor
+
+Packaging:
+----------
+ - Create a debian package
+
+ Very low priority stuff, maybe for v0.9:
+ ----------------------------------------
+ - xmidi music data is not dealocated on exit - memory leak
+ - "no_sound"/"no_music" option for config file
+ - Add mission failure music
+ - The built-in fonts have some characters that don't sit right vertically
+(Ö and Ü in certain sizes)
+ - Work on hyphenation rules in the text reflow code
+ - Convert Italian and French translations to accented characters in UTF-8
+ - Check all translations for correctness
+ - Reload button translation for non-English languages
+ - Use game lost menu
+ - Remove debug info displayed in the console

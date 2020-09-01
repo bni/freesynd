@@ -1,0 +1,26 @@
+The FreeSynd Team
+(listed in alphabetical order)
+current:
+* Benoit Blancard (Developer): <benblan@users.sourceforge.net>
+
+in past:
+* Stuart Binge (Developer) : <skbinge@users.sourceforge.net>
+* Anders Eurenius <gargoyle@users.sourceforge.net>
+* Tarjei Knapstad <tarjeik@users.sourceforge.net>
+* Davor Ocelic <docelic@users.sourceforge.net>
+* Joey Parrish (Developer): <joeyparrish@users.sourceforge.net>
+* Joost Peters (Developer): <joostp@users.sourceforge.net>
+* Bruce Sutherland <brucesutherland@users.sourceforge.net>
+* Unavowed <unavowed@users.sourceforge.net>
+* Trent Waddington (Developer): <quantumg@users.sourceforge.net>
+* Bohdan Stelmak(Developer): <chamel@users.sourceforge.net>
+
+Contributors
+* Tomas Jakobsson - good advices
+* Mark(mentor66) - patch for reload button
+* Michael Schubeck - patch for minimap
+* Ryan Cocks - patch, IPA initial implementaion + converted indexes to pointers in
+gameplaymenu
+* Roland Haeder - patch, debrief handleGameEvent function + proper naming for
+functions
+* Luboš Novák - patch, overriding binary and data locations in cmake
