@@ -135,11 +135,11 @@ void print_usage() {
     printf(" (default: $HOME/.freesynd/freesynd.ini)\n");
 #endif
 
-#ifdef _DEBUG
+
     printf("    -m, --mission <num>   jump directly to the specified mission.\n");
     printf("    -c, --cheat <codes>   apply the specified cheat codes.\n");
     printf("                          separate multiple codes with a colon.\n");
-#endif
+
 }
 
 int main(int argc, char *argv[]) {
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
     bool disable_sound = false;
 
     for (int i = 1; i < argc; ++i) {
-#ifdef _DEBUG
+
         // This parameter is used in debug phase to accelerate the starting
         // of a game and to jump directly to a mission
         // Note : the argument is the index of the block in the structure g_MissionNumbers
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
             cheatCodeIndex = i + 1;
             i++;
         }
-#endif
+
         if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
             print_usage();
             return 1;
