@@ -298,7 +298,8 @@ void MenuManager::leaveMenu(Menu *pMenu) {
         int size;
         data = File::loadOriginalFile(pMenu->getLeaveAnimName(), size);
         fliPlayer.loadFliData(data);
-        pGameSounds_->play(snd::MENU_CHANGE);
+        // NOTICE Disable annoying menu sound
+        //pGameSounds_->play(snd::MENU_CHANGE);
         fliPlayer.play();
         delete[] data;
         drop_events_ = false;

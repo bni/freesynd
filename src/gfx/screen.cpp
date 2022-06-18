@@ -28,8 +28,9 @@
 #include "screen.h"
 #include "utils/file.h"
 
-const int Screen::kScreenWidth = 640;
-const int Screen::kScreenHeight = 400;
+// NOTICE Xx
+const int Screen::kScreenWidth = 640*1;
+const int Screen::kScreenHeight = 400*1;
 const int Screen::kScreenPanelWidth = 129;
 
 Screen::Screen(int width, int height)

@@ -525,7 +525,8 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
             ipa_chng_.ipa_chng = -1;
     }
 
-    if (last_motion_x_ < 5) {
+    // NOTICE Disable scrolling with mouse
+    /*if (last_motion_x_ < 5) {
         scroll_x_ = - SCROLL_STEP;
     } else if (last_motion_x_ > GAME_SCREEN_WIDTH - 5) {
         scroll_x_ = SCROLL_STEP;
@@ -535,7 +536,7 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
         scroll_y_ = - SCROLL_STEP;
     } else if (last_motion_y_ > GAME_SCREEN_HEIGHT - 5) {
         scroll_y_ = SCROLL_STEP;
-    }
+    }*/
 
     bool inrange = false;
     target_ = NULL;

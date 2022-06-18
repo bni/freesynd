@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
     int cheatCodeIndex = -1;
     // If different from -1, the game will start directly on mission
     // with the given id
+    // NOTICE Jump to mission
     int start_mission = -1;
     // This variable stores the path to the Freesynd configuration file.
     std::string iniPath;

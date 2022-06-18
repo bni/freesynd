@@ -318,5 +318,12 @@ if (APPLE)
 	copy_resource_file (freesynd "Copying icon" ${CMAKE_SOURCE_DIR}/icon/sword.icns)
 	copy_resource_folder (freesynd "Copying data" ${CMAKE_SOURCE_DIR}/data)
 	include_libs (freesynd "Including non-standard OS X libraries")
+
+	add_custom_command(TARGET freesynd POST_BUILD
+			COMMAND echo "Copying data files..."
+			COMMAND cp ../../SYND/DATA/* FreeSynd.app/Contents/Resources/data/
+			COMMAND cp -r ../../data/* FreeSynd.app/Contents/Resources/data/
+	)
+
 endif()
 

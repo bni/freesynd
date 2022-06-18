@@ -561,7 +561,8 @@ void App::waitForKeyPress() {
 
     while (running_) {
         // small pause while waiting for key, also mouse event
-        SDL_Delay(20);
+        // NOTICE Decrease keypress delay
+        SDL_Delay(1);
         menus_.handleEvents();
     }
 }
@@ -630,8 +631,9 @@ void App::run(int start_mission) {
         int diff_ticks = curtick - lasttick;
         menus_.updtSinceMouseDown(diff_ticks);
         menus_.handleEvents();
-        if (diff_ticks < 30) {
-            SDL_Delay(30 - diff_ticks);
+        // NOTICE Decrease delay here also
+        if (diff_ticks < 3) {
+            SDL_Delay(3 - diff_ticks);
             continue;
         }
         menus_.handleTick(diff_ticks);

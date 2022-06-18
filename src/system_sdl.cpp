@@ -86,7 +86,8 @@ bool SystemSDL::initialize(bool fullscreen) {
     SDL_WM_SetCaption("FreeSynd", NULL);
 
     // Keyboard init
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    // NOTICE Less key repeat
+    SDL_EnableKeyRepeat(1, 1);
     SDL_EnableUNICODE(1);
 
     // Audio initialisation

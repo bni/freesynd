@@ -37,8 +37,9 @@
 // TODO: Add a configuration scheme to allow setting these during runtime
 #define MENU_SCREEN_WIDTH       320
 #define MENU_SCREEN_HEIGHT      200
-#define GAME_SCREEN_WIDTH       640
-#define GAME_SCREEN_HEIGHT      400
+// NOTICE Xx
+#define GAME_SCREEN_WIDTH       640*1
+#define GAME_SCREEN_HEIGHT      400*1
 
 #define STUB_FUNC               printf("STUB: %s\n", __PRETTY_FUNCTION__)
 
