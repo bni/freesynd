@@ -247,10 +247,14 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     keyModState_ = keyModState_ | KMD_LSHIFT; 
                     break;
                 case SDLK_RCTRL:
-                    keyModState_ = keyModState_ | KMD_RCTRL; 
+                    keyModState_ = keyModState_ | KMD_RCTRL;
+                    // NOTICE Hide cursor
+                    g_System.hideCursor();
                     break;
                 case SDLK_LCTRL:
-                    keyModState_ = keyModState_ | KMD_LCTRL; 
+                    keyModState_ = keyModState_ | KMD_LCTRL;
+                    // NOTICE Hide cursor
+                    g_System.hideCursor();
                     break;
                 case SDLK_RALT:
                     keyModState_ = keyModState_ | KMD_RALT; 
@@ -297,9 +301,13 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     break;
                 case SDLK_RCTRL:
                     keyModState_ = keyModState_ & !KMD_RCTRL;
+                    // NOTICE Show cursor again
+                    g_System.showCursor();
                     break;
                 case SDLK_LCTRL:
                     keyModState_ = keyModState_ & !KMD_LCTRL;
+                    // NOTICE Show cursor again
+                    g_System.showCursor();
                     break;
                 case SDLK_RALT:
                     keyModState_ = keyModState_ & !KMD_RALT;
