@@ -23,7 +23,6 @@
  *                                                                      *
  ************************************************************************/
 
-#include "config.h"
 #include "gfx/screen.h"
 #include "system.h"
 #include "sound/audio.h"
@@ -34,8 +33,7 @@
 
 const int SystemSDL::CURSOR_WIDTH = 24;
 
-SystemSDL::SystemSDL(int depth) {
-    depth_ = depth;
+SystemSDL::SystemSDL() {
     keyModState_ = 0;
     screen_surf_ = NULL;
     temp_surf_ = NULL;
@@ -53,9 +51,7 @@ SystemSDL::~SystemSDL() {
         SDL_FreeSurface(cursor_surf_);
     }
 
-#ifdef HAVE_SDL_MIXER
     Audio::quit();
-#endif
 
     // Destroy SDL_Image Lib
     IMG_Quit();
@@ -72,16 +68,10 @@ bool SystemSDL::initialize(bool fullscreen) {
         return false;
     }
 
-    // Audio initialisation
-    if (!Audio::init()) {
-        LOG(Log::k_FLG_SND, "SystemSDL", "Init", ("Couldn't initialize Sound System : no sound will be played."))
-    }
-
     SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP, &screen_surf_, &renderer_);
 
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-    SDL_RenderSetIntegerScale(renderer_, SDL_TRUE);
     SDL_RenderSetLogicalSize(renderer_, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    SDL_RenderSetIntegerScale(renderer_, SDL_TRUE);
 
     temp_surf_ = SDL_CreateRGBSurface(0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, 8, 0, 0, 0, 0);
 
@@ -104,48 +94,59 @@ bool SystemSDL::initialize(bool fullscreen) {
         useMenuCursor();
     }
 
+    // Audio initialisation
+    if (!Audio::init()) {
+        LOG(Log::k_FLG_SND, "SystemSDL", "Init", ("Couldn't initialize Sound System : no sound will be played."))
+    }
+
     return true;
 }
 
 void SystemSDL::updateScreen() {
-    const uint8 *pixeldata = g_Screen.pixels();
+    if (g_Screen.dirty() || (cursor_visible_ && update_cursor_)) {
+        SDL_LockSurface(temp_surf_);
 
-    // We do manual blitting to convert from 8bpp palette indexed values to 32bpp RGB for each pixel
-    uint8 r, g, b;
-    for (int i = 0; i < GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT; i++) {
-        uint8 index = pixeldata[i];
+        const uint8 *pixeldata = g_Screen.pixels();
 
-        r = temp_surf_->format->palette->colors[index].r;
-        g = temp_surf_->format->palette->colors[index].g;
-        b = temp_surf_->format->palette->colors[index].b;
+        // We do manual blitting to convert from 8bpp palette indexed values to 32bpp RGB for each pixel
+        uint8 r, g, b;
+        for (int i = 0; i < GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT; i++) {
+            uint8 index = pixeldata[i];
 
-        Uint32 c = ((r << 16) | (g << 8) | (b << 0)) | (255 << 24);
+            r = temp_surf_->format->palette->colors[index].r;
+            g = temp_surf_->format->palette->colors[index].g;
+            b = temp_surf_->format->palette->colors[index].b;
 
-        pixels_[i] = c;
+            Uint32 c = ((r << 16) | (g << 8) | (b << 0)) | (255 << 24);
+
+            pixels_[i] = c;
+        }
+
+        memcpy(temp_surf_->pixels, pixels_, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT * sizeof (Uint32));
+
+        SDL_UnlockSurface(temp_surf_);
+
+        SDL_RenderClear(renderer_);
+
+        SDL_UpdateTexture(texture_, NULL, temp_surf_->pixels, GAME_SCREEN_WIDTH * sizeof (Uint32));
+
+        if (cursor_visible_) {
+            SDL_Rect dst;
+
+            dst.x = cursor_x_ - cursor_hs_x_;
+            dst.y = cursor_y_ - cursor_hs_y_;
+            dst.w = CURSOR_WIDTH;
+            dst.h = CURSOR_WIDTH;
+
+            SDL_UpdateTexture(texture_, &dst, cursor_surf_->pixels, cursor_surf_->pitch);
+
+            update_cursor_ = false;
+        }
+
+        SDL_RenderCopy(renderer_, texture_, NULL, NULL);
+
+        SDL_RenderPresent(renderer_);
     }
-
-    memcpy(temp_surf_->pixels, pixels_, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT * sizeof (Uint32));
-
-    SDL_RenderClear(renderer_);
-
-    SDL_UpdateTexture(texture_, NULL, temp_surf_->pixels, GAME_SCREEN_WIDTH * sizeof (Uint32));
-
-    if (cursor_visible_) {
-        SDL_Rect dst;
-
-        dst.x = cursor_x_ - cursor_hs_x_;
-        dst.y = cursor_y_ - cursor_hs_y_;
-        dst.w = CURSOR_WIDTH;
-        dst.h = CURSOR_WIDTH;
-
-        SDL_UpdateTexture(texture_, &dst, cursor_surf_->pixels, cursor_surf_->pitch);
-
-        update_cursor_ = false;
-    }
-
-    SDL_RenderCopy(renderer_, texture_, NULL, NULL);
-
-    SDL_RenderPresent(renderer_);
 }
 
 /*!

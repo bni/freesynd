@@ -45,7 +45,7 @@
  */
 class SystemSDL : public System {
 public:
-    SystemSDL(int depth = 32);
+    SystemSDL();
     ~SystemSDL();
 
     bool initialize(bool fullscreen);
@@ -85,8 +85,6 @@ protected:
 protected:
     /*! A constant that holds the cursor icon width and height.*/
     static const int CURSOR_WIDTH;
-    int depth_;
-    bool scale_;
     /*! Cursor visibility.*/
     bool cursor_visible_;
     /*! Cursor screen coordinates. */

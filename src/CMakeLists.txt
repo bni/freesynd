@@ -182,8 +182,6 @@ set(HEADERS
 	utils/utf8/core.h
 	utils/utf8/unchecked.h)
 
-#source_group(Sources REGULAR_EXPRESSION .*.cpp)
-#source_group(Headers REGULAR_EXPRESSION .*.h)
 source_group(Menus REGULAR_EXPRESSION menus/*)
 source_group(Utils REGULAR_EXPRESSION utils/*)
 source_group(Core REGULAR_EXPRESSION core/*)
@@ -308,13 +306,11 @@ if (APPLE)
 		MACOSX_BUNDLE_SHORT_VERSION_STRING "${FREESYND_VERSION}"
 		MACOSX_BUNDLE_COPYRIGHT "© 2011 FreeSynd Team"
 	)
-	include (tools/osx.cmake)
-	copy_resource_file (freesynd "Copying icon" ${CMAKE_SOURCE_DIR}/icon/sword.icns)
-	copy_resource_folder (freesynd "Copying data" ${CMAKE_SOURCE_DIR}/data)
-	include_libs (freesynd "Including non-standard OS X libraries")
 
 	add_custom_command(TARGET freesynd POST_BUILD
 			COMMAND echo "Copying data files..."
+			COMMAND mkdir -p FreeSynd.app/Contents/Resources/data/
+			COMMAND cp ../../icon/sword.icns FreeSynd.app/Contents/Resources/
 			COMMAND cp ../../SYND/DATA/* FreeSynd.app/Contents/Resources/data/
 			COMMAND cp -r ../../data/* FreeSynd.app/Contents/Resources/data/
 	)
