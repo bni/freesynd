@@ -44,14 +44,6 @@
 #include <sys/types.h>
 #endif
 
-#ifdef SYSTEM_SDL
-#ifdef _WIN32
-#undef main
-#else
-#include <SDL_main.h>           //This is required on OSX for remapping of main()
-#endif
-#endif
-
 //#define CHEAP_LEAK_DETECTION
 
 #ifdef CHEAP_LEAK_DETECTION

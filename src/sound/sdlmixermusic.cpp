@@ -32,8 +32,8 @@
 #include "utils/file.h"
 #include "sdlmixermusic.h"
 
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 /*!
  * Class constructor.
@@ -109,7 +109,7 @@ bool SdlMixerMusic::loadMusic(uint8 * musicData, int size)
         Audio::error("SdlMixerMusic", "loadMusic", "Failed creating SDL_RW buffer from memory");
         return false;
     }
-    Mix_Music *newmusic = Mix_LoadMUS_RW(rw);
+    Mix_Music *newmusic = Mix_LoadMUS_RW(rw, 0);
 
     if (!newmusic) {
         Audio::error("SdlMixerMusic", "loadMusic", "Failed loading music from SDL_RW buffer");

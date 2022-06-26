@@ -30,9 +30,7 @@
 #include "utils/file.h"
 #include "utils/log.h"
 
-#include <SDL_image.h>
-
-SDL_Joystick *joy = NULL;
+#include <SDL2/SDL_image.h>
 
 const int SystemSDL::CURSOR_WIDTH = 24;
 
@@ -42,6 +40,8 @@ SystemSDL::SystemSDL(int depth) {
     screen_surf_ = NULL;
     temp_surf_ = NULL;
     cursor_surf_ = NULL;
+
+    pixels_ = new Uint32[GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT];
 }
 
 SystemSDL::~SystemSDL() {
@@ -64,53 +64,28 @@ SystemSDL::~SystemSDL() {
 }
 
 bool SystemSDL::initialize(bool fullscreen) {
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "metal");
+
     if (SDL_Init(SDL_INIT_VIDEO
-#ifdef GP2X
-                 | SDL_INIT_JOYSTICK
-#endif
         ) < 0) {
         printf("Critical error, SDL could not be initialized!");
         return false;
     }
-#ifdef GP2X
-    if (SDL_NumJoysticks() > 0) {
-        joy = SDL_JoystickOpen(0);
-        if (!joy) {
-            fprintf(stderr, "Couldn't open joystick 0: %s\n",
-                    SDL_GetError());
-        }
-        printf("found joystick\n");
-    }
-#endif
-
-    SDL_WM_SetCaption("FreeSynd", NULL);
-
-    // Keyboard init
-    // NOTICE Less key repeat
-    SDL_EnableKeyRepeat(1, 1);
-    SDL_EnableUNICODE(1);
 
     // Audio initialisation
     if (!Audio::init()) {
         LOG(Log::k_FLG_SND, "SystemSDL", "Init", ("Couldn't initialize Sound System : no sound will be played."))
     }
 
-    // TODO(nobody): maybe use double buffering?
-#ifdef GP2X
-    screen_surf_ = SDL_SetVideoMode(320, 240, 16, SDL_SWSURFACE);
-    temp_surf_ =
-        SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 8, 0, 0, 0, 0);
-#else
-    screen_surf_ =
-        SDL_SetVideoMode(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, depth_,
-                         SDL_DOUBLEBUF | SDL_HWSURFACE | (fullscreen ?
-                                                          SDL_FULLSCREEN :
-                                                          0));
-    temp_surf_ =
-        SDL_CreateRGBSurface(SDL_SWSURFACE, GAME_SCREEN_WIDTH,
-                             GAME_SCREEN_HEIGHT, 8, 0, 0, 0, 0);
+    SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP, &screen_surf_, &renderer_);
 
-#endif
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+    SDL_RenderSetIntegerScale(renderer_, SDL_TRUE);
+    SDL_RenderSetLogicalSize(renderer_, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+
+    temp_surf_ = SDL_CreateRGBSurface(0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, 8, 0, 0, 0, 0);
+
+    texture_ = SDL_CreateTextureFromSurface(renderer_, temp_surf_);
 
     cursor_surf_ = NULL;
     // Init SDL_Image library
@@ -133,40 +108,44 @@ bool SystemSDL::initialize(bool fullscreen) {
 }
 
 void SystemSDL::updateScreen() {
-    if (g_Screen.dirty()|| (cursor_visible_ && update_cursor_)) {
-        SDL_LockSurface(temp_surf_);
-#ifdef GP2X
-        const uint8 *pixeldata = g_Screen.pixels();
-        uint8 *screen = (uint8 *) temp_surf_->pixels;
-        for (int j = 0; j < 240; j++)
-            for (int i = 0; i < 320; i++) {
-                int tx = i * GAME_SCREEN_WIDTH / 320;
-                int ty = j * GAME_SCREEN_HEIGHT / 240;
+    const uint8 *pixeldata = g_Screen.pixels();
 
-                uint8 c = pixeldata[ty * GAME_SCREEN_WIDTH + tx];
-                screen[j * 320 + i] = c;
-            }
-#else
-        memcpy(temp_surf_->pixels, g_Screen.pixels(),
-               GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
-#endif
-        SDL_UnlockSurface(temp_surf_);
+    // We do manual blitting to convert from 8bpp palette indexed values to 32bpp RGB for each pixel
+    uint8 r, g, b;
+    for (int i = 0; i < GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT; i++) {
+        uint8 index = pixeldata[i];
 
-        g_Screen.clearDirty();
+        r = temp_surf_->format->palette->colors[index].r;
+        g = temp_surf_->format->palette->colors[index].g;
+        b = temp_surf_->format->palette->colors[index].b;
 
-        SDL_BlitSurface(temp_surf_, NULL, screen_surf_, NULL);
+        Uint32 c = ((r << 16) | (g << 8) | (b << 0)) | (255 << 24);
 
-        if (cursor_visible_) {
-            SDL_Rect dst;
-
-            dst.x = cursor_x_ - cursor_hs_x_;
-            dst.y = cursor_y_ - cursor_hs_y_;
-            SDL_BlitSurface(cursor_surf_, &cursor_rect_, screen_surf_, &dst);
-            update_cursor_ = false;
-        }
-
-        SDL_Flip(screen_surf_);
+        pixels_[i] = c;
     }
+
+    memcpy(temp_surf_->pixels, pixels_, GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT * sizeof (Uint32));
+
+    SDL_RenderClear(renderer_);
+
+    SDL_UpdateTexture(texture_, NULL, temp_surf_->pixels, GAME_SCREEN_WIDTH * sizeof (Uint32));
+
+    if (cursor_visible_) {
+        SDL_Rect dst;
+
+        dst.x = cursor_x_ - cursor_hs_x_;
+        dst.y = cursor_y_ - cursor_hs_y_;
+        dst.w = CURSOR_WIDTH;
+        dst.h = CURSOR_WIDTH;
+
+        SDL_UpdateTexture(texture_, &dst, cursor_surf_->pixels, cursor_surf_->pitch);
+
+        update_cursor_ = false;
+    }
+
+    SDL_RenderCopy(renderer_, texture_, NULL, NULL);
+
+    SDL_RenderPresent(renderer_);
 }
 
 /*!
@@ -174,7 +153,7 @@ void SystemSDL::updateScreen() {
  * a not printable key) returns the corresponding entry in the KeyFunc enumeration.
  * \returns If key code is not a function key, returns KEY_UNKNOWN.
  */
-void SystemSDL::checkKeyCodes(SDL_keysym keysym, Key &key) {
+void SystemSDL::checkKeyCodes(SDL_Keysym keysym, Key &key) {
     key.keyFunc = KFC_UNKNOWN;
     key.keyVirt = KVT_UNKNOWN;
     switch(keysym.sym) {
@@ -270,20 +249,6 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     Key key;
                     key.unicode = 0;
                     checkKeyCodes(evtIn.key.keysym, key);
-                    if (key.keyFunc == KFC_UNKNOWN) {
-                        key.unicode = evtIn.key.keysym.unicode;
-#if _DEBUG
-                        printf( "Scancode: 0x%02X", evtIn.key.keysym.scancode );
-                        printf( ", Name: %s", SDL_GetKeyName( evtIn.key.keysym.sym ) );
-                        printf(", Unicode: " );
-                        if( evtIn.key.keysym.unicode < 0x80 && evtIn.key.keysym.unicode > 0 ){
-                            printf( "%c (0x%04X)\n", (char)evtIn.key.keysym.unicode,
-                                    evtIn.key.keysym.unicode );
-                        } else{
-                            printf( "? (0x%04X)\n", evtIn.key.keysym.unicode );
-                        }
-#endif
-                    }
                     pEvtOut->key.key = key;
                     pEvtOut->key.keyMods = keyModState_;
                     break;
@@ -383,7 +348,7 @@ void SystemSDL::setPalette6b3(const uint8 * pal, int cols) {
 #endif
     }
 
-    SDL_SetColors(temp_surf_, palette, 0, cols);
+    SDL_SetPaletteColors(temp_surf_->format->palette, palette, 0, cols);
 }
 
 void SystemSDL::setPalette8b3(const uint8 * pal, int cols) {
@@ -395,7 +360,7 @@ void SystemSDL::setPalette8b3(const uint8 * pal, int cols) {
         palette[i].b = pal[i * 3 + 2];
     }
 
-    SDL_SetColors(temp_surf_, palette, 0, cols);
+    SDL_SetPaletteColors(temp_surf_->format->palette, palette, 0, cols);
 }
 
 void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
@@ -405,7 +370,7 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
     color.g = g;
     color.b = b;
 
-    SDL_SetColors(temp_surf_, &color, index, 1);
+    SDL_SetPaletteColors(temp_surf_->format->palette, &color, index, 1);
 }
 
 /*!

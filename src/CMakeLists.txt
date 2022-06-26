@@ -85,12 +85,6 @@ set (SOURCES
 	weaponmanager.cpp
 )
 
-if (APPLE AND "${SDL_INCLUDE_DIR}" MATCHES ".framework")
-	# When using the official SDL 1.2 framework for Mac,
-	# you must link in an implementation of SDLmain.
-	set (SOURCES ${SOURCES} SDLMain.m)
-endif()
-
 set(HEADERS
 	appcontext.h
 	agent.h
@@ -201,7 +195,7 @@ source_group(IA REGULAR_EXPRESSION ia/*)
 
 add_executable (freesynd ${SOURCES} ${HEADERS})
 
-target_link_libraries (freesynd ${PNG_LIBRARIES} ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY})
+target_link_libraries(freesynd ${PNG_LIBRARIES} SDL2::Main SDL2::Image SDL2::Mixer)
 
 # Use -DBIN_DIR to override binary installation location
 if(NOT BIN_DIR)
@@ -290,7 +284,7 @@ if (BUILD_DEV_TOOLS)
 		system_sdl.cpp
 		${DEV_TOOLS_HEADERS}
 	)
-	target_link_libraries (dump ${PNG_LIBRARIES} ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY})
+	target_link_libraries(dump ${PNG_LIBRARIES} SDL2::Main SDL2::Image SDL2::Mixer)
 
 	target_compile_definitions (dump PRIVATE EDITOR_)
 else ()

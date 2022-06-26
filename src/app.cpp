@@ -562,7 +562,7 @@ void App::waitForKeyPress() {
     while (running_) {
         // small pause while waiting for key, also mouse event
         // NOTICE Decrease keypress delay
-        SDL_Delay(1);
+        //SDL_Delay(1);
         menus_.handleEvents();
     }
 }

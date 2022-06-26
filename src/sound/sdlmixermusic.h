@@ -25,7 +25,7 @@
 
 #ifdef HAVE_SDL_MIXER
 
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 
 /*!
  * Implementation of music using SDL_Mixer.

@@ -26,9 +26,10 @@
 #ifndef SYSTEM_SDL_H
 #define SYSTEM_SDL_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "keys.h"
+#include "system.h"
 
 //! Implementation of the System interface for SDL.
 /*!
@@ -79,7 +80,7 @@ protected:
     bool loadCursorSprites();
 
     //! Sets the key arguments with some key codes
-    void checkKeyCodes(SDL_keysym sym, Key &key);
+    void checkKeyCodes(SDL_Keysym sym, Key &key);
 
 protected:
     /*! A constant that holds the cursor icon width and height.*/
@@ -97,7 +98,11 @@ protected:
     /*! Current cursor hotspot.*/
     int cursor_hs_y_;
 
-    SDL_Surface *screen_surf_;
+    SDL_Window *screen_surf_;
+    SDL_Renderer *renderer_;
+    SDL_Texture *texture_;
+
+    Uint32 *pixels_;
     SDL_Surface *temp_surf_;
     /*! 
      * A surface that holds all cursors

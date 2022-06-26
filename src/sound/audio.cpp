@@ -30,7 +30,7 @@
 
 #include <iostream>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #ifdef HAVE_SDL_MIXER
 
