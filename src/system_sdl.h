@@ -102,6 +102,8 @@ protected:
 
     Uint32 *pixels_;
     SDL_Surface *temp_surf_;
+
+    SDL_Texture *cursor_texture_;
     /*! 
      * A surface that holds all cursors
      * images.

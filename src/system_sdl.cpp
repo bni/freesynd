@@ -130,20 +130,19 @@ void SystemSDL::updateScreen() {
 
         SDL_UpdateTexture(texture_, NULL, temp_surf_->pixels, GAME_SCREEN_WIDTH * sizeof (Uint32));
 
+        SDL_RenderCopy(renderer_, texture_, NULL, NULL);
+
         if (cursor_visible_) {
             SDL_Rect dst;
 
             dst.x = cursor_x_ - cursor_hs_x_;
             dst.y = cursor_y_ - cursor_hs_y_;
-            dst.w = CURSOR_WIDTH;
-            dst.h = CURSOR_WIDTH;
+            dst.w = dst.h = CURSOR_WIDTH;
 
-            SDL_UpdateTexture(texture_, &dst, cursor_surf_->pixels, cursor_surf_->pitch);
+            SDL_RenderCopy(renderer_, cursor_texture_, &cursor_rect_, &dst);
 
             update_cursor_ = false;
         }
-
-        SDL_RenderCopy(renderer_, texture_, NULL, NULL);
 
         SDL_RenderPresent(renderer_);
     }
@@ -390,6 +389,8 @@ bool SystemSDL::loadCursorSprites() {
         printf("Cannot load cursors image: %s\n", IMG_GetError());
         return false;
     }
+
+    cursor_texture_ = SDL_CreateTextureFromSurface(renderer_, cursor_surf_);
 
     return true;
 }
