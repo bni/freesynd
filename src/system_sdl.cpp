@@ -249,6 +249,20 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     Key key;
                     key.unicode = 0;
                     checkKeyCodes(evtIn.key.keysym, key);
+                    if (key.keyFunc == KFC_UNKNOWN) {
+                        key.unicode = evtIn.key.keysym.sym;
+#if _DEBUG
+                        printf( "Scancode: 0x%02X", evtIn.key.keysym.scancode );
+                        printf( ", Name: %s", SDL_GetKeyName( evtIn.key.keysym.sym ) );
+                        printf(", Unicode: " );
+                        if( evtIn.key.keysym.unicode < 0x80 && evtIn.key.keysym.unicode > 0 ){
+                            printf( "%c (0x%04X)\n", (char)evtIn.key.keysym.unicode,
+                                    evtIn.key.keysym.unicode );
+                        } else{
+                            printf( "? (0x%04X)\n", evtIn.key.keysym.unicode );
+                        }
+#endif
+                    }
                     pEvtOut->key.key = key;
                     pEvtOut->key.keyMods = keyModState_;
                     break;
