@@ -458,3 +458,29 @@ bool FliPlayer::play(bool intro, Font *pIntroFont) {
 
     return true;
 }
+
+// NOTICE Used for quick menu transitions
+bool FliPlayer::playFast() {
+    if (!fli_data_)
+        return false;
+
+    g_Screen.clear(0);
+    int cur_frame = 0;
+    while (hasFrames()) {
+        pManager_->handleEvents();
+
+        if (!decodeFrame())
+            break;
+        copyCurrentFrameToScreen();
+
+        cur_frame++;
+
+        g_System.updateScreen();
+
+        if (cur_frame == 1) {
+            g_System.delay(1000 / 15);
+        }
+    }
+
+    return true;
+}

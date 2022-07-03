@@ -3,15 +3,17 @@ About this fork of FreeSynd
 Improvements:
 - Port from ancient SDL 1.2 to SDL2.
 - Fullscreen by default.
-- Automatic pixel-perfect scaling (integer), to make it playable on todays screens.
+- Automatic pixel-perfect scaling (2x, 3x, 4x integer), to make it playable on todays screens.
 - Hold down CTRL to pan the view using the mouse.
-- Removed menu navigation sound.
+- Instant and quiet menu transitions.
 - Cleaned out some CMake old cruft not relevant today.
 
-Possibly in the future:
+Future improvements and help wanted:
 - See more of the map in a more zoomed out view, but still atleast 2x scaled.
 - 16:9 full-screen, combined with the above.
 - Improved and modernized CMake config.
+- The game consumes unreasonable amount of CPU. Figure out why and optimize.
+- Fix game mechanics and bugs to be more like the original.
 
 All credits to the original FreeSynd authors and Bullfrog.
 

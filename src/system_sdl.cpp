@@ -162,9 +162,17 @@ void SystemSDL::checkKeyCodes(SDL_Keysym keysym, Key &key) {
         case SDLK_RETURN: key.keyFunc = KFC_RETURN; break;
         case SDLK_DELETE: key.keyFunc = KFC_DELETE; break;
         case SDLK_UP:
+            key.keyFunc = static_cast < KeyFunc > (KFC_UP + (keysym.sym - SDLK_UP));
+            break;
         case SDLK_DOWN:
+            key.keyFunc = static_cast < KeyFunc > (KFC_DOWN + (keysym.sym - SDLK_DOWN));
+            break;
         case SDLK_RIGHT:
+            key.keyFunc = static_cast < KeyFunc > (KFC_RIGHT + (keysym.sym - SDLK_RIGHT));
+            break;
         case SDLK_LEFT:
+            key.keyFunc = static_cast < KeyFunc > (KFC_LEFT + (keysym.sym - SDLK_LEFT));
+            break;
         case SDLK_INSERT:
         case SDLK_HOME:
         case SDLK_END:

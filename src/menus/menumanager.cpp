@@ -257,7 +257,7 @@ void MenuManager::showMenu(Menu *pMenu) {
         int size;
         data = File::loadOriginalFile(pMenu->getShowAnimName(), size);
         fliPlayer.loadFliData(data);
-        fliPlayer.play();
+        fliPlayer.playFast();
         delete[] data;
 
     }
@@ -300,7 +300,7 @@ void MenuManager::leaveMenu(Menu *pMenu) {
         fliPlayer.loadFliData(data);
         // NOTICE Disable annoying menu sound
         //pGameSounds_->play(snd::MENU_CHANGE);
-        fliPlayer.play();
+        fliPlayer.playFast();
         delete[] data;
         drop_events_ = false;
     }

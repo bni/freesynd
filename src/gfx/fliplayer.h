@@ -63,6 +63,7 @@ public:
 
     //! Play an entire animation without interruption
     bool play(bool intro = false, Font *pIntroFont = NULL);
+    bool playFast();
     void loadFliData(uint8 *buf);
     bool decodeFrame();
     void copyCurrentFrameToScreen();
