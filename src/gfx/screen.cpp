@@ -28,9 +28,9 @@
 #include "screen.h"
 #include "utils/file.h"
 
-// NOTICE Xx
-const int Screen::kScreenWidth = 640*1;
-const int Screen::kScreenHeight = 400*1;
+// NOTICE Using macros here instead of hardcoding the same values again
+const int Screen::kScreenWidth = GAME_SCREEN_WIDTH;
+const int Screen::kScreenHeight = GAME_SCREEN_HEIGHT;
 const int Screen::kScreenPanelWidth = 129;
 
 Screen::Screen(int width, int height)

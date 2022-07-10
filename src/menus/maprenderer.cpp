@@ -52,7 +52,8 @@ void MapRenderer::render(const Point2D &viewport) {
     int sw = mtp.tx;
     int chk = Screen::kScreenWidth / (TILE_WIDTH / 2) + 2
         + Screen::kScreenHeight / (TILE_HEIGHT / 3) + pMap_->maxZ() * 2;
-    int sh = mtp.ty - 8;
+    // NOTICE This controls how "far" tiles are drawn along the screen width
+    int sh = mtp.ty - 18;
 
     int shm = sh + chk;
 
