@@ -90,7 +90,7 @@ void EditorApp::destroy() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool EditorApp::initialize(const std::string& iniPath) {
+bool EditorApp::doInitialize(const std::string& iniPath) {
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("reading configuration..."))
     if (!context_->readConfiguration(iniPath)) {

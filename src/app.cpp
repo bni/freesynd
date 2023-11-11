@@ -82,7 +82,7 @@ App::~App() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool App::initialize(const std::string& iniPath) {
+bool App::doInitialize(const std::string& iniPath) {
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("reading configuration..."))
     if (!context_->readConfiguration(iniPath)) {

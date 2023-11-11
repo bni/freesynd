@@ -41,6 +41,7 @@
 
 
 #include "fs-utils/common.h"
+#include "fs-engine/base_app.h"
 #include "fs-engine/system.h"
 #include "fs-engine/gfx/screen.h"
 #include "path.h"
@@ -56,13 +57,10 @@
  * Application class.
  * Used for managing game settings and workflows.
  */
-class App : public Singleton < App > {
+class App : public BaseApp, public Singleton < App > {
   public:
     App(bool disable_sound);
     virtual ~App();
-
-    //! Initialize application
-    bool initialize(const std::string& iniPath);
 
     void setCheatCode(const char *name);
 
@@ -117,6 +115,10 @@ class App : public Singleton < App > {
 public:
     uint8 debug_breakpoint_trigger_;
 #endif
+
+protected:
+        //! Initialize application
+    bool doInitialize(const std::string& iniPath);
 
 private:
     void cheatFunds() {

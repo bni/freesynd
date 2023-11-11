@@ -33,6 +33,7 @@
 
 
 #include "fs-utils/common.h"
+#include "fs-engine/base_app.h"
 #include "fs-engine/system.h"
 #include "fs-engine/gfx/screen.h"
 #include "path.h"
@@ -46,13 +47,10 @@
 /*!
  * Editor Application class.
  */
-class EditorApp : public Singleton < EditorApp > {
+class EditorApp : public BaseApp, public Singleton < EditorApp > {
   public:
     EditorApp(bool disable_sound);
     virtual ~EditorApp();
-
-    //! Initialize application
-    bool initialize(const std::string& iniPath);
 
     GameSpriteManager &gameSprites() {
         return game_sprites_;
@@ -102,7 +100,9 @@ public:
     uint8 debug_breakpoint_trigger_;
 #endif
 
-private:
+protected:
+    //! Initialize application
+    bool doInitialize(const std::string& iniPath);
 
 private:
     bool running_;
