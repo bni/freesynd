@@ -80,6 +80,7 @@ if (APPLE AND "${SDL_INCLUDE_DIR}" MATCHES ".framework")
 endif()
 
 set(HEADERS
+    version.h
 	appcontext.h
 	agent.h
 	agentmanager.h

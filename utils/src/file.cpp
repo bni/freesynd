@@ -46,7 +46,7 @@
 #include "fs-utils/crc/dernc.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/portablefile.h"
-#include "fs-utils/io/version.h"
+#include "fs-utils/io/formatversion.h"
 
 std::string File::dataPath_ = "./data/";
 std::string File::ourDataPath_ = "./data/";

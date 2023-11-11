@@ -42,6 +42,7 @@
 #include "app.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+#include "version.h"
 
 #ifdef SYSTEM_SDL
 #ifdef _WIN32
@@ -143,7 +144,7 @@ void print_usage() {
 
 int main(int argc, char *argv[]) {
 
-    printf("Freesynd v0.8 (may 2016)\n");
+    printf("Freesynd v%i.%i (may 2016)\n", FS_VERSION_MAJOR, FS_VERSION_MINOR);
 
 #ifdef CHEAP_LEAK_DETECTION
     initLeakDetection();

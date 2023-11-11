@@ -31,7 +31,7 @@
 #include "fs-utils/misc/singleton.h"
 #include "core/researchmanager.h"
 #include "fs-utils/io/portablefile.h"
-#include "fs-utils/io/version.h"
+#include "fs-utils/io/formatversion.h"
 
 enum Status_Pop {
     STAT_VERY_HAPPY = 5,

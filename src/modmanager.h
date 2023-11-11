@@ -32,7 +32,7 @@
 #include "model/mod.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
-#include "fs-utils/io/version.h"
+#include "fs-utils/io/formatversion.h"
 
 /*!
  * Modifications manager class.

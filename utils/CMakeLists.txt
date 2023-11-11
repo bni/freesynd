@@ -10,7 +10,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/file.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/configfile.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/portablefile.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/version.h"
+    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/formatversion.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/checked.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/core.h"
