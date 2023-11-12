@@ -22,7 +22,7 @@
  ************************************************************************/
 
 #include "model/objectivedesc.h"
-#include "appcontext.h"
+#include "fs-engine/appcontext.h"
 #include "ped.h"
 #include "model/vehicle.h"
 #include "model/squad.h"

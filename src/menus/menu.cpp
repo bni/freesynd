@@ -24,13 +24,14 @@
  *                                                                      *
  ************************************************************************/
 
+#include "menus/menu.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#include "menus/menu.h"
 #include "menus/menumanager.h"
-#include "appcontext.h"
+#include "fs-engine/appcontext.h"
 #include "gfx/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
 

@@ -22,11 +22,12 @@
  ************************************************************************/
 
 #include "researchmanager.h"
+
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/io/configfile.h"
 #include "core/gamecontroller.h"
-#include "appcontext.h"
+#include "fs-engine/appcontext.h"
 
 ResearchManager::ResearchManager() {
     pCurrResearch_ = NULL;

@@ -27,20 +27,29 @@
 #define ENGINE_BASEAPP_H
 
 #include <string>
+#include <memory>
+
+#include "fs-engine/appcontext.h"
 
 /*!
  * Base class for a Freesynd application.
  */
 class BaseApp {
 public:
+    //! Constructor
+    BaseApp();
+    //! Destructor
+    virtual ~BaseApp();
+
     //! Initialize application
     virtual bool initialize(const std::string& iniPath) final;
-
-    virtual ~BaseApp();
 
 protected:
     //! Child class implements this method for initalization
     virtual bool doInitialize(const std::string& iniPath);
+
+    /*! A structure to hold general application informations.*/
+    std::unique_ptr<AppContext> context_;
 };
 
 #endif // ENGINE_BASEAPP_H

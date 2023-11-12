@@ -23,7 +23,8 @@
  *                                                                      *
  ************************************************************************/
 
-#include "appcontext.h"
+#include "fs-engine/appcontext.h"
+
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
@@ -50,9 +51,9 @@ bool AppContext::readConfiguration(const std::string& iniFolder) {
         return false;
     }
 
-    FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Reading configuration file %s\n", iniPath_.c_str()));
     if (iniExist) {
         // Load file
+        FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Reading configuration from existing file %s.\n", iniPath_.c_str()));
         std::ifstream in( iniPath_.c_str() );
 
         if( !in ) {
@@ -79,7 +80,7 @@ bool AppContext::readConfiguration(const std::string& iniFolder) {
     if (!iniExist) {
         // Save first ini file with default parameters
         try {
-            FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Write configuration file %s\n", iniPath_.c_str()));
+            FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Configuration file did not exist, create one in %s\n", iniPath_.c_str()));
             conf.add("fullscreen", fullscreen_);
             conf.add("play_intro", playIntro_);
             conf.add("time_for_click", time_for_click_);

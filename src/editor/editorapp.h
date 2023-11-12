@@ -41,7 +41,6 @@
 #include "mapmanager.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/sound/musicmanager.h"
-#include "appcontext.h"
 #include "core/gamecontroller.h"
 
 /*!
@@ -109,8 +108,6 @@ private:
 
     std::auto_ptr<Screen> screen_;
     std::auto_ptr<System> system_;
-    /*! A structure to hold general application informations.*/
-    std::auto_ptr<AppContext> context_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
 

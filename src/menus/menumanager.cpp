@@ -24,11 +24,12 @@
  *                                                                      *
  ************************************************************************/
 
+#include "menus/menumanager.h"
+
 #include <stdio.h>
 #include <assert.h>
 
-#include "menus/menumanager.h"
-#include "appcontext.h"
+#include "fs-engine/appcontext.h"
 #include "fs-engine/system.h"
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/io/file.h"

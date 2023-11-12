@@ -49,7 +49,7 @@
 #include "mapmanager.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/sound/musicmanager.h"
-#include "appcontext.h"
+#include "fs-engine/appcontext.h"
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
@@ -137,8 +137,6 @@ private:
 
 private:
     bool running_;
-    /*! A structure to hold general application informations.*/
-    std::auto_ptr<AppContext> context_;
     /*! A structure to hold player informations.*/
     std::auto_ptr<GameSession> session_;
     /*! Controls the game logic. */

@@ -24,10 +24,12 @@
  *                                                                      *
  ************************************************************************/
 
+#include "modmanager.h"
+
 #include <stdio.h>
 #include <assert.h>
-#include "modmanager.h"
-#include "appcontext.h"
+
+#include "fs-engine/appcontext.h"
 
 ModManager::ModManager()
 {
@@ -43,7 +45,7 @@ void ModManager::destroy() {
        delete preFetch_[i];
     }
 
-    // Delete all available mods 
+    // Delete all available mods
     for (unsigned int i = 0; i < mods_.size(); i++) {
         delete mods_.get(i);
     }
@@ -57,7 +59,7 @@ void ModManager::reset() {
 
     Mod::EModType types[] = {Mod::MOD_LEGS, Mod::MOD_ARMS, Mod::MOD_CHEST,
         Mod::MOD_HEART, Mod::MOD_EYES, Mod::MOD_BRAIN};
-    
+
     for (int t=0; t<6; t++) {
         enableMod(types[t], Mod::MOD_V1);
     }
@@ -124,7 +126,7 @@ Mod *ModManager::getMod(Mod::EModType mt, Mod::EModVersion ver) {
     Mod *pMod = loadMod(mt, ver);
     // Stores it in cache
     preFetch_.push_back(pMod);
-    
+
     return pMod;
 }
 
@@ -227,7 +229,7 @@ Mod *ModManager::loadMod(Mod::EModType mt, Mod::EModVersion ver) {
                       58);
         } else if (ver == Mod::MOD_V3) {
             return new
-                  Mod(g_Ctx.getMessage("MOD_BRAIN_V3"), Mod::MOD_BRAIN, Mod::MOD_V3, 45000, 
+                  Mod(g_Ctx.getMessage("MOD_BRAIN_V3"), Mod::MOD_BRAIN, Mod::MOD_V3, 45000,
                       g_Ctx.getMessage("MOD_BRAIN_V3_DESC"),
                       59);
         }

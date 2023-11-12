@@ -1,6 +1,7 @@
 
 set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/base_app.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/appcontext.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/system.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/system_sdl.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/config.h"
@@ -26,6 +27,7 @@ set(HEADER_LIST
 
 set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/base_app.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/appcontext.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/system_sdl.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/dirtylist.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/font.cpp"

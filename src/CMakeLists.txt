@@ -7,7 +7,7 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 #include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 set (SOURCES
-	appcontext.cpp
+#	appcontext.cpp
 	agent.cpp
 	agentmanager.cpp
 	app.cpp
@@ -81,7 +81,7 @@ endif()
 
 set(HEADERS
     version.h
-	appcontext.h
+#	appcontext.h
 	agent.h
 	agentmanager.h
 	app.h
@@ -208,7 +208,7 @@ if (BUILD_DEV_TOOLS)
 		menus/menu.cpp
 		menus/menumanager.cpp
 		menus/widget.cpp
-		appcontext.cpp
+#		appcontext.cpp
 		map.cpp
 		mapmanager.cpp
 		mapobject.cpp

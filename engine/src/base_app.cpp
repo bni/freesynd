@@ -23,11 +23,27 @@
 #include "fs-engine/base_app.h"
 
 #include "fs-utils/log/log.h"
+#include "fs-utils/io/file.h"
+
+BaseApp::BaseApp()
+    : context_(std::make_unique<AppContext>()) {
+}
 
 BaseApp::~BaseApp() {}
 
 bool BaseApp::initialize(const std::string& iniPath) {
-    LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("----- Initializing application..."))
+    if (!context_->readConfiguration(iniPath)) {
+        FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", iniPath.c_str()))
+        return false;
+    }
+
+    if (context_->isTestFiles()) {
+        if (!File::testOriginalData()) {
+            return false;
+        }
+        // do not tests files from now
+        context_->deactivateTestFlag();
+    }
     return doInitialize(iniPath);
 }
 

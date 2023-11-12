@@ -56,10 +56,10 @@
 #include "menus/gamemenufactory.h"
 #include "menus/gamemenuid.h"
 
-App::App(bool disable_sound):
-context_(new AppContext),
-session_(new GameSession()), game_ctlr_(new GameController),
-    screen_(new Screen(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT))
+App::App(bool disable_sound)
+    : BaseApp(),
+      session_(new GameSession()), game_ctlr_(new GameController),
+      screen_(new Screen(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT))
 #ifdef SYSTEM_SDL
     , system_(new SystemSDL())
 #else
@@ -83,20 +83,6 @@ App::~App() {
  * \return True if initialization is ok.
  */
 bool App::doInitialize(const std::string& iniPath) {
-
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("reading configuration..."))
-    if (!context_->readConfiguration(iniPath)) {
-        FSERR(Log::k_FLG_IO, "App", "initialize", ("failed to read configuration..."))
-        return false;
-    }
-
-    if (context_->isTestFiles()) {
-        if (!File::testOriginalData()) {
-            return false;
-        }
-        // do not tests files from now
-        context_->deactivateTestFlag();
-    }
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("initializing system..."))
     if (!system_->initialize(context_->isFullScreen())) {
