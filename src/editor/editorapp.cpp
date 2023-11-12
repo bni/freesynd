@@ -60,9 +60,8 @@
 EditorApp::EditorApp(bool disable_sound)
     : BaseApp(),
       game_ctlr_(new GameController),
-      screen_(new Screen(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT))
 #ifdef SYSTEM_SDL
-    , system_(new SystemSDL())
+      system_(new SystemSDL())
 #else
 #error A suitable System object has not been defined!
 #endif
@@ -79,9 +78,9 @@ EditorApp::~EditorApp() {
 }
 
 /*!
- * Destory the application.
+ * Destroy the application.
  */
-void EditorApp::destroy() {
+void EditorApp::doDestroy() {
     menus_.destroy();
 }
 
@@ -125,15 +124,6 @@ bool EditorApp::doInitialize(const std::string& iniPath) {
     return true;
 }
 
-void EditorApp::waitForKeyPress() {
-
-    while (running_) {
-        // small pause while waiting for key, also mouse event
-        SDL_Delay(20);
-        menus_.handleEvents();
-    }
-}
-
 /*!
  * This method defines the application loop.
  * \param start_mission Mission id used to start the application in debug mode
@@ -149,12 +139,12 @@ void EditorApp::run() {
     int nx = 0, ny = 0, my = 0;
     for (int i = 0; i < tabSize / 6; i++) {
         Sprite *s = menu_sprites_.sprite(i);
-        if (nx + s->width() >= GAME_SCREEN_WIDTH) {
+        if (nx + s->width() >= Screen::kScreenWidth) {
             nx = 0;
             ny += my;
             my = 0;
         }
-        if (ny + s->height() > GAME_SCREEN_HEIGHT)
+        if (ny + s->height() > Screen::kScreenHeight)
             break;
         s->draw(nx, ny, 0);
         system_->updateScreen();

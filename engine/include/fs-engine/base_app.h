@@ -30,6 +30,7 @@
 #include <memory>
 
 #include "fs-engine/appcontext.h"
+#include "fs-engine/gfx/screen.h"
 
 /*!
  * Base class for a Freesynd application.
@@ -44,12 +45,18 @@ public:
     //! Initialize application
     virtual bool initialize(const std::string& iniPath) final;
 
+    //! Destroy all components
+    virtual void destroy() final;
+
 protected:
     //! Child class implements this method for initalization
     virtual bool doInitialize(const std::string& iniPath);
+    //! Child class overloads this method for destroying ressources
+    virtual void doDestroy();
 
     /*! A structure to hold general application informations.*/
     std::unique_ptr<AppContext> context_;
+    std::unique_ptr<Screen> screen_;
 };
 
 #endif // ENGINE_BASEAPP_H

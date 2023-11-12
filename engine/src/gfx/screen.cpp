@@ -380,12 +380,12 @@ void Screen::drawRect(int x, int y, int width, int height, uint8 color)
 
 int Screen::gameScreenHeight()
 {
-    return GAME_SCREEN_HEIGHT;
+    return kScreenHeight;
 }
 
 int Screen::gameScreenWidth()
 {
-    return GAME_SCREEN_WIDTH;
+    return kScreenWidth;
 }
 
 int Screen::gameScreenLeftMargin()

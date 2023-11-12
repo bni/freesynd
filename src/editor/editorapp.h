@@ -86,11 +86,6 @@ class EditorApp : public BaseApp, public Singleton < EditorApp > {
         return running_;
     }
 
-    //! Destroy all components
-    void destroy();
-
-    void waitForKeyPress();
-
     //! Return the list of missions found in the search menu
     std::list<int> & getMissionResultList() { return searchResLst_;}
 
@@ -102,16 +97,15 @@ public:
 protected:
     //! Initialize application
     bool doInitialize(const std::string& iniPath);
+    //! Destroy all components
+    void doDestroy();
 
 private:
     bool running_;
 
-    std::auto_ptr<Screen> screen_;
     std::auto_ptr<System> system_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
-
-    std::string iniPath_;
 
     GameSpriteManager game_sprites_;
     MenuManager menus_;

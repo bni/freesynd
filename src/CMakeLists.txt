@@ -249,7 +249,8 @@ if (BUILD_DEV_TOOLS)
 	#	system_sdl.cpp
 		${DEV_TOOLS_HEADERS}
 	)
-	target_link_libraries (dump PRIVATE ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} Freesynd::Utils Freesynd::Engine)
+
+	target_link_libraries (dump PRIVATE Freesynd::Utils Freesynd::Engine)
 
 	target_compile_definitions (dump PRIVATE EDITOR_)
 else ()

@@ -59,9 +59,8 @@
 App::App(bool disable_sound)
     : BaseApp(),
       session_(new GameSession()), game_ctlr_(new GameController),
-      screen_(new Screen(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT))
 #ifdef SYSTEM_SDL
-    , system_(new SystemSDL())
+      system_(new SystemSDL())
 #else
 #error A suitable System object has not been defined!
 #endif
@@ -291,7 +290,7 @@ bool App::reset() {
 /*!
  * Destroy the application.
  */
-void App::destroy() {
+void App::doDestroy() {
     game_ctlr_->clearAllListeners();
     menus_.destroy();
 
@@ -302,7 +301,7 @@ void App::waitForKeyPress() {
 
     while (running_) {
         // small pause while waiting for key, also mouse event
-        SDL_Delay(20);
+        system_->delay(20);
         menus_.handleEvents();
     }
 }
@@ -322,12 +321,12 @@ void App::run(int start_mission) {
     int nx = 0, ny = 0, my = 0;
     for (int i = 0; i < tabSize / 6; i++) {
         Sprite *s = menu_sprites_.sprite(i);
-        if (nx + s->width() >= GAME_SCREEN_WIDTH) {
+        if (nx + s->width() >= Screen::kScreenWidth) {
             nx = 0;
             ny += my;
             my = 0;
         }
-        if (ny + s->height() > GAME_SCREEN_HEIGHT)
+        if (ny + s->height() > Screen::kScreenHeight)
             break;
         s->draw(nx, ny, 0);
         system_->updateScreen();
@@ -365,14 +364,14 @@ void App::run(int start_mission) {
         menus_.gotoMenu(fs_game_menus::kMenuIdBrief);
     }
 
-    int lasttick = SDL_GetTicks();
+    int lasttick = system_->getTicks();
     while (running_) {
-        int curtick = SDL_GetTicks();
+        int curtick = system_->getTicks();
         int diff_ticks = curtick - lasttick;
         menus_.updtSinceMouseDown(diff_ticks);
         menus_.handleEvents();
         if (diff_ticks < 30) {
-            SDL_Delay(30 - diff_ticks);
+            system_->delay(30 - diff_ticks);
             continue;
         }
         menus_.handleTick(diff_ticks);

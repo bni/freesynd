@@ -26,7 +26,8 @@
 #include "fs-utils/io/file.h"
 
 BaseApp::BaseApp()
-    : context_(std::make_unique<AppContext>()) {
+    : context_(std::make_unique<AppContext>()),
+      screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)) {
 }
 
 BaseApp::~BaseApp() {}
@@ -50,3 +51,10 @@ bool BaseApp::initialize(const std::string& iniPath) {
 bool BaseApp::doInitialize(const std::string& iniPath) {
    return true;
 }
+
+void BaseApp::destroy() {
+    doDestroy();
+}
+
+void BaseApp::doDestroy() {}
+

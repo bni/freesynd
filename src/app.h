@@ -43,7 +43,6 @@
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
 #include "fs-engine/system.h"
-#include "fs-engine/gfx/screen.h"
 #include "path.h"
 #include "menus/menumanager.h"
 #include "mapmanager.h"
@@ -101,9 +100,6 @@ class App : public BaseApp, public Singleton < App > {
         return running_;
     }
 
-    //! Destroy all components
-    void destroy();
-
     void waitForKeyPress();
 
     //! Save game to a file
@@ -117,8 +113,10 @@ public:
 #endif
 
 protected:
-        //! Initialize application
+    //! Initialize application
     bool doInitialize(const std::string& iniPath);
+    //! Destroy all components
+    void doDestroy();
 
 private:
     void cheatFunds() {
@@ -141,7 +139,6 @@ private:
     std::auto_ptr<GameSession> session_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
-    std::auto_ptr<Screen> screen_;
     std::auto_ptr<System> system_;
 
     GameSpriteManager game_sprites_;
