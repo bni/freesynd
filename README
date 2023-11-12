@@ -51,6 +51,10 @@ Configuration
 Edit the freesynd.ini file to configure the game. The location of the file
 and a description of the options can be found in the file INSTALL under the
 heading "Configuring FreeSynd".
+
+Running options
+---------------
+Type "freesynd -h" to display the list of available arguments when starting the application.
  
 Commands
 --------

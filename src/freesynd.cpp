@@ -139,6 +139,7 @@ void print_usage() {
     printf("    -m, --mission <num>   jump directly to the specified mission.\n");
     printf("    -c, --cheat <codes>   apply the specified cheat codes.\n");
     printf("                          separate multiple codes with a colon.\n");
+    printf("    -l, --log <flags>     apply the specified log flags separated by colon.\n");
 #endif
 }
 
