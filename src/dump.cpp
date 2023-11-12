@@ -557,10 +557,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-#ifdef _DEBUG
     // Initialize log
-    Log::initialize(Log::k_FLG_ALL, "editor.log");
-#endif
+    Log::initialize("ALL", "editor.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
     std::auto_ptr<EditorApp> app(new EditorApp(disable_sound));

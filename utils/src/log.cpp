@@ -20,12 +20,13 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-utils/log/log.h"
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
-
-#include "fs-utils/log/log.h"
+#include <sstream>
 
 const int Log::k_FLG_ALL  = 0xffffffff;
 const int Log::k_FLG_NONE = 0x00000000;
@@ -70,17 +71,55 @@ const char * Log::typeToStr(int type) {
     }
 }
 
+const int Log::maskFromString(std::string mask) {
+    // used to parse the mask
+    std::stringstream ss(mask);
+    // `flag` is used to store the token string
+    std::string flag;
+    int resMask = k_FLG_NONE;
+
+    // Use while loop to check the getline() function condition.
+    while (getline(ss, flag, ':')) {
+        if (flag.compare("INFO") == 0) {
+            resMask |= k_FLG_INFO;
+        } else if (flag.compare("UI") == 0) {
+            resMask |= k_FLG_UI;
+        } else if (flag.compare("GFX") == 0) {
+            resMask |= k_FLG_GFX;
+        } else if (flag.compare("MEM") == 0) {
+            resMask |= k_FLG_MEM;
+        } else if (flag.compare("GAME") == 0) {
+            resMask |= k_FLG_GAME;
+        } else if (flag.compare("IO") == 0) {
+            resMask |= k_FLG_IO;
+        } else if (flag.compare("SND") == 0) {
+            resMask |= k_FLG_SND;
+        } else if (flag.compare("ALL") == 0) {
+            resMask = k_FLG_ALL;
+        }
+    }
+
+    return resMask;
+}
+
 /*!
  * This method sets the logging mask to specify which type of log is enable
- * and then tries to open the logging file.
- * \param mask Either k_FLG_NONE to disable the logger or k_FLG_ALL to
- * enable all types or a combination k_FLG_XXX with the '|' operator.
+ * and then tries to open the logging file. If compile flag _DEBUG is not set,
+ * mask is set to k_FLG_NONE.
+ * mask can have following flags : INFO:UI:MEM:GFX:GAME:IO:SND:ALL
+ * \param mask A string composed of flags separated by ':'. If string is empty
+ * or malformed, mask is set to k_FLG_ALL.
  * \param filename The name of the log file.
  * \return true if the logging system has correctly been initialized.
  */
-bool Log::initialize(int mask, const char *filename) {
+bool Log::initialize(std::string mask, const char *filename) {
     // sets the current mask
-    logMask_ = mask;
+#ifdef _DEBUG
+    logMask_ = maskFromString(mask);
+    printf("Debug mode activated : logging in %s with flags %s\n", filename, mask.c_str());
+#else
+    logMask_ = k_FLG_NONE;
+#endif
 
     // try to open the log file only if logging has been enabled
     if (logMask_ != k_FLG_NONE) {

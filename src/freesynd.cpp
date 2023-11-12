@@ -164,6 +164,8 @@ int main(int argc, char *argv[]) {
     int start_mission = -1;
     // This variable stores the path to the Freesynd configuration file.
     std::string iniPath;
+    // This variable stores the log mask to init log. By default we activate all logs
+    std::string logMask = "ALL";
 
     bool disable_sound = false;
 
@@ -184,10 +186,19 @@ int main(int argc, char *argv[]) {
         // This parameter is used to specify cheat codes on command line.
         // You can specify multiple codes using the ':' as a separator.
         // See available cheat codes in App::setCheatCode()
-        // exemple -c "DO IT AGAIN:NUK THEM"
+        // example -c "DO IT AGAIN:NUK THEM"
         if (0 == strcmp("-c", argv[i]) || 0 == strcmp("--cheat", argv[i])) {
             cheatCodeIndex = i + 1;
             i++;
+        }
+
+        // This parameter is used to specify debug flags on command line.
+        // You can specify multiple flags using the ':' as a separator.
+        // example -l "INFO:GFX"
+        if (0 == strcmp("-l", argv[i]) || 0 == strcmp("--log", argv[i])) {
+            i++;
+            logMask = argv[i];
+
         }
 #endif
         if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
@@ -203,10 +214,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-#ifdef _DEBUG
     // Initialize log
-    Log::initialize(Log::k_FLG_ALL, "game.log");
-#endif
+    Log::initialize(logMask, "game.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
     std::auto_ptr<App> app(new App(disable_sound));

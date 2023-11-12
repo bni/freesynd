@@ -24,6 +24,7 @@
 #define FREESYND_UTILS_LOG_H_
 
 #include <stdio.h>
+#include <string>
 
 // Logging is enabled only in debug mode
 #ifdef _DEBUG
@@ -75,7 +76,7 @@ class Log {
     static const int k_FLG_SND;
 
     //! Log initialization.
-    static bool initialize(int mask, const char *filename);
+    static bool initialize(std::string mask, const char *filename);
 
     //! Returns true if logging is enabled for the given type.
     static int canLog(int type);
@@ -93,6 +94,8 @@ class Log {
 
     //! Returns a readable representation of the given type.
     static const char * typeToStr(int type);
+    //! Returns a log mask from parsing the input
+    static const int maskFromString(std::string mask);
 
     /*! The current logging mask. By default , ALL is set.*/
     static int logMask_;
