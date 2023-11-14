@@ -30,9 +30,10 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
-SoundManager::SoundManager(bool disabled):tabentry_startoffset_(58), tabentry_offset_(32), disabled_(disabled)
+SoundManager::SoundManager():tabentry_startoffset_(58), tabentry_offset_(32)
 {
     volumeBeforeMute_ = -1;
+    disabled_ = false;
 }
 
 SoundManager::~SoundManager()
@@ -50,8 +51,16 @@ Sound *SoundManager::sound(snd::InGameSample sample)
     return sounds_.at(sample);
 }
 
+void SoundManager::initialize(bool disabled, Audio* audio, SampleSet set) {
+    disabled_ = disabled;
+    if (disabled_) {
+        FSINFO(Log::k_FLG_SND, "SoundManager", "initialize", ("Sound will be disabled\n"))
+    }
+    audio_ = audio;
+    loadSounds(set);
+}
 
-bool SoundManager::loadSounds(SampleSet set)
+void SoundManager::loadSounds(SampleSet set)
 {
     int tabSize, size;
     uint8 *tabData, *data;
@@ -64,8 +73,8 @@ bool SoundManager::loadSounds(SampleSet set)
             delete[] tabData;
             delete[] data;
             if (!loaded) {
-                printf("Error : Could not load sounds from file ISNDS-0.DAT\n");
-                return false;
+                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load sounds from file ISNDS-0.DAT\n"))
+                return;
             }
             tabData = File::loadOriginalFile("ISNDS-1.TAB", tabSize);
             data = File::loadOriginalFile("ISNDS-1.DAT", size);
@@ -73,8 +82,8 @@ bool SoundManager::loadSounds(SampleSet set)
             delete[] tabData;
             delete[] data;
             if (!loaded) {
-                printf("Error : Could not load sounds from file ISNDS-1.DAT\n");
-                return false;
+                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load sounds from file ISNDS-1.DAT\n"))
+                return;
             }
         }
         break;
@@ -95,8 +104,6 @@ bool SoundManager::loadSounds(SampleSet set)
     default:
         break;
     }
-
-    return true;
 }
 
 bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
@@ -138,16 +145,23 @@ bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
     return true;
 }
 
+bool SoundManager::canUseAudio() {
+    return !disabled_ &&
+            audio_ != NULL &&
+            audio_->isInitialized();
+}
+
 /*!
  *
  */
 void SoundManager::play(snd::InGameSample sample, int channel, int loops) {
-    if (disabled_) return;
-    Sound *pSound = sound(sample);
+    if (canUseAudio()) {
+        Sound *pSound = sound(sample);
 
-    if (pSound) {
-        // Sound is played on first available channel (value -1)
-        pSound->play(loops, -1);
+        if (pSound) {
+            // Sound is played on first available channel (value -1)
+            pSound->play(loops, -1);
+        }
     }
 }
 
@@ -155,20 +169,26 @@ void SoundManager::play(snd::InGameSample sample, int channel, int loops) {
  *
  */
 void SoundManager::stop(snd::InGameSample sample) {
-    if (disabled_) return;
-    Sound *pSound = sound(sample);
+    if (canUseAudio()) {
+        Sound *pSound = sound(sample);
 
-    if (pSound) {
-        pSound->stop(sample >= snd::MENU_UP ? 1 : 0);
+        if (pSound) {
+            pSound->stop(sample >= snd::MENU_UP ? 1 : 0);
+        }
     }
 }
 
 void SoundManager::setVolume(int volume) {
-    Audio::setSoundVolume(volume);
+    if (canUseAudio()) {
+        audio_->setSoundVolume(volume);
+    }
 }
 
 int SoundManager::getVolume() {
-    return Audio::getSoundVolume();
+    if (canUseAudio()) {
+        return audio_->getSoundVolume();
+    }
+    return 0;
 }
 
 /*!
@@ -180,13 +200,15 @@ int SoundManager::getVolume() {
  *    volume level.
  */
 void SoundManager::toggleSound() {
-    if (volumeBeforeMute_ == -1) {
-        volumeBeforeMute_ = Audio::getSoundVolume();
-        LOG(Log::k_FLG_SND, "SoundManager", "toggleSound", ("Turning sound off : %d", volumeBeforeMute_))
-        Audio::setSoundVolume(0);
-    } else {
-        LOG(Log::k_FLG_SND, "SoundManager", "toggleSound", ("Turning sound on : %d", volumeBeforeMute_))
-        Audio::setSoundVolume(volumeBeforeMute_);
-        volumeBeforeMute_ = -1;
+    if (canUseAudio()) {
+        if (volumeBeforeMute_ == -1) {
+            volumeBeforeMute_ = audio_->getSoundVolume();
+            LOG(Log::k_FLG_SND, "SoundManager", "toggleSound", ("Turning sound off : %d", volumeBeforeMute_))
+            audio_->setSoundVolume(0);
+        } else {
+            LOG(Log::k_FLG_SND, "SoundManager", "toggleSound", ("Turning sound on : %d", volumeBeforeMute_))
+            audio_->setSoundVolume(volumeBeforeMute_);
+            volumeBeforeMute_ = -1;
+        }
     }
 }

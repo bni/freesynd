@@ -219,9 +219,9 @@ int main(int argc, char *argv[]) {
     Log::initialize(logMask, "game.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
-    std::auto_ptr<App> app(new App(disable_sound));
+    std::auto_ptr<App> app(new App());
 
-    if (app->initialize(iniPath)) {
+    if (app->initialize(iniPath, disable_sound)) {
         // setting the cheat codes
         if (cheatCodeIndex != -1) {
             std::string cheats = argv[cheatCodeIndex];

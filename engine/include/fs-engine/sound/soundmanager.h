@@ -27,10 +27,11 @@
 #ifndef SOUNDMANAGER_H
 #define SOUNDMANAGER_H
 
+#include <vector>
+
 #include "fs-utils/common.h"
 #include "sound.h"
-
-#include <vector>
+#include "audio.h"
 
 /*!
  * Sound manager class.
@@ -42,10 +43,10 @@ public:
         SAMPLES_GAME
     };
 
-    SoundManager(bool disabled);
+    SoundManager();
     ~SoundManager();
 
-    bool loadSounds(SampleSet set);
+    void initialize(bool disabled, Audio* audio,  SampleSet set);
 
     //! Plays the sound a number a time on the given channel
     void play(snd::InGameSample sample, int channel = 0, int loops = 0);
@@ -61,8 +62,11 @@ public:
 
 protected:
     Sound *sound(snd::InGameSample sample);
+    void loadSounds(SampleSet set);
     bool loadSounds(uint8 *tabData, int tabSize, uint8 *soundData);
+    bool canUseAudio();
 
+protected:
     const int tabentry_startoffset_;
     const int tabentry_offset_;
     std::vector<Sound *> sounds_;
@@ -72,6 +76,7 @@ protected:
      */
     int volumeBeforeMute_;
     bool disabled_;
+    Audio *audio_;
 };
 
 #endif

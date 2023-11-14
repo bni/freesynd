@@ -47,7 +47,6 @@
 #endif
 
 #include "fs-engine/gfx/spritemanager.h"
-#include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/configfile.h"
@@ -56,7 +55,7 @@
 #include "menus/gamemenufactory.h"
 #include "menus/gamemenuid.h"
 
-App::App(bool disable_sound)
+App::App()
     : BaseApp(),
       session_(new GameSession()), game_ctlr_(new GameController),
 #ifdef SYSTEM_SDL
@@ -64,7 +63,7 @@ App::App(bool disable_sound)
 #else
 #error A suitable System object has not been defined!
 #endif
-    , intro_sounds_(disable_sound), game_sounds_(disable_sound), music_(disable_sound),
+    , intro_sounds_(), game_sounds_(), music_(),
     menus_(new GameMenuFactory(), &game_sounds_)
 {
     running_ = true;
@@ -81,7 +80,7 @@ App::~App() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool App::doInitialize(const std::string& iniPath) {
+bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("initializing system..."))
     if (!system_->initialize(context_->isFullScreen())) {
@@ -104,18 +103,14 @@ bool App::doInitialize(const std::string& iniPath) {
 
     if (context_->isPlayIntro()) {
         LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading intro sounds..."))
-        if (!intro_sounds_.loadSounds(SoundManager::SAMPLES_INTRO)) {
-            return false;
-        }
+        intro_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
     }
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game sounds..."))
-    if (!game_sounds_.loadSounds(SoundManager::SAMPLES_GAME)) {
-        return false;
-    }
+    game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading music..."))
-    music_.loadMusic();
+    music_.initialize(disable_sound, system_->getAudio());
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
     g_gameCtrl.agents().loadAgents();

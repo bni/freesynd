@@ -72,9 +72,6 @@ else ()
 	endif ()
 endif ()
 
-# Make sure we can include from the libs we found.
-# include_directories (${PNG_INCLUDE_DIR} ${SDL_INCLUDE_DIR} ${SDLIMAGE_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR})
-
 # Build the sources in this subdirectory.
 add_subdirectory(utils)
 add_subdirectory(engine)

@@ -47,9 +47,6 @@
 #endif
 
 #include "fs-engine/gfx/spritemanager.h"
-#include "fs-engine/gfx/screen.h"
-#include "fs-engine/sound/audio.h"
-#include "fs-utils/crc/ccrc32.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/configfile.h"
@@ -57,7 +54,7 @@
 #include "editor/editormenufactory.h"
 #include "editor/editormenuid.h"
 
-EditorApp::EditorApp(bool disable_sound)
+EditorApp::EditorApp()
     : BaseApp(),
       game_ctlr_(new GameController),
 #ifdef SYSTEM_SDL
@@ -65,7 +62,7 @@ EditorApp::EditorApp(bool disable_sound)
 #else
 #error A suitable System object has not been defined!
 #endif
-    , intro_sounds_(disable_sound), game_sounds_(disable_sound), music_(disable_sound),
+    , intro_sounds_(), game_sounds_(), music_(),
     menus_(new EditorMenuFactory(), &game_sounds_)
 {
     running_ = true;
@@ -90,7 +87,7 @@ void EditorApp::doDestroy() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool EditorApp::doInitialize(const std::string& iniPath) {
+bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("initializing system..."))
     if (!system_->initialize(context_->isFullScreen())) {
@@ -112,12 +109,10 @@ bool EditorApp::doInitialize(const std::string& iniPath) {
     }
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("Loading game sounds..."))
-    if (!game_sounds_.loadSounds(SoundManager::SAMPLES_GAME)) {
-        return false;
-    }
+    game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("Loading music..."))
-    music_.loadMusic();
+    music_.initialize(disable_sound, system_->getAudio());
 
     g_gameCtrl.reset();
 

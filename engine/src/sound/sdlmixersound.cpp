@@ -25,6 +25,7 @@
 
 #include "fs-engine/config.h"
 #include "fs-engine/sound/audio.h"
+#include "fs-utils/log/log.h"
 
 #ifdef HAVE_SDL_MIXER
 
@@ -58,11 +59,9 @@ SdlMixerSound::~SdlMixerSound()
  */
 void SdlMixerSound::play(int loops, int channel) const
 {
-    if (Audio::isInitialized()) {
-        int ret = Mix_PlayChannel(channel, sound_data_, loops);
-        if (ret < 0) {
-            Audio::error("Sound", "play", "Failed to play sound on channel 0.");
-        }
+    int ret = Mix_PlayChannel(channel, sound_data_, loops);
+    if (ret < 0) {
+        FSERR(Log::k_FLG_SND, "SdlMixerSound", "play", ("Failed to play sound on channel 0."));
     }
 }
 
@@ -72,9 +71,7 @@ void SdlMixerSound::play(int loops, int channel) const
  */
 void SdlMixerSound::stop(int channel) const
 {
-    if (Audio::isInitialized()) {
-        Mix_HaltChannel(channel);
-    }
+    Mix_HaltChannel(channel);
 }
 
 /*!
@@ -86,13 +83,12 @@ void SdlMixerSound::stop(int channel) const
  */
 bool SdlMixerSound::setVolume(int volume)
 {
-    if (Audio::isInitialized()) {
-        int ret = Mix_VolumeChunk(sound_data_, volume);
-        if (ret < 0) {
-            Audio::error("Sound", "setVolume", "Failed setting volume on Sound.");
-            return false;
-        }
+    int ret = Mix_VolumeChunk(sound_data_, volume);
+    if (ret < 0) {
+        FSERR(Log::k_FLG_SND, "SdlMixerSound", "setVolume", ("Failed setting volume on Sound."));
+        return false;
     }
+
     return true;
 }
 
@@ -103,19 +99,15 @@ bool SdlMixerSound::setVolume(int volume)
  */
 bool SdlMixerSound::loadSound(uint8 * soundData, uint32 size)
 {
-    if (!Audio::isInitialized()) {
-        return false;
-    }
-
     SDL_RWops *rw = SDL_RWFromMem(soundData, size);
     if (!rw) {
-        Audio::error("Sound", "loadSound", "Failed creating SDL_RW buffer from memory");
+        FSERR(Log::k_FLG_SND, "SdlMixerSound", "loadSound", ("Failed creating SDL_RW buffer from memory"));
         return false;
     }
     Mix_Chunk *newsound = Mix_LoadWAV_RW(rw, 1);
 
     if (!newsound) {
-        Audio::error("Sound", "loadSound", "Failed loading sound from SDL_RW buffer");
+        FSERR(Log::k_FLG_SND, "SdlMixerSound", "loadSound", ("Failed loading sound from SDL_RW buffer"));
         return false;
     }
     if (sound_data_ != 0)

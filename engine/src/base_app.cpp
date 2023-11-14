@@ -25,6 +25,13 @@
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 
+#include "fs-engine/config.h"
+
+#ifdef HAVE_SDL_MIXER
+
+#include "mixer/sdlmixeraudio.h"
+#endif // HAVE_SDL_MIXER
+
 BaseApp::BaseApp()
     : context_(std::make_unique<AppContext>()),
       screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)) {
@@ -32,7 +39,7 @@ BaseApp::BaseApp()
 
 BaseApp::~BaseApp() {}
 
-bool BaseApp::initialize(const std::string& iniPath) {
+bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
     if (!context_->readConfiguration(iniPath)) {
         FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", iniPath.c_str()))
         return false;
@@ -45,10 +52,11 @@ bool BaseApp::initialize(const std::string& iniPath) {
         // do not tests files from now
         context_->deactivateTestFlag();
     }
-    return doInitialize(iniPath);
+
+    return doInitialize(iniPath, disable_sound);
 }
 
-bool BaseApp::doInitialize(const std::string& iniPath) {
+bool BaseApp::doInitialize(const std::string& iniPath, bool disable_sound) {
    return true;
 }
 

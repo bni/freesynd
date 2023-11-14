@@ -30,6 +30,12 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
+#ifdef HAVE_SDL_MIXER
+
+#include "mixer/sdlmixeraudio.h"
+
+#endif // HAVE_SDL_MIXER
+
 #include <SDL_image.h>
 
 SDL_Joystick *joy = NULL;
@@ -53,9 +59,7 @@ SystemSDL::~SystemSDL() {
         SDL_FreeSurface(cursor_surf_);
     }
 
-#ifdef HAVE_SDL_MIXER
-    Audio::quit();
-#endif
+    audio_->quit();
 
     // Destroy SDL_Image Lib
     IMG_Quit();
@@ -64,12 +68,14 @@ SystemSDL::~SystemSDL() {
 }
 
 bool SystemSDL::initialize(bool fullscreen) {
-    if (SDL_Init(SDL_INIT_VIDEO
+    int resInit = SDL_Init(SDL_INIT_VIDEO
 #ifdef GP2X
                  | SDL_INIT_JOYSTICK
 #endif
-        ) < 0) {
-        printf("Critical error, SDL could not be initialized!");
+                );
+
+    if (resInit < 0) {
+        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Errcode : %i", resInit))
         return false;
     }
 #ifdef GP2X
@@ -89,9 +95,15 @@ bool SystemSDL::initialize(bool fullscreen) {
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     SDL_EnableUNICODE(1);
 
-    // Audio initialisation
-    if (!Audio::init()) {
-        LOG(Log::k_FLG_SND, "SystemSDL", "Init", ("Couldn't initialize Sound System : no sound will be played."))
+    // Audio initialization
+#ifdef HAVE_SDL_MIXER
+    audio_ = std::make_unique<SdlMixerAudio>();
+#else
+    audio_ = std::make_unique<DefaultAudio>();
+#endif
+
+    if (!audio_->init()) {
+        FSINFO(Log::k_FLG_SND, "SystemSDL", "Init", ("Couldn't initialize Sound System : no sound will be played."))
     }
 
     // TODO(nobody): maybe use double buffering?

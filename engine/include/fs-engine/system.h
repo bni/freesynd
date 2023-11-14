@@ -26,9 +26,12 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+#include <memory>
+
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
 #include "fs-engine/io/keys.h"
+#include "fs-engine/sound/audio.h"
 
 class Sprite;
 
@@ -111,6 +114,10 @@ struct System : public Singleton<System> {
     virtual void usePickupCursor() = 0;
     virtual int getKeyModState() = 0;
 
+    Audio* getAudio() {return audio_.get();}
+
+protected:
+    std::unique_ptr<Audio> audio_;
 };
 
 #define g_System    System::singleton()

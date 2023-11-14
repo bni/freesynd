@@ -30,6 +30,7 @@
 #ifdef HAVE_SDL_MIXER
 
 #include "fs-utils/io/file.h"
+#include "fs-utils/log/log.h"
 #include "fs-engine/sound/sdlmixermusic.h"
 
 #include <SDL.h>
@@ -106,13 +107,13 @@ bool SdlMixerMusic::loadMusic(uint8 * musicData, int size)
 {
     SDL_RWops *rw = SDL_RWFromMem(musicData, size);
     if (!rw) {
-        Audio::error("SdlMixerMusic", "loadMusic", "Failed creating SDL_RW buffer from memory");
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed creating SDL_RW buffer from memory"));
         return false;
     }
     Mix_Music *newmusic = Mix_LoadMUS_RW(rw);
 
     if (!newmusic) {
-        Audio::error("SdlMixerMusic", "loadMusic", "Failed loading music from SDL_RW buffer");
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed loading music from SDL_RW buffer"));
         SDL_FreeRW(rw);
         return false;
     }
@@ -140,7 +141,7 @@ bool SdlMixerMusic::loadMusicFile(const char *fname)
     Mix_Music *newmusic = Mix_LoadMUS(File::getFreesyndDataFullPath(fname).c_str());
 
     if (!newmusic) {
-        Audio::error("SdlMixerMusic", "loadMusicFile", "Failed loading music from file");
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusicFile", ("Failed loading music from file"));
         return false;
     }
     if (music_data_)

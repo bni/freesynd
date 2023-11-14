@@ -58,7 +58,7 @@
  */
 class App : public BaseApp, public Singleton < App > {
   public:
-    App(bool disable_sound);
+    App();
     virtual ~App();
 
     void setCheatCode(const char *name);
@@ -114,7 +114,7 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const std::string& iniPath);
+    bool doInitialize(const std::string& iniPath, bool disable_sound);
     //! Destroy all components
     void doDestroy();
 

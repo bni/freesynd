@@ -43,14 +43,14 @@ public:
     virtual ~BaseApp();
 
     //! Initialize application
-    virtual bool initialize(const std::string& iniPath) final;
+    virtual bool initialize(const std::string& iniPath, bool disable_sound) final;
 
     //! Destroy all components
     virtual void destroy() final;
 
 protected:
     //! Child class implements this method for initalization
-    virtual bool doInitialize(const std::string& iniPath);
+    virtual bool doInitialize(const std::string& iniPath, bool disable_sound);
     //! Child class overloads this method for destroying ressources
     virtual void doDestroy();
 

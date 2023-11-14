@@ -2,11 +2,7 @@
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
  *                                                                      *
- *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
- *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
- *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2023  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -24,49 +20,45 @@
  *                                                                      *
  ************************************************************************/
 
-#ifndef MUSICMANAGER_H
-#define MUSICMANAGER_H
+#ifndef FS_SDLMIXER_AUDIO_H
+#define FS_SDLMIXER_AUDIO_H
 
-#include <vector>
-#include <memory>
-
-#include "fs-utils/common.h"
-#include "fs-engine/sound/music.h"
 #include "fs-engine/sound/audio.h"
 
-/*!
- * Music manager class.
- */
-class MusicManager {
+class SdlMixerAudio : public Audio {
 public:
-    MusicManager();
-    ~MusicManager();
+    SdlMixerAudio();
 
-    void initialize(bool disabled, Audio* audio);
+    ~SdlMixerAudio();
 
-    void playTrack(msc::MusicTrack track, int loops = -1);
-    void stopPlayback();
+    //! Initialize the audio underneath implementation
+    bool init(EFrequency frequency = FRQ_DEFAULT,
+                     EFormat format = FMT_DEFAULT,
+                     EChannel channels = CHN_DEFAULT,
+                     int chunksize = 1024);
+
+    //! Returns true if the audio system has been initialized with success
+    bool isInitialized() { return initialized_; }
+    //! Terminates the audio system
+    bool quit();
+
+    //! Returns the maximum volume possible
+    int getMaxVolume();
+
     //! Sets the music volume to the given level
-    void setVolume(int volume);
-    //! Returns the current volume
-    int getVolume();
-    //! Mute / unmute the music
-    void toggleMusic();
+    void setMusicVolume(int volume);
+    //! Returns the music volume
+    int getMusicVolume();
 
-protected:
-    bool isAudioInitialized();
+    //! Sets the sound volume on the given channel to the given level
+    void setSoundVolume(int volume, int channel = 0);
+    //! Returns the sound volume of the given channel
+    int getSoundVolume(int channel = 0);
 
-protected:
-    std::vector<Music *> tracks_;
-    msc::MusicTrack current_track_;
-    bool is_playing_;
-    /*!
-     * Saves the volume level before a mute so
-     * we can restore it after a unmute.
-     */
-    int volumeBeforeMute_;
-    bool disabled_;
-    Audio* audio_;
+private:
+    /*! True if the audio system has been initialized with success.*/
+    bool initialized_;
+
 };
 
-#endif
+#endif //FS_SDLMIXER_AUDIO_H

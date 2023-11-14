@@ -561,9 +561,9 @@ int main(int argc, char *argv[]) {
     Log::initialize("ALL", "editor.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
-    std::auto_ptr<EditorApp> app(new EditorApp(disable_sound));
+    std::auto_ptr<EditorApp> app(new EditorApp());
 
-    if (app->initialize(iniPath)) {
+    if (app->initialize(iniPath, disable_sound)) {
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Starting game loop"))
         app->run();

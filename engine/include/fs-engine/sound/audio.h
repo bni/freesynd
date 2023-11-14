@@ -40,7 +40,7 @@
  * offers common API to access the underlying implementation.
  */
 class Audio {
-
+public:
     /*!
      * A list of supported frequencies.
      */
@@ -68,35 +68,67 @@ class Audio {
     };
 
 public:
+    virtual ~Audio() {}
     //! Initialize the audio underneath implementation
-    static bool init(EFrequency frequency = FRQ_DEFAULT,
+    virtual bool init(EFrequency frequency = FRQ_DEFAULT,
+                     EFormat format = FMT_DEFAULT,
+                     EChannel channels = CHN_DEFAULT,
+                     int chunksize = 1024) = 0;
+
+    //! Returns true if the audio system has been initialized with success
+    virtual bool isInitialized() = 0;
+    //! Terminates the audio system
+    virtual bool quit() = 0;
+    //! Logs the given message
+    //static void error(const char *from, const char *meth, std::string const &message);
+
+    //! Returns the maximum volume possible
+    virtual int getMaxVolume() = 0;
+
+    //! Sets the music volume to the given level
+    virtual void setMusicVolume(int volume) = 0;
+    //! Returns the music volume
+    virtual int getMusicVolume() = 0;
+
+    //! Sets the sound volume on the given channel to the given level
+    virtual void setSoundVolume(int volume, int channel = 0) = 0;
+    //! Returns the sound volume of the given channel
+    virtual int getSoundVolume(int channel = 0) = 0;
+
+private:
+    /*! True if the audio system has been initialized with success.*/
+    //static bool initialized_;
+};
+
+class DefaultAudio : public Audio {
+public:
+    DefaultAudio();
+
+    ~DefaultAudio();
+
+    //! Initialize the audio underneath implementation
+    bool init(EFrequency frequency = FRQ_DEFAULT,
                      EFormat format = FMT_DEFAULT,
                      EChannel channels = CHN_DEFAULT,
                      int chunksize = 1024);
 
     //! Returns true if the audio system has been initialized with success
-    static bool isInitialized() { return initialized_; }
+    bool isInitialized();
     //! Terminates the audio system
-    static bool quit();
-    //! Logs the given message
-    static void error(const char *from, const char *meth, std::string const &message);
+    bool quit();
 
     //! Returns the maximum volume possible
-    static int getMaxVolume();
+    int getMaxVolume();
 
     //! Sets the music volume to the given level
-    static void setMusicVolume(int volume);
+    void setMusicVolume(int volume);
     //! Returns the music volume
-    static int getMusicVolume();
+    int getMusicVolume();
 
     //! Sets the sound volume on the given channel to the given level
-    static void setSoundVolume(int volume, int channel = 0);
+    void setSoundVolume(int volume, int channel = 0);
     //! Returns the sound volume of the given channel
-    static int getSoundVolume(int channel = 0);
-
-private:
-    /*! True if the audio system has been initialized with success.*/
-    static bool initialized_;
+    int getSoundVolume(int channel = 0);
 };
 
 #endif

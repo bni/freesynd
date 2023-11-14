@@ -48,7 +48,7 @@
  */
 class EditorApp : public BaseApp, public Singleton < EditorApp > {
   public:
-    EditorApp(bool disable_sound);
+    EditorApp();
     virtual ~EditorApp();
 
     GameSpriteManager &gameSprites() {
@@ -96,7 +96,7 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const std::string& iniPath);
+    bool doInitialize(const std::string& iniPath, bool disable_sound);
     //! Destroy all components
     void doDestroy();
 

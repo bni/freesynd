@@ -24,18 +24,22 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-engine/sound/musicmanager.h"
+
 #include "fs-engine/config.h"
 #include "fs-engine/sound/audio.h"
-#include "fs-engine/sound/musicmanager.h"
 #include "fs-engine/sound/xmidi.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
-MusicManager::MusicManager(bool disabled):is_playing_(false), disabled_(disabled)
+MusicManager::MusicManager()
 {
     // -1 means music is not mute
     // other value stores music volume before mute
     volumeBeforeMute_ = -1;
+    audio_ = NULL;
+    disabled_ = false;
+    is_playing_ = false;
 }
 
 MusicManager::~MusicManager()
@@ -46,10 +50,19 @@ MusicManager::~MusicManager()
     tracks_.clear();
 }
 
-void MusicManager::loadMusic()
+bool MusicManager::isAudioInitialized() {
+    return audio_ != NULL && audio_->isInitialized();
+}
+
+void MusicManager::initialize(bool disabled, Audio* audio)
 {
+    audio_ = audio;
+    disabled_ = disabled;
+    if (disabled_) {
+        FSINFO(Log::k_FLG_SND, "MusicManager", "initialize", ("Music will be disabled\n"))
+    }
     // If audio has not been initialized -> do nothing
-    if (!Audio::isInitialized()) {
+    if (!isAudioInitialized()) {
         return;
     }
 
@@ -92,8 +105,7 @@ void MusicManager::loadMusic()
 
 void MusicManager::playTrack(msc::MusicTrack track, int loops)
 {
-    if (disabled_) return;
-    if (Audio::isInitialized()) {
+    if (!disabled_ && isAudioInitialized()) {
         if (is_playing_) {
             tracks_.at(current_track_)->stopFadeOut();
         }
@@ -103,21 +115,25 @@ void MusicManager::playTrack(msc::MusicTrack track, int loops)
     }
 }
 
-void MusicManager::stopPlayback()
-{
-    if (disabled_) return;
-    if (Audio::isInitialized() && is_playing_) {
+void MusicManager::stopPlayback() {
+    if (!disabled_ && isAudioInitialized() && is_playing_) {
         tracks_.at(current_track_)->stop();
         is_playing_ = false;
     }
 }
 
 void MusicManager::setVolume(int volume) {
-    Audio::setMusicVolume(volume);
+    if (isAudioInitialized()) {
+        audio_->setMusicVolume(volume);
+    }
 }
 
 int MusicManager::getVolume() {
-    return Audio::getMusicVolume();
+    if (isAudioInitialized()) {
+        return audio_->getMusicVolume();
+    } else {
+        return 0;
+    }
 }
 
 /*!
@@ -129,13 +145,15 @@ int MusicManager::getVolume() {
  *    volume level.
  */
 void MusicManager::toggleMusic() {
-    if (volumeBeforeMute_ == -1) {
-        volumeBeforeMute_ = Audio::getMusicVolume();
-        LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music off : %d", volumeBeforeMute_))
-        Audio::setMusicVolume(0);
-    } else {
-        LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music on : %d", volumeBeforeMute_))
-        Audio::setMusicVolume(volumeBeforeMute_);
-        volumeBeforeMute_ = -1;
+    if (isAudioInitialized()) {
+        if (volumeBeforeMute_ == -1) {
+            volumeBeforeMute_ = audio_->getMusicVolume();
+            LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music off : %d", volumeBeforeMute_))
+            audio_->setMusicVolume(0);
+        } else {
+            LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music on : %d", volumeBeforeMute_))
+            audio_->setMusicVolume(volumeBeforeMute_);
+            volumeBeforeMute_ = -1;
+        }
     }
 }

@@ -69,10 +69,21 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include)
 
+add_library(fs_engine_sdlmixer STATIC
+              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h
+            )
+add_library(Freesynd::Engine::SdlMixer ALIAS fs_engine_sdlmixer)
+
+target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
+target_include_directories(fs_engine_sdlmixer PRIVATE include)
+target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL::SDL ${SDL_MIXER_LIBRARIES})
+
 # This depends on (header only) boost
 target_link_libraries(fs_engine PUBLIC SDL::SDL ${SDL_MIXER_LIBRARIES})
 
 target_link_libraries(fs_engine PRIVATE Freesynd::Utils PNG::PNG ${SDLIMAGE_LIBRARY})
+
+target_link_libraries(fs_engine PRIVATE Freesynd::Engine::SdlMixer)
 
 # All users of this library will need at least C++11
 #target_compile_features(modern_library PUBLIC cxx_std_11)
