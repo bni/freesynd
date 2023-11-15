@@ -23,14 +23,14 @@
 #ifndef SDLMIXERMUSIC_H
 #define SDLMIXERMUSIC_H
 
-#ifdef HAVE_SDL_MIXER
+#include "fs-engine/sound/music.h"
 
 #include <SDL_mixer.h>
 
 /*!
  * Implementation of music using SDL_Mixer.
  */
-class SdlMixerMusic {
+class SdlMixerMusic : public Music {
   public:
     SdlMixerMusic();
     ~SdlMixerMusic();
@@ -46,7 +46,5 @@ class SdlMixerMusic {
     Mix_Music *music_data_;
     SDL_RWops *rw_;
 };
-
-#endif  // HAVE_SDL_MIXER
 
 #endif  //SDLMIXERMUSIC_H

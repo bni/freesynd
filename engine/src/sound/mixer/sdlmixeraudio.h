@@ -57,6 +57,8 @@ public:
 
     std::unique_ptr<Sound> createSound();
 
+    std::unique_ptr<Music> createMusic();
+
 private:
     /*! True if the audio system has been initialized with success.*/
     bool initialized_;

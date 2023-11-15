@@ -28,6 +28,7 @@
 #define MUSICMANAGER_H
 
 #include <vector>
+#include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-engine/sound/music.h"
@@ -56,7 +57,7 @@ protected:
     bool isAudioInitialized();
 
 protected:
-    std::vector<Music *> tracks_;
+    std::vector<std::unique_ptr<Music>> tracks_;
     msc::MusicTrack current_track_;
     bool is_playing_;
     /*!

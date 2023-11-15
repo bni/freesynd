@@ -24,17 +24,15 @@
  *                                                                      *
  ************************************************************************/
 
-#include "fs-engine/config.h"
-#include "fs-engine/sound/audio.h"
-
-#ifdef HAVE_SDL_MIXER
-
-#include "fs-utils/io/file.h"
-#include "fs-utils/log/log.h"
-#include "fs-engine/sound/sdlmixermusic.h"
+#include "sdlmixermusic.h"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
+
+#include "fs-engine/config.h"
+#include "fs-engine/sound/audio.h"
+#include "fs-utils/io/file.h"
+#include "fs-utils/log/log.h"
 
 /*!
  * Class constructor.
@@ -157,5 +155,3 @@ bool SdlMixerMusic::loadMusicFile(const char *fname)
     return true;
 }
 
-
-#endif                          // HAVE_SDL_MIXER

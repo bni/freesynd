@@ -27,6 +27,7 @@
 
 #include "fs-utils/log/log.h"
 #include "sdlmixersound.h"
+#include "sdlmixermusic.h"
 
 SdlMixerAudio::SdlMixerAudio() {
     initialized_ = false;
@@ -180,10 +181,18 @@ int SdlMixerAudio::getMaxVolume() {
 }
 
 /*!
- * Returns an instance of Sound for this implementation od Audio
+ * Returns an instance of Sound for this implementation of Audio
  * \return Returns an instance of SdlMixerSound.
  */
 std::unique_ptr<Sound> SdlMixerAudio::createSound() {
     return std::make_unique<SdlMixerSound>();
+}
+
+/*!
+ * Returns an instance of Music for this implementation of Audio
+ * \return Returns an instance of SdlMixerMusic.
+ */
+std::unique_ptr<Music> SdlMixerAudio::createMusic() {
+    return std::make_unique<SdlMixerMusic>();
 }
 

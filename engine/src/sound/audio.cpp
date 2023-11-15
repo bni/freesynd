@@ -91,4 +91,8 @@ std::unique_ptr<Sound> DefaultAudio::createSound() {
     return std::make_unique<DefaultSound>();
 }
 
+std::unique_ptr<Music> DefaultAudio::createMusic() {
+    return std::make_unique<DefaultMusic>();
+}
+
 #endif // HAVE_SDL_MIXER

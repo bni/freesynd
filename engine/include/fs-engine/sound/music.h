@@ -42,20 +42,50 @@ namespace msc {
     };
 };
 
-#ifdef HAVE_SDL_MIXER
+class Music {
+  public:
+    virtual ~Music() {}
 
-// Load the SDL_Mixer implementation
-#include "sdlmixermusic.h"
+    //! Play the music
+    /*!
+     * \param loops = -1 means play forever
+     */
+     virtual void play(int loops = -1) const = 0;
+      //! Plays the music with a fade in.
+    /*!
+     * \param loops
+     * \param ms
+     */
+    virtual  void playFadeIn(int loops = -1, int ms = 200) const = 0;
+      //! Stops the music
+    /*!
+     *
+     */
+    virtual void stop() const = 0;
+      //! Stops the music with a fade out.
+    /*!
+     * \param ms
+     */
+    virtual void stopFadeOut(int ms = 200) const = 0;
+      //! Loads the music from the given data.
+    /*!
+     * \param musicData
+     * \param size
+     */
+    virtual bool loadMusic(uint8 *musicData, int size) = 0;
+      //! Loads the music from the given file.
+    /*!
+     * \param fname
+     */
+    virtual bool loadMusicFile(const char *fname) = 0;
+};
 
-// This macro is used to hide the implementation class
-#define Music SdlMixerMusic
-
-#else
+#if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
 
 /*!
  * Dummy implementation of music.
  */
-class DefaultMusic {
+class DefaultMusic : public Music {
   public:
     //! Play the music
     /*!
@@ -90,8 +120,6 @@ class DefaultMusic {
      */
       bool loadMusicFile(const char *fname) { return true;}
 };
-
-#define Music DefaultMusic
 
 #endif  // HAVE_SDL_MIXER
 

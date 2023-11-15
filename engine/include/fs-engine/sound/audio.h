@@ -32,6 +32,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-engine/sound/sound.h"
+#include "fs-engine/sound/music.h"
 
 
 //! Abstraction of the sound subsystem.
@@ -97,6 +98,9 @@ public:
 
     //! Instanciate an implementation of Sound based on the implementation of Audio
     virtual std::unique_ptr<Sound> createSound() = 0;
+
+    //! Instanciate an implementation of Music based on the implementation of Audio
+    virtual std::unique_ptr<Music> createMusic() = 0;
 };
 
 #if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
@@ -136,6 +140,9 @@ public:
 
     //! Returns a basic implementation of Sound
     std::unique_ptr<Sound> createSound();
+
+    //! Returns a basic implementation of Sound
+    std::unique_ptr<Music> createMusic();
 };
 
 #endif //HAVE_SDL_MIXER
