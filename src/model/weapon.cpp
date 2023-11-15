@@ -49,7 +49,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
     switch(w_type) {
         case Weapon::Pistol:
             idx_ = Weapon::Pistol_Anim;
-            sample_ = snd::PISTOL;
+            sample_ = PISTOL;
             dmg_type_ = fs_dmg::kDmgTypeBullet;
             shot_property_ = Weapon::wspt_Pistol;
             impactAnims_.groundHit = SFXObject::sfxt_BulletHit;
@@ -59,7 +59,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Minigun:
             idx_ = Weapon::Minigun_Anim;
-            sample_ = snd::MINIGUN;
+            sample_ = MINIGUN;
             dmg_type_ = fs_dmg::kDmgTypeBullet;
             shot_property_ = Weapon::wspt_Minigun;
             impactAnims_.groundHit = SFXObject::sfxt_BulletHit;
@@ -69,7 +69,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Flamer:
             idx_ = Weapon::Flamer_Anim;
-            sample_ = snd::FLAME;
+            sample_ = FLAME;
             dmg_type_ = fs_dmg::kDmgTypeBurn;
             shot_property_ = Weapon::wspt_Flamer;
             impactAnims_.groundHit = SFXObject::sfxt_FlamerFire;
@@ -79,7 +79,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::LongRange:
             idx_ = Weapon::LongRange_Anim;
-            sample_ = snd::LONGRANGE;
+            sample_ = LONGRANGE;
             dmg_type_ = fs_dmg::kDmgTypeBullet;
             shot_property_ = Weapon::wspt_LongRange;
             impactAnims_.groundHit = SFXObject::sfxt_BulletHit;
@@ -89,7 +89,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::EnergyShield:
             idx_ = Weapon::EnergyShield_Anim;
-            sample_ = snd::NO_SOUND;
+            sample_ = NO_SOUND;
             dmg_type_ = fs_dmg::kDmgTypeNone;
             shot_property_ = Weapon::wspt_EnergyShield;
             impactAnims_.groundHit = SFXObject::sfxt_Unknown;
@@ -99,7 +99,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Uzi:
             idx_ = Weapon::Uzi_Anim;
-            sample_ = snd::UZI;
+            sample_ = UZI;
             dmg_type_ = fs_dmg::kDmgTypeBullet;
             shot_property_ = Weapon::wspt_Uzi;
             impactAnims_.groundHit = SFXObject::sfxt_BulletHit;
@@ -109,7 +109,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Laser:
             idx_ = Weapon::Laser_Anim;
-            sample_ = snd::LASER;
+            sample_ = LASER;
             dmg_type_ = fs_dmg::kDmgTypeLaser;
             shot_property_ = Weapon::wspt_Laser;
             impactAnims_.groundHit = SFXObject::sfxt_Fire_LongSmoke;
@@ -119,7 +119,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::GaussGun:
             idx_ = Weapon::Gauss_Anim;
-            sample_ = snd::GAUSSGUN;
+            sample_ = GAUSSGUN;
             dmg_type_ = fs_dmg::kDmgTypeExplosion;
             shot_property_ = Weapon::wspt_GaussGun;
             impactAnims_.groundHit = SFXObject::sfxt_ExplosionFire;
@@ -129,7 +129,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Shotgun:
             idx_ = Weapon::Shotgun_Anim;
-            sample_ = snd::SHOTGUN;
+            sample_ = SHOTGUN;
             dmg_type_ = fs_dmg::kDmgTypeBullet;
             shot_property_ = Weapon::wspt_Shotgun;
             impactAnims_.groundHit = SFXObject::sfxt_BulletHit;
@@ -139,7 +139,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::MediKit:
             idx_ = Weapon::Unarmed_Anim;
-            sample_ = snd::NO_SOUND;
+            sample_ = NO_SOUND;
             dmg_type_ = fs_dmg::kDmgTypeNone;
             shot_property_ = Weapon::wspt_MediKit;
             impactAnims_.groundHit = SFXObject::sfxt_Unknown;
@@ -149,7 +149,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Scanner:
             idx_ = Weapon::Unarmed_Anim;
-            sample_ = snd::NO_SOUND;
+            sample_ = NO_SOUND;
             dmg_type_ = fs_dmg::kDmgTypeNone;
             shot_property_ = Weapon::wspt_Scanner;
             impactAnims_.groundHit = SFXObject::sfxt_Unknown;
@@ -159,7 +159,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::AccessCard:
             idx_ = Weapon::Unarmed_Anim;
-            sample_ = snd::NO_SOUND;
+            sample_ = NO_SOUND;
             dmg_type_ = fs_dmg::kDmgTypeNone;
             shot_property_ = Weapon::wspt_AccessCard;
             impactAnims_.groundHit = SFXObject::sfxt_Unknown;
@@ -169,7 +169,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::TimeBomb:
             idx_ = Weapon::Unarmed_Anim;
-            sample_ = snd::EXPLOSION;
+            sample_ = EXPLOSION;
             dmg_type_ = fs_dmg::kDmgTypeExplosion;
             shot_property_ = Weapon::wspt_TimeBomb;
             impactAnims_.groundHit = SFXObject::sfxt_ExplosionFire;
@@ -179,7 +179,7 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
             break;
         case Weapon::Persuadatron:
             idx_ = Weapon::Unarmed_Anim;
-            sample_ = snd::PERSUADE;
+            sample_ = PERSUADE;
             dmg_type_ = fs_dmg::kDmgTypePersuasion;
             shot_property_ = Weapon::wspt_Persuadatron;
             impactAnims_.groundHit = SFXObject::sfxt_Unknown;
@@ -288,7 +288,7 @@ bool WeaponInstance::animate(int elapsed) {
     if (activated_) {
         if (isInstanceOf(Weapon::TimeBomb)) {
             if (bombSoundTimer.update(elapsed)) {
-                g_App.gameSounds().play(snd::TIMEBOMB);
+                g_App.gameSounds().play(TIMEBOMB);
             }
 
             if (bombExplosionTimer.update(elapsed)) {

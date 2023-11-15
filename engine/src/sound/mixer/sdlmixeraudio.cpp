@@ -26,6 +26,7 @@
 #include <SDL_mixer.h>
 
 #include "fs-utils/log/log.h"
+#include "sdlmixersound.h"
 
 SdlMixerAudio::SdlMixerAudio() {
     initialized_ = false;
@@ -176,5 +177,13 @@ int SdlMixerAudio::getSoundVolume(int channel) {
  */
 int SdlMixerAudio::getMaxVolume() {
     return MIX_MAX_VOLUME;
+}
+
+/*!
+ * Returns an instance of Sound for this implementation od Audio
+ * \return Returns an instance of SdlMixerSound.
+ */
+std::unique_ptr<Sound> SdlMixerAudio::createSound() {
+    return std::make_unique<SdlMixerSound>();
 }
 

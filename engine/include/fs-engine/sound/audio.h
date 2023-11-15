@@ -27,9 +27,12 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include "fs-utils/common.h"
-
 #include <string>
+#include <memory>
+
+#include "fs-utils/common.h"
+#include "fs-engine/sound/sound.h"
+
 
 //! Abstraction of the sound subsystem.
 /*!
@@ -68,7 +71,6 @@ public:
     };
 
 public:
-    virtual ~Audio() {}
     //! Initialize the audio underneath implementation
     virtual bool init(EFrequency frequency = FRQ_DEFAULT,
                      EFormat format = FMT_DEFAULT,
@@ -79,8 +81,6 @@ public:
     virtual bool isInitialized() = 0;
     //! Terminates the audio system
     virtual bool quit() = 0;
-    //! Logs the given message
-    //static void error(const char *from, const char *meth, std::string const &message);
 
     //! Returns the maximum volume possible
     virtual int getMaxVolume() = 0;
@@ -95,11 +95,15 @@ public:
     //! Returns the sound volume of the given channel
     virtual int getSoundVolume(int channel = 0) = 0;
 
-private:
-    /*! True if the audio system has been initialized with success.*/
-    //static bool initialized_;
+    //! Instanciate an implementation of Sound based on the implementation of Audio
+    virtual std::unique_ptr<Sound> createSound() = 0;
 };
 
+#if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
+
+/*!
+ * Dummy class that does not initialize sound.
+ */
 class DefaultAudio : public Audio {
 public:
     DefaultAudio();
@@ -129,6 +133,11 @@ public:
     void setSoundVolume(int volume, int channel = 0);
     //! Returns the sound volume of the given channel
     int getSoundVolume(int channel = 0);
+
+    //! Returns a basic implementation of Sound
+    std::unique_ptr<Sound> createSound();
 };
+
+#endif //HAVE_SDL_MIXER
 
 #endif

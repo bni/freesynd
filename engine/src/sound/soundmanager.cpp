@@ -23,7 +23,7 @@
  *  The full text of the license is also included in the file COPYING.  *
  *                                                                      *
  ************************************************************************/
-
+#include <memory>
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/config.h"
 #include "fs-engine/sound/audio.h"
@@ -36,19 +36,13 @@ SoundManager::SoundManager():tabentry_startoffset_(58), tabentry_offset_(32)
     disabled_ = false;
 }
 
-SoundManager::~SoundManager()
-{
-    for(std::vector< Sound * >::iterator it = sounds_.begin(); it != sounds_.end(); ++it)
-    {
-        delete *it;
-    }
-}
+SoundManager::~SoundManager() {}
 
-Sound *SoundManager::sound(snd::InGameSample sample)
+Sound *SoundManager::sound(InGameSample sample)
 {
-    if (sample == snd::NO_SOUND)
+    if (sample == NO_SOUND)
         return NULL;
-    return sounds_.at(sample);
+    return sounds_.at(sample).get();
 }
 
 void SoundManager::initialize(bool disabled, Audio* audio, SampleSet set) {
@@ -123,7 +117,7 @@ bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
 
         // Samples with size < 144 are bogus
         if (soundsize > 144) {
-            sounds_.push_back(new Sound);
+            sounds_.push_back(audio_->createSound());
             uint8 *sample = new uint8[soundsize];
             memcpy(sample, soundData, soundsize);
             //printf("sample rate %x\n", sample[0x1e]);
@@ -154,7 +148,7 @@ bool SoundManager::canUseAudio() {
 /*!
  *
  */
-void SoundManager::play(snd::InGameSample sample, int channel, int loops) {
+void SoundManager::play(InGameSample sample, int channel, int loops) {
     if (canUseAudio()) {
         Sound *pSound = sound(sample);
 
@@ -168,12 +162,12 @@ void SoundManager::play(snd::InGameSample sample, int channel, int loops) {
 /*!
  *
  */
-void SoundManager::stop(snd::InGameSample sample) {
+void SoundManager::stop(InGameSample sample) {
     if (canUseAudio()) {
         Sound *pSound = sound(sample);
 
         if (pSound) {
-            pSound->stop(sample >= snd::MENU_UP ? 1 : 0);
+            pSound->stop(sample >= MENU_UP ? 1 : 0);
         }
     }
 }

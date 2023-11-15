@@ -55,6 +55,8 @@ public:
     //! Returns the sound volume of the given channel
     int getSoundVolume(int channel = 0);
 
+    std::unique_ptr<Sound> createSound();
+
 private:
     /*! True if the audio system has been initialized with success.*/
     bool initialized_;

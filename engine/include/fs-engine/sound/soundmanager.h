@@ -28,6 +28,7 @@
 #define SOUNDMANAGER_H
 
 #include <vector>
+#include <memory>
 
 #include "fs-utils/common.h"
 #include "sound.h"
@@ -49,9 +50,9 @@ public:
     void initialize(bool disabled, Audio* audio,  SampleSet set);
 
     //! Plays the sound a number a time on the given channel
-    void play(snd::InGameSample sample, int channel = 0, int loops = 0);
+    void play(InGameSample sample, int channel = 0, int loops = 0);
     //! Stops the sound
-    void stop(snd::InGameSample sample);
+    void stop(InGameSample sample);
 
     //! Sets the music volume to the given level
     void setVolume(int volume);
@@ -61,7 +62,7 @@ public:
     void toggleSound();
 
 protected:
-    Sound *sound(snd::InGameSample sample);
+    Sound *sound(InGameSample sample);
     void loadSounds(SampleSet set);
     bool loadSounds(uint8 *tabData, int tabSize, uint8 *soundData);
     bool canUseAudio();
@@ -69,7 +70,7 @@ protected:
 protected:
     const int tabentry_startoffset_;
     const int tabentry_offset_;
-    std::vector<Sound *> sounds_;
+    std::vector<std::unique_ptr<Sound>> sounds_;
     /*!
      * Saves the volume level before a mute so
      * we can restore it after a unmute.

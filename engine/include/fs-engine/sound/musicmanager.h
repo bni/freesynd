@@ -28,7 +28,6 @@
 #define MUSICMANAGER_H
 
 #include <vector>
-#include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-engine/sound/music.h"

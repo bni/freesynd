@@ -23,18 +23,17 @@
 #ifndef SDLMIXERSOUND_H_
 #define SDLMIXERSOUND_H_
 
-#include "fs-utils/common.h"
-
-#ifdef HAVE_SDL_MIXER
-
 #include <SDL_mixer.h>
+
+#include "fs-utils/common.h"
+#include "fs-engine/sound/sound.h"
 
 //! Sound implementation using Sdl_Mixer.
 /*!
  * This class is an implementation of the sound system
  * using the Sdl_Mixer library.
  */
-class SdlMixerSound {
+class SdlMixerSound : public Sound {
 public:
     //! Class constructor
     SdlMixerSound();
@@ -54,7 +53,5 @@ protected:
     /*! The sdl structure that stores sound data.*/
     Mix_Chunk *sound_data_;
 };
-
-#endif  // HAVE_SDL_MIXER
 
 #endif  // SDLMIXERSOUND_H_

@@ -32,16 +32,9 @@
 #include "fs-engine/config.h"
 #include "fs-utils/log/log.h"
 
-#ifdef HAVE_SDL_MIXER
+//Audio::~Audio() {}
 
-
-#else
-
-#ifdef _WIN32
-#pragma message("Music playback requires SDL_mixer 1.2.7 or later to function")
-#else
-#warning "Music playback requires SDL_mixer 1.2.7 or later to function"
-#endif
+#if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
 
 DefaultAudio::DefaultAudio() {}
 
@@ -53,7 +46,6 @@ bool DefaultAudio::init(EFrequency freq, EFormat fmt, EChannel chan, int chunksi
 
     LOG(Log::k_FLG_SND, "Audio", "init", ("Sound system initialized"));
 
-    initialized_ = true;
     return true;
 }
 
@@ -63,10 +55,6 @@ bool DefaultAudio::isInitialized(){
 
 bool DefaultAudio::quit(void) {
     return true;
-}
-
-void DefaultAudio::error(const char *from, const char *meth, std::string const &message) {
-    LOG(Log::k_FLG_SND, from, meth, ("%s )", message.c_str()));
 }
 
 void DefaultAudio::setMusicVolume(int volume)
@@ -99,7 +87,8 @@ int DefaultAudio::getMaxVolume() {
     return 0;
 }
 
-#endif                          // HAVE_SDL_MIXER
+std::unique_ptr<Sound> DefaultAudio::createSound() {
+    return std::make_unique<DefaultSound>();
+}
 
-// The audio system is not initialized by defaut
-//bool Audio::initialized_ = false;
+#endif // HAVE_SDL_MIXER

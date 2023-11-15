@@ -23,13 +23,10 @@
  *                                                                      *
  ************************************************************************/
 
+#include "sdlmixersound.h"
+
 #include "fs-engine/config.h"
-#include "fs-engine/sound/audio.h"
 #include "fs-utils/log/log.h"
-
-#ifdef HAVE_SDL_MIXER
-
-#include "fs-engine/sound/sdlmixersound.h"
 
 /*!
  * Class constructor. Initialize date with NULL.
@@ -116,4 +113,3 @@ bool SdlMixerSound::loadSound(uint8 * soundData, uint32 size)
     return true;
 }
 
-#endif                          // HAVE_SDL_MIXER

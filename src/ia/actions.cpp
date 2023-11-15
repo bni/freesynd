@@ -902,7 +902,7 @@ HitAction(d) {
  */
 void PersuadedHitAction::doStart(Mission *pMission, PedInstance *pPed) {
     status_ = kActStatusWaitForAnim;
-    g_App.gameSounds().play(snd::PERSUADE);
+    g_App.gameSounds().play(PERSUADE);
 }
 
 /*!

@@ -15,7 +15,6 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/tile.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/tilemanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/audio.h"
-    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/sdlmixersound.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/music.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/musicmanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/sdlmixermusic.h"
@@ -38,7 +37,6 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/tile.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/tilemanager.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/sound/audio.cpp"
-    "${Freesynd_SOURCE_DIR}/engine/src/sound/sdlmixersound.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/sound/sdlmixermusic.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/sound/musicmanager.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/sound/soundmanager.cpp"
@@ -70,7 +68,11 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 target_include_directories(fs_engine PUBLIC include)
 
 add_library(fs_engine_sdlmixer STATIC
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h
+              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp
+              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.cpp
+
+              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h
+              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.h
             )
 add_library(Freesynd::Engine::SdlMixer ALIAS fs_engine_sdlmixer)
 

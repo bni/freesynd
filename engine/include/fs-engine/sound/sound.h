@@ -30,76 +30,76 @@
 #include "fs-utils/common.h"
 #include "fs-engine/config.h"
 
-namespace snd {
-    /*!
-     * These enum values match the indices in the vector containing the samples
-     * so don't mess up the order in which they are in.
-     */
-    enum InGameSample {
-        SHOTGUN = 0,
-        PISTOL,
-        LASER,
-        FLAME,
-        FLAMING_DEATH,
-        GLASS_BREAKING,
-        EXPLOSION,
-        UZI,
-        LONGRANGE,
-        MINIGUN,
-        PERSUADE,
-        TRACKING_PONG,
-        SPEECH_SELECTED,
-        GAUSSGUN,
-        SPEECH_MISSION_COMPLETED,
-        SPEECH_MISSION_FAILED,
-        DOOR,
-        TIMEBOMB,
-        DOOR_2,
-        PUTDOWN_WEAPON,
-        MENU_UP = 20,
-        MENU_CHANGE,
-        FIREWORKS,
-        SPEECH_NO,
-        // mission failed, lamp-monitor impact
-        MONITOR_IMPACT,
-        // mission failed, lamp breaks
-        GLASS_BREAKING_2,
-        APPLAUSE,
-        APPLAUSE_ZOOM,
-        FIREWORKS_APPLAUSE,
-        EXPLOSION_BIG,
-        MENU_AFTER_MISSION,
-        FALLING_COMMAND_SHIP,
-        // mission failed, pressed button on chair
-        PRESS_BUTTON,
-        NO_SOUND = -1
-    };
+/*!
+ * These enum values match the indices in the vector containing the samples
+ * so don't mess up the order in which they are in.
+ */
+enum InGameSample {
+    SHOTGUN = 0,
+    PISTOL,
+    LASER,
+    FLAME,
+    FLAMING_DEATH,
+    GLASS_BREAKING,
+    EXPLOSION,
+    UZI,
+    LONGRANGE,
+    MINIGUN,
+    PERSUADE,
+    TRACKING_PONG,
+    SPEECH_SELECTED,
+    GAUSSGUN,
+    SPEECH_MISSION_COMPLETED,
+    SPEECH_MISSION_FAILED,
+    DOOR,
+    TIMEBOMB,
+    DOOR_2,
+    PUTDOWN_WEAPON,
+    MENU_UP = 20,
+    MENU_CHANGE,
+    FIREWORKS,
+    SPEECH_NO,
+    // mission failed, lamp-monitor impact
+    MONITOR_IMPACT,
+    // mission failed, lamp breaks
+    GLASS_BREAKING_2,
+    APPLAUSE,
+    APPLAUSE_ZOOM,
+    FIREWORKS_APPLAUSE,
+    EXPLOSION_BIG,
+    MENU_AFTER_MISSION,
+    FALLING_COMMAND_SHIP,
+    // mission failed, pressed button on chair
+    PRESS_BUTTON,
+    NO_SOUND = -1
+};
 
-}
+/*!
+ * This is an abstraction of sound. It's a pure virtual class.
+ */
+class Sound {
+public:
+    virtual ~Sound() {}
+    virtual void play(int loops = 0, int channel = 0) const = 0;
+    virtual void stop(int channel = 0) const  = 0;
+    virtual bool setVolume(int volume)  = 0;
+    virtual bool loadSound(uint8 *soundData, uint32 size)  = 0;
+};
 
-#ifdef HAVE_SDL_MIXER
-
-// Load the SDL_Mixer implementation
-#include "fs-engine/sound/sdlmixersound.h"
-
-// This macro is used to hide the implementation class
-#define Sound SdlMixerSound
-
-#else
+#if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
 
 //! Default implementation for the sound.
 /*!
  * This class is a dummy implementation. It does nothing.
  */
-class DefaultSound {
+class DefaultSound : public Sound {
 public:
-    void play(int loops = 0) const {;}
-    void stop() const {;}
+    void play(int loops = 0, int channel = 0) const {;}
+    void stop(int channel = 0) const {;}
     bool setVolume(int volume) { return true; }
     bool loadSound(uint8 *soundData, uint32 size) { return true; }
 };
 
-#define Sound DefaultSound
-
 #endif  // HAVE_SDL_MIXER
+
 #endif  // SOUND_H

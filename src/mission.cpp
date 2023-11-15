@@ -257,10 +257,10 @@ void Mission::checkObjectives() {
 void Mission::endWithStatus(Status status) {
     switch (status) {
     case kMissionStatusCompleted:
-        g_App.gameSounds().play(snd::SPEECH_MISSION_COMPLETED);
+        g_App.gameSounds().play(SPEECH_MISSION_COMPLETED);
         break;
     case kMissionStatusFailed:
-        g_App.gameSounds().play(snd::SPEECH_MISSION_FAILED);
+        g_App.gameSounds().play(SPEECH_MISSION_FAILED);
         break;
     case kMissionStatusAborted:
         break;
