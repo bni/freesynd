@@ -29,7 +29,6 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-#include "fs-engine/config.h"
 #include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
@@ -136,10 +135,12 @@ bool SdlMixerMusic::loadMusic(uint8 * musicData, int size)
  */
 bool SdlMixerMusic::loadMusicFile(const char *fname)
 {
-    Mix_Music *newmusic = Mix_LoadMUS(File::getFreesyndDataFullPath(fname).c_str());
+    std::string fullpathName = File::getFreesyndDataFullPath(fname);
+    LOG(Log::k_FLG_SND, "SdlMixerMusic", "loadMusicFile", ("Load music from file %s", fullpathName.c_str()));
+    Mix_Music *newmusic = Mix_LoadMUS(fullpathName.c_str());
 
     if (!newmusic) {
-        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusicFile", ("Failed loading music from file"));
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusicFile", ("Failed loading music from file : %s", fullpathName.c_str()));
         return false;
     }
     if (music_data_)

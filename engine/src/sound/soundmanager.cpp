@@ -23,9 +23,11 @@
  *  The full text of the license is also included in the file COPYING.  *
  *                                                                      *
  ************************************************************************/
-#include <memory>
+
 #include "fs-engine/sound/soundmanager.h"
-#include "fs-engine/config.h"
+
+#include <memory>
+
 #include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"

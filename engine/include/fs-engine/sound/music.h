@@ -27,7 +27,6 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include "fs-engine/config.h"
 #include "fs-utils/common.h"
 
 namespace msc {

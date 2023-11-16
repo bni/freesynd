@@ -26,6 +26,7 @@
  ************************************************************************/
 
 #include "menus/maprenderer.h"
+
 #include "mission.h"
 #include "agentmanager.h"
 #include "mapobject.h"
@@ -35,6 +36,7 @@
 #include "fs-engine/gfx/tile.h"
 #include "fs-engine/system.h"
 #include "menus/squadselection.h"
+#include "fs-engine/config.h"
 
 void MapRenderer::init(Mission *pMission, SquadSelection *pSelection) {
     pMission_ = pMission;

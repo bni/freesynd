@@ -56,8 +56,6 @@ endif ()
 
 find_package (PNG REQUIRED)
 
-find_package (SDL_mixer REQUIRED)
-
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(fs_engine ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Engine ALIAS fs_engine)
@@ -65,27 +63,41 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include)
 
-add_library(fs_engine_sdlmixer STATIC
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.cpp
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.cpp
+# The USE_SDL_MIXER option enables the creation of the fs_engine_sdlmixer
+# library. If not on, there will be the default Audio implementation
+option(USE_SDL_MIXER "Use SDL Mixer library" ON)
 
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.h
-              ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.h
-            )
-add_library(Freesynd::Engine::SdlMixer ALIAS fs_engine_sdlmixer)
+if (USE_SDL_MIXER)
 
-target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
-target_include_directories(fs_engine_sdlmixer PRIVATE include)
-target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL::SDL ${SDL_MIXER_LIBRARIES})
+    find_package (SDL_mixer REQUIRED)
 
-# This depends on (header only) boost
-target_link_libraries(fs_engine PUBLIC SDL::SDL ${SDL_MIXER_LIBRARIES})
+    add_library(fs_engine_sdlmixer STATIC
+                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp
+                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.cpp
+                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.cpp
+
+                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h
+                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.h
+                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.h
+                )
+    add_library(Freesynd::Engine::SdlMixer ALIAS fs_engine_sdlmixer)
+
+    target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
+    target_include_directories(fs_engine_sdlmixer PRIVATE include)
+    target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL::SDL ${SDL_MIXER_LIBRARIES})
+
+    target_compile_definitions(fs_engine PRIVATE "HAVE_SDL_MIXER")
+
+    target_link_libraries(fs_engine PRIVATE Freesynd::Engine::SdlMixer)
+endif()
+
+
+
+# Public dependencies
+target_link_libraries(fs_engine PUBLIC SDL::SDL)
 
 target_link_libraries(fs_engine PRIVATE Freesynd::Utils PNG::PNG ${SDLIMAGE_LIBRARY})
 
-target_link_libraries(fs_engine PRIVATE Freesynd::Engine::SdlMixer)
 
 # All users of this library will need at least C++11
 #target_compile_features(modern_library PUBLIC cxx_std_11)
@@ -95,4 +107,12 @@ source_group(
   TREE "${PROJECT_SOURCE_DIR}/engine/include"
   FILES ${HEADER_LIST})
 
+option(USE_INTRO_OGG "Use Ogg file for intro music instead of midi file" ON)
+if (USE_INTRO_OGG)
+    target_compile_definitions(fs_engine PRIVATE "USE_INTRO_OGG")
+endif()
 
+option(USE_ASSASSINATE_OGG "Use Ogg file for assassinate music instead of midi file" ON)
+if (USE_ASSASSINATE_OGG)
+    target_compile_definitions(fs_engine PRIVATE "USE_ASSASSINATE_OGG")
+endif()

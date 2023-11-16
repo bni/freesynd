@@ -26,7 +26,6 @@
 
 #include "fs-engine/sound/musicmanager.h"
 
-#include "fs-engine/config.h"
 #include "fs-engine/sound/audio.h"
 #include "fs-engine/sound/xmidi.h"
 #include "fs-utils/io/file.h"

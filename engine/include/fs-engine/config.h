@@ -26,13 +26,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Define this to enable sound effects and music
-//#undef HAVE_SDL_MIXER
-#define HAVE_SDL_MIXER          1
-
-#define USE_INTRO_OGG           1
-#define USE_ASSASSINATE_OGG     1
-
 // Define this to display frame rate during gameplay
 //define TRACK_FPS  1
 

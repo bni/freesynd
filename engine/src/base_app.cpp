@@ -25,8 +25,6 @@
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 
-#include "fs-engine/config.h"
-
 #ifdef HAVE_SDL_MIXER
 
 #include "mixer/sdlmixeraudio.h"

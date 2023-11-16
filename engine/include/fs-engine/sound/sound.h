@@ -28,7 +28,6 @@
 #define SOUND_H
 
 #include "fs-utils/common.h"
-#include "fs-engine/config.h"
 
 /*!
  * These enum values match the indices in the vector containing the samples

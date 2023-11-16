@@ -35,14 +35,15 @@
 Download and unzip file containing source code in any directory you want or git clone the repository.
 The root directory containing the source code will be called *FS_ROOT* in the following text.
 
-> **Attention** : This file only describe the installation from the CLI for a quick setup. If you want to configure a full Development Environment, please consult this [WikiPage](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/).
+> **Attention** : This file only describes the installation from the CLI for a quick setup. If you want to configure a full Development Environment, please consult this [WikiPage](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/).
 
 #### Prerequisites
 **Note**: For more information on how to setup those prerequisites for your plateform, please consult this [Wiki Page](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/#requirements).
 
-    1/ To build Freesynd, you will need to install [Cmake 3.22](https://cmake.org/)
+To build Freesynd, you will need to install :
+    1/ [Cmake 3.22](https://cmake.org/)
     2/ A C++ compiler
-	3/ Install the required Libraries. Freesynd needs the following libraries to build and run :
+	3/ The following required Libraries (for build and run) :
     - SDL-1.2
     - SDL_mixer
     - SDL_image
@@ -50,40 +51,34 @@ The root directory containing the source code will be called *FS_ROOT* in the fo
 
 **Note** : On Windows, required librairies (for development and run) are available with the source code (in the /extern/MSVC directory)
 
-#### Notes on running CMake
-- When building the source code (option `--build`), use `-G"My tool"` to specify a particular build system. See CMake documentation for a list of options.
+#### Notes on CMake
+- When configuring the build, use `-G"My tool"` to specify a particular build system. See CMake documentation for a list of options.
 - It is a best practice to specify a build directory inside the source code directory. Name your build directory starting with "build" so that Git ignores it automatically.
+- You can set options when running CMake to configure the build. 
+    - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -LH` to list available options
+    - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -D<OPTION>=ON|OFF` to set the value of an option
+    - Available options :
+        - `USE_ASSASSINATE_OGG`: Use Ogg file for assassinate music instead of midi file
+        - `USE_INTRO_OGG`: Use Ogg file for intro music instead of midi file
+        - `USE_SDL_MIXER`: Use SDL Mixer library
 
-**CMake Options**
- - TBD
-
-#### Windows
-From the command line :
-
-	$ cd FS_ROOT
-	$ cmake -S . -B build
-	$ cmake --build build
-
-Then you need to copy all dll files that are in FS_ROOT/extern/MSVC/lib/ to the directory where the feesynd.exe file has been generated.
-
-#### Linux
-From the command line :
+#### Build the source
+On any platform, from the command line :
 
 	$ cd FS_ROOT
 	$ cmake -S . -B build
 	$ cmake --build build
-	
+
+**Windows**
+Then you need to copy all dll files that are in FS_ROOT/extern/MSVC/lib/ to the directory where the feesynd.exe file has been 
+
+**Linux**
 Install the application :
 
     $ sudo make install
 
-#### Mac
-From the command line :
-
-	$ cd FS_ROOT
-	$ cmake -S . -B build
-	$ cmake --build build
-
+**Mac**
+TBC
 
 ## Configuring FreeSynd
 
@@ -114,7 +109,7 @@ After launch, `play_intro` will be turned off automatically.
 
 
 ## Saved Games
-Saved games are located in a different place on each platform.  
+Saved games are located in a different place on each platform.
 
 - Windows: the folder containing freesynd.exe, + "save"
 - Linux: $HOME/.freesynd/save/
