@@ -52,7 +52,6 @@ if(NOT DATA_DIR)
 endif(NOT DATA_DIR)
 
 # Set standard definitions for all platforms.
-add_definitions (-DSYSTEM_SDL)
 add_definitions (-DPREFIX=\"${DATA_DIR}\")
 
 

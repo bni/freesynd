@@ -23,12 +23,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "fs-engine/system.h"
-#include "fs-engine/config.h"
-#include "fs-engine/gfx/screen.h"
-#include "fs-engine/sound/audio.h"
-#include "fs-utils/io/file.h"
-#include "fs-utils/log/log.h"
+#include "fs-engine/system_sdl.h"
 
 #ifdef HAVE_SDL_MIXER
 
@@ -37,6 +32,12 @@
 #endif // HAVE_SDL_MIXER
 
 #include <SDL_image.h>
+
+#include "fs-engine/config.h"
+#include "fs-engine/gfx/screen.h"
+#include "fs-engine/sound/audio.h"
+#include "fs-utils/io/file.h"
+#include "fs-utils/log/log.h"
 
 SDL_Joystick *joy = NULL;
 

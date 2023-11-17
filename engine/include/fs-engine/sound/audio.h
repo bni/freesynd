@@ -72,6 +72,8 @@ public:
     };
 
 public:
+    virtual ~Audio() {}
+
     //! Initialize the audio underneath implementation
     virtual bool init(EFrequency frequency = FRQ_DEFAULT,
                      EFormat format = FMT_DEFAULT,

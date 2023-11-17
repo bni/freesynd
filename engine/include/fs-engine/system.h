@@ -82,7 +82,10 @@ union FS_Event {
 /*!
  * Abstract interface that all systems/ports should implement.
  */
-struct System : public Singleton<System> {
+class System : public Singleton<System> {
+public:
+    static std::unique_ptr<System> createSystem();
+
     virtual ~System() {}
     virtual bool initialize(bool fullscreen) = 0;
     virtual void updateScreen() = 0;
@@ -114,6 +117,7 @@ struct System : public Singleton<System> {
     virtual void usePickupCursor() = 0;
     virtual int getKeyModState() = 0;
 
+    //! Return a pointer to the Audio system instance
     Audio* getAudio() {return audio_.get();}
 
 protected:
@@ -121,9 +125,5 @@ protected:
 };
 
 #define g_System    System::singleton()
-
-#ifdef SYSTEM_SDL
-#include "system_sdl.h"
-#endif
 
 #endif

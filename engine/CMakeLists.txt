@@ -26,6 +26,7 @@ set(HEADER_LIST
 set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/base_app.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/appcontext.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/system/system.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/system_sdl.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/dirtylist.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/font.cpp"
@@ -41,7 +42,6 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/sound/xmidi.cpp"
     )
 
-add_definitions (-DSYSTEM_SDL)
 
 # Locate libs we depend on directly.
 find_package (SDL)
@@ -62,6 +62,12 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include)
+
+option(USE_SYSTEM_SDL "Use SDL Library" ON)
+
+if (USE_SYSTEM_SDL)
+    target_compile_definitions(fs_engine PRIVATE "SYSTEM_SDL")
+endif()
 
 # The USE_SDL_MIXER option enables the creation of the fs_engine_sdlmixer
 # library. If not on, there will be the default Audio implementation

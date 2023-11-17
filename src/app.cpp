@@ -58,13 +58,9 @@
 App::App()
     : BaseApp(),
       session_(new GameSession()), game_ctlr_(new GameController),
-#ifdef SYSTEM_SDL
-      system_(new SystemSDL())
-#else
-#error A suitable System object has not been defined!
-#endif
-    , intro_sounds_(), game_sounds_(), music_(),
-    menus_(new GameMenuFactory(), &game_sounds_)
+      system_(System::createSystem()),
+      intro_sounds_(), game_sounds_(), music_(),
+      menus_(new GameMenuFactory(), &game_sounds_)
 {
     running_ = true;
 #ifdef _DEBUG

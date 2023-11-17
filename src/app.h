@@ -135,11 +135,11 @@ private:
 
 private:
     bool running_;
-    /*! A structure to hold player informations.*/
+    /*! A structure to hold player information.*/
     std::auto_ptr<GameSession> session_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
-    std::auto_ptr<System> system_;
+    std::unique_ptr<System> system_;
 
     GameSpriteManager game_sprites_;
     MenuManager menus_;

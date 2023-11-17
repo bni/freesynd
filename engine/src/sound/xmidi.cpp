@@ -513,7 +513,7 @@ uint32 XMidi::convertListToMTrk (unsigned char *buf, const midi_event *mlist)
     unsigned char    last_status = 0;
     uint32     i = 8;
     uint32     j;
-    int i_start;
+    //int i_start;
 
     /* This is set true to make the song end when an XMidiFile break is hit. */
     int    sshock_break = 0;
@@ -528,7 +528,7 @@ uint32 XMidi::convertListToMTrk (unsigned char *buf, const midi_event *mlist)
 
     for (const midi_event* event = mlist; event; event=event->next)
     {
-        i_start = i;
+        //i_start = i;
 
         /* If sshock_break is set, the delta is only 0 */
         delta = sshock_break?0:event->time - time;
@@ -717,19 +717,17 @@ bool XMidi::handleChunkXMID(XMidiFile* xmidi, const unsigned char* stream, uint3
     uint32 read_so_far = 0;
 
     do {
-    bool result;
+        bool result;
 
-    getIFFchunkHeader(chunk, stream);
-    stream += 8;
-    read_so_far += 8;
+        getIFFchunkHeader(chunk, stream);
+        stream += 8;
+        read_so_far += 8;
 
-    if (chunk.isType("FORM")) {
-        result = handleChunkFORM(xmidi, stream, chunk.size);
-    } else
-        if (chunk.isType("TIMB")) {
-        result = handleChunkTIMB(xmidi, stream, chunk.size);
-        } else
-        if (chunk.isType("EVNT")) {
+        if (chunk.isType("FORM")) {
+            result = handleChunkFORM(xmidi, stream, chunk.size);
+        } else if (chunk.isType("TIMB")) {
+            result = handleChunkTIMB(xmidi, stream, chunk.size);
+        } else if (chunk.isType("EVNT")) {
             result = handleChunkEVNT(xmidi, stream, chunk.size);
         } else {
             return false; // We don't know how to handle this
@@ -737,7 +735,7 @@ bool XMidi::handleChunkXMID(XMidiFile* xmidi, const unsigned char* stream, uint3
         if (!result) {
             return 0; // something failed
         }
-        stream      += chunk.getActualSize();;
+        stream      += chunk.getActualSize();
         read_so_far += chunk.getActualSize();
     } while (read_so_far < chunksize);
 
