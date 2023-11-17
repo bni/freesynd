@@ -23,7 +23,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "fs-engine/system_sdl.h"
+#include "system_sdl.h"
 
 #ifdef HAVE_SDL_MIXER
 

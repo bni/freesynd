@@ -57,12 +57,8 @@
 EditorApp::EditorApp()
     : BaseApp(),
       game_ctlr_(new GameController),
-#ifdef SYSTEM_SDL
-      system_(new SystemSDL())
-#else
-#error A suitable System object has not been defined!
-#endif
-    , intro_sounds_(), game_sounds_(), music_(),
+      system_(System::createSystem()),
+      intro_sounds_(), game_sounds_(), music_(),
     menus_(new EditorMenuFactory(), &game_sounds_)
 {
     running_ = true;
@@ -155,14 +151,14 @@ void EditorApp::run() {
     // play title before going to main menu
     menus_.gotoMenu(fs_edit_menus::kMenuIdMain);
 
-    int lasttick = SDL_GetTicks();
+    int lasttick = system_->getTicks();
     while (running_) {
-        int curtick = SDL_GetTicks();
+        int curtick = system_->getTicks();
         int diff_ticks = curtick - lasttick;
         menus_.updtSinceMouseDown(diff_ticks);
         menus_.handleEvents();
         if (diff_ticks < 30) {
-            SDL_Delay(30 - diff_ticks);
+            system_->delay(30 - diff_ticks);
             continue;
         }
         menus_.handleTick(diff_ticks);

@@ -24,7 +24,7 @@
 
 #include <memory>
 
-#include "fs-engine/system_sdl.h"
+#include "sdl/system_sdl.h"
 
 std::unique_ptr<System> System::createSystem() {
 #ifdef SYSTEM_SDL

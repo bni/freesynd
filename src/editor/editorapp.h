@@ -103,7 +103,7 @@ protected:
 private:
     bool running_;
 
-    std::auto_ptr<System> system_;
+    std::unique_ptr<System> system_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
 

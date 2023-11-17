@@ -33,7 +33,7 @@
 
 //Audio::~Audio() {}
 
-#if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
+#ifndef HAVE_SDL_MIXER
 
 DefaultAudio::DefaultAudio() {}
 

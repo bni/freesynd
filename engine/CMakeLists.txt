@@ -3,7 +3,6 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/base_app.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/appcontext.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/system.h"
-    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/system_sdl.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/config.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/cp437.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/dirtylist.h"
@@ -27,7 +26,6 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/base_app.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/appcontext.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/system/system.cpp"
-    "${Freesynd_SOURCE_DIR}/engine/src/system_sdl.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/dirtylist.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/font.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/fontmanager.cpp"
@@ -43,17 +41,6 @@ set(SOURCE_LIST
     )
 
 
-# Locate libs we depend on directly.
-find_package (SDL)
-if (NOT SDL_FOUND)
-	message (FATAL_ERROR "Unable to locate SDL")
-endif ()
-
-find_package (SDL_image)
-if (NOT SDLIMAGE_FOUND)
-	message (FATAL_ERROR "Unable to locate SDL_image")
-endif ()
-
 find_package (PNG REQUIRED)
 
 # Make an automatic library - will be static or dynamic based on user setting
@@ -63,10 +50,38 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include)
 
+target_link_libraries(fs_engine PRIVATE Freesynd::Utils PNG::PNG )
+
+# The USE_SYSTEM_SDL option enables the creation of the fs_engine_sdl
+# library. If not on, there will be an error as there is not other implementation
 option(USE_SYSTEM_SDL "Use SDL Library" ON)
 
 if (USE_SYSTEM_SDL)
     target_compile_definitions(fs_engine PRIVATE "SYSTEM_SDL")
+
+    # Locate libs we depend on directly.
+    find_package (SDL)
+    if (NOT SDL_FOUND)
+        message (FATAL_ERROR "Unable to locate SDL")
+    endif ()
+
+    find_package (SDL_image)
+    if (NOT SDLIMAGE_FOUND)
+        message (FATAL_ERROR "Unable to locate SDL_image")
+    endif ()
+
+    add_library(fs_engine_sdl STATIC
+                  ${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.cpp
+
+                  ${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.h
+                )
+    add_library(Freesynd::Engine::Sdl ALIAS fs_engine_sdl)
+
+    target_include_directories(fs_engine_sdl PUBLIC src/system)
+    target_include_directories(fs_engine_sdl PRIVATE include)
+    target_link_libraries(fs_engine_sdl PUBLIC SDL::SDL ${SDLIMAGE_LIBRARY} Freesynd::Utils)
+
+    target_link_libraries(fs_engine PRIVATE Freesynd::Engine::Sdl)
 endif()
 
 # The USE_SDL_MIXER option enables the creation of the fs_engine_sdlmixer
@@ -92,18 +107,10 @@ if (USE_SDL_MIXER)
     target_include_directories(fs_engine_sdlmixer PRIVATE include)
     target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL::SDL ${SDL_MIXER_LIBRARIES})
 
-    target_compile_definitions(fs_engine PRIVATE "HAVE_SDL_MIXER")
+    target_compile_definitions(fs_engine_sdl PRIVATE "HAVE_SDL_MIXER")
 
-    target_link_libraries(fs_engine PRIVATE Freesynd::Engine::SdlMixer)
+    target_link_libraries(fs_engine_sdl PUBLIC Freesynd::Engine::SdlMixer)
 endif()
-
-
-
-# Public dependencies
-target_link_libraries(fs_engine PUBLIC SDL::SDL)
-
-target_link_libraries(fs_engine PRIVATE Freesynd::Utils PNG::PNG ${SDLIMAGE_LIBRARY})
-
 
 # All users of this library will need at least C++11
 #target_compile_features(modern_library PUBLIC cxx_std_11)

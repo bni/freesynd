@@ -105,7 +105,7 @@ public:
     virtual std::unique_ptr<Music> createMusic() = 0;
 };
 
-#if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
+#ifndef HAVE_SDL_MIXER
 
 /*!
  * Dummy class that does not initialize sound.
