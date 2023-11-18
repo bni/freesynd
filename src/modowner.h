@@ -26,7 +26,8 @@
  ************************************************************************/
 #ifndef MODOWNER_H
 #define MODOWNER_H
-#include "model/mod.h"
+
+#include "fs-kernel/model/mod.h"
 
 class ModOwner {
 public:

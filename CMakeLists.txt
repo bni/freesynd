@@ -54,7 +54,9 @@ endif(NOT DATA_DIR)
 # Set standard definitions for all platforms.
 add_definitions (-DPREFIX=\"${DATA_DIR}\")
 
-
+set(CMAKE_CXX_STANDARD 23 CACHE STRING "The C++ standard to use")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE "debug")
@@ -74,5 +76,6 @@ endif ()
 # Build the sources in this subdirectory.
 add_subdirectory(utils)
 add_subdirectory(engine)
+add_subdirectory(kernel)
 subdirs (src)
 

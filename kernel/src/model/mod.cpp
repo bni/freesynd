@@ -23,13 +23,13 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-kernel/model/mod.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#include "mod.h"
-
-Mod::Mod(const std::string& mod_name, EModType type, EModVersion version, 
+Mod::Mod(const std::string& mod_name, EModType type, EModVersion version,
          int mod_cost, const std::string& mod_desc,
          int mod_icon, int mod_iconF):name_(mod_name),
 desc_(mod_desc), cost_(mod_cost), icon_(mod_icon),

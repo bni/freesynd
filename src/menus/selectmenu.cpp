@@ -36,7 +36,7 @@
 #include "core/gamesession.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
-#include "model/mod.h"
+#include "fs-kernel/model/mod.h"
 
 SelectMenu::SelectMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, "mselect.dat",
     "mselout.dat"),

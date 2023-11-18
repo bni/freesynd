@@ -29,7 +29,7 @@
 #include <fstream>
 
 #include "fs-utils/common.h"
-#include "model/mod.h"
+#include "fs-kernel/model/mod.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"

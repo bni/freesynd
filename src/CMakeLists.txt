@@ -10,7 +10,7 @@ set (SOURCES
 	agent.cpp
 	agentmanager.cpp
 	app.cpp
-	model/mod.cpp
+#	model/mod.cpp
 	model/objectivedesc.cpp
 	model/weaponholder.cpp
 	model/shot.cpp
@@ -89,7 +89,7 @@ set(HEADERS
 	core/researchmanager.h
 	ia/actions.h
 	ia/behaviour.h
-	model/mod.h
+#	model/mod.h
 	model/vehicle.h
 	model/weapon.h
 	model/position.h
@@ -134,7 +134,7 @@ source_group(IA REGULAR_EXPRESSION ia/*)
 
 add_executable (freesynd ${SOURCES} ${HEADERS})
 
-target_link_libraries (freesynd PRIVATE Freesynd::Utils Freesynd::Engine)
+target_link_libraries (freesynd PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
 # Use -DBIN_DIR to override binary installation location
 if(NOT BIN_DIR)
@@ -176,7 +176,7 @@ if (BUILD_DEV_TOOLS)
 		core/gamesession.cpp
 		core/missionbriefing.cpp
 		core/researchmanager.cpp
-		model/mod.cpp
+#		model/mod.cpp
 		model/research.cpp
 		model/squad.cpp
 		model/objectivedesc.cpp
@@ -197,7 +197,7 @@ if (BUILD_DEV_TOOLS)
 		${DEV_TOOLS_HEADERS}
 	)
 
-	target_link_libraries (dump PRIVATE Freesynd::Utils Freesynd::Engine)
+	target_link_libraries (dump PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
 	target_compile_definitions (dump PRIVATE EDITOR_)
 else ()
