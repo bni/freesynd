@@ -69,6 +69,7 @@ SystemSDL::~SystemSDL() {
 }
 
 bool SystemSDL::initialize(bool fullscreen) {
+    LOG(Log::k_FLG_INFO, "SystemSDL", "initialize", ("initializing System SDL"))
     int resInit = SDL_Init(SDL_INIT_VIDEO
 #ifdef GP2X
                  | SDL_INIT_JOYSTICK

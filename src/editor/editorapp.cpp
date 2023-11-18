@@ -57,7 +57,6 @@
 EditorApp::EditorApp()
     : BaseApp(),
       game_ctlr_(new GameController),
-      system_(System::createSystem()),
       intro_sounds_(), game_sounds_(), music_(),
     menus_(new EditorMenuFactory(), &game_sounds_)
 {
@@ -84,11 +83,6 @@ void EditorApp::doDestroy() {
  * \return True if initialization is ok.
  */
 bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
-
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("initializing system..."))
-    if (!system_->initialize(context_->isFullScreen())) {
-        return false;
-    }
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("initializing menus..."))
     if (!menus_.initialize(false)) {

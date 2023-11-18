@@ -42,7 +42,6 @@
 
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
-#include "fs-engine/system.h"
 #include "path.h"
 #include "menus/menumanager.h"
 #include "mapmanager.h"
@@ -139,7 +138,6 @@ private:
     std::auto_ptr<GameSession> session_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
-    std::unique_ptr<System> system_;
 
     GameSpriteManager game_sprites_;
     MenuManager menus_;

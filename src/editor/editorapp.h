@@ -34,8 +34,6 @@
 
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
-#include "fs-engine/system.h"
-#include "fs-engine/gfx/screen.h"
 #include "path.h"
 #include "menus/menumanager.h"
 #include "mapmanager.h"
@@ -103,7 +101,6 @@ protected:
 private:
     bool running_;
 
-    std::unique_ptr<System> system_;
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
 

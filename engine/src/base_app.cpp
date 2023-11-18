@@ -32,7 +32,8 @@
 
 BaseApp::BaseApp()
     : context_(std::make_unique<AppContext>()),
-      screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)) {
+      screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
+      system_(System::createSystem()) {
 }
 
 BaseApp::~BaseApp() {}
@@ -49,6 +50,10 @@ bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
         }
         // do not tests files from now
         context_->deactivateTestFlag();
+    }
+
+    if (!system_->initialize(context_->isFullScreen())) {
+        return false;
     }
 
     return doInitialize(iniPath, disable_sound);

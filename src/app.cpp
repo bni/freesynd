@@ -58,7 +58,6 @@
 App::App()
     : BaseApp(),
       session_(new GameSession()), game_ctlr_(new GameController),
-      system_(System::createSystem()),
       intro_sounds_(), game_sounds_(), music_(),
       menus_(new GameMenuFactory(), &game_sounds_)
 {
@@ -77,11 +76,6 @@ App::~App() {
  * \return True if initialization is ok.
  */
 bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
-
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("initializing system..."))
-    if (!system_->initialize(context_->isFullScreen())) {
-        return false;
-    }
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("initializing menus..."))
     if (!menus_.initialize(context_->isPlayIntro())) {

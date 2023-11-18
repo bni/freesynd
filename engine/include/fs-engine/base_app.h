@@ -31,6 +31,7 @@
 
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/system.h"
 
 /*!
  * Base class for a Freesynd application.
@@ -57,6 +58,7 @@ protected:
     /*! A structure to hold general application informations.*/
     std::unique_ptr<AppContext> context_;
     std::unique_ptr<Screen> screen_;
+    std::unique_ptr<System> system_;
 };
 
 #endif // ENGINE_BASEAPP_H
