@@ -51,6 +51,7 @@ bool MusicManager::isAudioInitialized() {
 
 void MusicManager::initialize(bool disabled, Audio* audio)
 {
+    LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music..."))
     audio_ = audio;
     disabled_ = disabled;
     if (disabled_) {
@@ -96,6 +97,8 @@ void MusicManager::initialize(bool disabled, Audio* audio)
         }
     }
     delete[] data;
+
+    LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Music initialized"))
 }
 
 void MusicManager::playTrack(msc::MusicTrack track, int loops)

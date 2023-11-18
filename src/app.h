@@ -44,7 +44,6 @@
 #include "fs-engine/base_app.h"
 #include "path.h"
 #include "mapmanager.h"
-#include "fs-engine/sound/musicmanager.h"
 #include "fs-engine/appcontext.h"
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
@@ -60,20 +59,12 @@ class App : public BaseApp, public Singleton < App > {
 
     void setCheatCode(const char *name);
 
-    GameSpriteManager &gameSprites() {
-        return game_sprites_;
-    }
-
     MapManager &maps() {
         return maps_;
     }
 
     SoundManager &introSounds() {
         return intro_sounds_;
-    }
-
-    MusicManager &music() {
-        return music_;
     }
 
     //! Main application method
@@ -129,10 +120,8 @@ private:
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
 
-    GameSpriteManager game_sprites_;
     MapManager maps_;
     SoundManager intro_sounds_;
-    MusicManager music_;
 };
 
 #define g_App   App::singleton()

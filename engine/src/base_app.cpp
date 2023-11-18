@@ -34,13 +34,14 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
     : context_(std::make_unique<AppContext>()),
       screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
       system_(System::createSystem()),
-      game_sounds_(),
+      game_sounds_(), music_(),
       menus_(pMenuFactory, &game_sounds_) {
 }
 
 BaseApp::~BaseApp() {}
 
 bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
+    LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
     if (!context_->readConfiguration(iniPath)) {
         FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", iniPath.c_str()))
         return false;
@@ -62,10 +63,21 @@ bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
         return false;
     }
 
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game sounds..."))
+    if (!gameSprites().loaded()) {
+        gameSprites().load();
+    }
+
+    LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("Loading game sounds..."))
     game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
-    return doInitialize(iniPath, disable_sound);
+    music_.initialize(disable_sound, system_->getAudio());
+
+    bool resInit = doInitialize(iniPath, disable_sound);
+    if (resInit) {
+        LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialized with success"))
+    }
+
+    return resInit;
 }
 
 bool BaseApp::doInitialize(const std::string& iniPath, bool disable_sound) {

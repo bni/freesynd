@@ -46,7 +46,6 @@
 #undef ChunkHeader
 #endif
 
-#include "fs-engine/gfx/spritemanager.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/configfile.h"
@@ -58,7 +57,7 @@
 App::App()
     : BaseApp(new GameMenuFactory()),
       session_(new GameSession()), game_ctlr_(new GameController),
-      intro_sounds_(), music_()
+      intro_sounds_()
 {
     running_ = true;
 #ifdef _DEBUG
@@ -76,10 +75,6 @@ App::~App() {
  */
 bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
 
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("loading game sprites..."))
-    if (!gameSprites().loaded())
-        gameSprites().load();
-
     LOG(Log::k_FLG_INFO, "App", "initialize", ("loading game tileset..."))
     if (!maps().initialize()) {
         return false;
@@ -89,9 +84,6 @@ bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
         LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading intro sounds..."))
         intro_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
     }
-
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading music..."))
-    music_.initialize(disable_sound, system_->getAudio());
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
     g_gameCtrl.agents().loadAgents();

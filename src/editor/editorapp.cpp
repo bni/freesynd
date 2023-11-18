@@ -46,7 +46,6 @@
 #undef ChunkHeader
 #endif
 
-#include "fs-engine/gfx/spritemanager.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/configfile.h"
@@ -57,7 +56,7 @@
 EditorApp::EditorApp()
     : BaseApp(new EditorMenuFactory()),
       game_ctlr_(new GameController),
-      intro_sounds_(), music_()
+      intro_sounds_()
 {
     running_ = true;
 #ifdef _DEBUG
@@ -83,18 +82,10 @@ void EditorApp::doDestroy() {
  */
 bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
 
-
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game sprites..."))
-    if (!gameSprites().loaded())
-        gameSprites().load();
-
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game tileset..."))
     if (!maps().initialize()) {
         return false;
     }
-
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("Loading music..."))
-    music_.initialize(disable_sound, system_->getAudio());
 
     g_gameCtrl.reset();
 

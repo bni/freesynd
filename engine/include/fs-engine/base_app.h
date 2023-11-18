@@ -31,8 +31,10 @@
 
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/gfx/spritemanager.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/sound/soundmanager.h"
+#include "fs-engine/sound/musicmanager.h"
 #include "fs-engine/menus/menumanager.h"
 
 /*!
@@ -59,18 +61,28 @@ public:
         return menus_;
     }
 
+    GameSpriteManager &gameSprites() {
+        return game_sprites_;
+    }
+
+    MusicManager &music() {
+        return music_;
+    }
+
 protected:
-    //! Child class implements this method for initalization
+    //! Child class implements this method for initialization
     virtual bool doInitialize(const std::string& iniPath, bool disable_sound);
-    //! Child class overloads this method for destroying ressources
+    //! Child class overloads this method for destroying resources
     virtual void doDestroy();
 
-    /*! A structure to hold general application informations.*/
+    /*! A structure to hold general application information.*/
     std::unique_ptr<AppContext> context_;
     std::unique_ptr<Screen> screen_;
     std::unique_ptr<System> system_;
     MenuManager menus_;
     SoundManager game_sounds_;
+    GameSpriteManager game_sprites_;
+    MusicManager music_;
 };
 
 #endif // ENGINE_BASEAPP_H

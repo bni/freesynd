@@ -38,7 +38,6 @@
 #include "fs-engine/menus/menumanager.h"
 #include "mapmanager.h"
 #include "fs-engine/sound/soundmanager.h"
-#include "fs-engine/sound/musicmanager.h"
 #include "core/gamecontroller.h"
 
 /*!
@@ -49,20 +48,12 @@ class EditorApp : public BaseApp, public Singleton < EditorApp > {
     EditorApp();
     virtual ~EditorApp();
 
-    GameSpriteManager &gameSprites() {
-        return game_sprites_;
-    }
-
     MapManager &maps() {
         return maps_;
     }
 
     SoundManager &introSounds() {
         return intro_sounds_;
-    }
-
-    MusicManager &music() {
-        return music_;
     }
 
     //! Main application method
@@ -96,10 +87,9 @@ private:
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
 
-    GameSpriteManager game_sprites_;
     MapManager maps_;
     SoundManager intro_sounds_;
-    MusicManager music_;
+
     /*!
      * Use to store id of missions that are found in the search menu.
      */
