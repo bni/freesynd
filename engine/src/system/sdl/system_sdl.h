@@ -28,7 +28,7 @@
 
 #include <SDL.h>
 
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 #include "fs-engine/io/keys.h"
 
 //! Implementation of the System interface for SDL.

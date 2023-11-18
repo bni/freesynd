@@ -2,8 +2,8 @@
 set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/base_app.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/appcontext.h"
-    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/system.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/config.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/system/system.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/cp437.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/dirtylist.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/font.h"
@@ -71,9 +71,9 @@ if (USE_SYSTEM_SDL)
     endif ()
 
     add_library(fs_engine_sdl STATIC
-                  ${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.cpp
+                  "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.cpp"
 
-                  ${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.h
+                  "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.h"
                 )
     add_library(Freesynd::Engine::Sdl ALIAS fs_engine_sdl)
 
@@ -93,13 +93,13 @@ if (USE_SDL_MIXER)
     find_package (SDL_mixer REQUIRED)
 
     add_library(fs_engine_sdlmixer STATIC
-                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp
-                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.cpp
-                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.cpp
+                  "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp"
+                  "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.cpp"
+                  "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.cpp"
 
-                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h
-                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.h
-                  ${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.h
+                  "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.h"
+                  "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.h"
+                  "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixermusic.h"
                 )
     add_library(Freesynd::Engine::SdlMixer ALIAS fs_engine_sdlmixer)
 

@@ -31,7 +31,7 @@
 
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 
 /*!
  * Base class for a Freesynd application.
