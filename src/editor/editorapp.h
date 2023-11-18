@@ -66,11 +66,11 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const std::string& iniPath, bool disable_sound);
+    bool doInitialize(const CliParam& param);
     //! Destroy all components
     void doDestroy() {}
     //! Define the menuid that will be displayed at the application's start
-    int getStartMenuId();
+    int getStartMenuId(const CliParam& param);
 
 private:
     /*! Controls the game logic. */

@@ -73,7 +73,7 @@ EditorApp::~EditorApp() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
+bool EditorApp::doInitialize(const CliParam& param) {
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game tileset..."))
     if (!maps().initialize()) {
@@ -88,7 +88,7 @@ bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
 /*!
  * This method returns the menu Id used to start the app.
  */
-int EditorApp::getStartMenuId() {
+int EditorApp::getStartMenuId(const CliParam& param) {
     // Go directly to the main menu
     return fs_edit_menus::kMenuIdMain;
 }

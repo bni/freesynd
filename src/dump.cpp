@@ -539,10 +539,8 @@ int main(int argc, char *argv[]) {
     srand((unsigned) time(NULL));
 #endif
 
-    // This variable stores the path to the Freesynd configuration file.
-    std::string iniPath;
-
-    bool disable_sound = true;
+    CliParam params;
+    params.disableSound = true;
 
     for (int i = 1; i < argc; ++i) {
 
@@ -553,7 +551,7 @@ int main(int argc, char *argv[]) {
 
         if (0 == strcmp("-i", argv[i]) || 0 == strcmp("--ini", argv[i])) {
             i++;
-            iniPath = argv[i];
+            params.iniPath = argv[i];
         }
     }
 
@@ -564,10 +562,10 @@ int main(int argc, char *argv[]) {
 
     auto app = std::make_unique<EditorApp>();
 
-    if (app->initialize(iniPath, disable_sound)) {
+    if (app->initialize(params)) {
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Starting game loop"))
-        app->run();
+        app->run(params);
     } else {
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application failed"))
     }
