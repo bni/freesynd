@@ -83,10 +83,6 @@ void EditorApp::doDestroy() {
  */
 bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
 
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("initializing menus..."))
-    if (!menus_.initialize(false)) {
-        return false;
-    }
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game sprites..."))
     if (!gameSprites().loaded())
@@ -96,9 +92,6 @@ bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
     if (!maps().initialize()) {
         return false;
     }
-
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("Loading game sounds..."))
-    game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
     LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("Loading music..."))
     music_.initialize(disable_sound, system_->getAudio());
