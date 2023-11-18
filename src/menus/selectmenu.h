@@ -28,7 +28,7 @@
 #ifndef SELECTMENU_H
 #define SELECTMENU_H
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 
 class ListBox;
 class WeaponInstance;

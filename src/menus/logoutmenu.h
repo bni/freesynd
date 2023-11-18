@@ -26,7 +26,7 @@
 #ifndef LOGOUTMENU_H
 #define LOGOUTMENU_H
 
-#include "menu.h"
+#include "fs-engine/menus/menu.h"
 
 /*!
  * Logout Menu class.

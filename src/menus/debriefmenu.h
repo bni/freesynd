@@ -26,7 +26,7 @@
 #ifndef DEBRIEFMENU_H
 #define DEBRIEFMENU_H
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 #include "core/gameevent.h"
 
 class Mission;

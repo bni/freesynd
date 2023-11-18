@@ -20,6 +20,10 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/soundmanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/xmidi.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/io/keys.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/menu.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/menumanager.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/widget.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/fliplayer.h"
     )
 
 set(SOURCE_LIST
@@ -38,6 +42,10 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/sound/musicmanager.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/sound/soundmanager.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/sound/xmidi.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/menus/menu.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/menus/menumanager.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/menus/widget.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/menus/fliplayer.cpp"
     )
 
 

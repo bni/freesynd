@@ -32,7 +32,7 @@
 #include "mission.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 
 LoadingMenu::LoadingMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLoading, fs_game_menus::kMenuIdMain),

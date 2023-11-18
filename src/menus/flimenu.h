@@ -23,8 +23,8 @@
 #ifndef FLIMENU_H
 #define FLIMENU_H
 
-#include "menus/menumanager.h"
-#include "gfx/fliplayer.h"
+#include "fs-engine/menus/menumanager.h"
+#include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/sound/sound.h"
 #include "fs-engine/sound/music.h"
 

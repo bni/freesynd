@@ -24,10 +24,10 @@
  ************************************************************************/
 
 #include "editor/animmenu.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 #include "editor/editormenuid.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 #include "editor/editorapp.h"
 
 AnimMenu::AnimMenu(MenuManager * m):

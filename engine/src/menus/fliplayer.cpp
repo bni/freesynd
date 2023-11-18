@@ -22,12 +22,13 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-engine/menus/fliplayer.h"
+
 #include <cstdio>
 
-#include "fliplayer.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-utils/log/log.h"
-#include "menus/menumanager.h"
+#include "fs-engine/gfx/screen.h"
+#include "fs-engine/menus/menumanager.h"
 
 #if 0 // TMN: Data for playing samples during intro video. Hardcoded from intro.exe.
 

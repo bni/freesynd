@@ -23,12 +23,12 @@
  *                                                                      *
  ************************************************************************/
 
-#include "menus/menu.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menu.h"
+#include "fs-engine/menus/menumanager.h"
 #include "editor/mainmenu.h"
 #include "editor/editormenuid.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 
 MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
 {

@@ -21,14 +21,14 @@
  *                                                                      *
  ************************************************************************/
 
-#include "menus/widget.h"
+#include "fs-engine/menus/widget.h"
 
 #include <stdarg.h>
 
-#include "menus/menu.h"
-#include "menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-utils/io/utf8.h"
+#include "fs-engine/menus/menu.h"
+#include "fs-engine/menus/menumanager.h"
+#include "fs-engine/gfx/screen.h"
 #include "fs-engine/appcontext.h"
 
 int Widget::widgetCnt = 0;

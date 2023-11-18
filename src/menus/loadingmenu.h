@@ -26,7 +26,7 @@
 #define LOADINGMENU_H
 
 #include "fs-utils/misc/timer.h"
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 
 /*!
  * This menu is in charge of loading the mission.

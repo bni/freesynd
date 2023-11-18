@@ -31,13 +31,13 @@
 #include <map>
 
 #include "fs-utils/common.h"
-#include "menu.h"
+#include "fs-utils/io/configfile.h"
+#include "fs-engine/menus/menu.h"
 #include "fs-engine/gfx/dirtylist.h"
+#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/sound/soundmanager.h"
 
-class SpriteManager;
-class ConfigFile;
 class MenuManager;
-class SoundManager;
 
 /*!
  * This abstract class is responsible for instanciating menus from a given id.

@@ -26,7 +26,7 @@
 #ifndef LOGOUTMENU_H
 #define LOGOUTMENU_H
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 
 /*!
  * Menu showed when leaving the application.

@@ -29,15 +29,14 @@
 #include <string>
 #include <list>
 #include <map>
-#include "fs-engine/io/keys.h"
+
 #include "fs-utils/common.h"
-#include "menus/widget.h"
+#include "fs-engine/io/keys.h"
+#include "fs-engine/menus/widget.h"
 #include "fs-engine/gfx/dirtylist.h"
 
-class FontManager;
-class Menu;
-class MenuManager;
 
+class MenuManager;
 
 /*!
  * Menu class.

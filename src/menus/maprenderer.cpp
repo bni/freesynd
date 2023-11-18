@@ -34,7 +34,7 @@
 #include "model/squad.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/tile.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 #include "menus/squadselection.h"
 #include "fs-engine/config.h"
 

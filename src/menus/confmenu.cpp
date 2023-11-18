@@ -30,12 +30,12 @@
 #include <assert.h>
 
 #include "confmenu.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 
 #define NAME_MAX_SIZE 16
 #define MAX_COLOUR 8

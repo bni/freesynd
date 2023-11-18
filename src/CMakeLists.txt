@@ -7,7 +7,6 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 #include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 set (SOURCES
-#	appcontext.cpp
 	agent.cpp
 	agentmanager.cpp
 	app.cpp
@@ -28,11 +27,6 @@ set (SOURCES
 	ia/behaviour.cpp
 	freesynd.cpp
     ipastim.cpp
-	gfx/fliplayer.cpp
-#	gfx/fontmanager.cpp
-#	gfx/sprite.cpp
-#	gfx/spritemanager.cpp
-#	gfx/tilemanager.cpp
 	map.cpp
 	mapobject.cpp
 	mapmanager.cpp
@@ -49,13 +43,10 @@ set (SOURCES
 	menus/logoutmenu.cpp
 	menus/mainmenu.cpp
 	menus/mapmenu.cpp
-	menus/menu.cpp
-	menus/menumanager.cpp
 	menus/gamemenufactory.cpp
 	menus/researchmenu.cpp
 	menus/selectmenu.cpp
 	menus/squadselection.cpp
-	menus/widget.cpp
 	mission.cpp
 	missionmanager.cpp
 	modmanager.cpp
@@ -63,13 +54,6 @@ set (SOURCES
 	pedactions.cpp
 	pedmanager.cpp
 	pedpathfinding.cpp
-#	sound/audio.cpp
-#	sound/musicmanager.cpp
-#	sound/sdlmixermusic.cpp
-#	sound/sdlmixersound.cpp
-#	sound/soundmanager.cpp
-#	sound/xmidi.cpp
-#	system_sdl.cpp
 	weaponmanager.cpp
 )
 
@@ -81,13 +65,10 @@ endif()
 
 set(HEADERS
     version.h
-#	appcontext.h
 	agent.h
 	agentmanager.h
 	app.h
-#	config.h
     ipastim.h
-#	keys.h
 	map.h
 	mapmanager.h
 	mapobject.h
@@ -100,8 +81,6 @@ set(HEADERS
 	ped.h
 	pedmanager.h
 	resources.h
-#	system.h
-#	system_sdl.h
 	weaponmanager.h
 	core/gameevent.h
 	core/gamesession.h
@@ -110,11 +89,6 @@ set(HEADERS
 	core/researchmanager.h
 	ia/actions.h
 	ia/behaviour.h
-	gfx/fliplayer.h
-#	gfx/fontmanager.h
-#	gfx/sprite.h
-#	gfx/spritemanager.h
-#	gfx/tilemanager.h
 	model/mod.h
 	model/vehicle.h
 	model/weapon.h
@@ -140,22 +114,11 @@ set(HEADERS
 	menus/logoutmenu.h
 	menus/mainmenu.h
 	menus/mapmenu.h
-	menus/menu.h
-	menus/menumanager.h
 	menus/gamemenufactory.h
 	menus/gamemenuid.h
 	menus/researchmenu.h
 	menus/selectmenu.h
 	menus/squadselection.h
-	menus/widget.h
-#	sound/audio.h
-#	sound/music.h
-#	sound/musicmanager.h
-#	sound/sdlmixermusic.h
-#	sound/sdlmixersound.h
-#	sound/sound.h
-#	sound/soundmanager.h
-#	sound/xmidi.h
 )
 
 #source_group(Sources REGULAR_EXPRESSION .*.cpp)
@@ -194,21 +157,6 @@ if (BUILD_DEV_TOOLS)
 
 	add_executable (dump
 		dump.cpp
-		gfx/fliplayer.cpp
-#		gfx/fontmanager.cpp
-#		gfx/sprite.cpp
-#		gfx/spritemanager.cpp
-#		gfx/tilemanager.cpp
-#		sound/audio.cpp
-#		sound/musicmanager.cpp
-#		sound/sdlmixermusic.cpp
-#		sound/sdlmixersound.cpp
-#		sound/soundmanager.cpp
-#		sound/xmidi.cpp
-		menus/menu.cpp
-		menus/menumanager.cpp
-		menus/widget.cpp
-#		appcontext.cpp
 		map.cpp
 		mapmanager.cpp
 		mapobject.cpp
@@ -246,7 +194,6 @@ if (BUILD_DEV_TOOLS)
 		editor/animmenu.cpp
 		editor/searchmissionmenu.cpp
 		editor/listmissionmenu.cpp
-	#	system_sdl.cpp
 		${DEV_TOOLS_HEADERS}
 	)
 

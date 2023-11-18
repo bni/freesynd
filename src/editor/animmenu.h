@@ -26,7 +26,7 @@
 #ifndef EDITOR_ANIMMENU_H_
 #define EDITOR_ANIMMENU_H_
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 /*!
  * Animation menu.
  */

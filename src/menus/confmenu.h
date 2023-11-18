@@ -27,7 +27,7 @@
 #ifndef CONFMENU_H
 #define CONFMENU_H
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 /*!
  * Configuration Menu class.
  */
@@ -57,7 +57,7 @@ protected:
     void redrawPanel() { addDirtyRect(278, 20, 340 , 135); }
 
 protected:
-    /*! 
+    /*!
      * This enum identifies the panel which is currently displayed.
      */
     enum EPanel {

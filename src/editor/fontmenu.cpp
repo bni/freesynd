@@ -24,10 +24,10 @@
  ************************************************************************/
 
 #include "editor/fontmenu.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 #include "editor/editormenuid.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 
 FontMenu::FontMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, "", "")

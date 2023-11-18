@@ -24,17 +24,17 @@
  *                                                                      *
  ************************************************************************/
 
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 
 #include <stdio.h>
 #include <assert.h>
 
-#include "fs-engine/appcontext.h"
-#include "fs-engine/system.h"
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
-#include "gfx/fliplayer.h"
+#include "fs-engine/appcontext.h"
+#include "fs-engine/system/system.h"
+#include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/soundmanager.h"
 

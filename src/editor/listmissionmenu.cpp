@@ -23,13 +23,13 @@
  *                                                                      *
  ************************************************************************/
 
-#include "menus/menu.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menu.h"
+#include "fs-engine/menus/menumanager.h"
 #include "editor/listmissionmenu.h"
 #include "editor/editormenuid.h"
 #include "editor/editorapp.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
+#include "fs-engine/system/system.h"
 
 ListMissionMenu::ListMissionMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdListMis, fs_edit_menus::kMenuIdSrchMis, "mscrenup.dat", "")

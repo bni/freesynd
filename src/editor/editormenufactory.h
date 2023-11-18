@@ -27,7 +27,7 @@
 #define EDITOR_EDITORMENUFACTORY_H_
 
 #include "fs-utils/common.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 
 /*!
  * Creates menus for the editor application.

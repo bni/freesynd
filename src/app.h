@@ -43,7 +43,7 @@
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
 #include "path.h"
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 #include "mapmanager.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/sound/musicmanager.h"

@@ -31,7 +31,7 @@
 #include "app.h"
 #include "gameplaymenu.h"
 #include "menus/gamemenuid.h"
-#include "gfx/fliplayer.h"
+#include "fs-engine/menus/fliplayer.h"
 #include "model/vehicle.h"
 #include "mission.h"
 #include "model/shot.h"

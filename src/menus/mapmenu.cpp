@@ -32,8 +32,8 @@
 #include "menus/gamemenuid.h"
 #include "core/gamesession.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/system.h"
-#include "menus/menumanager.h"
+#include "fs-engine/system/system.h"
+#include "fs-engine/menus/menumanager.h"
 
 struct pos {
     int x;

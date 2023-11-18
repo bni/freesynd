@@ -26,7 +26,7 @@
 #ifndef EDITOR_FONTMENU_H_
 #define EDITOR_FONTMENU_H_
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 /*!
  * Font menu.
  */

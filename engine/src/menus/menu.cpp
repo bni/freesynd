@@ -24,15 +24,14 @@
  *                                                                      *
  ************************************************************************/
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#include "menus/menumanager.h"
+#include "fs-engine/menus/menumanager.h"
 #include "fs-engine/appcontext.h"
-#include "gfx/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
 
 const int Menu::MENU_NO_MENU = -1;

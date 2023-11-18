@@ -29,7 +29,7 @@
 
 #include <assert.h>
 
-#include "menus/menu.h"
+#include "fs-engine/menus/menu.h"
 
 //! Displays the mission selection map.
 /*!
