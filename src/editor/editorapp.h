@@ -53,20 +53,12 @@ class EditorApp : public BaseApp, public Singleton < EditorApp > {
         return game_sprites_;
     }
 
-    MenuManager &menus() {
-        return menus_;
-    }
-
     MapManager &maps() {
         return maps_;
     }
 
     SoundManager &introSounds() {
         return intro_sounds_;
-    }
-
-    SoundManager &gameSounds() {
-        return game_sounds_;
     }
 
     MusicManager &music() {
@@ -105,10 +97,8 @@ private:
     std::auto_ptr<GameController> game_ctlr_;
 
     GameSpriteManager game_sprites_;
-    MenuManager menus_;
     MapManager maps_;
     SoundManager intro_sounds_;
-    SoundManager game_sounds_;
     MusicManager music_;
     /*!
      * Use to store id of missions that are found in the search menu.

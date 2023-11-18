@@ -55,10 +55,9 @@
 #include "editor/editormenuid.h"
 
 EditorApp::EditorApp()
-    : BaseApp(),
+    : BaseApp(new EditorMenuFactory()),
       game_ctlr_(new GameController),
-      intro_sounds_(), game_sounds_(), music_(),
-    menus_(new EditorMenuFactory(), &game_sounds_)
+      intro_sounds_(), music_()
 {
     running_ = true;
 #ifdef _DEBUG

@@ -53,12 +53,6 @@ Menu::Menu(MenuManager * menuManager, int id, int parentId,
 }
 
 Menu::~Menu() {
-    for (std::list < ActionWidget * >::iterator it = actions_.begin();
-         it != actions_.end(); it++) {
-        delete (*it);
-    }
-
-    actions_.clear();
 }
 
 SpriteManager & Menu::menuSprites() {
@@ -94,13 +88,12 @@ void Menu::render(DirtyList &dirtyList)
         }
     }
 
-    for (std::list < ActionWidget * >::iterator it = actions_.begin();
-        it != actions_.end(); it++) {
-            ActionWidget * a = *it;
-            if ( a->isVisible() && dirtyList.intersectsList(a->getX(), a->getY(), a->getWidth(), a->getHeight())) {
-                a->draw();
-            }
+    for (const auto& action : actions_) {
+        if ( action->isVisible() && dirtyList.intersectsList(action->getX(), action->getY(), action->getWidth(), action->getHeight())) {
+            action->draw();
+        }
     }
+
     handleRender(dirtyList);
 }
 
@@ -183,15 +176,17 @@ int Menu::addStatic(int x, int y, int width, const char *text, FontManager::EFon
 int Menu::addOption(int x, int y, int width, int height, const char *text, FontManager::EFontSize size,
             int to, bool visible, bool centered, int dark_widget, int light_widget) {
 
-    Option *pOption = new Option(this, x, y, width, height, text, getMenuFont(size), to, visible, centered, dark_widget, light_widget);
-    actions_.push_back(pOption);
+    std::unique_ptr<Option> pOption =
+                std::make_unique<Option>(this, x, y, width, height, text, getMenuFont(size), to, visible, centered, dark_widget, light_widget);
 
     if (pOption->getHotKey().keyFunc != KFC_UNKNOWN || pOption->getHotKey().unicode != 0) {
         // The option already has an acceleration key
         registerHotKey(pOption->getHotKey().unicode, pOption->getId());
     }
 
-    return pOption->getId();
+    actions_.push_back(std::move(pOption));
+
+    return actions_.back()->getId();
 }
 
 /*!
@@ -209,22 +204,23 @@ int Menu::addImageOption(int x, int y, int dark_widget, int light_widget, bool v
 
     Sprite *spr = menu_manager_->menuSprites().sprite(dark_widget);
 
-    Option *m = new Option(this, x, y, spr->width() * 2, spr->height() * 2, "",
-        getMenuFont(FontManager::SIZE_1), MENU_NO_MENU, visible, true, dark_widget, light_widget);
-    actions_.push_back(m);
+    actions_.push_back(
+                std::make_unique<Option>(this, x, y, spr->width() * 2, spr->height() * 2, "",
+                    getMenuFont(FontManager::SIZE_1), MENU_NO_MENU, visible, true, dark_widget, light_widget));
 
-    return m->getId();
+    return actions_.back()->getId();
 }
 
 int Menu::addToggleAction(int x, int y, int width, int height, const char *text,
     FontManager::EFontSize size, bool selected)
 {
-    ToggleAction *a = new ToggleAction(this, x, y, width, height, text,
-        getMenuFont(size), selected, &group_);
-    group_.addButton(a);
-    actions_.push_back(a);
+    actions_.push_back(
+        std::make_unique<ToggleAction>(this, x, y, width, height, text,
+            getMenuFont(size), selected, &group_));
 
-    return a->getId();
+    group_.addButton(dynamic_cast<ToggleAction *>(actions_.back().get()));
+
+    return actions_.back()->getId();
 }
 
 /*!
@@ -237,10 +233,10 @@ int Menu::addToggleAction(int x, int y, int width, int height, const char *text,
  * \return A pointer on the widget.
  */
 ListBox * Menu::addListBox(int x, int y, int width, int height, bool visible) {
-    ListBox *pBox = new ListBox(this, x, y, width, height, getMenuFont(FontManager::SIZE_1), visible);
-    actions_.push_back(pBox);
+    actions_.push_back(
+        std::make_unique<ListBox>(this, x, y, width, height, getMenuFont(FontManager::SIZE_1), visible));
 
-    return pBox;
+    return dynamic_cast<ListBox *>(actions_.back().get());
 }
 
 /*!
@@ -253,17 +249,17 @@ ListBox * Menu::addListBox(int x, int y, int width, int height, bool visible) {
  * \return A pointer on the widget.
  */
 TeamListBox * Menu::addTeamListBox(int x, int y, int width, int height, bool visible) {
-    TeamListBox *pBox = new TeamListBox(this, x, y, width, height, getMenuFont(FontManager::SIZE_1), visible);
-    actions_.push_back(pBox);
+    actions_.push_back(
+        std::make_unique<TeamListBox>(this, x, y, width, height, getMenuFont(FontManager::SIZE_1), visible));
 
-    return pBox;
+    return dynamic_cast<TeamListBox *>(actions_.back().get());
 }
 
 TextField * Menu::addTextField(int x, int y, int width, int height, FontManager::EFontSize size, int maxSize, bool displayEmpty, bool visible) {
-    TextField *pTextField = new TextField(this, x, y, width, height, getMenuFont(size), maxSize, displayEmpty, visible);
-    actions_.push_back(pTextField);
+    actions_.push_back(
+        std::make_unique<TextField>(this, x, y, width, height, getMenuFont(size), maxSize, displayEmpty, visible));
 
-    return pTextField;
+    return dynamic_cast<TextField *>(actions_.back().get());
 }
 
 /*!
@@ -289,11 +285,9 @@ MenuText * Menu::getStatic(int staticId) {
  * \return NULL if no widget has that id.
  */
 ActionWidget * Menu::getActionWidget(int id) {
-    for (std::list < ActionWidget * >::iterator it = actions_.begin();
-         it != actions_.end(); it++) {
-
-        if (id == (*it)->getId()) {
-            return *it;
+    for (const auto& action : actions_) {
+        if ( id == action->getId()) {
+            return action.get();
         }
     }
 
@@ -417,25 +411,22 @@ void Menu::mouseMotionEvent(int x, int y, int state, const int modKeys)
     }
 
     // See if the mouse is hovering an action widget
-    for (std::list < ActionWidget * >::iterator it = actions_.begin();
-         it != actions_.end(); it++) {
-        ActionWidget *m = *it;
-
-        if (!m->isVisible() || !m->isWidgetEnabled()) {
+    for (const auto& action : actions_) {
+        if (!action->isVisible() || !action->isWidgetEnabled()) {
             // action is not visible or not enabled so it doesn't count
             continue;
         }
 
         // Mouse is over a widget
-        if (m->isMouseOver(x, y)) {
-            if (m->getId() != focusedWgId_) {
+        if (action->isMouseOver(x, y)) {
+            if (action->getId() != focusedWgId_) {
                 // Widget has now the focus : handle the event
-                m->handleFocusGained();
-                focusedWgId_ = m->getId();
+                action->handleFocusGained();
+                focusedWgId_ = action->getId();
             }
 
             // Pass the event to the widget
-            m->handleMouseMotion(x, y, state, modKeys);
+            action->handleMouseMotion(x, y, state, modKeys);
 
             return;
         }
@@ -458,17 +449,15 @@ void Menu::mouseDownEvent(int x, int y, int button, const int modKeys)
     }
 
     // The event was not processed by the menu, so give a chance to a widget
-    for (std::list < ActionWidget * >::iterator it = actions_.begin();
-         it != actions_.end(); it++) {
-        ActionWidget *m = *it;
+    for (const auto& action : actions_) {
 
-        if (!m->isVisible() || !m->isWidgetEnabled()) {
+        if (!action->isVisible() || !action->isWidgetEnabled()) {
             // Widget is not visible or enabled so it doesn't count
             continue;
         }
 
-        if (m->isMouseOver(x, y)) {
-            m->handleMouseDown(x, y, button, modKeys);
+        if (action->isMouseOver(x, y)) {
+            action->handleMouseDown(x, y, button, modKeys);
             return;
         }
     }

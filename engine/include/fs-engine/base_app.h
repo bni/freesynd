@@ -32,6 +32,8 @@
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
+#include "fs-engine/sound/soundmanager.h"
+#include "fs-engine/menus/menumanager.h"
 
 /*!
  * Base class for a Freesynd application.
@@ -39,7 +41,7 @@
 class BaseApp {
 public:
     //! Constructor
-    BaseApp();
+    BaseApp(MenuFactory *pMenuFactory);
     //! Destructor
     virtual ~BaseApp();
 
@@ -48,6 +50,14 @@ public:
 
     //! Destroy all components
     virtual void destroy() final;
+
+    SoundManager &gameSounds() {
+        return game_sounds_;
+    }
+
+    MenuManager &menus() {
+        return menus_;
+    }
 
 protected:
     //! Child class implements this method for initalization
@@ -59,6 +69,8 @@ protected:
     std::unique_ptr<AppContext> context_;
     std::unique_ptr<Screen> screen_;
     std::unique_ptr<System> system_;
+    MenuManager menus_;
+    SoundManager game_sounds_;
 };
 
 #endif // ENGINE_BASEAPP_H

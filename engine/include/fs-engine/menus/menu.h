@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-engine/io/keys.h"
@@ -105,7 +106,7 @@ public:
     //! Does common actions before leaving
     void leave();
 
-    //! Callback function : Childs can reimplement
+    //! Callback function : Children can re-implement
     /*!
      * Called just after the opening animation is played (if one has
      * been defined) and before the menu is rendered for the first time.
@@ -115,7 +116,7 @@ public:
     //! Main render function
     void render(DirtyList &dirtyList);
 
-    //! Callback function : Childs can reimplement
+    //! Callback function : Children can re-implement
     /*!
      * Called just before the closing animation is played (if one has
      * been defined) and the menu closed.
@@ -152,7 +153,7 @@ public:
 
 protected:
 
-    //! Callback function : Childs can reimplement
+    //! Callback function : Children can re-implement
     /*!
         * Called each time a menu is rendered.
         */
@@ -199,7 +200,7 @@ protected:
     /*! The list of all static widgets (MenuText).*/
     std::list<MenuText> statics_;
     /*! The list of all dynamic widgets (Option).*/
-    std::list<ActionWidget *> actions_;
+    std::list<std::unique_ptr<ActionWidget>> actions_;
     /*! An association between key and option for hotkeys.*/
     std::list<HotKey> hotKeys_;
     /*! A group of mutual exclusive ToggleAction.*/

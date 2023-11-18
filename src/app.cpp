@@ -56,10 +56,9 @@
 #include "menus/gamemenuid.h"
 
 App::App()
-    : BaseApp(),
+    : BaseApp(new GameMenuFactory()),
       session_(new GameSession()), game_ctlr_(new GameController),
-      intro_sounds_(), game_sounds_(), music_(),
-      menus_(new GameMenuFactory(), &game_sounds_)
+      intro_sounds_(), music_()
 {
     running_ = true;
 #ifdef _DEBUG
@@ -77,11 +76,6 @@ App::~App() {
  */
 bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
 
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("initializing menus..."))
-    if (!menus_.initialize(context_->isPlayIntro())) {
-        return false;
-    }
-
     LOG(Log::k_FLG_INFO, "App", "initialize", ("loading game sprites..."))
     if (!gameSprites().loaded())
         gameSprites().load();
@@ -95,9 +89,6 @@ bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
         LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading intro sounds..."))
         intro_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
     }
-
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game sounds..."))
-    game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading music..."))
     music_.initialize(disable_sound, system_->getAudio());

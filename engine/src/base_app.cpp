@@ -30,10 +30,12 @@
 #include "mixer/sdlmixeraudio.h"
 #endif // HAVE_SDL_MIXER
 
-BaseApp::BaseApp()
+BaseApp::BaseApp(MenuFactory *pMenuFactory)
     : context_(std::make_unique<AppContext>()),
       screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
-      system_(System::createSystem()) {
+      system_(System::createSystem()),
+      game_sounds_(),
+      menus_(pMenuFactory, &game_sounds_) {
 }
 
 BaseApp::~BaseApp() {}
@@ -55,6 +57,13 @@ bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
     if (!system_->initialize(context_->isFullScreen())) {
         return false;
     }
+
+    if (!menus_.initialize(context_->isPlayIntro())) {
+        return false;
+    }
+
+    LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game sounds..."))
+    game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
     return doInitialize(iniPath, disable_sound);
 }

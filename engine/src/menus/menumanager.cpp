@@ -73,6 +73,8 @@ bool MenuManager::initialize(bool loadIntroFont) {
     int size = 0, tabSize = 0;
     uint8 *data, *tabData;
 
+    LOG(Log::k_FLG_INFO, "MenuManager", "initialize", ("initializing menus..."))
+
     // Loads menu sprites
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading menu sprites ..."))
     tabData = File::loadOriginalFile("mspr-0.tab", tabSize);

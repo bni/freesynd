@@ -43,9 +43,7 @@
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
 #include "path.h"
-#include "fs-engine/menus/menumanager.h"
 #include "mapmanager.h"
-#include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/sound/musicmanager.h"
 #include "fs-engine/appcontext.h"
 #include "core/gamesession.h"
@@ -66,20 +64,12 @@ class App : public BaseApp, public Singleton < App > {
         return game_sprites_;
     }
 
-    MenuManager &menus() {
-        return menus_;
-    }
-
     MapManager &maps() {
         return maps_;
     }
 
     SoundManager &introSounds() {
         return intro_sounds_;
-    }
-
-    SoundManager &gameSounds() {
-        return game_sounds_;
     }
 
     MusicManager &music() {
@@ -140,10 +130,8 @@ private:
     std::auto_ptr<GameController> game_ctlr_;
 
     GameSpriteManager game_sprites_;
-    MenuManager menus_;
     MapManager maps_;
     SoundManager intro_sounds_;
-    SoundManager game_sounds_;
     MusicManager music_;
 };
 
