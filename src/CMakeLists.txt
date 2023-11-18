@@ -199,7 +199,6 @@ if (BUILD_DEV_TOOLS)
 
 	target_link_libraries (dump PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
-	target_compile_definitions (dump PRIVATE EDITOR_)
 else ()
 	# We only define an install target if we're doing a release build.
 	if (APPLE)

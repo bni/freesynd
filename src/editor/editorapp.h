@@ -74,7 +74,7 @@ protected:
 
 private:
     /*! Controls the game logic. */
-    std::auto_ptr<GameController> game_ctlr_;
+    std::unique_ptr<GameController> game_ctlr_;
 
     MapManager maps_;
     SoundManager intro_sounds_;

@@ -55,7 +55,7 @@
 
 EditorApp::EditorApp()
     : BaseApp(new EditorMenuFactory()),
-      game_ctlr_(new GameController),
+      game_ctlr_(std::make_unique<GameController>()),
       intro_sounds_()
 {
     running_ = true;

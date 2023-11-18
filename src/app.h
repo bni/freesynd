@@ -25,26 +25,17 @@
  *                                                                      *
  ************************************************************************/
 
-#ifdef EDITOR_
-// if EDITOR_ variable is defined that means that we are building
-// the editor so we want to load the EditorApp and not the regular App class.
-
-#include "editor/editorapp.h"
-
-#else
-
 #ifndef APP_H
 #define APP_H
 
 #include <memory>
 #include <vector>
 
-
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
+#include "fs-engine/appcontext.h"
 #include "path.h"
 #include "mapmanager.h"
-#include "fs-engine/appcontext.h"
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
@@ -119,4 +110,3 @@ private:
 
 #endif  // APP_H
 
-#endif // EDITOR_
