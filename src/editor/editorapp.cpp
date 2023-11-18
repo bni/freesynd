@@ -67,13 +67,6 @@ EditorApp::EditorApp()
 EditorApp::~EditorApp() {
 }
 
-/*!
- * Destroy the application.
- */
-void EditorApp::doDestroy() {
-    menus_.destroy();
-}
-
 
 /*!
  * Initialize application.
@@ -93,63 +86,10 @@ bool EditorApp::doInitialize(const std::string& iniPath, bool disable_sound) {
 }
 
 /*!
- * This method defines the application loop.
- * \param start_mission Mission id used to start the application in debug mode
- * In standard mode start_mission is always -1.
+ * This method returns the menu Id used to start the app.
  */
-void EditorApp::run() {
-
-    // load palette
-    menus().setDefaultPalette();
-
-#if 0
-    system_->updateScreen();
-    int nx = 0, ny = 0, my = 0;
-    for (int i = 0; i < tabSize / 6; i++) {
-        Sprite *s = menu_sprites_.sprite(i);
-        if (nx + s->width() >= Screen::kScreenWidth) {
-            nx = 0;
-            ny += my;
-            my = 0;
-        }
-        if (ny + s->height() > Screen::kScreenHeight)
-            break;
-        s->draw(nx, ny, 0);
-        system_->updateScreen();
-        nx += s->width();
-        if (s->height() > my)
-            my = s->height();
-    }
-
-    waitForKeyPress();
-    exit(1);
-#endif
-
-    // play title before going to main menu
-    menus_.gotoMenu(fs_edit_menus::kMenuIdMain);
-
-    int lasttick = system_->getTicks();
-    while (running_) {
-        int curtick = system_->getTicks();
-        int diff_ticks = curtick - lasttick;
-        menus_.updtSinceMouseDown(diff_ticks);
-        menus_.handleEvents();
-        if (diff_ticks < 30) {
-            system_->delay(30 - diff_ticks);
-            continue;
-        }
-        menus_.handleTick(diff_ticks);
-        menus_.renderMenu();
-        lasttick = curtick;
-        system_->updateScreen();
-    }
-
-#ifdef GP2X
-#ifndef WIN32
-    // return to the menu
-    chdir("/usr/gp2x");
-    execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
-#endif
-#endif
+int EditorApp::getStartMenuId() {
+    // Go directly to the main menu
+    return fs_edit_menus::kMenuIdMain;
 }
 

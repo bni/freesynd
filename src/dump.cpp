@@ -561,7 +561,8 @@ int main(int argc, char *argv[]) {
     Log::initialize("ALL", "editor.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
-    std::auto_ptr<EditorApp> app(new EditorApp());
+
+    auto app = std::make_unique<EditorApp>();
 
     if (app->initialize(iniPath, disable_sound)) {
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))

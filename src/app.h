@@ -67,18 +67,8 @@ class App : public BaseApp, public Singleton < App > {
         return intro_sounds_;
     }
 
-    //! Main application method
-    void run(int start_mission);
     //! Reset the application data
     bool reset();
-
-    void quit() {
-        running_ = false;
-    }
-
-    bool isRunning() const {
-        return running_;
-    }
 
     void waitForKeyPress();
 
@@ -94,9 +84,11 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const std::string& iniPath, bool disable_sound);
+    bool doInitialize(const CliParam& param);
     //! Destroy all components
     void doDestroy();
+    //! Define the menuid that will be displayed at the application's start
+    int getStartMenuId(const CliParam& param);
 
 private:
     void cheatFunds() {
@@ -114,11 +106,10 @@ private:
     void cheatEquipFancyWeapons();
 
 private:
-    bool running_;
     /*! A structure to hold player information.*/
-    std::auto_ptr<GameSession> session_;
+    std::unique_ptr<GameSession> session_;
     /*! Controls the game logic. */
-    std::auto_ptr<GameController> game_ctlr_;
+    std::unique_ptr<GameController> game_ctlr_;
 
     MapManager maps_;
     SoundManager intro_sounds_;

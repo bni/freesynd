@@ -37,6 +37,12 @@
 #include "fs-engine/sound/musicmanager.h"
 #include "fs-engine/menus/menumanager.h"
 
+struct CliParam {
+    std::string iniPath;
+    bool disableSound = false;
+    int startMission =-1;
+};
+
 /*!
  * Base class for a Freesynd application.
  */
@@ -48,10 +54,23 @@ public:
     virtual ~BaseApp();
 
     //! Initialize application
-    virtual bool initialize(const std::string& iniPath, bool disable_sound) final;
+    virtual bool initialize(const CliParam& param) final;
 
     //! Destroy all components
     virtual void destroy() final;
+
+    //! running loop
+    void run(const CliParam& param);
+
+    //! Stop the running loop
+    void quit() {
+        running_ = false;
+    }
+
+    //! Returns true if the application is running
+    bool isRunning() const {
+        return running_;
+    }
 
     SoundManager &gameSounds() {
         return game_sounds_;
@@ -71,9 +90,11 @@ public:
 
 protected:
     //! Child class implements this method for initialization
-    virtual bool doInitialize(const std::string& iniPath, bool disable_sound);
+    virtual bool doInitialize(const CliParam& param);
     //! Child class overloads this method for destroying resources
     virtual void doDestroy();
+    //! Define the menuid that will be displayed at the application's start
+    virtual int getStartMenuId(const CliParam& param) = 0;
 
     /*! A structure to hold general application information.*/
     std::unique_ptr<AppContext> context_;
@@ -83,6 +104,8 @@ protected:
     SoundManager game_sounds_;
     GameSpriteManager game_sprites_;
     MusicManager music_;
+
+    bool running_;
 };
 
 #endif // ENGINE_BASEAPP_H

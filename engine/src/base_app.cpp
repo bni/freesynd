@@ -40,10 +40,10 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
 
 BaseApp::~BaseApp() {}
 
-bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
+bool BaseApp::initialize(const CliParam& param) {
     LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
-    if (!context_->readConfiguration(iniPath)) {
-        FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", iniPath.c_str()))
+    if (!context_->readConfiguration(param.iniPath)) {
+        FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", param.iniPath.c_str()))
         return false;
     }
 
@@ -68,11 +68,11 @@ bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
     }
 
     LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("Loading game sounds..."))
-    game_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_GAME);
+    game_sounds_.initialize(param.disableSound, system_->getAudio(), SoundManager::SAMPLES_GAME);
 
-    music_.initialize(disable_sound, system_->getAudio());
+    music_.initialize(param.disableSound, system_->getAudio());
 
-    bool resInit = doInitialize(iniPath, disable_sound);
+    bool resInit = doInitialize(param);
     if (resInit) {
         LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialized with success"))
     }
@@ -80,13 +80,76 @@ bool BaseApp::initialize(const std::string& iniPath, bool disable_sound) {
     return resInit;
 }
 
-bool BaseApp::doInitialize(const std::string& iniPath, bool disable_sound) {
+bool BaseApp::doInitialize(const CliParam& param) {
    return true;
 }
 
 void BaseApp::destroy() {
+    menus_.destroy();
+
     doDestroy();
 }
 
 void BaseApp::doDestroy() {}
+
+/*!
+ * This method defines the application loop.
+ * \param start_mission Mission id used to start the application in debug mode
+ * In standard mode start_mission is always -1.
+ */
+void BaseApp::run(const CliParam& param) {
+
+    // load palette
+    menus().setDefaultPalette();
+
+#if 0
+    system_->updateScreen();
+    int nx = 0, ny = 0, my = 0;
+    for (int i = 0; i < tabSize / 6; i++) {
+        Sprite *s = menu_sprites_.sprite(i);
+        if (nx + s->width() >= Screen::kScreenWidth) {
+            nx = 0;
+            ny += my;
+            my = 0;
+        }
+        if (ny + s->height() > Screen::kScreenHeight)
+            break;
+        s->draw(nx, ny, 0);
+        system_->updateScreen();
+        nx += s->width();
+        if (s->height() > my)
+            my = s->height();
+    }
+
+    waitForKeyPress();
+    exit(1);
+#endif
+
+    // Then we go to the brief menu
+    menus_.gotoMenu(getStartMenuId(param));
+
+    int lasttick = system_->getTicks();
+    while (running_) {
+        int curtick = system_->getTicks();
+        int diff_ticks = curtick - lasttick;
+        menus_.updtSinceMouseDown(diff_ticks);
+        menus_.handleEvents();
+        if (diff_ticks < 30) {
+            system_->delay(30 - diff_ticks);
+            continue;
+        }
+        menus_.handleTick(diff_ticks);
+        menus_.renderMenu();
+        lasttick = curtick;
+        system_->updateScreen();
+    }
+
+#ifdef GP2X
+#ifndef WIN32
+    // return to the menu
+    chdir("/usr/gp2x");
+    execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
+#endif
+#endif
+}
 

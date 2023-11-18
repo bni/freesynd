@@ -156,19 +156,17 @@ int main(int argc, char *argv[]) {
 #else
     srand((unsigned) time(NULL));
 #endif
+    CliParam param;
+    // If different from -1, the game will start directly on mission
+    // with the given id
+    param.startMission = -1;
+    param.disableSound = false;
 
     // This variable stores the index of the cheat code param on
     // the command line
     int cheatCodeIndex = -1;
-    // If different from -1, the game will start directly on mission
-    // with the given id
-    int start_mission = -1;
-    // This variable stores the path to the Freesynd configuration file.
-    std::string iniPath;
     // This variable stores the log mask to init log. By default we activate all logs
     std::string logMask = "ALL";
-
-    bool disable_sound = false;
 
     for (int i = 1; i < argc; ++i) {
 #ifdef _DEBUG
@@ -179,7 +177,7 @@ int main(int argc, char *argv[]) {
         if (0 == strcmp("-m", argv[i]) || 0 == strcmp("--mission", argv[i])) {
             int mission = atoi(argv[i + 1]);
             if (mission >= 0 && mission < 50) {
-                start_mission = mission;
+                param.startMission = mission;
             }
             i++;
         }
@@ -208,10 +206,10 @@ int main(int argc, char *argv[]) {
         }
         if (0 == strcmp("-i", argv[i]) || 0 == strcmp("--ini", argv[i])) {
             i++;
-            iniPath = argv[i];
+            param.iniPath = argv[i];
         }
         if (0 == strcmp("--nosound", argv[i])) {
-            disable_sound = true;
+            param.disableSound = true;
         }
     }
 
@@ -219,9 +217,9 @@ int main(int argc, char *argv[]) {
     Log::initialize(logMask, "game.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
-    std::auto_ptr<App> app(new App());
+    auto app = std::make_unique<App>();
 
-    if (app->initialize(iniPath, disable_sound)) {
+    if (app->initialize(param)) {
         // setting the cheat codes
         if (cheatCodeIndex != -1) {
             std::string cheats = argv[cheatCodeIndex];
@@ -236,7 +234,7 @@ int main(int argc, char *argv[]) {
 
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Starting game loop"))
-        app->run(start_mission);
+        app->run(param);
     } else {
         LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application failed"))
     }

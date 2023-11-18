@@ -56,7 +56,7 @@
 
 App::App()
     : BaseApp(new GameMenuFactory()),
-      session_(new GameSession()), game_ctlr_(new GameController),
+      session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>()),
       intro_sounds_()
 {
     running_ = true;
@@ -73,7 +73,7 @@ App::~App() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
+bool App::doInitialize(const CliParam& param) {
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("loading game tileset..."))
     if (!maps().initialize()) {
@@ -82,7 +82,7 @@ bool App::doInitialize(const std::string& iniPath, bool disable_sound) {
 
     if (context_->isPlayIntro()) {
         LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading intro sounds..."))
-        intro_sounds_.initialize(disable_sound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
+        intro_sounds_.initialize(param.disableSound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
     }
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
@@ -260,7 +260,6 @@ bool App::reset() {
  */
 void App::doDestroy() {
     game_ctlr_->clearAllListeners();
-    menus_.destroy();
 
     game_ctlr_->destroy();
 }
@@ -279,42 +278,18 @@ void App::waitForKeyPress() {
  * \param start_mission Mission id used to start the application in debug mode
  * In standard mode start_mission is always -1.
  */
-void App::run(int start_mission) {
-
-    // load palette
-    menus().setDefaultPalette();
-
-#if 0
-    system_->updateScreen();
-    int nx = 0, ny = 0, my = 0;
-    for (int i = 0; i < tabSize / 6; i++) {
-        Sprite *s = menu_sprites_.sprite(i);
-        if (nx + s->width() >= Screen::kScreenWidth) {
-            nx = 0;
-            ny += my;
-            my = 0;
-        }
-        if (ny + s->height() > Screen::kScreenHeight)
-            break;
-        s->draw(nx, ny, 0);
-        system_->updateScreen();
-        nx += s->width();
-        if (s->height() > my)
-            my = s->height();
-    }
-
-    waitForKeyPress();
-    exit(1);
-#endif
-
-    if (start_mission == -1) {
+/*!
+ * This method returns the menu Id used to start the app.
+ */
+int App::getStartMenuId(const CliParam& param) {
+    if (param.startMission == -1) {
         if (context_->isPlayIntro()) {
-            menus_.gotoMenu(fs_game_menus::kMenuIdFliIntro);
+            return fs_game_menus::kMenuIdFliIntro;
             // Update intro flag so intro won't be played next time
             context_->updateIntroFlag();
         } else {
             // play title before going to main menu
-            menus_.gotoMenu(fs_game_menus::kMenuIdFliTitle);
+            return fs_game_menus::kMenuIdFliTitle;
         }
     }
     else {
@@ -323,39 +298,16 @@ void App::run(int start_mission) {
         // First, we find the block associated with the given
         // mission number
         for (int i = 0; i < 50; i++) {
-            if (g_Session.getBlock(i).mis_id == start_mission) {
+            if (g_Session.getBlock(i).mis_id == param.startMission) {
                 g_Session.setSelectedBlockId(i);
                 break;
             }
         }
         // Then we go to the brief menu
-        menus_.gotoMenu(fs_game_menus::kMenuIdBrief);
+        return fs_game_menus::kMenuIdBrief;
     }
-
-    int lasttick = system_->getTicks();
-    while (running_) {
-        int curtick = system_->getTicks();
-        int diff_ticks = curtick - lasttick;
-        menus_.updtSinceMouseDown(diff_ticks);
-        menus_.handleEvents();
-        if (diff_ticks < 30) {
-            system_->delay(30 - diff_ticks);
-            continue;
-        }
-        menus_.handleTick(diff_ticks);
-        menus_.renderMenu();
-        lasttick = curtick;
-        system_->updateScreen();
-    }
-
-#ifdef GP2X
-#ifndef WIN32
-    // return to the menu
-    chdir("/usr/gp2x");
-    execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
-#endif
-#endif
 }
+
 
 bool App::saveGameToFile(int fileSlot, std::string name) {
     LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving %s in slot %d", name.c_str(), fileSlot))

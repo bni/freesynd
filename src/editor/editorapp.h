@@ -56,17 +56,6 @@ class EditorApp : public BaseApp, public Singleton < EditorApp > {
         return intro_sounds_;
     }
 
-    //! Main application method
-    void run();
-
-    void quit() {
-        running_ = false;
-    }
-
-    bool isRunning() const {
-        return running_;
-    }
-
     //! Return the list of missions found in the search menu
     std::list<int> & getMissionResultList() { return searchResLst_;}
 
@@ -79,11 +68,11 @@ protected:
     //! Initialize application
     bool doInitialize(const std::string& iniPath, bool disable_sound);
     //! Destroy all components
-    void doDestroy();
+    void doDestroy() {}
+    //! Define the menuid that will be displayed at the application's start
+    int getStartMenuId();
 
 private:
-    bool running_;
-
     /*! Controls the game logic. */
     std::auto_ptr<GameController> game_ctlr_;
 
