@@ -230,7 +230,7 @@ void GameSpriteManager::load()
     printf("index contains %i animations\n", (int)index_.size());
 }
 
-bool GameSpriteManager::drawFrame(int animNum, int frameNum, int x, int y)
+bool GameSpriteManager::drawFrame(int animNum, int frameNum, const Point2D &screenPos)
 {
     assert(animNum < (int) index_.size());
 
@@ -245,7 +245,7 @@ bool GameSpriteManager::drawFrame(int animNum, int frameNum, int x, int y)
 
     GameSpriteFrameElement *e = &elements_[f->first_element_];
     while (1) {
-        sprites_[e->sprite_].draw(x + e->off_x_, y + e->off_y_, 0,
+        sprites_[e->sprite_].draw(screenPos.x + e->off_x_, screenPos.y + e->off_y_, 0,
                                   e->flipped_);
         if (e->next_element_ == 0)
             break;

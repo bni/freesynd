@@ -342,9 +342,8 @@ bool WeaponInstance::consumeAmmoForEnergyShield(int elapsed) {
     return ammo_remaining_ == 0;
 }
 
-void WeaponInstance::draw(int x, int y) {
-    addOffs(x, y);
-    g_App.gameSprites().drawFrame(pWeaponClass_->anim(), frame_, x, y);
+void WeaponInstance::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
+    spriteMgr.drawFrame(pWeaponClass_->anim(), frame_, addOffs(screenPos));
 }
 
 /*!

@@ -155,7 +155,8 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
             topY + 6 + 36 - ydiff, 7, ydiff, 12);
 
         //draw animation within selectors
-        pAgent->drawSelectorAnim(topX + 32, topY + 38);
+        Point2D top = {topX + 32, topY + 38};
+        pAgent->drawSelectorAnim(top);
 
         // draw IPA, for alive only agents
         if (pAgent->isAlive()) {

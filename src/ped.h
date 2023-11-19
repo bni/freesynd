@@ -94,41 +94,41 @@ public:
 
     void setPersuadeAnim(int anim) { persuade_anim_ = anim; }
 
-    bool drawStandFrame(int x, int y, int dir, int frame,
+    bool drawStandFrame(const Point2D &screenPos, int dir, int frame,
             Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
     int lastStandFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawWalkFrame(int x, int y, int dir, int frame,
+    bool drawWalkFrame(const Point2D &screenPos, int dir, int frame,
             Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
     int lastWalkFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawStandFireFrame(int x, int y, int dir, int frame,
+    bool drawStandFireFrame(const Point2D &screenPos, int dir, int frame,
             Weapon::WeaponAnimIndex weapon);
     int lastStandFireFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawWalkFireFrame(int x, int y, int dir, int frame,
+    bool drawWalkFireFrame(const Point2D &screenPos, int dir, int frame,
             Weapon::WeaponAnimIndex weapon);
     int lastWalkFireFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawDieFrame(int x, int y, int frame);
+    bool drawDieFrame(const Point2D &screenPos, int frame);
     int lastDieFrame();
 
-    void drawDeadFrame(int x, int y, int frame);
-    void drawDeadAgentFrame(int x, int y, int frame);
+    void drawDeadFrame(const Point2D &screenPos, int frame);
+    void drawDeadAgentFrame(const Point2D &screenPos, int frame);
 
-    void drawHitFrame(int x, int y, int dir, int frame);
+    void drawHitFrame(const Point2D &screenPos, int dir, int frame);
     int lastHitFrame(int dir);
-    void drawPickupFrame(int x, int y, int frame);
+    void drawPickupFrame(const Point2D &screenPos, int frame);
     int lastPickupFrame();
-    void drawVaporizeFrame(int x, int y, int dir, int frame);
+    void drawVaporizeFrame(const Point2D &screenPos, int dir, int frame);
     int lastVaporizeFrame(int dir);
-    void drawSinkFrame(int x, int y, int frame);
+    void drawSinkFrame(const Point2D &screenPos, int frame);
     int lastSinkFrame();
 
-    void drawStandBurnFrame(int x, int y, int frame);
-    void drawWalkBurnFrame(int x, int y, int frame);
-    void drawDieBurnFrame(int x, int y, int frame);
+    void drawStandBurnFrame(const Point2D &screenPos, int frame);
+    void drawWalkBurnFrame(const Point2D &screenPos, int frame);
+    void drawDieBurnFrame(const Point2D &screenPos, int frame);
     int lastDieBurnFrame();
-    void drawSmokeBurnFrame(int x, int y, int frame);
-    void drawDeadBurnFrame(int x, int y, int frame);
+    void drawSmokeBurnFrame(const Point2D &screenPos, int frame);
+    void drawDeadBurnFrame(const Point2D &screenPos, int frame);
 
-    void drawPersuadeFrame(int x, int y, int frame);
+    void drawPersuadeFrame(const Point2D &screenPos, int frame);
     int lastPersuadeFrame();
 
 protected:
@@ -248,7 +248,7 @@ public:
         pa_smAll = 0xFFFF
     };
 
-    void draw(int x, int y);
+    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
 
     void setFrame(int f) { frame_ = f; }
 
@@ -262,7 +262,7 @@ public:
     void synchDrawnAnimWithActionState(void);
     bool animate(int elapsed, Mission *mission);
 
-    void drawSelectorAnim(int x, int y);
+    void drawSelectorAnim(const Point2D &screenPos);
     //! Update frame to render
     bool updateAnimation(int elapsed);
     //! Set state for ped (replace switchActionStateTo)

@@ -7,6 +7,7 @@
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
  *   Copyright (C) 2010  Bohdan Stelmakh <chamel@users.sourceforge.net> *
+ *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -24,39 +25,7 @@
  *                                                                      *
  ************************************************************************/
 
-#ifndef PEDMANAGER_H
-#define PEDMANAGER_H
+#include "fs-kernel/model/sfxobject.h"
 
-#include <vector>
+#include "fs-utils/log/log.h"
 
-#include "fs-utils/common.h"
-#include "ped.h"
-#include "fs-kernel/model/leveldata.h"
-
-
-/*!
- * Pedestrians manager class.
- */
-class PedManager {
-public:
-    PedManager();
-    virtual ~PedManager() {}
-
-    PedInstance *loadInstance(const LevelData::People & ped_data, uint16 ped_idx, int map, uint32 playerGroupId);
-protected:
-    void initAnimation(Ped *pedanim, unsigned short baseAnim);
-    //! Initialize the ped instance as our agent
-    void initOurAgent(Agent *p_agent, unsigned int obj_group_id, PedInstance *pPed);
-    //! Initialize the ped instance as an enemy agent
-    void initEnemyAgent(PedInstance *pPed);
-    //! Initialize the ped instance as a guard
-    void initGuard(PedInstance *pPed);
-    //! Initialize the ped instance as a police
-    void initPolice(PedInstance *pPed);
-    //! Initialize the ped instance as a civilian
-    void initCivilian(PedInstance *pPed);
-    //! Initialize the ped instance as a criminal
-    void initCriminal(PedInstance *pPed);
-};
-
-#endif

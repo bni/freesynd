@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include "mapobject.h"
+#include "fs-kernel/model/sfxobject.h"
 #include "fs-engine/sound/sound.h"
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/misc/timer.h"
@@ -334,8 +335,8 @@ public:
     void activate();
     void deactivate();
 
-    bool animate(int elapsed);
-    void draw(int x, int y);
+    bool animate(int elapsed) override;
+    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
 
     void handleHit(fs_dmg::DamageToInflict & d);
 

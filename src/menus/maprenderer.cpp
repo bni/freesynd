@@ -37,6 +37,7 @@
 #include "fs-engine/system/system.h"
 #include "menus/squadselection.h"
 #include "fs-engine/config.h"
+#include "app.h"
 
 void MapRenderer::init(Mission *pMission, SquadSelection *pSelection) {
     pMission_ = pMission;
@@ -229,7 +230,7 @@ int MapRenderer::drawObjectsOnTile(const TilePoint & tilePos, const Point2D &scr
         ObjectToDraw *pObj = it->second;
         objectsByTile_.erase(it);
         while(pObj != NULL) {
-            pObj->getObject()->draw(screenPos.x, screenPos.y);
+            pObj->getObject()->draw(screenPos, g_App.gameSprites());
             ObjectToDraw *pNext = pObj->getNext();
             pool_.releaseResource(pObj);
             pObj = pNext;

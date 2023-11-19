@@ -90,7 +90,7 @@ public:
 
     int numAnims() { return (int) index_.size(); }
 
-    bool drawFrame(int animNum, int frameNum, int x, int y);
+    bool drawFrame(int animNum, int frameNum, const Point2D &screenPos);
     bool lastFrame(int animNum, int frameNum);
     int lastFrame(int animNum);
     int getFrameFromFrameIndx(int frameIndx);

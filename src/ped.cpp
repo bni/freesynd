@@ -49,12 +49,12 @@ Ped::Ped() {
     memset(walk_fire_anims_, 0, sizeof(walk_fire_anims_));
 }
 
-bool Ped::drawStandFrame(int x, int y, int dir, int frame,
+bool Ped::drawStandFrame(const Point2D &screenPos, int dir, int frame,
                          Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon < NUM_ANIMS);
     return g_App.gameSprites().drawFrame(
-            stand_anims_[weapon] + dir, frame, x, y);
+            stand_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastStandFrame(int dir, Weapon::WeaponAnimIndex weapon) {
@@ -62,12 +62,12 @@ int Ped::lastStandFrame(int dir, Weapon::WeaponAnimIndex weapon) {
     return g_App.gameSprites().lastFrame(stand_anims_[weapon] + dir);
 }
 
-bool Ped::drawWalkFrame(int x, int y, int dir, int frame,
+bool Ped::drawWalkFrame(const Point2D &screenPos, int dir, int frame,
                         Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon < NUM_ANIMS);
     return g_App.gameSprites().drawFrame(
-            walk_anims_[weapon] + dir, frame, x, y);
+            walk_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastWalkFrame(int dir, Weapon::WeaponAnimIndex weapon) {
@@ -75,11 +75,11 @@ int Ped::lastWalkFrame(int dir, Weapon::WeaponAnimIndex weapon) {
     return g_App.gameSprites().lastFrame(walk_anims_[weapon] + dir);
 }
 
-bool Ped::drawStandFireFrame(int x, int y, int dir, int frame,
+bool Ped::drawStandFireFrame(const Point2D &screenPos, int dir, int frame,
         Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_App.gameSprites().drawFrame(
-            stand_fire_anims_[weapon] + dir, frame, x, y);
+            stand_fire_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastStandFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
@@ -89,11 +89,11 @@ int Ped::lastStandFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
             stand_fire_anims_[weapon] + dir);
 }
 
-bool Ped::drawWalkFireFrame(int x, int y, int dir, int frame,
+bool Ped::drawWalkFireFrame(const Point2D &screenPos, int dir, int frame,
         Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_App.gameSprites().drawFrame(
-            walk_fire_anims_[weapon] + dir, frame, x, y);
+            walk_fire_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastWalkFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
@@ -102,32 +102,32 @@ int Ped::lastWalkFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
     return g_App.gameSprites().lastFrame(walk_fire_anims_[weapon] + dir);
 }
 
-bool Ped::drawDieFrame(int x, int y, int frame) {
-    return g_App.gameSprites().drawFrame(die_anim_, frame, x, y);
+bool Ped::drawDieFrame(const Point2D &screenPos, int frame) {
+    return g_App.gameSprites().drawFrame(die_anim_, frame, screenPos);
 }
 
 int Ped::lastDieFrame() {
     return g_App.gameSprites().lastFrame(die_anim_);
 }
 
-void Ped::drawDeadFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(dead_anim_, frame, x, y);
+void Ped::drawDeadFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(dead_anim_, frame, screenPos);
 }
 
-void Ped::drawDeadAgentFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(dead_agent_anim_, frame, x, y);
+void Ped::drawDeadAgentFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(dead_agent_anim_, frame, screenPos);
 }
 
-void Ped::drawHitFrame(int x, int y, int dir, int frame) {
-    g_App.gameSprites().drawFrame(hit_anim_ + dir / 2, frame, x, y);
+void Ped::drawHitFrame(const Point2D &screenPos, int dir, int frame) {
+    g_App.gameSprites().drawFrame(hit_anim_ + dir / 2, frame, screenPos);
 }
 
 int Ped::lastHitFrame(int dir) {
     return g_App.gameSprites().lastFrame(hit_anim_ + dir / 2);
 }
 
-void Ped::drawPickupFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(pickup_anim_, frame, x, y);
+void Ped::drawPickupFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(pickup_anim_, frame, screenPos);
 }
 
 int Ped::lastPickupFrame() {
@@ -135,48 +135,48 @@ int Ped::lastPickupFrame() {
     return g_App.gameSprites().lastFrame(pickup_anim_);
 }
 
-void Ped::drawVaporizeFrame(int x, int y, int dir, int frame) {
-    g_App.gameSprites().drawFrame(vaporize_anim_ + dir / 2, frame, x, y);
+void Ped::drawVaporizeFrame(const Point2D &screenPos, int dir, int frame) {
+    g_App.gameSprites().drawFrame(vaporize_anim_ + dir / 2, frame, screenPos);
 }
 
 int Ped::lastVaporizeFrame(int dir) {
     return g_App.gameSprites().lastFrame(vaporize_anim_ + dir / 2);
 }
 
-void Ped::drawSinkFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(sink_anim_, frame, x, y);
+void Ped::drawSinkFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(sink_anim_, frame, screenPos);
 }
 
 int Ped::lastSinkFrame() {
     return g_App.gameSprites().lastFrame(sink_anim_);
 }
 
-void Ped::drawStandBurnFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(stand_burn_anim_, frame, x, y);
+void Ped::drawStandBurnFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(stand_burn_anim_, frame, screenPos);
 }
 
-void Ped::drawWalkBurnFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(walk_burn_anim_, frame, x, y);
+void Ped::drawWalkBurnFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(walk_burn_anim_, frame, screenPos);
 }
 
-void Ped::drawDieBurnFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(die_burn_anim_, frame, x, y);
+void Ped::drawDieBurnFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(die_burn_anim_, frame, screenPos);
 }
 
 int Ped::lastDieBurnFrame() {
     return g_App.gameSprites().lastFrame(die_burn_anim_);
 }
 
-void Ped::drawSmokeBurnFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(smoke_burn_anim_, frame, x, y);
+void Ped::drawSmokeBurnFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(smoke_burn_anim_, frame, screenPos);
 }
 
-void Ped::drawDeadBurnFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(dead_burn_anim_, frame, x, y);
+void Ped::drawDeadBurnFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(dead_burn_anim_, frame, screenPos);
 }
 
-void Ped::drawPersuadeFrame(int x, int y, int frame) {
-    g_App.gameSprites().drawFrame(persuade_anim_, frame, x, y);
+void Ped::drawPersuadeFrame(const Point2D &screenPos, int frame) {
+    g_App.gameSprites().drawFrame(persuade_anim_, frame, screenPos);
 }
 
 int Ped::lastPersuadeFrame() {
@@ -751,136 +751,136 @@ PedInstance::~PedInstance()
     destroyUseWeaponAction();
 }
 
-void PedInstance::draw(int x, int y) {
+void PedInstance::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
 
     // ensure on map
-    if (x < 110 || y < 0 || map_ == -1)
+    if (screenPos.x < 110 || screenPos.y < 0 || map_ == -1)
         return;
 
     Weapon::WeaponAnimIndex weapon_idx =
         selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
-    addOffs(x, y);
+    Point2D posWithOffs = addOffs(screenPos);
 
 
     switch(drawnAnim()){
         case PedInstance::ad_HitAnim:
-            ped_->drawHitFrame(x, y, getDirection(), frame_);
+            ped_->drawHitFrame(posWithOffs, getDirection(), frame_);
             break;
         case PedInstance::ad_DieAnim:
-            ped_->drawDieFrame(x, y, frame_);
+            ped_->drawDieFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_DeadAnim:
-            ped_->drawDeadFrame(x, y, frame_);
+            ped_->drawDeadFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_DeadAgentAnim:
-            ped_->drawDeadAgentFrame(x, y, frame_);
+            ped_->drawDeadAgentFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_PickupAnim:
-            ped_->drawPickupFrame(x, y, frame_);
+            ped_->drawPickupFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_PutdownAnim:
-            ped_->drawPickupFrame(x, y, frame_);
+            ped_->drawPickupFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_WalkAnim:
-            ped_->drawWalkFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFrame(posWithOffs, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandAnim:
-            ped_->drawStandFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFrame(posWithOffs, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_WalkFireAnim:
-            ped_->drawWalkFireFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFireFrame(posWithOffs, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandFireAnim:
-            ped_->drawStandFireFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFireFrame(posWithOffs, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_VaporizeAnim:
-            ped_->drawVaporizeFrame(x, y, getDirection(), frame_);
+            ped_->drawVaporizeFrame(posWithOffs, getDirection(), frame_);
             break;
         case PedInstance::ad_SinkAnim:
-            ped_->drawSinkFrame(x, y, frame_);
+            ped_->drawSinkFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_StandBurnAnim:
-            ped_->drawStandBurnFrame(x, y, frame_);
+            ped_->drawStandBurnFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_WalkBurnAnim:
-            ped_->drawWalkBurnFrame(x, y, frame_);
+            ped_->drawWalkBurnFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_DieBurnAnim:
-            ped_->drawDieBurnFrame(x, y, frame_);
+            ped_->drawDieBurnFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_SmokeBurnAnim:
-            ped_->drawSmokeBurnFrame(x, y, frame_);
+            ped_->drawSmokeBurnFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_DeadBurnAnim:
-            ped_->drawDeadBurnFrame(x, y, frame_);
+            ped_->drawDeadBurnFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_PersuadedAnim:
-            ped_->drawPersuadeFrame(x, y, frame_);
+            ped_->drawPersuadeFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_NoAnimation:
             break;
     }
 }
 
-void PedInstance::drawSelectorAnim(int x, int y) {
+void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
 
     Weapon::WeaponAnimIndex weapon_idx =
         selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
 
     switch(drawnAnim()) {
         case PedInstance::ad_HitAnim:
-            ped_->drawHitFrame(x, y, getDirection(), frame_);
+            ped_->drawHitFrame(screenPos, getDirection(), frame_);
             break;
         case PedInstance::ad_DieAnim:
-            ped_->drawDieFrame(x, y, frame_);
+            ped_->drawDieFrame(screenPos, frame_);
             break;
         case PedInstance::ad_DeadAnim:
-            ped_->drawDeadFrame(x, y, frame_);
+            ped_->drawDeadFrame(screenPos, frame_);
             break;
         case PedInstance::ad_DeadAgentAnim:
-            ped_->drawDeadAgentFrame(x, y, frame_);
+            ped_->drawDeadAgentFrame(screenPos, frame_);
             break;
         case PedInstance::ad_PickupAnim:
-            ped_->drawPickupFrame(x, y, frame_);
+            ped_->drawPickupFrame(screenPos, frame_);
             break;
         case PedInstance::ad_PutdownAnim:
-            ped_->drawPickupFrame(x, y, frame_);
+            ped_->drawPickupFrame(screenPos, frame_);
             break;
         case PedInstance::ad_WalkAnim:
-            ped_->drawWalkFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFrame(screenPos, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandAnim:
-            ped_->drawStandFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFrame(screenPos, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_WalkFireAnim:
-            ped_->drawWalkFireFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFireFrame(screenPos, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandFireAnim:
-            ped_->drawStandFireFrame(x, y, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFireFrame(screenPos, getDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_VaporizeAnim:
-            ped_->drawVaporizeFrame(x, y, getDirection(), frame_);
+            ped_->drawVaporizeFrame(screenPos, getDirection(), frame_);
             break;
         case PedInstance::ad_SinkAnim:
-            ped_->drawSinkFrame(x, y, frame_);
+            ped_->drawSinkFrame(screenPos, frame_);
             break;
         case PedInstance::ad_StandBurnAnim:
-            ped_->drawStandBurnFrame(x, y, frame_);
+            ped_->drawStandBurnFrame(screenPos, frame_);
             break;
         case PedInstance::ad_WalkBurnAnim:
-            ped_->drawWalkBurnFrame(x, y, frame_);
+            ped_->drawWalkBurnFrame(screenPos, frame_);
             break;
         case PedInstance::ad_DieBurnAnim:
-            ped_->drawDieBurnFrame(x, y, frame_);
+            ped_->drawDieBurnFrame(screenPos, frame_);
             break;
         case PedInstance::ad_SmokeBurnAnim:
-            ped_->drawSmokeBurnFrame(x, y, frame_);
+            ped_->drawSmokeBurnFrame(screenPos, frame_);
             break;
         case PedInstance::ad_DeadBurnAnim:
-            ped_->drawDeadBurnFrame(x, y, frame_);
+            ped_->drawDeadBurnFrame(screenPos, frame_);
             break;
         case PedInstance::ad_PersuadedAnim:
-            ped_->drawPersuadeFrame(x, y, frame_);
+            ped_->drawPersuadeFrame(screenPos, frame_);
             break;
         case PedInstance::ad_NoAnimation:
 #ifdef _DEBUG

@@ -51,17 +51,17 @@ VehicleAnimation::VehicleAnimation() {
     vehicle_anim_ = kNormalAnim;
 }
 
-void VehicleAnimation::draw(int x, int y, int dir, int frame)
+void VehicleAnimation::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr, int dir, int frame)
 {
     switch (vehicle_anim_) {
         case kNormalAnim:
-            g_App.gameSprites().drawFrame(anims_ + dir * 2, frame, x, y);
+            spriteMgr.drawFrame(anims_ + dir * 2, frame, screenPos);
             break;
         case kOnFireAnim:
-            g_App.gameSprites().drawFrame(anims_burning_ + dir, frame, x, y);
+            spriteMgr.drawFrame(anims_burning_ + dir, frame, screenPos);
             break;
         case kBurntAnim:
-            g_App.gameSprites().drawFrame(anims_burnt_ + dir, frame, x, y);
+            spriteMgr.drawFrame(anims_burnt_ + dir, frame, screenPos);
             break;
     }
 }
@@ -72,16 +72,17 @@ void VehicleAnimation::set_base_anims(int anims) {
     anims_burnt_ = anims + 12;
 }
 
-void Vehicle::draw(int x, int y)
+void Vehicle::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
 {
-    y += TILE_HEIGHT / 3;
-    addOffs(x, y);
+    Point2D posWithOffs = screenPos;
+    posWithOffs.y += TILE_HEIGHT / 3;
+    posWithOffs = addOffs(posWithOffs);
 
     // ensure on map
-    if (x < 90 || y < -20)
+    if (posWithOffs.x < 90 || posWithOffs.y < -20)
         return;
 
-    animation_->draw(x, y, getDirection(4), frame_);
+    animation_->draw(posWithOffs, spriteMgr, getDirection(4), frame_);
 }
 
 bool Vehicle::animate(int elapsed)

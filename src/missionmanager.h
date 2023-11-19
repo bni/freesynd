@@ -28,7 +28,7 @@
 #include <map>
 
 #include "fs-utils/common.h"
-#include "model/leveldata.h"
+#include "fs-kernel/model/leveldata.h"
 #include "ia/actions.h"
 
 class Mission;
