@@ -24,7 +24,7 @@
 #define PATHSURFACES_H
 
 #include "fs-utils/common.h"
-#include "model/position.h"
+#include "fs-kernel/model/position.h"
 
 
     class floodPointDesc {

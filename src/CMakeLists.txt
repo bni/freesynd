@@ -92,9 +92,9 @@ set(HEADERS
 #	model/mod.h
 	model/vehicle.h
 	model/weapon.h
-	model/position.h
+#	model/position.h
 	model/objectivedesc.h
-	model/leveldata.h
+#	model/leveldata.h
 	model/damage.h
 	model/shot.h
 	model/weaponholder.h

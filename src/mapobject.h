@@ -30,7 +30,7 @@
 
 #include <math.h>
 #include <list>
-#include "model/position.h"
+#include "fs-kernel/model/position.h"
 #include "model/damage.h"
 #include "path.h"
 #include "pathsurfaces.h"

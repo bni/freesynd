@@ -29,7 +29,7 @@
 #ifndef MODEL_DAMAGE_H_
 #define MODEL_DAMAGE_H_
 
-#include "model/position.h"
+#include "fs-kernel/model/position.h"
 
 class ShootableMapObject;
 class WeaponInstance;

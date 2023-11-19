@@ -25,10 +25,9 @@
 
 #include "model/squad.h"
 #include "agentmanager.h"
-#include "model/position.h"
-
-class Mission;
-class Vehicle;
+#include "fs-kernel/model/position.h"
+#include "model/vehicle.h"
+#include "mission.h"
 
 /*!
  * This class manages the agents selection during a gameplay session.

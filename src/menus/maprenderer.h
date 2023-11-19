@@ -35,7 +35,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
-#include "model/position.h"
+#include "fs-kernel/model/position.h"
 
 class Mission;
 class Map;

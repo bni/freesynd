@@ -1,6 +1,8 @@
 
 set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mod.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/position.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/leveldata.h"
     )
 
 set(SOURCE_LIST

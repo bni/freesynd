@@ -24,7 +24,7 @@
 #define CORE_SQUAD_H_
 
 #include "fs-utils/common.h"
-#include "model/position.h"
+#include "fs-kernel/model/position.h"
 
 class PedInstance;
 
