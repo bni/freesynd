@@ -66,7 +66,8 @@ void AnimMenu::handleRender(DirtyList &dirtyList)
 {
     g_Screen.drawRect(150, 110, 350, 150);
     //GameSpriteFrame sprite = g_App.gameSprites().
-    g_App.gameSprites().drawFrame(animId_, frameId_, 310, 180);
+    Point2D pos = {310, 180};
+    g_App.gameSprites().drawFrame(animId_, frameId_, pos);
 }
 
 void AnimMenu::handleLeave() {

@@ -437,3 +437,58 @@ void MapObject::offzOnStairs(uint8 twd) {
             break;
     }
 }
+
+/** \brief
+ *
+ * \param anId uint16
+ * \param m int
+ * \param aNature ObjectNature
+ *
+ */
+ShootableMapObject::ShootableMapObject(uint16 anId, int m, ObjectNature aNature):
+    MapObject(anId, m, aNature)
+{}
+
+ShootableMovableMapObject::ShootableMovableMapObject(uint16 anId, int m, ObjectNature aNature):
+        ShootableMapObject(anId, m, aNature) {
+    speed_ = 0;
+    base_speed_ = 0;
+    dist_to_pos_ = 0;
+}
+
+/*!
+ * This method adds the given offsets to the object's offX and offY
+ * and moves it to a new tile if necessary.
+ * \param nOffX amount to add to offX
+ * \param nOffY amount to add to offY
+ */
+bool ShootableMovableMapObject::addOffsetToPosition(int nOffX, int nOffY)
+{
+
+    pos_.ox += nOffX;
+    pos_.oy += nOffY;
+    bool changed = false;
+
+    while (pos_.ox < 0) {
+        pos_.ox += 256;
+        pos_.tx--;
+        changed = true;
+    }
+    while (pos_.ox > 255) {
+        pos_.ox -= 256;
+        pos_.tx++;
+        changed = true;
+    }
+    while (pos_.oy < 0) {
+        pos_.oy += 256;
+        pos_.ty--;
+        changed = true;
+    }
+    while (pos_.oy > 255) {
+        pos_.oy -= 256;
+        pos_.ty++;
+        changed = true;
+    }
+
+    return changed;
+}

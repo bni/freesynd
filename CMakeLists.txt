@@ -54,7 +54,7 @@ endif(NOT DATA_DIR)
 # Set standard definitions for all platforms.
 add_definitions (-DPREFIX=\"${DATA_DIR}\")
 
-set(CMAKE_CXX_STANDARD 23 CACHE STRING "The C++ standard to use")
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
