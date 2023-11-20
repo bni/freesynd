@@ -356,7 +356,7 @@ void GameplayMenu::handleTick(int elapsed)
 
         for (size_t i = 0; i < mission_->numSfxObjects(); i++) {
             SFXObject *pSfx = mission_->sfxObjects(i);
-            change |= pSfx->animate(diff);
+            change |= pSfx->animate(diff, g_App.gameSprites());
             if (pSfx->sfxLifeOver()) {
                 mission_->delSfxObject(i);
                 i--;
@@ -364,17 +364,17 @@ void GameplayMenu::handleTick(int elapsed)
         }
 
         for (size_t i = 0; i < mission_->numPeds(); i++)
-            change |= mission_->ped(i)->animate(diff, mission_);
+            change |= mission_->ped(i)->animate(diff, mission_, g_App.gameSprites());
 
 
         for (size_t i = 0; i < mission_->numVehicles(); i++)
-            change |= mission_->vehicle(i)->animate(diff);
+            change |= mission_->vehicle(i)->animate(diff, g_App.gameSprites());
 
         for (size_t i = 0; i < mission_->numWeaponsOnGround(); i++)
-            change |= mission_->weaponOnGround(i)->animate(diff);
+            change |= mission_->weaponOnGround(i)->animate(diff, g_App.gameSprites());
 
         for (size_t i = 0; i < mission_->numStatics(); i++)
-            change |= mission_->statics(i)->animate(diff, mission_);
+            change |= mission_->statics(i)->animate(diff, mission_, g_App.gameSprites());
 
         for (size_t i = 0; i < mission_->numPrjShots(); i++) {
             change |= mission_->prjShots(i)->animate(diff, mission_);

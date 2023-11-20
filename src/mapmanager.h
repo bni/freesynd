@@ -28,7 +28,7 @@
 
 #include <map>
 #include "fs-utils/common.h"
-#include "map.h"
+#include "fs-kernel/model/map.h"
 #include "fs-engine/gfx/tilemanager.h"
 
 /*!

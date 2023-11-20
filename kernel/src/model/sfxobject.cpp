@@ -29,3 +29,138 @@
 
 #include "fs-utils/log/log.h"
 
+uint16 SFXObject::sfxIdCnt = 0;
+
+/*!
+ * Constructor of the class.
+ * \param pMap a pointer to the map
+ * \param type Type of SfxObject (see SFXObject::SfxTypeEnum)
+ * \param t_show
+ * \param managed True means object is destroyed by another object than Mission
+ */
+SFXObject::SFXObject(Map *pMap, int mapId, SfxTypeEnum type, int t_show, bool managed) : MapObject(sfxIdCnt++, mapId, kNatureUndefined) {
+    type_ = type;
+    // TODO(benblan) : use MapObjet constructor to set the map when isVisible is implemented
+    setMap(pMap);
+    managed_ = managed;
+    draw_all_frames_ = true;
+    loopAnimation_ = false;
+    setTimeShowAnim(0);
+    reset();
+    switch(type) {
+        case SFXObject::sfxt_Unknown:
+            FSERR(Log::k_FLG_UI, "SFXObject", "SFXObject", ("Sfx object of type Unknown created"));
+            sfx_life_over_ = true;
+            break;
+        case SFXObject::sfxt_BulletHit:
+            anim_ = 382;
+            break;
+        case SFXObject::sfxt_FlamerFire:
+            anim_ = 383;
+            setFramesPerSec(12);
+            break;
+        case SFXObject::sfxt_Smoke:
+            anim_ = 244;
+            break;
+        case SFXObject::sfxt_Fire_LongSmoke:
+            // point of impact for laser
+            anim_ = 389;
+            break;
+        case SFXObject::sfxt_ExplosionFire:
+            anim_ = 390;
+            setFramesPerSec(6);
+            break;
+        case SFXObject::sfxt_ExplosionBall:
+            anim_ = 391;
+            setFramesPerSec(6);
+            break;
+        case SFXObject::sfxt_LargeFire:
+            anim_ = 243;
+            setTimeShowAnim(3000 + t_show);
+            break;
+        case SFXObject::sfxt_SelArrow:
+            anim_ = 601;
+            time_show_anim_ = -1;
+            setFramesPerSec(6);
+            break;
+        case SFXObject::sfxt_AgentFirst:
+            anim_ = 1951;
+            time_show_anim_ = -1;
+            setFramesPerSec(4);
+            break;
+        case SFXObject::sfxt_AgentSecond:
+            anim_ = 1952;
+            time_show_anim_ = -1;
+            setFramesPerSec(4);
+            break;
+        case SFXObject::sfxt_AgentThird:
+            anim_ = 1953;
+            time_show_anim_ = -1;
+            setFramesPerSec(4);
+            break;
+        case SFXObject::sfxt_AgentFourth:
+            anim_ = 1954;
+            time_show_anim_ = -1;
+            setFramesPerSec(4);
+            break;
+    }
+}
+
+void SFXObject::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
+    spriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
+}
+
+bool SFXObject::animate(int elapsed, GameSpriteManager &spriteMgr) {
+
+    if (is_frame_drawn_) {
+        bool changed = draw_all_frames_ ? MapObject::animate(elapsed, spriteMgr) : false;
+        if (type_ == SFXObject::sfxt_ExplosionBall) {
+            int z = pos_.tz * 128 + pos_.oz;
+            // 250 per sec
+            z += ((elapsed + elapsed_left_) >> 2);
+            elapsed_left_ = elapsed &3;
+            if (z > (pMap_->maxZ() - 1) * 128)
+                z = (pMap_->maxZ() - 1) * 128;
+            pos_.tz = z / 128;
+            pos_.oz = z % 128;
+        }
+
+        if (frame_ > spriteMgr.lastFrame(anim_)
+            && !leftTimeShowAnim(elapsed))
+        {
+            if (loopAnimation_) {
+                reset();
+            } else {
+                sfx_life_over_ = true;
+            }
+        }
+        return changed;
+    }
+    is_frame_drawn_ = true;
+    return false;
+}
+
+
+/** \brief
+ *
+ * \param mapMaxZ int
+ * \return void
+ *
+ */
+void SFXObject::correctZ(int mapMaxZ) {
+    if (type_ == SFXObject::sfxt_ExplosionBall) {
+        int z = pos_.tz * 128 + pos_.oz;
+        z += 512;
+
+        if (z > (mapMaxZ - 1) * 128)
+            z = (mapMaxZ - 1) * 128;
+        pos_.tz = z / 128;
+        pos_.oz = z % 128;
+    }
+}
+
+void SFXObject::reset() {
+    sfx_life_over_ = false;
+    frame_ = 0;
+    elapsed_left_ = 0;
+}

@@ -6,10 +6,12 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mapobject.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/sfxobject.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/damage.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/map.h"
     )
 
 set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mod.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/model/map.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mapobject.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/sfxobject.cpp"
     )

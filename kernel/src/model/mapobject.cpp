@@ -28,6 +28,7 @@
 #include "fs-kernel/model/mapobject.h"
 
 #include "fs-engine/gfx/tile.h"
+#include "fs-kernel/model/map.h"
 
 MapObject::MapObject(uint16 anId, int m, ObjectNature aNature):
     size_x_(1), size_y_(1), size_z_(2),
@@ -40,6 +41,7 @@ MapObject::MapObject(uint16 anId, int m, ObjectNature aNature):
 {
     nature_ = aNature;
     id_ = anId;
+    pMap_ = NULL;
 }
 
 const char* MapObject::natureName() {
@@ -106,7 +108,7 @@ Point2D MapObject::addOffs(const Point2D &screenPos)
     return posWithOffs;
 }
 
-bool MapObject::animate(int elapsed)
+bool MapObject::animate(int elapsed, GameSpriteManager &spriteMgr)
 {
     int frame_tics_ = 1000 / frames_per_sec_;
     int total_elapsed = elapsed + elapsed_carry_;

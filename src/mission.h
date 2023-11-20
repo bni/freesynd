@@ -34,7 +34,7 @@
 #include "fs-utils/common.h"
 #include "mapobject.h"
 #include "fs-kernel/model/sfxobject.h"
-#include "map.h"
+#include "fs-kernel/model/map.h"
 #include "fs-kernel/model/leveldata.h"
 #include "core/gameevent.h"
 

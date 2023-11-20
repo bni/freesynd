@@ -25,7 +25,7 @@
 #include <string>
 
 #include "core/missionbriefing.h"
-#include "map.h"
+#include "fs-kernel/model/map.h"
 
 const int MissionBriefing::kMaxInfos = MAX_INFOS;
 const int MissionBriefing::kMaxEnht = MAX_ENHT;
@@ -135,9 +135,9 @@ void MissionBriefing::init_minimap(Map *p_map, LevelData::LevelDataAll &level_da
 
     // We use 2 infos to create the overlay: by ped offset or by weapon offset
     // - if weapon has owner we look into type/index of
-    // owner to define our/enemy type; 
-    // original map overlay is a 16384x2 array(container), only using map size 
-    // we can correctly use our minimap_overlay_; 
+    // owner to define our/enemy type;
+    // original map overlay is a 16384x2 array(container), only using map size
+    // we can correctly use our minimap_overlay_;
     // our agent = 1, enemy agent = 2, tile doesn't have ped = 0
     for (uint32 i = 0; i < (128*128); i++) {
         uint32 pin = READ_LE_UINT16(level_data.map.objs + i * 2);

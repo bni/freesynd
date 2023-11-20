@@ -36,6 +36,7 @@
 #include "fs-kernel/model/damage.h"
 #include "fs-engine/gfx/spritemanager.h"
 
+class Map;
 class Mission;
 
 /*!
@@ -83,6 +84,8 @@ public:
 
     int map() { return map_; }
     void setMap(int new_map) { map_ = new_map; }
+    //! Set the current map
+    void setMap(Map *pMap) { pMap_ = pMap; }
 
     virtual void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) = 0;
 
@@ -207,7 +210,7 @@ public:
         return pos_.ox < pOther->position().ox || pos_.oy < pOther->position().oy;
     }
 
-    virtual bool animate(int elapsed);
+    virtual bool animate(int elapsed, GameSpriteManager &spriteMgr);
 
     void setFramesPerSec(int framesPerSec)
     {
@@ -285,6 +288,8 @@ protected:
     int size_x_, size_y_, size_z_;
     //! if equal -1 object is not on map and should not be drawn
     int map_;
+    //! A pointer to the map that the object is on
+    Map *pMap_;
     //! Object should be drawn only if visible
     bool isDrawable_;
     //! animation frame changing

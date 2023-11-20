@@ -85,7 +85,7 @@ void Vehicle::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     animation_->draw(posWithOffs, spriteMgr, getDirection(4), frame_);
 }
 
-bool Vehicle::animate(int elapsed)
+bool Vehicle::animate(int elapsed, GameSpriteManager &spriteMgr)
 {
     bool updated = false;
 
@@ -95,7 +95,7 @@ bool Vehicle::animate(int elapsed)
 
     if (animation_->animation_type() == VehicleAnimation::kOnFireAnim) {
         if (leftTimeShowAnim(elapsed))
-            updated |= MapObject::animate(elapsed);
+            updated |= MapObject::animate(elapsed, spriteMgr);
         else {
             animation_->set_animation_type(VehicleAnimation::kBurntAnim);
             frame_ = 0;

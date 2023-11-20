@@ -35,133 +35,6 @@
 const int Static::kStaticOrientation1 = 0;
 const int Static::kStaticOrientation2 = 2;
 
-uint16 SFXObject::sfxIdCnt = 0;
-
-/*!
- * Constructor of the class.
- * \param m Map id
- * \param type Type of SfxObject (see SFXObject::SfxTypeEnum)
- * \param t_show
- * \param managed True means object is destroyed by another object than Mission
- */
-SFXObject::SFXObject(int m, SfxTypeEnum type, int t_show, bool managed) : MapObject(sfxIdCnt++, m, kNatureUndefined) {
-    type_ = type;
-    managed_ = managed;
-    draw_all_frames_ = true;
-    loopAnimation_ = false;
-    setTimeShowAnim(0);
-    reset();
-    switch(type) {
-        case SFXObject::sfxt_Unknown:
-            FSERR(Log::k_FLG_UI, "SFXObject", "SFXObject", ("Sfx object of type Unknown created"));
-            sfx_life_over_ = true;
-            break;
-        case SFXObject::sfxt_BulletHit:
-            anim_ = 382;
-            break;
-        case SFXObject::sfxt_FlamerFire:
-            anim_ = 383;
-            setFramesPerSec(12);
-            break;
-        case SFXObject::sfxt_Smoke:
-            anim_ = 244;
-            break;
-        case SFXObject::sfxt_Fire_LongSmoke:
-            // point of impact for laser
-            anim_ = 389;
-            break;
-        case SFXObject::sfxt_ExplosionFire:
-            anim_ = 390;
-            setFramesPerSec(6);
-            break;
-        case SFXObject::sfxt_ExplosionBall:
-            anim_ = 391;
-            setFramesPerSec(6);
-            break;
-        case SFXObject::sfxt_LargeFire:
-            anim_ = 243;
-            setTimeShowAnim(3000 + t_show);
-            break;
-        case SFXObject::sfxt_SelArrow:
-            anim_ = 601;
-            time_show_anim_ = -1;
-            setFramesPerSec(6);
-            break;
-        case SFXObject::sfxt_AgentFirst:
-            anim_ = 1951;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
-            break;
-        case SFXObject::sfxt_AgentSecond:
-            anim_ = 1952;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
-            break;
-        case SFXObject::sfxt_AgentThird:
-            anim_ = 1953;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
-            break;
-        case SFXObject::sfxt_AgentFourth:
-            anim_ = 1954;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
-            break;
-    }
-}
-
-void SFXObject::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
-    spriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
-}
-
-bool SFXObject::animate(int elapsed) {
-
-    if (is_frame_drawn_) {
-        bool changed = draw_all_frames_ ? MapObject::animate(elapsed) : false;
-        if (type_ == SFXObject::sfxt_ExplosionBall) {
-            int z = pos_.tz * 128 + pos_.oz;
-            // 250 per sec
-            z += ((elapsed + elapsed_left_) >> 2);
-            elapsed_left_ = elapsed &3;
-            if (z > (g_Session.getMission()->mmax_z_ - 1) * 128)
-                z = (g_Session.getMission()->mmax_z_ - 1) * 128;
-            pos_.tz = z / 128;
-            pos_.oz = z % 128;
-        }
-
-        if (frame_ > g_App.gameSprites().lastFrame(anim_)
-            && !leftTimeShowAnim(elapsed))
-        {
-            if (loopAnimation_) {
-                reset();
-            } else {
-                sfx_life_over_ = true;
-            }
-        }
-        return changed;
-    }
-    is_frame_drawn_ = true;
-    return false;
-}
-
-void SFXObject::correctZ() {
-    if (type_ == SFXObject::sfxt_ExplosionBall) {
-        int z = pos_.tz * 128 + pos_.oz;
-        z += 512;
-
-        if (z > (g_Session.getMission()->mmax_z_ - 1) * 128)
-            z = (g_Session.getMission()->mmax_z_ - 1) * 128;
-        pos_.tz = z / 128;
-        pos_.oz = z % 128;
-    }
-}
-
-void SFXObject::reset() {
-    sfx_life_over_ = false;
-    frame_ = 0;
-    elapsed_left_ = 0;
-}
-
 Static *Static::loadInstance(uint8 * data, uint16 id, int m)
 {
     LevelData::Statics * gamdata =
@@ -494,7 +367,7 @@ void Door::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     spriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
-bool Door::animate(int elapsed, Mission *obj)
+bool Door::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
 {
     PedInstance *p = NULL;
     int x = tileX();
@@ -506,7 +379,7 @@ bool Door::animate(int elapsed, Mission *obj)
     char *i = 0, *j = 0;
     bool found = false;
 
-    bool changed = MapObject::animate(elapsed);
+    bool changed = MapObject::animate(elapsed, spriteMgr);
     switch(state_) {
         case Static::sttdoor_Open:
             if (orientation_ == kStaticOrientation1) {
@@ -635,7 +508,7 @@ void LargeDoor::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     }
 }
 
-bool LargeDoor::animate(int elapsed, Mission *obj)
+bool LargeDoor::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
 {
     // TODO: there must be somewhere locked door
     GenericCar *v = NULL;
@@ -655,7 +528,7 @@ bool LargeDoor::animate(int elapsed, Mission *obj)
     char sign;
     int set_wayFree = 0;
 
-    bool changed = MapObject::animate(elapsed);
+    bool changed = MapObject::animate(elapsed, spriteMgr);
     uint32 cur_state = state_;
     switch(state_) {
         case Static::sttdoor_Open:
@@ -992,7 +865,7 @@ void Tree::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     }
 }
 
-bool Tree::animate(int elapsed, Mission *obj) {
+bool Tree::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
 
     if (state_ == Static::stttree_Burning) {
         if (!(leftTimeShowAnim(elapsed))) {
@@ -1003,7 +876,7 @@ bool Tree::animate(int elapsed, Mission *obj) {
         }
     }
 
-    return MapObject::animate(elapsed);
+    return MapObject::animate(elapsed, spriteMgr);
 }
 
 /*!
@@ -1027,8 +900,8 @@ WindowObj::WindowObj(uint16 anId, int m, int anim, int openAnim, int breakingAni
         Static(anId, m, Static::smt_Window), anim_(anim), open_anim_(openAnim),
         breaking_anim_(breakingAnim), damaged_anim_(damagedAnim) {}
 
-bool WindowObj::animate(int elapsed, Mission *obj) {
-    bool updated = MapObject::animate(elapsed);
+bool WindowObj::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
+    bool updated = MapObject::animate(elapsed, spriteMgr);
 
     if (state_ == Static::sttwnd_Breaking
         && frame_ >= g_App.gameSprites().lastFrame(breaking_anim_)
@@ -1087,7 +960,7 @@ Semaphore::Semaphore(uint16 anId, int m, int anim, int damagedAnim) :
     setFramesPerSec(2);
 }
 
-bool Semaphore::animate(int elapsed, Mission *obj) {
+bool Semaphore::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
     if (state_ == Static::sttsem_Damaged) {
         if (elapsed_left_bigger_ == 0)
             return false;
@@ -1130,7 +1003,7 @@ bool Semaphore::animate(int elapsed, Mission *obj) {
             state_ = Static::sttsem_Stt0;
     }
 
-    return MapObject::animate(elapsed);
+    return MapObject::animate(elapsed, spriteMgr);
 }
 
 /*!
@@ -1182,7 +1055,7 @@ void AnimWindow::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     g_App.gameSprites().drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
-bool AnimWindow::animate(int elapsed, Mission *obj)
+bool AnimWindow::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
 {
     switch (state_) {
         case Static::sttawnd_LightOff:
@@ -1253,7 +1126,7 @@ bool AnimWindow::animate(int elapsed, Mission *obj)
             break;
     }
 
-    return MapObject::animate(elapsed);
+    return MapObject::animate(elapsed, spriteMgr);
     return false;
 }
 

@@ -283,7 +283,7 @@ WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16 anId, int remaining
     pFlamerShot_ = NULL;
 }
 
-bool WeaponInstance::animate(int elapsed) {
+bool WeaponInstance::animate(int elapsed, GameSpriteManager &spriteMgr) {
 
     if (activated_) {
         if (isInstanceOf(Weapon::TimeBomb)) {
@@ -300,7 +300,7 @@ bool WeaponInstance::animate(int elapsed) {
     }
 
     if (isDrawable()) {
-        return MapObject::animate(elapsed);
+        return MapObject::animate(elapsed, spriteMgr);
     }
 
     return false;

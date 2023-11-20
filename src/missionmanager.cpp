@@ -370,14 +370,14 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
 
         // adding visual markers(arrow + 1,2,3,4) above our agents
         // availiable/selected on screen
-        p_mission->addSfxObject(new SFXObject(-1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(-1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(-1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(-1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(p_mission->mapId(), SFXObject::sfxt_AgentFirst));
-        p_mission->addSfxObject(new SFXObject(p_mission->mapId(), SFXObject::sfxt_AgentSecond));
-        p_mission->addSfxObject(new SFXObject(p_mission->mapId(), SFXObject::sfxt_AgentThird));
-        p_mission->addSfxObject(new SFXObject(p_mission->mapId(), SFXObject::sfxt_AgentFourth));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentFirst));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentSecond));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentThird));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentFourth));
 
         return p_mission;
 

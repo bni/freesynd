@@ -27,7 +27,7 @@ set (SOURCES
 	ia/behaviour.cpp
 	freesynd.cpp
     ipastim.cpp
-	map.cpp
+#	map.cpp
 	mapobject.cpp
 	mapmanager.cpp
 	menus/agentselectorrenderer.cpp
@@ -69,7 +69,7 @@ set(HEADERS
 	agentmanager.h
 	app.h
     ipastim.h
-	map.h
+#	map.h
 	mapmanager.h
 	mapobject.h
 	mission.h
@@ -157,7 +157,7 @@ if (BUILD_DEV_TOOLS)
 
 	add_executable (dump
 		dump.cpp
-		map.cpp
+#		map.cpp
 		mapmanager.cpp
 		mapobject.cpp
 		agent.cpp

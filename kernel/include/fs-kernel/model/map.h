@@ -26,12 +26,9 @@
 #define MAP_H
 
 #include "fs-utils/common.h"
+#include "fs-engine/gfx/tilemanager.h"
 #include "fs-kernel/model/position.h"
-
-class Tile;
-class TileManager;
-class MapObject;
-
+#include "fs-kernel/model/mapobject.h"
 
 /*!
  * Map class.

@@ -26,9 +26,9 @@
 #include <map>
 
 #include "fs-utils/common.h"
-#include "map.h"
-#include "pathsurfaces.h"
 #include "fs-utils/misc/timer.h"
+#include "fs-kernel/model/map.h"
+#include "pathsurfaces.h"
 #include "core/gameevent.h"
 
 class Mission;

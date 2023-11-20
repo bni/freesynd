@@ -30,9 +30,9 @@
 
 #include <string>
 
-#include "mapobject.h"
+#include "fs-kernel/model/mapobject.h"
+#include "fs-kernel/model/map.h"
 #include "ped.h"
-#include "map.h"
 
 /*!
  * This class holds informations about the animation of a vehicle.
@@ -99,7 +99,7 @@ public:
         delete animation_;
     }
 
-    bool animate(int elapsed) override;
+    bool animate(int elapsed, GameSpriteManager &spriteMgr) override;
     void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
 
     //! Return type of vehicle

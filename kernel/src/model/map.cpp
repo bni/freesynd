@@ -23,7 +23,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "map.h"
+#include "fs-kernel/model/map.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,7 +31,6 @@
 #include <assert.h>
 
 #include "fs-utils/log/log.h"
-#include "fs-engine/gfx/tilemanager.h"
 #include "fs-engine/gfx/screen.h"
 
 Map::Map(TileManager * tileManager, uint16 anId) : tile_manager_(tileManager)

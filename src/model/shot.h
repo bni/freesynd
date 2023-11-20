@@ -66,7 +66,7 @@ class InstantImpactShot : public Shot {
     explicit InstantImpactShot(
         const fs_dmg::DamageToInflict &dmg) : Shot(dmg) {}
 
-    void inflictDamage(Mission *pMission);
+    void inflictDamage(Mission *pMission) override;
  private:
     //! Spread the impact on the ground
     void diffuseImpact(Mission *m, const WorldPoint &originLocW,
@@ -94,7 +94,7 @@ class Explosion : public Shot {
 
     explicit Explosion(const fs_dmg::DamageToInflict &dmg);
 
-    void inflictDamage(Mission *pMission);
+    void inflictDamage(Mission *pMission) override;
  private:
     void generateFlameWaves(Mission *pMission, WorldPoint *pOrigin, double dmg_rng);
     //!
@@ -168,7 +168,7 @@ class GaussGunShot: public ProjectileShot {
     //! Destructor
     ~GaussGunShot() {}
 
-    void inflictDamage(Mission *pMission);
+    void inflictDamage(Mission *pMission) override;
  protected:
     //! Update projectile position
     void drawTrace(Mission *pMission);
@@ -187,7 +187,7 @@ class FlamerShot: public ProjectileShot {
     //! Desctructor
     ~FlamerShot();
 
-    void inflictDamage(Mission *pMission);
+    void inflictDamage(Mission *pMission) override;
 
  protected:
     void drawTrace(Mission *pMission);
