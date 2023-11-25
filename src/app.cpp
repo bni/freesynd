@@ -56,8 +56,8 @@
 
 App::App()
     : BaseApp(new GameMenuFactory()),
-      session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>(&maps_)),
-      intro_sounds_()
+      session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>(&maps_))
+      /*intro_sounds_()*/
 {
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;
@@ -79,10 +79,10 @@ bool App::doInitialize(const CliParam& param) {
         return false;
     }
 
-    if (context_->isPlayIntro()) {
+ /*   if (context_->isPlayIntro()) {
         LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading intro sounds..."))
         intro_sounds_.initialize(param.disableSound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
-    }
+    }*/
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
     g_gameCtrl.agents().loadAgents();

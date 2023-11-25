@@ -25,10 +25,11 @@
  *                                                                      *
  ************************************************************************/
 
+#include "model/shot.h"
+
 #include <map>
 
-#include "app.h"
-#include "model/shot.h"
+#include "fs-engine/sound/soundmanager.h"
 #include "mission.h"
 #include "ped.h"
 #include "vehicle.h"
@@ -281,7 +282,7 @@ void Explosion::inflictDamage(Mission *pMission) {
     // create the ring of fire around the origin of explosion
     generateFlameWaves(pMission, &(dmg_.originLocW), dmg_.range);
 
-    g_App.gameSounds().play(EXPLOSION_BIG);
+    g_SoundMgr.play(EXPLOSION_BIG);
 }
 
 /*! Draws animation of impact/explosion

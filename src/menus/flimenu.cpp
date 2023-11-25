@@ -242,7 +242,7 @@ void FliMenu::handleTick(int elapsed)
                     }
                     // Play sound
                     if (desc.evtList[i].sound != NO_SOUND) {
-                        g_App.gameSounds().play(desc.evtList[i].sound, desc.evtList[i].sndChan);
+                        g_SoundMgr.play(desc.evtList[i].sound, desc.evtList[i].sndChan);
                     }
                     // Draw subtitle
                     if (desc.evtList[i].subtitle != NULL) {

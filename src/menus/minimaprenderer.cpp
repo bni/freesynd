@@ -20,8 +20,9 @@
  *                                                                      *
  ************************************************************************/
 
-#include "app.h"
 #include "menus/minimaprenderer.h"
+
+#include "core/gamecontroller.h"
 #include "core/missionbriefing.h"
 #include "mission.h"
 #include "fs-engine/gfx/screen.h"
@@ -395,7 +396,7 @@ bool GamePlayMinimapRenderer::handleTick(int elapsed) {
                     signalSourceLocW_.convertFromTilePoint(p_minimap_->target()->position());
                 }
                 // TODO : uncomment when assassinate.ogg doesn't have the pong sound in it
-                //g_App.gameSounds().play(snd::TRACKING_PONG);
+                //g_SoundMgr.play(snd::TRACKING_PONG);
             }
             // reset color to white in case the red circle was displayed
             i_signalColor_ = fs_cmn::kColorWhite;

@@ -981,7 +981,7 @@ bool GameplayMenu::handleUnknownKey(Key key, const int modKeys) {
     } else if (key.keyFunc == KFC_F1) { // Music Control
         g_App.music().toggleMusic();
     } else if (key.keyFunc == KFC_F2) { // Sound Control
-        g_App.gameSounds().toggleSound();
+        g_SoundMgr.toggleSound();
     }
 
 #ifdef _DEBUG
@@ -1017,7 +1017,7 @@ bool GameplayMenu::handleUnknownKey(Key key, const int modKeys) {
 #if 0
     static int sound_num = 20;
     if (key.unicode == 'i') {
-     g_App.gameSounds().play((snd::InGameSample)sound_num);
+     g_SoundMgr.play((snd::InGameSample)sound_num);
      printf("sn %i\n", sound_num);
      sound_num++;
      if (sound_num == 33)
@@ -1312,7 +1312,7 @@ void GameplayMenu::selectAgent(size_t agentNo, bool addToGroup) {
         updateSelectAll();
         centerMinimapOnLeader();
         highlightLeaderMarker();
-        g_App.gameSounds().play(SPEECH_SELECTED);
+        g_SoundMgr.play(SPEECH_SELECTED);
 
         // redraw agent selectors
         addDirtyRect((agentNo % 2) * 65, (agentNo / 2) * 90 , 64, 46);
@@ -1330,7 +1330,7 @@ void GameplayMenu::selectAllAgents() {
     selection_.selectAllAgents(isButtonSelectAllPressed_);
     updateSelectAll();
     if (isButtonSelectAllPressed_ != prv_state) {
-        g_App.gameSounds().play(SPEECH_SELECTED);
+        g_SoundMgr.play(SPEECH_SELECTED);
         // redraw all agent selectors
         addDirtyRect(0, 0, 128, 180);
     }
@@ -1446,7 +1446,7 @@ void GameplayMenu::handleWeaponSelection(uint8 selectorIndex, bool ctrl) {
             selection_.selectWeaponFromLeader(selectorIndex, ctrl);
         }
     }
-    g_App.gameSounds().play(SPEECH_SELECTED);
+    g_SoundMgr.play(SPEECH_SELECTED);
 }
 
 /**
@@ -1487,7 +1487,7 @@ void GameplayMenu::handleGameEvent(GameEvent evt) {
     } else if (evt.type == GameEvent::kEvtWarnAgent) {
         if (canPlayPoliceWarnSound_) {
             // warn
-            g_App.gameSounds().play(PUTDOWN_WEAPON);
+            g_SoundMgr.play(PUTDOWN_WEAPON);
             canPlayPoliceWarnSound_ = false;
         }
     }

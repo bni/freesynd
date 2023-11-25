@@ -31,13 +31,14 @@
 #include <memory>
 
 #include "fs-utils/common.h"
-#include "sound.h"
-#include "audio.h"
+#include "fs-utils/misc/singleton.h"
+#include "fs-engine/sound/sound.h"
+#include "fs-engine/sound/audio.h"
 
 /*!
  * Sound manager class.
  */
-class SoundManager {
+class SoundManager : public Singleton < SoundManager > {
 public:
     enum SampleSet {
         SAMPLES_INTRO,
@@ -79,5 +80,7 @@ protected:
     bool disabled_;
     Audio *audio_;
 };
+
+#define g_SoundMgr   SoundManager::singleton()
 
 #endif

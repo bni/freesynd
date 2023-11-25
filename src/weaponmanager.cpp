@@ -26,10 +26,11 @@
  *                                                                      *
  ************************************************************************/
 
+#include "weaponmanager.h"
+
 #include <stdio.h>
 #include <assert.h>
 
-#include "app.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/io/configfile.h"

@@ -25,14 +25,16 @@
  *                                                                      *
  ************************************************************************/
 
+#include "mission.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include <string>
 
-#include "mission.h"
+#include "core/gamecontroller.h"
+#include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/gfx/screen.h"
-#include "app.h"
 #include "model/objectivedesc.h"
 #include "fs-utils/log/log.h"
 #include "model/vehicle.h"
@@ -257,10 +259,10 @@ void Mission::checkObjectives() {
 void Mission::endWithStatus(Status status) {
     switch (status) {
     case kMissionStatusCompleted:
-        g_App.gameSounds().play(SPEECH_MISSION_COMPLETED);
+        g_SoundMgr.play(SPEECH_MISSION_COMPLETED);
         break;
     case kMissionStatusFailed:
-        g_App.gameSounds().play(SPEECH_MISSION_FAILED);
+        g_SoundMgr.play(SPEECH_MISSION_FAILED);
         break;
     case kMissionStatusAborted:
         break;

@@ -54,9 +54,9 @@ class App : public BaseApp, public Singleton < App > {
         return maps_;
     }
 
-    SoundManager &introSounds() {
+    /*SoundManager &introSounds() {
         return intro_sounds_;
-    }
+    }*/
 
     //! Reset the application data
     bool reset();
@@ -103,7 +103,7 @@ private:
     std::unique_ptr<GameController> game_ctlr_;
 
     MapManager maps_;
-    SoundManager intro_sounds_;
+    /*SoundManager intro_sounds_;*/
 };
 
 #define g_App   App::singleton()

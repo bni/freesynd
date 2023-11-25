@@ -69,7 +69,7 @@ void SoundManager::loadSounds(SampleSet set)
             delete[] tabData;
             delete[] data;
             if (!loaded) {
-                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load sounds from file ISNDS-0.DAT\n"))
+                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load intro sounds from file ISNDS-0.DAT\n"))
                 return;
             }
             tabData = File::loadOriginalFile("ISNDS-1.TAB", tabSize);
@@ -78,7 +78,7 @@ void SoundManager::loadSounds(SampleSet set)
             delete[] tabData;
             delete[] data;
             if (!loaded) {
-                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load sounds from file ISNDS-1.DAT\n"))
+                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load intro sounds from file ISNDS-1.DAT\n"))
                 return;
             }
         }
@@ -131,6 +131,7 @@ bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
             else if (sounds_.size() == 25)
                 sample[0x1e] = 0x38;
             sounds_.back()->loadSound(sample, soundsize);
+            LOG(Log::k_FLG_INFO, "SoundManager", "loadSounds", ("Sound %d loaded", i))
             delete []sample;
         }
         soundData += soundsize;

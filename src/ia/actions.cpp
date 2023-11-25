@@ -26,7 +26,9 @@
  ************************************************************************/
 
 #include "ia/actions.h"
-#include "app.h"
+
+#include "fs-engine/sound/soundmanager.h"
+#include "core/gamecontroller.h"
 #include "ped.h"
 #include "model/weapon.h"
 #include "model/vehicle.h"
@@ -902,7 +904,7 @@ HitAction(d) {
  */
 void PersuadedHitAction::doStart(Mission *pMission, PedInstance *pPed) {
     status_ = kActStatusWaitForAnim;
-    g_App.gameSounds().play(PERSUADE);
+    g_SoundMgr.play(PERSUADE);
 }
 
 /*!

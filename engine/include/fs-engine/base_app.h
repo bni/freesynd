@@ -72,10 +72,6 @@ public:
         return running_;
     }
 
-    SoundManager &gameSounds() {
-        return game_sounds_;
-    }
-
     MenuManager &menus() {
         return menus_;
     }
@@ -97,12 +93,12 @@ protected:
     std::unique_ptr<Screen> screen_;
     std::unique_ptr<System> system_;
     MenuManager menus_;
-    SoundManager game_sounds_;
     MusicManager music_;
 
 private:
     bool running_;
     GameSpriteManager game_sprites_;
+    SoundManager game_sounds_;
 };
 
 #endif // ENGINE_BASEAPP_H

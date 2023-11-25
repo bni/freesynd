@@ -31,7 +31,7 @@
 #include <vector>
 #include <list>
 
-#include "static.h"
+#include "fs-kernel/model/sfxobject.h"
 
 class Mission;
 class WeaponInstance;

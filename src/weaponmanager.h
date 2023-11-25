@@ -35,6 +35,7 @@
 #include "model/weapon.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
+#include "fs-utils/io/formatversion.h"
 
 /*!
  * Weapon manager class.

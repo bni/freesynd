@@ -25,13 +25,15 @@
  *                                                                      *
  ************************************************************************/
 
+#include "weapon.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#include "app.h"
+#include "fs-engine/appcontext.h"
+#include "fs-engine/sound/soundmanager.h"
 #include "fs-utils/log/log.h"
-#include "weapon.h"
 #include "ped.h"
 #include "mission.h"
 #include "model/shot.h"
@@ -288,7 +290,7 @@ bool WeaponInstance::animate(int elapsed) {
     if (activated_) {
         if (isInstanceOf(Weapon::TimeBomb)) {
             if (bombSoundTimer.update(elapsed)) {
-                g_App.gameSounds().play(TIMEBOMB);
+                g_SoundMgr.play(TIMEBOMB);
             }
 
             if (bombExplosionTimer.update(elapsed)) {
@@ -350,7 +352,7 @@ void WeaponInstance::draw(const Point2D &screenPos) {
  * Plays the sound associated with that weapon.
  */
 void WeaponInstance::playSound() {
-    g_App.gameSounds().play(pWeaponClass_->getSound());
+    g_SoundMgr.play(pWeaponClass_->getSound());
 }
 
 void WeaponInstance::activate() {
