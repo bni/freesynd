@@ -31,7 +31,7 @@
 #include <vector>
 #include <list>
 
-#include "mapobject.h"
+#include "static.h"
 
 class Mission;
 class WeaponInstance;

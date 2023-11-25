@@ -10,7 +10,6 @@ set (SOURCES
 	agent.cpp
 	agentmanager.cpp
 	app.cpp
-#	model/mod.cpp
 	model/objectivedesc.cpp
 	model/weaponholder.cpp
 	model/shot.cpp
@@ -27,8 +26,7 @@ set (SOURCES
 	ia/behaviour.cpp
 	freesynd.cpp
     ipastim.cpp
-#	map.cpp
-	mapobject.cpp
+	static.cpp
 	mapmanager.cpp
 	menus/agentselectorrenderer.cpp
 	menus/maprenderer.cpp
@@ -69,9 +67,8 @@ set(HEADERS
 	agentmanager.h
 	app.h
     ipastim.h
-#	map.h
 	mapmanager.h
-	mapobject.h
+	static.h
 	mission.h
 	missionmanager.h
 	modmanager.h
@@ -89,13 +86,9 @@ set(HEADERS
 	core/researchmanager.h
 	ia/actions.h
 	ia/behaviour.h
-#	model/mod.h
 	model/vehicle.h
 	model/weapon.h
-#	model/position.h
 	model/objectivedesc.h
-#	model/leveldata.h
-#	model/damage.h
 	model/shot.h
 	model/weaponholder.h
 	model/train.h
@@ -157,9 +150,8 @@ if (BUILD_DEV_TOOLS)
 
 	add_executable (dump
 		dump.cpp
-#		map.cpp
 		mapmanager.cpp
-		mapobject.cpp
+		static.cpp
 		agent.cpp
 		agentmanager.cpp
 		ipastim.cpp
@@ -176,7 +168,6 @@ if (BUILD_DEV_TOOLS)
 		core/gamesession.cpp
 		core/missionbriefing.cpp
 		core/researchmanager.cpp
-#		model/mod.cpp
 		model/research.cpp
 		model/squad.cpp
 		model/objectivedesc.cpp

@@ -32,7 +32,7 @@
 #include <set>
 
 #include "fs-utils/common.h"
-#include "mapobject.h"
+#include "static.h"
 #include "modowner.h"
 #include "fs-engine/gfx/spritemanager.h"
 #include "model/weaponholder.h"

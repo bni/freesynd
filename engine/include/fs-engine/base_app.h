@@ -80,10 +80,6 @@ public:
         return menus_;
     }
 
-    GameSpriteManager &gameSprites() {
-        return game_sprites_;
-    }
-
     MusicManager &music() {
         return music_;
     }

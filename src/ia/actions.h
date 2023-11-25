@@ -25,7 +25,7 @@
 #define IA_ACTIONS_H_
 
 #include "path.h"
-#include "mapobject.h"
+#include "static.h"
 #include "fs-utils/misc/timer.h"
 
 class Mission;

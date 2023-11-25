@@ -29,7 +29,6 @@
 
 #include "mission.h"
 #include "agentmanager.h"
-#include "mapobject.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "fs-engine/gfx/screen.h"
@@ -37,7 +36,6 @@
 #include "fs-engine/system/system.h"
 #include "menus/squadselection.h"
 #include "fs-engine/config.h"
-#include "app.h"
 
 void MapRenderer::init(Mission *pMission, SquadSelection *pSelection) {
     pMission_ = pMission;

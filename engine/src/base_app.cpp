@@ -63,8 +63,8 @@ bool BaseApp::initialize(const CliParam& param) {
         return false;
     }
 
-    if (!gameSprites().loaded()) {
-        gameSprites().load();
+    if (!game_sprites_.loaded()) {
+        game_sprites_.load();
     }
 
     LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("Loading game sounds..."))

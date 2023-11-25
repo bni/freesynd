@@ -27,7 +27,6 @@
 #include <vector>
 
 #include "fs-utils/common.h"
-#include "mapobject.h"
 #include "ped.h"
 #include "core/gameevent.h"
 
