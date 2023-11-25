@@ -248,7 +248,7 @@ public:
         pa_smAll = 0xFFFF
     };
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
     void setFrame(int f) { frame_ = f; }
 

@@ -31,7 +31,6 @@
 #include <string.h>
 #include <assert.h>
 
-#include "app.h"
 #include "mission.h"
 #include "core/gamesession.h"
 #include "fs-engine/gfx/screen.h"
@@ -51,17 +50,17 @@ VehicleAnimation::VehicleAnimation() {
     vehicle_anim_ = kNormalAnim;
 }
 
-void VehicleAnimation::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr, int dir, int frame)
+void VehicleAnimation::draw(const Point2D &screenPos, int dir, int frame)
 {
     switch (vehicle_anim_) {
         case kNormalAnim:
-            spriteMgr.drawFrame(anims_ + dir * 2, frame, screenPos);
+            g_SpriteMgr.drawFrame(anims_ + dir * 2, frame, screenPos);
             break;
         case kOnFireAnim:
-            spriteMgr.drawFrame(anims_burning_ + dir, frame, screenPos);
+            g_SpriteMgr.drawFrame(anims_burning_ + dir, frame, screenPos);
             break;
         case kBurntAnim:
-            spriteMgr.drawFrame(anims_burnt_ + dir, frame, screenPos);
+            g_SpriteMgr.drawFrame(anims_burnt_ + dir, frame, screenPos);
             break;
     }
 }
@@ -72,7 +71,7 @@ void VehicleAnimation::set_base_anims(int anims) {
     anims_burnt_ = anims + 12;
 }
 
-void Vehicle::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void Vehicle::draw(const Point2D &screenPos)
 {
     Point2D posWithOffs = screenPos;
     posWithOffs.y += TILE_HEIGHT / 3;
@@ -82,7 +81,7 @@ void Vehicle::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     if (posWithOffs.x < 90 || posWithOffs.y < -20)
         return;
 
-    animation_->draw(posWithOffs, spriteMgr, getDirection(4), frame_);
+    animation_->draw(posWithOffs, getDirection(4), frame_);
 }
 
 bool Vehicle::animate(int elapsed, GameSpriteManager &spriteMgr)

@@ -146,7 +146,7 @@ public:
     Door(uint16 id, Map *pMap, int anim, int closingAnim, int openAnim, int openingAnim);
     virtual ~Door() {}
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
     bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
     bool isPathBlocker();
 
@@ -162,7 +162,7 @@ public:
     LargeDoor(uint16 id, Map *pMap, int anim, int closingAnim, int openingAnim);
     virtual ~LargeDoor() {}
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
     bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
     bool isPathBlocker();
 
@@ -177,7 +177,7 @@ public:
     Tree(uint16 id, Map *pMap, int anim, int burningAnim, int damagedAnim);
     virtual ~Tree() {}
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
     bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
     void handleHit(fs_dmg::DamageToInflict &d);
 
@@ -195,7 +195,7 @@ public:
     virtual ~WindowObj() {}
 
     bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
     void handleHit(fs_dmg::DamageToInflict &d);
 
 protected:
@@ -210,7 +210,7 @@ public:
     EtcObj(uint16 id, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType type = smt_None);
     virtual ~EtcObj() {}
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
 protected:
     int anim_, burning_anim_, damaged_anim_;
@@ -224,7 +224,7 @@ public:
     NeonSign(uint16 id, Map *pMap, int anim);
     virtual ~NeonSign() {}
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
 protected:
     int anim_;
@@ -240,7 +240,7 @@ public:
     virtual ~Semaphore() {}
 
     bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
     void handleHit(fs_dmg::DamageToInflict &d);
 
@@ -267,7 +267,7 @@ public:
     virtual ~AnimWindow() {}
 
     bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
 protected:
     int anim_;

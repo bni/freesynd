@@ -24,11 +24,12 @@
  ************************************************************************/
 
 #include "editor/animmenu.h"
+
 #include "fs-engine/menus/menumanager.h"
 #include "editor/editormenuid.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
-#include "editor/editorapp.h"
+#include "fs-engine/gfx/spritemanager.h"
 
 AnimMenu::AnimMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
@@ -65,9 +66,8 @@ void AnimMenu::handleShow()
 void AnimMenu::handleRender(DirtyList &dirtyList)
 {
     g_Screen.drawRect(150, 110, 350, 150);
-    //GameSpriteFrame sprite = g_App.gameSprites().
     Point2D pos = {310, 180};
-    g_App.gameSprites().drawFrame(animId_, frameId_, pos);
+    g_SpriteMgr.drawFrame(animId_, frameId_, pos);
 }
 
 void AnimMenu::handleLeave() {
@@ -82,7 +82,7 @@ void AnimMenu::displayFont() {
 bool AnimMenu::handleUnknownKey(Key key, const int modKeys) {
     bool change = false;
     if (key.keyFunc == KFC_UP) {
-        if (animId_ < g_App.gameSprites().numAnims() - 1) {
+        if (animId_ < g_SpriteMgr.numAnims() - 1) {
             animId_++;
             frameId_ = 0;
             change = true;
@@ -95,14 +95,14 @@ bool AnimMenu::handleUnknownKey(Key key, const int modKeys) {
         }
     } else if (key.keyFunc == KFC_RIGHT) {
         frameId_++;
-        if (frameId_ > g_App.gameSprites().lastFrame(animId_)) {
+        if (frameId_ > g_SpriteMgr.lastFrame(animId_)) {
             frameId_ = 0;
         }
         change = true;
     } else if (key.keyFunc == KFC_LEFT) {
         frameId_--;
         if (frameId_ < 0) {
-            frameId_ = g_App.gameSprites().lastFrame(animId_);
+            frameId_ = g_SpriteMgr.lastFrame(animId_);
         }
         change = true;
     }

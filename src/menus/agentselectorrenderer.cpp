@@ -22,7 +22,7 @@
 
 #include "menus/agentselectorrenderer.h"
 #include "fs-engine/gfx/screen.h"
-#include "app.h"
+#include "fs-engine/gfx/spritemanager.h"
 #include "ped.h"
 
 const int AgentSelectorRenderer::kIpaBarWidth = 56;
@@ -143,9 +143,9 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
     int springUnselected = 1748 + (agentSlot > 1 ? agentSlot + 2 : agentSlot);
 
     // Draw the background of selector
-    g_App.gameSprites().sprite(isSelected ? spriteSelected : springUnselected)->draw(
+    g_SpriteMgr.sprite(isSelected ? spriteSelected : springUnselected)->draw(
             topX, topY, 0);
-    g_App.gameSprites().sprite(isSelected ? 1778 : 1754)->draw(
+    g_SpriteMgr.sprite(isSelected ? 1778 : 1754)->draw(
             topX, topY + 46, 0);
 
     if (pAgent) {

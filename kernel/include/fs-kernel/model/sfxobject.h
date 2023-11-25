@@ -66,7 +66,7 @@ public:
     //! Reset animation
     void reset();
 
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
     bool animate(int elapsed, GameSpriteManager &spriteMgr) override;
     //!
     void correctZ(int mapMaxZ);

@@ -55,7 +55,7 @@ public:
     virtual ~VehicleAnimation() {}
 
     //! Draw the vehicle
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr, int dir, int frame);
+    void draw(const Point2D &screenPos, int dir, int frame);
 
     void set_base_anims(int anims);
     //void setAnimsBurning(int anims) { anims_burning_ = anims; }
@@ -100,7 +100,7 @@ public:
     }
 
     bool animate(int elapsed, GameSpriteManager &spriteMgr) override;
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
     //! Return type of vehicle
     uint8 getType() { return type_; }

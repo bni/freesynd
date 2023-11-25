@@ -105,8 +105,8 @@ SFXObject::SFXObject(Map *pMap, SfxTypeEnum type, bool drawable, int t_show, boo
     }
 }
 
-void SFXObject::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
-    spriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
+void SFXObject::draw(const Point2D &screenPos) {
+    g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
 bool SFXObject::animate(int elapsed, GameSpriteManager &spriteMgr) {

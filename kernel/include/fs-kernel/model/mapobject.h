@@ -84,7 +84,7 @@ public:
         pMap_ = pMap;
     }
 
-    virtual void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) = 0;
+    virtual void draw(const Point2D &screenPos) = 0;
 
     const TilePoint & position()const { return pos_; }
 

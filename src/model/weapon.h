@@ -336,7 +336,7 @@ public:
     void deactivate();
 
     bool animate(int elapsed, GameSpriteManager &spriteMgr) override;
-    void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) override;
+    void draw(const Point2D &screenPos) override;
 
     void handleHit(fs_dmg::DamageToInflict & d);
 

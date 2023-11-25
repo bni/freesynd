@@ -26,14 +26,16 @@
  ************************************************************************/
 
 #include "fs-utils/common.h"
-#include "app.h"
 #include "fs-utils/log/log.h"
+#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/screen.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "model/shot.h"
 #include "mission.h"
 #include "core/gamesession.h"
 #include "ia/behaviour.h"
+#include "agentmanager.h"
 
 //*************************************
 // Constant definition
@@ -53,134 +55,134 @@ bool Ped::drawStandFrame(const Point2D &screenPos, int dir, int frame,
                          Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon < NUM_ANIMS);
-    return g_App.gameSprites().drawFrame(
+    return g_SpriteMgr.drawFrame(
             stand_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastStandFrame(int dir, Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
-    return g_App.gameSprites().lastFrame(stand_anims_[weapon] + dir);
+    return g_SpriteMgr.lastFrame(stand_anims_[weapon] + dir);
 }
 
 bool Ped::drawWalkFrame(const Point2D &screenPos, int dir, int frame,
                         Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon < NUM_ANIMS);
-    return g_App.gameSprites().drawFrame(
+    return g_SpriteMgr.drawFrame(
             walk_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastWalkFrame(int dir, Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
-    return g_App.gameSprites().lastFrame(walk_anims_[weapon] + dir);
+    return g_SpriteMgr.lastFrame(walk_anims_[weapon] + dir);
 }
 
 bool Ped::drawStandFireFrame(const Point2D &screenPos, int dir, int frame,
         Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
-    return g_App.gameSprites().drawFrame(
+    return g_SpriteMgr.drawFrame(
             stand_fire_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastStandFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon != 0 && weapon < NUM_ANIMS);
-    return g_App.gameSprites().lastFrame(
+    return g_SpriteMgr.lastFrame(
             stand_fire_anims_[weapon] + dir);
 }
 
 bool Ped::drawWalkFireFrame(const Point2D &screenPos, int dir, int frame,
         Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
-    return g_App.gameSprites().drawFrame(
+    return g_SpriteMgr.drawFrame(
             walk_fire_anims_[weapon] + dir, frame, screenPos);
 }
 
 int Ped::lastWalkFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon != 0 && weapon < NUM_ANIMS);
-    return g_App.gameSprites().lastFrame(walk_fire_anims_[weapon] + dir);
+    return g_SpriteMgr.lastFrame(walk_fire_anims_[weapon] + dir);
 }
 
 bool Ped::drawDieFrame(const Point2D &screenPos, int frame) {
-    return g_App.gameSprites().drawFrame(die_anim_, frame, screenPos);
+    return g_SpriteMgr.drawFrame(die_anim_, frame, screenPos);
 }
 
 int Ped::lastDieFrame() {
-    return g_App.gameSprites().lastFrame(die_anim_);
+    return g_SpriteMgr.lastFrame(die_anim_);
 }
 
 void Ped::drawDeadFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(dead_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(dead_anim_, frame, screenPos);
 }
 
 void Ped::drawDeadAgentFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(dead_agent_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(dead_agent_anim_, frame, screenPos);
 }
 
 void Ped::drawHitFrame(const Point2D &screenPos, int dir, int frame) {
-    g_App.gameSprites().drawFrame(hit_anim_ + dir / 2, frame, screenPos);
+    g_SpriteMgr.drawFrame(hit_anim_ + dir / 2, frame, screenPos);
 }
 
 int Ped::lastHitFrame(int dir) {
-    return g_App.gameSprites().lastFrame(hit_anim_ + dir / 2);
+    return g_SpriteMgr.lastFrame(hit_anim_ + dir / 2);
 }
 
 void Ped::drawPickupFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(pickup_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(pickup_anim_, frame, screenPos);
 }
 
 int Ped::lastPickupFrame() {
     // same for putdown weapon
-    return g_App.gameSprites().lastFrame(pickup_anim_);
+    return g_SpriteMgr.lastFrame(pickup_anim_);
 }
 
 void Ped::drawVaporizeFrame(const Point2D &screenPos, int dir, int frame) {
-    g_App.gameSprites().drawFrame(vaporize_anim_ + dir / 2, frame, screenPos);
+    g_SpriteMgr.drawFrame(vaporize_anim_ + dir / 2, frame, screenPos);
 }
 
 int Ped::lastVaporizeFrame(int dir) {
-    return g_App.gameSprites().lastFrame(vaporize_anim_ + dir / 2);
+    return g_SpriteMgr.lastFrame(vaporize_anim_ + dir / 2);
 }
 
 void Ped::drawSinkFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(sink_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(sink_anim_, frame, screenPos);
 }
 
 int Ped::lastSinkFrame() {
-    return g_App.gameSprites().lastFrame(sink_anim_);
+    return g_SpriteMgr.lastFrame(sink_anim_);
 }
 
 void Ped::drawStandBurnFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(stand_burn_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(stand_burn_anim_, frame, screenPos);
 }
 
 void Ped::drawWalkBurnFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(walk_burn_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(walk_burn_anim_, frame, screenPos);
 }
 
 void Ped::drawDieBurnFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(die_burn_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(die_burn_anim_, frame, screenPos);
 }
 
 int Ped::lastDieBurnFrame() {
-    return g_App.gameSprites().lastFrame(die_burn_anim_);
+    return g_SpriteMgr.lastFrame(die_burn_anim_);
 }
 
 void Ped::drawSmokeBurnFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(smoke_burn_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(smoke_burn_anim_, frame, screenPos);
 }
 
 void Ped::drawDeadBurnFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(dead_burn_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(dead_burn_anim_, frame, screenPos);
 }
 
 void Ped::drawPersuadeFrame(const Point2D &screenPos, int frame) {
-    g_App.gameSprites().drawFrame(persuade_anim_, frame, screenPos);
+    g_SpriteMgr.drawFrame(persuade_anim_, frame, screenPos);
 }
 
 int Ped::lastPersuadeFrame() {
-    return g_App.gameSprites().lastFrame(persuade_anim_);
+    return g_SpriteMgr.lastFrame(persuade_anim_);
 }
 
 void PedInstance::setTypeFromValue(uint8 value) {
@@ -751,7 +753,7 @@ PedInstance::~PedInstance()
     destroyUseWeaponAction();
 }
 
-void PedInstance::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
+void PedInstance::draw(const Point2D &screenPos) {
 
     // ensure on map
     if (screenPos.x < 110 || screenPos.y < 0 || !isDrawable())

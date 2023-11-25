@@ -1140,11 +1140,11 @@ bool GameplayMenu::handleUnknownKey(Key key, const int modKeys) {
 void GameplayMenu::drawSelectAllButton() {
     // 64x10
     if(isButtonSelectAllPressed_) {
-        g_App.gameSprites().sprite(1792)->draw(0, 46 + 44, 0);
-        g_App.gameSprites().sprite(1793)->draw(64, 46 + 44, 0);
+        g_SpriteMgr.sprite(1792)->draw(0, 46 + 44, 0);
+        g_SpriteMgr.sprite(1793)->draw(64, 46 + 44, 0);
     } else {
-        g_App.gameSprites().sprite(1796)->draw(0, 46 + 44, 0);
-        g_App.gameSprites().sprite(1797)->draw(64, 46 + 44, 0);
+        g_SpriteMgr.sprite(1796)->draw(0, 46 + 44, 0);
+        g_SpriteMgr.sprite(1797)->draw(64, 46 + 44, 0);
     }
 }
 
@@ -1154,9 +1154,9 @@ void GameplayMenu::drawMissionHint(int elapsed) {
     int inc = elapsed / 45;
     mission_hint_ticks_ = elapsed % 45;
 
-    g_App.gameSprites().sprite(1798)->draw(
+    g_SpriteMgr.sprite(1798)->draw(
         0, 46 + 44 + 10 + 46 + 44 - 1, 0);
-    g_App.gameSprites().sprite(1799)->draw(
+    g_SpriteMgr.sprite(1799)->draw(
         64, 46 + 44 + 10 + 46 + 44 - 1, 0);
 
     mission_hint_ += inc;
@@ -1269,7 +1269,7 @@ void GameplayMenu::drawWeaponSelectors() {
                     }
                 }
 
-                g_App.gameSprites().sprite(s)->draw(
+                g_SpriteMgr.sprite(s)->draw(
                         32 * i, 2 + 46 + 44 + 10 + 46 + 44 + 15 + j * 32, 0);
 
                 // draw ammo bars
@@ -1293,7 +1293,7 @@ void GameplayMenu::drawWeaponSelectors() {
             for (int i = 0; i < 4; i++) {
                 int s = 1601;
 
-                g_App.gameSprites().sprite(s)->draw(
+                g_SpriteMgr.sprite(s)->draw(
                         32 * i, 2 + 46 + 44 + 10 + 46 + 44 + 15 + j * 32, 0);
             }
 

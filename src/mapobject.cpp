@@ -362,9 +362,9 @@ Door::Door(uint16 anId, Map *pMap, int anim, int closingAnim, int openAnim, int 
     state_ = Static::sttdoor_Closed;
 }
 
-void Door::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void Door::draw(const Point2D &screenPos)
 {
-    spriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
 bool Door::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
@@ -490,7 +490,7 @@ LargeDoor::LargeDoor(uint16 anId, Map *pMap, int anim, int closingAnim, int open
     state_ = Static::sttdoor_Closed;
 }
 
-void LargeDoor::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void LargeDoor::draw(const Point2D &screenPos)
 {
     Point2D posWithOffs = addOffs(screenPos);
     switch(state_) {
@@ -849,7 +849,7 @@ Tree::Tree(uint16 anId, Map *pMap, int anim, int burningAnim, int damagedAnim) :
     state_ = Static::stttree_Healthy;
 }
 
-void Tree::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void Tree::draw(const Point2D &screenPos)
 {
     Point2D posWithOffs = addOffs(screenPos);
     switch (state_) {
@@ -912,7 +912,7 @@ bool WindowObj::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
     return updated;
 }
 
-void WindowObj::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void WindowObj::draw(const Point2D &screenPos)
 {
     g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
@@ -938,7 +938,7 @@ EtcObj::EtcObj(uint16 anId, Map *pMap, int anim, int burningAnim, int damagedAni
         Static(anId, pMap, aType), anim_(anim), burning_anim_(burningAnim),
         damaged_anim_(damagedAnim) {}
 
-void EtcObj::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void EtcObj::draw(const Point2D &screenPos)
 {
     g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
@@ -947,7 +947,7 @@ NeonSign::NeonSign(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, Static
     anim_ = anim;
 }
 
-void NeonSign::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void NeonSign::draw(const Point2D &screenPos)
 {
     g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
@@ -1035,7 +1035,7 @@ void Semaphore::handleHit(fs_dmg::DamageToInflict &d) {
     }
 }
 
-void Semaphore::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void Semaphore::draw(const Point2D &screenPos)
 {
     g_SpriteMgr.drawFrame(anim_ +  state_, frame_, addOffs(screenPos));
 }
@@ -1046,7 +1046,7 @@ AnimWindow::AnimWindow(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, sm
     anim_ = anim;
 }
 
-void AnimWindow::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
+void AnimWindow::draw(const Point2D &screenPos)
 {
     // When light is on, don't draw window
     // because lighted window is part of the map

@@ -230,7 +230,7 @@ int MapRenderer::drawObjectsOnTile(const TilePoint & tilePos, const Point2D &scr
         ObjectToDraw *pObj = it->second;
         objectsByTile_.erase(it);
         while(pObj != NULL) {
-            pObj->getObject()->draw(screenPos, g_App.gameSprites());
+            pObj->getObject()->draw(screenPos);
             ObjectToDraw *pNext = pObj->getNext();
             pool_.releaseResource(pObj);
             pObj = pNext;
