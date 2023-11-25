@@ -144,7 +144,7 @@ void PedManager::initAnimation(Ped *pedanim, unsigned short baseAnim)
  * \param map id of the map
  * \return NULL if the ped could not be created.
  */
-PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 ped_idx, int map, uint32 playerGroupId)
+PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 ped_idx, Map *pMap, uint32 playerGroupId)
 {
     if(gamdata.type == 0x0 ||
         gamdata.location == LevelData::kPeopleLocNotVisible ||
@@ -163,7 +163,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 
 
     Ped *pedanim = new Ped();
     initAnimation(pedanim, READ_LE_UINT16(gamdata.index_base_anim));
-    PedInstance *newped = new PedInstance(pedanim, ped_idx, map, isOurAgent);
+    PedInstance *newped = new PedInstance(pedanim, ped_idx, pMap, isOurAgent);
 
     int hp = READ_LE_INT16(gamdata.health);
     if (isOurAgent) {

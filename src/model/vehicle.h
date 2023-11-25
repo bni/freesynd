@@ -90,7 +90,7 @@ public:
     static const uint8 kVehicleTypePolice;
     static const uint8 kVehicleTypeMedics;
 
-    Vehicle(uint16 anId, uint8 aType, int m, VehicleAnimation *pAnimation) : ShootableMovableMapObject(anId, m, MapObject::kNatureVehicle) {
+    Vehicle(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation) : ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle) {
         type_ = aType;
         animation_ = pAnimation;
     }
@@ -145,7 +145,7 @@ private:
 class GenericCar : public Vehicle
 {
 public:
-    GenericCar(VehicleAnimation *pAnimation, uint16 id, uint8 aType, int m);
+    GenericCar(VehicleAnimation *pAnimation, uint16 id, uint8 aType, Map *pMap);
     virtual ~GenericCar() {}
 
     //! See ShootableMovableMapObject::initMovementToDestination()

@@ -260,11 +260,11 @@ int Weapon::calculateReloadingCost(int remaingAmmo) {
  * \return an instance of WeaponInstance
  */
 WeaponInstance *WeaponInstance::createInstance(Weapon *pWeaponClass, int remainingAmmo) {
-    return new WeaponInstance(pWeaponClass, weaponIdCnt++, remainingAmmo);
+    return new WeaponInstance(pWeaponClass, weaponIdCnt++, NULL, remainingAmmo);
 }
 
-WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16 anId, int remainingAmmo) :
-        ShootableMapObject(anId, -1, MapObject::kNatureWeapon),
+WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16 anId, Map *pMap, int remainingAmmo) :
+        ShootableMapObject(anId, pMap, MapObject::kNatureWeapon),
         bombSoundTimer(pWeaponClass->reloadTime()), bombExplosionTimer(pWeaponClass->timeForShot()),
         flamerTimer_(180) {
     pWeaponClass_ = pWeaponClass;

@@ -29,8 +29,8 @@
 #include "mission.h"
 #include "model/squad.h"
 
-TrainBody::TrainBody(uint16 anId, uint8 aType, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
-    Vehicle(anId, aType, -1, pAnimation) {
+TrainBody::TrainBody(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
+    Vehicle(anId, aType, pMap, pAnimation) {
 
     setHealth(startHp);
     setStartHealth(startHp);
@@ -78,8 +78,8 @@ void TrainBody::changeTrainAndPassengersPosition(int distanceX, int distanceY) {
     }
 }
 
-TrainHead::TrainHead(uint16 anId, uint8 aType, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
-    TrainBody(anId, aType, pAnimation, startHp, isMoveOnXAxis) {}
+TrainHead::TrainHead(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
+    TrainBody(anId, aType, pMap, pAnimation, startHp, isMoveOnXAxis) {}
 
 TrainHead::~TrainHead() {
 

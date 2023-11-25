@@ -56,7 +56,7 @@ public:
     };
 
 public:
-    MapObject(uint16 id, int m, ObjectNature nature);
+    MapObject(uint16 id, Map *pMap, ObjectNature nature);
     virtual ~MapObject() {}
 
     //! Return the nature of the object
@@ -69,23 +69,20 @@ public:
     //! Return the object's id
     uint16 id() const { return id_; }
 
+    //! Set if MapObject is visible on screen
     void setDrawable(bool drawable) {
         isDrawable_ = drawable;
-        // TODO : remove when isDrawable_ is active
-        if (!isDrawable_) {
-            map_ = -1;
-        }
     }
 
+    //! Returns true is Object is visible on screen
     bool isDrawable() {
-        // TODO : replace with isvisible_
-        return map_ != -1;
+        return isDrawable_;
     }
 
-    int map() { return map_; }
-    void setMap(int new_map) { map_ = new_map; }
-    //! Set the current map
-    void setMap(Map *pMap) { pMap_ = pMap; }
+    //!Sets the current map
+    void setMap(Map *pMap) {
+        pMap_ = pMap;
+    }
 
     virtual void draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) = 0;
 
@@ -286,12 +283,8 @@ protected:
     TilePoint pos_;
     //! these are not true sizes, but halfs of full size by respective coord
     int size_x_, size_y_, size_z_;
-    //! if equal -1 object is not on map and should not be drawn
-    int map_;
     //! A pointer to the map that the object is on
     Map *pMap_;
-    //! Object should be drawn only if visible
-    bool isDrawable_;
     //! animation frame changing
     int frame_;
     /*!
@@ -313,6 +306,10 @@ protected:
      */
     bool is_frame_drawn_;
     uint32 state_;
+
+private:
+    //! Object should be drawn only if visible
+    bool isDrawable_;
 };
 
 /*!
@@ -321,7 +318,7 @@ protected:
  */
 class ShootableMapObject : public MapObject {
 public:
-    ShootableMapObject(uint16 id, int m, ObjectNature nature);
+    ShootableMapObject(uint16 id, Map *pMap, ObjectNature nature);
     virtual ~ShootableMapObject() {}
 
     int health() { return health_; }
@@ -400,7 +397,7 @@ public:
  */
 class ShootableMovableMapObject : public ShootableMapObject {
 public:
-    ShootableMovableMapObject(uint16 id, int m, ObjectNature nature);
+    ShootableMovableMapObject(uint16 id, Map *pMap, ObjectNature nature);
     virtual ~ShootableMovableMapObject() {}
 
     void setSpeed(int new_speed) {

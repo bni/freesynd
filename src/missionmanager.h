@@ -79,12 +79,12 @@ private:
     //! Creates all weapons
     void createWeapons(const LevelData::LevelDataAll &level_data, DataIndex &di, Mission *pMission);
     //! Creates a weapon from the game data
-    WeaponInstance * create_weapon_instance(const LevelData::Weapons &gamdata);
+    WeaponInstance * create_weapon_instance(const LevelData::Weapons &gamdata, Map *pMap);
     //! Creates all vehicles
     void createVehicles(const LevelData::LevelDataAll &level_data,
                             DataIndex &di, Mission *pMission);
     //! Creates a vehicle from the game data
-    Vehicle * createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, uint16 map);
+    Vehicle * createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, Map *pMap);
     //! Creates all peds
     void createPeds(const LevelData::LevelDataAll &level_data,
                             DataIndex &di, Mission *pMission);

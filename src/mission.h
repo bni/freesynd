@@ -132,7 +132,7 @@ public:
     static const uint8 kBMaskBlockerTargetObjectUpdated;
     static const uint8 kBMaskBlockerTargetPosUpdated;
 
-    Mission(const LevelData::MapInfos & map_infos);
+    Mission(const LevelData::MapInfos & map_infos, Map *pMap);
     virtual ~Mission();
 
     //*************************************
@@ -162,13 +162,6 @@ public:
     //*************************************
     // Map
     //*************************************
-    /*!
-     * Sets the given map for the mission.
-     * If p_map is not null, creates a minimap from it.
-     * \param p_map The map to set.
-     */
-    void set_map(Map *p_map);
-
     /*!
      * Returns the map used for the mission.
      */
@@ -325,6 +318,13 @@ protected:
     bool isStairs(char thisTile);
 
     void transferWeaponsFromPedInstanceToAgent(PedInstance *p, Agent *pAg);
+
+    /*!
+     * Sets the given map for the mission.
+     * If p_map is not null, creates a minimap from it.
+     * \param p_map The map to set.
+     */
+    void set_map(Map *p_map);
 
 protected:
 

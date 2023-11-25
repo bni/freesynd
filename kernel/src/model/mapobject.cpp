@@ -30,9 +30,9 @@
 #include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/map.h"
 
-MapObject::MapObject(uint16 anId, int m, ObjectNature aNature):
+MapObject::MapObject(uint16 anId, Map *pMap, ObjectNature aNature):
     size_x_(1), size_y_(1), size_z_(2),
-    map_(m), frame_(0), elapsed_carry_(0),
+    frame_(0), elapsed_carry_(0),
     frames_per_sec_(8),
     dir_(0),
     time_show_anim_(-1), time_showing_anim_(-1),
@@ -41,7 +41,8 @@ MapObject::MapObject(uint16 anId, int m, ObjectNature aNature):
 {
     nature_ = aNature;
     id_ = anId;
-    pMap_ = NULL;
+    pMap_ = pMap;
+    isDrawable_ = true;
 }
 
 const char* MapObject::natureName() {
@@ -447,12 +448,12 @@ void MapObject::offzOnStairs(uint8 twd) {
  * \param aNature ObjectNature
  *
  */
-ShootableMapObject::ShootableMapObject(uint16 anId, int m, ObjectNature aNature):
-    MapObject(anId, m, aNature)
+ShootableMapObject::ShootableMapObject(uint16 anId, Map *pMap, ObjectNature aNature):
+    MapObject(anId, pMap, aNature)
 {}
 
-ShootableMovableMapObject::ShootableMovableMapObject(uint16 anId, int m, ObjectNature aNature):
-        ShootableMapObject(anId, m, aNature) {
+ShootableMovableMapObject::ShootableMovableMapObject(uint16 anId, Map *pMap, ObjectNature aNature):
+        ShootableMapObject(anId, pMap, aNature) {
     speed_ = 0;
     base_speed_ = 0;
     dist_to_pos_ = 0;

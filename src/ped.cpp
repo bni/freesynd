@@ -665,14 +665,14 @@ bool getOnScreen(int scrollX, int scrollY, Point2D &scPt, const Point2D &tScPt) 
 
 void PedInstance::showPath(int scrollX, int scrollY) {
     Point2D pedScPt;
-    g_App.maps().map(map())->tileToScreenPoint(pos_, &pedScPt);
+    pMap_->tileToScreenPoint(pos_, &pedScPt);
     pedScPt.y = pedScPt.y - pos_.tz * TILE_HEIGHT/3 + TILE_HEIGHT/3;
 
     for (std::list<TilePoint>::iterator it = dest_path_.begin();
             it != dest_path_.end(); ++it) {
         TilePoint & d = *it;
         Point2D pathSp;
-        g_App.maps().map(map())->tileToScreenPoint(d, &pathSp);
+        pMap_->tileToScreenPoint(d, &pathSp);
         pathSp.y = pathSp.y - d.tz * TILE_HEIGHT/3 + TILE_HEIGHT/3;
 
         int ox = pathSp.x;
@@ -702,8 +702,8 @@ void PedInstance::showPath(int scrollX, int scrollY) {
     }
 }
 
-PedInstance::PedInstance(Ped *ped, uint16 anId, int m, bool isOur) :
-    ShootableMovableMapObject(anId, m, MapObject::kNaturePed),
+PedInstance::PedInstance(Ped *ped, uint16 anId, Map *pMap, bool isOur) :
+    ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed),
     ped_(ped),
     desc_state_(PedInstance::pd_smUndefined),
     hostile_desc_(PedInstance::pd_smUndefined),
@@ -754,7 +754,7 @@ PedInstance::~PedInstance()
 void PedInstance::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr) {
 
     // ensure on map
-    if (screenPos.x < 110 || screenPos.y < 0 || map_ == -1)
+    if (screenPos.x < 110 || screenPos.y < 0 || !isDrawable())
         return;
 
     Weapon::WeaponAnimIndex weapon_idx =
@@ -979,7 +979,6 @@ WeaponInstance * PedInstance::dropWeapon(uint8 index) {
     WeaponInstance *pWeapon = removeWeaponAtIndex(index);
 
     if(pWeapon) {
-        pWeapon->setMap(map_);
         pWeapon->setDrawable(true);
         pWeapon->setPosition(pos_);
         g_Session.getMission()->addWeaponToGround(pWeapon);
@@ -1026,7 +1025,6 @@ void PedInstance::putInVehicle(Vehicle * pVehicle)
 
 void PedInstance::leaveVehicle() {
     setDrawable(true);
-    setMap(g_Session.getMission()->map());
     setPosition(in_vehicle_->position());
     in_vehicle_ = NULL;
     switchActionStateFrom(state_ & PedInstance::pa_smInCar);
@@ -1470,10 +1468,10 @@ int PedInstance::getSpeedOwnerBoost()
 void PedInstance::adjustAimedPtWithRangeAndAccuracy(Weapon *pWeaponClass, WorldPoint *pAimedLocW) {
     // 1- Adjust Range
     WorldPoint originLocW(pos_);
-    if (originLocW.z > (g_App.maps().map(map_)->maxZ() - 1) * 128)
+    if (originLocW.z > (pMap_->maxZ() - 1) * 128)
         return;
 
-    if (pAimedLocW->z > (g_App.maps().map(map_)->maxZ() - 1) * 128)
+    if (pAimedLocW->z > (pMap_->maxZ() - 1) * 128)
         return;
 
     double d = distanceToPosition(*pAimedLocW);

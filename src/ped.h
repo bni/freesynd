@@ -180,7 +180,7 @@ public:
         kPedTypeCriminal = 0x10
     } ;
 
-    PedInstance(Ped *ped, uint16 id, int m, bool isOur);
+    PedInstance(Ped *ped, uint16 id, Map *pMap, bool isOur);
     ~PedInstance();
 
     //*************************************

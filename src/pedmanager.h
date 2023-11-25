@@ -42,7 +42,7 @@ public:
     PedManager();
     virtual ~PedManager() {}
 
-    PedInstance *loadInstance(const LevelData::People & ped_data, uint16 ped_idx, int map, uint32 playerGroupId);
+    PedInstance *loadInstance(const LevelData::People & ped_data, uint16 ped_idx, Map *pMap, uint32 playerGroupId);
 protected:
     void initAnimation(Ped *pedanim, unsigned short baseAnim);
     //! Initialize the ped instance as our agent

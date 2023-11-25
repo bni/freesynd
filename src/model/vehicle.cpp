@@ -167,8 +167,8 @@ bool Vehicle::containsHostilesForPed(PedInstance* p,
     return false;
 }
 
-GenericCar::GenericCar(VehicleAnimation * pAnimation, uint16 anId, uint8 aType, int m):
-    Vehicle(anId, aType, m, pAnimation)
+GenericCar::GenericCar(VehicleAnimation * pAnimation, uint16 anId, uint8 aType, Map *pMap):
+    Vehicle(anId, aType, pMap, pAnimation)
 {
     pDriver_ = NULL;
     hold_on_.wayFree = 0;
@@ -177,29 +177,28 @@ GenericCar::GenericCar(VehicleAnimation * pAnimation, uint16 anId, uint8 aType, 
 uint16 GenericCar::tileDir(int x, int y, int z) {
     uint16 dir = 0x0;
     int near_tile;
-    Map *pMap = g_App.maps().map(map());
 
-    switch(pMap->tileAt(x, y, z)){
+    switch(pMap_->tileAt(x, y, z)){
         case 80:
-            if(g_App.maps().map(map())->tileAt(x + 1, y, z) == 80)
+            if(pMap_->tileAt(x + 1, y, z) == 80)
                 dir = (0)|(0xFFF0);
-            if(pMap->tileAt(x - 1, y, z) == 80)
+            if(pMap_->tileAt(x - 1, y, z) == 80)
                 dir = (4<<8)|(0xF0FF);
             break;
         case 81:
-            if(pMap->tileAt(x, y - 1, z) == 81)
+            if(pMap_->tileAt(x, y - 1, z) == 81)
                 dir = (2<<4)|(0xFF0F);
-            if(pMap->tileAt(x, y + 1, z) == 81)
+            if(pMap_->tileAt(x, y + 1, z) == 81)
                 dir = (6<<12)|(0x0FFF);
             break;
         case 106:
             dir = (0)|(2<<4)|(6<<12)|(0x0F00);
 
-            if(pMap->tileAt(x + 1, y - 1, z) != 118)
+            if(pMap_->tileAt(x + 1, y - 1, z) != 118)
                 dir |= 0x0FF0;
-            if(pMap->tileAt(x + 1, y + 1, z) != 118)
+            if(pMap_->tileAt(x + 1, y + 1, z) != 118)
                 dir |= 0xFF00;
-            near_tile = pMap->tileAt(x + 1, y, z);
+            near_tile = pMap_->tileAt(x + 1, y, z);
             if (near_tile == 108 || near_tile == 109)
                 dir = (dir & 0x0FFF) | 0x6000;
 
@@ -207,11 +206,11 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
         case 107:
             dir = (2<<4)|(4<<8)|(6<<12)|(0x000F);
 
-            if(pMap->tileAt(x - 1, y - 1, z) != 118)
+            if(pMap_->tileAt(x - 1, y - 1, z) != 118)
                 dir |= 0x00FF;
-            if(pMap->tileAt(x - 1, y + 1, z) != 118)
+            if(pMap_->tileAt(x - 1, y + 1, z) != 118)
                 dir |= 0xF00F;
-            near_tile = pMap->tileAt(x - 1, y, z);
+            near_tile = pMap_->tileAt(x - 1, y, z);
             if (near_tile == 108 || near_tile == 109)
                 dir = (dir & 0xFF0F) | 0x0020;
 
@@ -219,11 +218,11 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
         case 108:
             dir = (0)|(2<<4)|(4<<8)|(0xF000);
 
-            if(pMap->tileAt(x + 1, y - 1, z) != 118)
+            if(pMap_->tileAt(x + 1, y - 1, z) != 118)
                 dir |= 0xF00F;
-            if(pMap->tileAt(x - 1, y - 1, z) != 118)
+            if(pMap_->tileAt(x - 1, y - 1, z) != 118)
                 dir |= 0xFF00;
-            near_tile = pMap->tileAt(x, y - 1, z);
+            near_tile = pMap_->tileAt(x, y - 1, z);
             if (near_tile == 106 || near_tile == 107)
                 dir = dir & 0xFFF0;
 
@@ -231,11 +230,11 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
         case 109:
             dir = (0)|(4<<8)|(6<<12)|(0x00F0);
 
-            if(pMap->tileAt(x + 1, y + 1, z) != 118)
+            if(pMap_->tileAt(x + 1, y + 1, z) != 118)
                 dir |= 0x00FF;
-            if(pMap->tileAt(x - 1, y + 1, z) != 118)
+            if(pMap_->tileAt(x - 1, y + 1, z) != 118)
                 dir |= 0x0FF0;
-            near_tile = pMap->tileAt(x, y + 1, z);
+            near_tile = pMap_->tileAt(x, y + 1, z);
             if (near_tile == 106 || near_tile == 107)
                 dir = (dir & 0xF0FF) | 0x0400;
 
@@ -255,16 +254,16 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
         /*case 119:
             // TODO: Greenland map needs fixing
             dir = 0xFFFF;
-            near_tile = pMap->tileAt(x, y + 1, z);
+            near_tile = pMap_->tileAt(x, y + 1, z);
             if (near_tile == 107 || near_tile == 225 || near_tile == 226)
                 dir = (dir & 0xF0FF) | 0x0400;
-            near_tile = pMap->tileAt(x, y + 1, z);
+            near_tile = pMap_->tileAt(x, y + 1, z);
             if (near_tile == 106 || near_tile == 225 || near_tile == 226)
                dir &= 0xFFF0;
-            near_tile = pMap->tileAt(x + 1, y, z);
+            near_tile = pMap_->tileAt(x + 1, y, z);
             if (near_tile == 109 || near_tile == 225 || near_tile == 226)
                 dir = (dir & 0xFF0F) | 0x0020;
-            near_tile = pMap->tileAt(x - 1, y, z);
+            near_tile = pMap_->tileAt(x - 1, y, z);
             if (near_tile == 108 || near_tile == 225 || near_tile == 226)
                 dir = (dir & 0x0FFF) | 0x6000;
             if (dir ==0xFFFF)
@@ -289,18 +288,18 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
                 dir = (4<<8)|(0xF0FF);
             else {*/
                 dir = 0xFFFF;
-                near_tile = pMap->tileAt(x, y + 1, z);
+                near_tile = pMap_->tileAt(x, y + 1, z);
                 if (/*near_tile == 119 || */near_tile == 106
                     || near_tile == 107 || near_tile == 80 || near_tile == 225)
                     dir = (dir & 0xF0FF) | 0x0400;
-                near_tile = pMap->tileAt(x, y - 1, z);
+                near_tile = pMap_->tileAt(x, y - 1, z);
                 if (/*near_tile == 119 || */near_tile == 106
                     || near_tile == 107 || near_tile == 80 || near_tile == 225)
                     dir &= 0xFFF0;
-                near_tile = pMap->tileAt(x + 1, y, z);
+                near_tile = pMap_->tileAt(x + 1, y, z);
                 if (/*near_tile == 119 || */near_tile == 108 || near_tile == 81)
                     dir = (dir & 0xFF0F) | 0x0020;
-                near_tile = pMap->tileAt(x - 1, y, z);
+                near_tile = pMap_->tileAt(x - 1, y, z);
                 if (/*near_tile == 119 || */near_tile == 109 || near_tile == 81)
                     dir = (dir & 0x0FFF) | 0x6000;
                 if (dir == 0xFFFF)
@@ -314,17 +313,17 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
                 dir = (6<<12)|(0x0FFF);
             else {*/
                 dir = 0xFFFF;
-                near_tile = pMap->tileAt(x, y + 1, z);
+                near_tile = pMap_->tileAt(x, y + 1, z);
                 if (/*near_tile == 119 || */near_tile == 106 || near_tile == 80)
                     dir = (dir & 0xF0FF) | 0x0400;
-                near_tile = pMap->tileAt(x, y - 1, z);
+                near_tile = pMap_->tileAt(x, y - 1, z);
                 if (/*near_tile == 119 || */near_tile == 107 || near_tile == 80)
                     dir &= 0xFFF0;
-                near_tile = pMap->tileAt(x + 1, y, z);
+                near_tile = pMap_->tileAt(x + 1, y, z);
                 if (/*near_tile == 119 || */near_tile == 108 || near_tile == 109
                     || near_tile == 81 || near_tile == 226)
                     dir = (dir & 0xFF0F) | 0x0020;
-                near_tile = pMap->tileAt(x - 1, y, z);
+                near_tile = pMap_->tileAt(x - 1, y, z);
                 if (/*near_tile == 119 || */near_tile == 108 || near_tile == 109
                     || near_tile == 81 || near_tile == 226)
                     dir = (dir & 0x0FFF) | 0x6000;
@@ -340,8 +339,7 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
 }
 
 bool GenericCar::dirWalkable(TilePoint *p, int x, int y, int z) {
-    Map *pMap = g_App.maps().map(map());
-    if(!(pMap->isTileWalkableByCar(x,y,z)))
+    if(!(pMap_->isTileWalkableByCar(x,y,z)))
         return false;
 
     uint16 dirStart = tileDir(p->tx,p->ty,p->tz);
@@ -385,20 +383,19 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
     int basex = pos_.tx, basey = pos_.ty;
     std::vector < TilePoint > path2add;
     path2add.reserve(16);
-    Map *pMap = pMission->get_map();
     int x = destinationPt.tx;
     int y = destinationPt.ty;
     int z = destinationPt.tz;
     int ox = destinationPt.ox;
     int oy = destinationPt.oy;
 
-    pMap->adjXYZ(x, y, z);
+    pMap_->adjXYZ(x, y, z);
     // NOTE: we will be using lower tiles, later will restore Z coord
     z = pos_.tz - 1;
 
     clearDestination();
 
-    if (!isDrawable() || isDead() || !(pMap->isTileWalkableByCar(x, y, z))) {
+    if (!isDrawable() || isDead() || !(pMap_->isTileWalkableByCar(x, y, z))) {
 #if 0
 #if _DEBUG
         if (!(map_ == -1 || health_ <= 0)) {
@@ -412,10 +409,10 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
         return false;
     }
 
-    if (!pMap->isTileWalkableByCar(pos_.tx, pos_.ty, z)) {
+    if (!pMap_->isTileWalkableByCar(pos_.tx, pos_.ty, z)) {
         TilePoint currentPos(pos_.tx , pos_.ty, z, pos_.ox, pos_.oy);
 
-        if(!findPathToNearestWalkableTile(pMap, currentPos, &basex, &basey, &path2add)) {
+        if(!findPathToNearestWalkableTile(pMap_, currentPos, &basex, &basey, &path2add)) {
             return false;
         }
     }
@@ -491,7 +488,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
                 neighbours[TilePoint(p.tx - 1, p.ty, p.tz)] = 0x0020;
         }
 
-        if (wrong_dir != 0x0020 && p.tx < g_App.maps().map(map())->maxX()) {
+        if (wrong_dir != 0x0020 && p.tx < pMap_->maxX()) {
             if (dirWalkable(&p, p.tx + 1, p.ty, p.tz)
                 && ((goodDir & 0x00F0) == 0x0020 || goodDir == 0xFFFF))
                 neighbours[TilePoint(p.tx + 1, p.ty, p.tz)] = 0x6000;
@@ -502,7 +499,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
                 && ((goodDir & 0x0F00) == 0x0400 || goodDir == 0xFFFF))
                 neighbours[TilePoint(p.tx, p.ty - 1, p.tz)] = 0x0;
 
-        if (wrong_dir != 0x0000 && p.ty < g_App.maps().map(map())->maxY())
+        if (wrong_dir != 0x0000 && p.ty < pMap_->maxY())
             if (dirWalkable(&p, p.tx, p.ty + 1, p.tz)
                 && ((goodDir & 0x000F) == 0x0 || goodDir == 0xFFFF))
                 neighbours[TilePoint(p.tx, p.ty + 1, p.tz)] = 0x0400;
@@ -570,7 +567,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
                         (unsigned int)tileDir(it->tileX(), it->tileY(),
                         it->tileZ()), it->tileX(), it->tileY(), it->tileZ());
                     printf("tileAt %i\n",
-                        (unsigned int)g_App.maps().map(map())->tileAt(
+                        (unsigned int)pMap_->tileAt(
                         it->tileX(), it->tileY(), it->tileZ()));
 #endif
 #endif

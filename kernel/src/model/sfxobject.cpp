@@ -38,14 +38,13 @@ uint16 SFXObject::sfxIdCnt = 0;
  * \param t_show
  * \param managed True means object is destroyed by another object than Mission
  */
-SFXObject::SFXObject(Map *pMap, int mapId, SfxTypeEnum type, int t_show, bool managed) : MapObject(sfxIdCnt++, mapId, kNatureUndefined) {
+SFXObject::SFXObject(Map *pMap, SfxTypeEnum type, bool drawable, int t_show, bool managed) : MapObject(sfxIdCnt++, pMap, kNatureUndefined) {
     type_ = type;
-    // TODO(benblan) : use MapObjet constructor to set the map when isVisible is implemented
-    setMap(pMap);
     managed_ = managed;
     draw_all_frames_ = true;
     loopAnimation_ = false;
     setTimeShowAnim(0);
+    setDrawable(drawable);
     reset();
     switch(type) {
         case SFXObject::sfxt_Unknown:

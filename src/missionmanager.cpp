@@ -137,20 +137,15 @@ Mission *MissionManager::loadMission(int n)
     // Initialize LevelData structure from data read in file
     LevelData::LevelDataAll level_data;
     if (load_level_data(n, level_data)) {
-
         Mission *m = create_mission(level_data);
 
         if (m) {
-            Map *p_map = g_App.maps().loadMap(m->mapId());
-            if (p_map == NULL) {
+            if (m->setSurfaces()) {
+                return m;
+            } else {
                 delete m;
-                return NULL;
             }
-            m->set_map(p_map);
-            m->setSurfaces();
         }
-
-        return m;
     }
 
     return NULL;
@@ -322,7 +317,12 @@ void MissionManager::exportMissionData(LevelData::LevelDataAll &level_data, Miss
  * Creates a Mission object from the LevelDataAll structure.
  */
 Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
-    Mission *p_mission = new Mission(level_data.mapinfos);
+    Map *pMap = g_App.maps().loadMap(READ_LE_UINT16(level_data.mapinfos.map));
+    if (pMap == NULL) {
+        return NULL;
+    }
+
+    Mission *p_mission = new Mission(level_data.mapinfos, pMap);
 
     // Init indexes
     DataIndex di;
@@ -332,22 +332,26 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
 
 
     try {
+        LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Vehicles creation"));
         createVehicles(level_data, di, p_mission);
 
+        LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Peds creation"));
         createPeds(level_data, di, p_mission);
 
         for (uint16 i = 0; i < 400; i++) {
             LevelData::Statics & sref = level_data.statics[i];
             if(sref.desc == 0)
                 continue;
-            Static *s = Static::loadInstance((uint8 *) & sref, i, p_mission->mapId());
+            Static *s = Static::loadInstance((uint8 *) & sref, i, p_mission->get_map());
             if (s) {
                 p_mission->addStatic(s);
             }
         }
 
+        LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Weapons creation"));
         createWeapons(level_data, di, p_mission);
 
+        LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Objectives creation"));
         createObjectives(level_data, di, p_mission);
 
 #ifdef SHOW_SCENARIOS_DEBUG
@@ -370,19 +374,20 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
 
         // adding visual markers(arrow + 1,2,3,4) above our agents
         // availiable/selected on screen
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), -1, SFXObject::sfxt_SelArrow));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentFirst));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentSecond));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentThird));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), p_mission->mapId(), SFXObject::sfxt_AgentFourth));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentFirst));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentSecond));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentThird));
+        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentFourth));
 
+        LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("End of Mission creation"));
         return p_mission;
 
     } catch (const LoadMissionException & ex) {
-        FSERR(Log::k_FLG_GAME, "Mission", "loadMission", ("Failed to load mission %s\n", ex.what()));
+        FSERR(Log::k_FLG_GAME, "MissionManager", "loadMission", ("Failed to load mission %s\n", ex.what()));
         if (p_mission) {
             delete p_mission;
         }
@@ -395,7 +400,7 @@ void MissionManager::createWeapons(const LevelData::LevelDataAll &level_data, Da
         const LevelData::Weapons & wref = level_data.weapons[i];
         if(wref.desc == 0)
             continue;
-        WeaponInstance *w = create_weapon_instance(wref);
+        WeaponInstance *w = create_weapon_instance(wref, pMission->get_map());
         if (w) {
             if (wref.desc == 0x05) {
                 uint16 offset_owner = READ_LE_UINT16(wref.offset_owner);
@@ -415,7 +420,7 @@ void MissionManager::createWeapons(const LevelData::LevelDataAll &level_data, Da
                     delete w;
                 }
             } else {
-                w->setMap(pMission->mapId());
+                w->setDrawable(true);
                 di.weapons[i] = w;
                 pMission->addWeaponToGround(w);
             }
@@ -423,7 +428,7 @@ void MissionManager::createWeapons(const LevelData::LevelDataAll &level_data, Da
     }
 }
 
-WeaponInstance * MissionManager::create_weapon_instance(const LevelData::Weapons &gamdata) {
+WeaponInstance * MissionManager::create_weapon_instance(const LevelData::Weapons &gamdata, Map *pMap) {
     Weapon::WeaponType wType = Weapon::Unknown;
     WeaponInstance *pNewWeapon = NULL;
 
@@ -478,6 +483,7 @@ WeaponInstance * MissionManager::create_weapon_instance(const LevelData::Weapons
     Weapon *pWeapon = g_gameCtrl.weaponManager().getWeapon(wType);
     if (pWeapon) {
         pNewWeapon = WeaponInstance::createInstance(pWeapon);
+        pNewWeapon->setMap(pMap);
         pNewWeapon->setPosition(gamdata.mapposx[1], gamdata.mapposy[1],
             READ_LE_UINT16(gamdata.mapposz) >> 7, gamdata.mapposx[0],
             gamdata.mapposy[0], gamdata.mapposz[0] & 0x7F);
@@ -495,7 +501,7 @@ void MissionManager::createVehicles(const LevelData::LevelDataAll &level_data, D
         if (car.type == 0x0)
             continue;
         Vehicle *v =
-            createVehicleInstance(car, i, pMission->mapId());
+            createVehicleInstance(car, i, pMission->get_map());
         if (v) {
             di.vindx[i] = pMission->numVehicles();
             pMission->addVehicle(v);
@@ -521,7 +527,7 @@ void MissionManager::createVehicles(const LevelData::LevelDataAll &level_data, D
 /*!
  *
  */
-Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, uint16 map) {
+Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, Map *pMap) {
 
     int hp = READ_LE_INT16(gamdata.health);
     int dir = gamdata.orientation >> 5;
@@ -533,14 +539,14 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
     Vehicle *pVehicle = NULL;
     if (gamdata.sub_type == Vehicle::kVehicleTypeTrainHead) {
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create Train Head %d", id))
-        pVehicle = new TrainHead(id, Vehicle::kVehicleTypeTrainHead, vehicleanim, hp, gamdata.orientation == 192);
+        pVehicle = new TrainHead(id, Vehicle::kVehicleTypeTrainHead, pMap, vehicleanim, hp, gamdata.orientation == 192);
     } else if (gamdata.sub_type == Vehicle::kVehicleTypeTrainBody) {
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create Train Body %d", id))
-        pVehicle = new TrainBody(id, Vehicle::kVehicleTypeTrainBody, vehicleanim, hp, gamdata.orientation == 192);
+        pVehicle = new TrainBody(id, Vehicle::kVehicleTypeTrainBody, pMap, vehicleanim, hp, gamdata.orientation == 192);
     } else {
         // standard car
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create generic car %d", id))
-        pVehicle = new GenericCar(vehicleanim, id, gamdata.sub_type, map);
+        pVehicle = new GenericCar(vehicleanim, id, gamdata.sub_type, pMap);
         pVehicle->setHealth(hp);
         pVehicle->setStartHealth(hp);
 
@@ -633,7 +639,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
         const LevelData::People & pedref = level_data.people[i];
 
         PedInstance *p =
-            peds.loadInstance(pedref, i, pMission->mapId(), PedInstance::kPlayerGroupId);
+            peds.loadInstance(pedref, i, pMission->get_map(), PedInstance::kPlayerGroupId);
         if (p) {
             di.pindx[i] = pMission->numPeds();
             pMission->addPed(p);

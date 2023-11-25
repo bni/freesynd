@@ -547,7 +547,7 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
         for (size_t i = mission_->getSquad()->size(); mission_ && i < mission_->numPeds(); ++i) {
 #endif
             PedInstance *p = mission_->ped(i);
-            if (p->isAlive() && p->map() != -1) {
+            if (p->isAlive() && p->isDrawable()) {
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(p->position(), &scPt);
                 int px = scPt.x - 10;
@@ -587,7 +587,7 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
         for (size_t i = 0; mission_ && i < mission_->numWeaponsOnGround(); ++i) {
             WeaponInstance *w = mission_->weaponOnGround(i);
 
-            if (w->map() != -1) {
+            if (w->isDrawable()) {
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(w->position(), &scPt);
                 int px = scPt.x - 10;
@@ -1163,7 +1163,7 @@ void GameplayMenu::drawMissionHint(int elapsed) {
 
     bool inversed = false;
     bool text_pw = (target_ && target_->nature() == MapObject::kNatureWeapon
-        && target_->map() != -1);
+        && target_->isDrawable());
 
     std::string str;
 
@@ -1259,7 +1259,7 @@ void GameplayMenu::drawWeaponSelectors() {
                 } else if (draw_pw) {
                     if (target_ && target_->nature() == MapObject::kNatureWeapon
                         && (mission_hint_ % 20) < 10
-                        && target_->map() != -1)
+                        && target_->isDrawable())
                     {
                         // player is pointing a weapon on the ground and there's space
                         // in the inventory to display its icon

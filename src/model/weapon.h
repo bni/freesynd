@@ -274,7 +274,7 @@ public:
     //! Creates a instance for the given weapon class
     static WeaponInstance *createInstance(Weapon *pWeaponClass, int remainingAmmo = -1);
 
-    WeaponInstance(Weapon *w, uint16 id, int remainingAmmo = -1);
+    WeaponInstance(Weapon *w, uint16 id, Map *pMap, int remainingAmmo = -1);
     ~WeaponInstance() {};
 
     //*************************************

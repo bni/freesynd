@@ -208,7 +208,7 @@ void InstantImpactShot::createImpactAnimation(Mission *pMission, ShootableMapObj
             dmg_.pWeapon->getClass()->impactAnims()->groundHit);
 
     if (impactAnimId != SFXObject::sfxt_Unknown) {
-        SFXObject *so = new SFXObject(pMission->get_map(), pMission->map(), impactAnimId);
+        SFXObject *so = new SFXObject(pMission->get_map(), impactAnimId);
         so->setPosition(impactPosW);
         so->correctZ(pMission->get_map()->maxZ());
         pMission->addSfxObject(so);
@@ -272,7 +272,7 @@ void Explosion::inflictDamage(Mission *pMission) {
         // distribute damage
         smo->handleHit(dmg_);
         // draw a explosion ball above each object that was hit
-        SFXObject *so = new SFXObject(pMission->get_map(), pMission->map(), SFXObject::sfxt_ExplosionBall);
+        SFXObject *so = new SFXObject(pMission->get_map(), SFXObject::sfxt_ExplosionBall);
         so->setPosition(smo->tileX(), smo->tileY(), smo->tileZ(), smo->offX(),
             smo->offY(), smo->offZ());
         so->correctZ(pMission->get_map()->maxZ());
@@ -316,7 +316,7 @@ void Explosion::generateFlameWaves(Mission *pMission, WorldPoint *pOrigin, doubl
 
             uint8 block_mask = pMission->checkBlockedByTile(*pOrigin, &flamePosW, true, dmg_rng);
             if (block_mask != 32) {
-                SFXObject *so = new SFXObject(pMission->get_map(), pMission->map(), rngDmgAnim_,
+                SFXObject *so = new SFXObject(pMission->get_map(), rngDmgAnim_, true,
                                 100 * (rand() % 16));
                 so->setPosition(flamePosW);
                 pMission->addSfxObject(so);
@@ -576,7 +576,7 @@ void GaussGunShot::drawTrace(Mission *pMission) {
                 if (t.z > (pMission->mmax_z_ - 1) * 128)
                     t.z = (pMission->mmax_z_ - 1) * 128;
 
-                SFXObject *so = new SFXObject(pMission->get_map(), pMission->map(),
+                SFXObject *so = new SFXObject(pMission->get_map(),
                     dmg_.pWeapon->getClass()->impactAnims()->trace_anim);
                 so->setPosition(t);
                 pMission->addSfxObject(so);
@@ -588,7 +588,7 @@ void GaussGunShot::drawTrace(Mission *pMission) {
 FlamerShot::FlamerShot(Mission *pMission, const fs_dmg::DamageToInflict &dmg) :
         ProjectileShot(dmg) {
     // We create a SFXObjet that we keep in memory to updateits position
-    pFlame_ = new SFXObject(pMission->get_map(), pMission->map(),
+    pFlame_ = new SFXObject(pMission->get_map(),
                             dmg_.pWeapon->getClass()->impactAnims()->trace_anim);
     // The sfxObject will loop to keep it alive
     pFlame_->setLoopAnimation(true);

@@ -531,7 +531,7 @@ void GamePlayMinimapRenderer::drawWeapons(uint8 * a_minimap) {
         WeaponInstance * w = p_mission_->weaponOnGround(i);
         // we draw weapons that have no owner ie that are on the ground
         // and are not destroyed
-        if (w->map() == -1)
+        if (!w->isDrawable())
             continue;
 
         int tx = w->tileX();

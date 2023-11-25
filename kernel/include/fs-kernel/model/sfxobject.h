@@ -55,7 +55,7 @@ public:
         sfxt_AgentFourth = 12
     };
 
-    SFXObject(Map *pMap, int mapId, SfxTypeEnum type, int t_show = 0, bool managed = false);
+    SFXObject(Map *pMap, SfxTypeEnum type, bool drawable = true, int t_show = 0, bool managed = false);
     virtual ~SFXObject() {}
 
     bool sfxLifeOver() { return sfx_life_over_; }
