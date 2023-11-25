@@ -56,8 +56,7 @@ class EditorApp : public BaseApp, public Singleton < EditorApp > {
         return intro_sounds_;
     }
 
-    //! Return the list of missions found in the search menu
-    std::list<int> & getMissionResultList() { return searchResLst_;}
+
 
 #ifdef _DEBUG
 public:
@@ -78,11 +77,6 @@ private:
 
     MapManager maps_;
     SoundManager intro_sounds_;
-
-    /*!
-     * Use to store id of missions that are found in the search menu.
-     */
-    std::list<int> searchResLst_;
 };
 
 #define g_App   EditorApp::singleton()

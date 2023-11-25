@@ -282,9 +282,9 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
             dir = (2<<4)|(4<<8)|(0xF00F);
             break;
         case 225:/*
-            if(g_App.maps().map(map())->getTileAt(x + 1, y, z)->type() == Tile::kRoadPedCross)
+            if(pMap_->getTileAt(x + 1, y, z)->type() == Tile::kRoadPedCross)
                 dir = (0)|(0xFFF0);
-            else if(g_App.maps().map(map())->getTileAt(x - 1, y, z)->type() == Tile::kRoadPedCross)
+            else if(pMap_->getTileAt(x - 1, y, z)->type() == Tile::kRoadPedCross)
                 dir = (4<<8)|(0xF0FF);
             else {*/
                 dir = 0xFFFF;
@@ -307,9 +307,9 @@ uint16 GenericCar::tileDir(int x, int y, int z) {
             //}
             break;
         case 226:/*
-            if(g_App.maps().map(map())->getTileAt(x, y - 1, z)->type() == Tile::kRoadPedCross)
+            if(pMap_->getTileAt(x, y - 1, z)->type() == Tile::kRoadPedCross)
                 dir = (2<<4)|(0xFF0F);
-            else if(g_App.maps().map(map())->getTileAt(x, y + 1, z)->type() == Tile::kRoadPedCross)
+            else if(pMap_->getTileAt(x, y + 1, z)->type() == Tile::kRoadPedCross)
                 dir = (6<<12)|(0x0FFF);
             else {*/
                 dir = 0xFFFF;
@@ -401,7 +401,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
         if (!(map_ == -1 || health_ <= 0)) {
             printf("non-walking tile is target to drive\n");
             printf("tileAt %i\n",
-                (unsigned int)g_App.maps().map(map())->tileAt(x, y, z));
+                (unsigned int)pMap_->tileAt(x, y, z));
             printf("tile x = %i, y = %i, z = %i\n", x, y, z);
         }
 #endif

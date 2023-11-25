@@ -153,13 +153,11 @@ bool SearchMissionMenu::matchMissionWithVehicleType(Mission *pMission) {
 
 void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
     if (actionId == searchButId_) {
-        MissionManager missionMgr;
-
         // first clear result list
-        g_App.getMissionResultList().clear();
+        g_gameCtrl.getMissionResultList().clear();
 
         for (int misId = 1; misId <= 50; misId++) {
-            Mission *pMission = missionMgr.loadMission(misId);
+            Mission *pMission = g_gameCtrl.missions().loadMission(misId);
 
             if (pMission) {
                 bool keepMission = matchMissionWithPedType(pMission);
@@ -169,7 +167,7 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int mo
                 }
 
                 if (keepMission) {
-                    g_App.getMissionResultList().push_back(misId);
+                    g_gameCtrl.getMissionResultList().push_back(misId);
                 }
 
                 delete pMission;

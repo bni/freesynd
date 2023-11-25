@@ -25,8 +25,10 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
-#include "sprite.h"
 #include <vector>
+
+#include "sprite.h"
+#include "fs-utils/misc/singleton.h"
 
 /*!
  * Sprite manager class.
@@ -81,7 +83,7 @@ public:
 /*!
  * Game sprite class.
  */
-class GameSpriteManager : public SpriteManager {
+class GameSpriteManager : public SpriteManager, public Singleton < GameSpriteManager > {
 public:
     GameSpriteManager();
     virtual ~GameSpriteManager();
@@ -101,5 +103,7 @@ protected:
     std::vector<GameSpriteFrame> frames_;
     std::vector<GameSpriteFrameElement> elements_;
 };
+
+#define g_SpriteMgr   GameSpriteManager::singleton()
 
 #endif

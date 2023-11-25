@@ -128,6 +128,7 @@ void BaseApp::run(const CliParam& param) {
     // Then we go to the brief menu
     menus_.gotoMenu(getStartMenuId(param));
 
+    running_ = true;
     int lasttick = system_->getTicks();
     while (running_) {
         int curtick = system_->getTicks();

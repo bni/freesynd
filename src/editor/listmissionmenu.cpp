@@ -42,8 +42,8 @@ ListMissionMenu::ListMissionMenu(MenuManager * m):
     int x = 20;
     int y, topY = 100;
 
-    for (std::list < int >::iterator it = g_App.getMissionResultList().begin();
-         it != g_App.getMissionResultList().end(); it++) {
+    for (std::list < int >::iterator it = g_gameCtrl.getMissionResultList().begin();
+         it != g_gameCtrl.getMissionResultList().end(); it++) {
 
              int missionId = *it;
              char label[50];

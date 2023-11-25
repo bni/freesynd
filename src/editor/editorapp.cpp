@@ -55,10 +55,9 @@
 
 EditorApp::EditorApp()
     : BaseApp(new EditorMenuFactory()),
-      game_ctlr_(std::make_unique<GameController>()),
+      game_ctlr_(std::make_unique<GameController>(&maps_)),
       intro_sounds_()
 {
-    running_ = true;
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;
 #endif

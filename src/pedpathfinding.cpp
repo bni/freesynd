@@ -86,7 +86,7 @@ bool PedInstance::initMovementToDestination(Mission *m, const TilePoint &destina
         + z * m->mmax_m_xy].twd);
     printf("target pos: x %i; y %i; z %i, ox %i, oy %i\n",
         x, y, z, ox, oy);
-    //printf("tileAt %x\n", g_App.maps().map(map())->tileAt(x,y,z));
+    //printf("tileAt %x\n", pMap_->tileAt(x,y,z));
     printf("base pos: x %i; y %i; z %i, ox %i, oy %i, oz %i\n",
         pos_.tx, pos_.ty, pos_.tz, pos_.ox, pos_.oy, pos_.oz);
     printf("zmax %x\n", m->mmax_z_);

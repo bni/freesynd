@@ -56,10 +56,9 @@
 
 App::App()
     : BaseApp(new GameMenuFactory()),
-      session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>()),
+      session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>(&maps_)),
       intro_sounds_()
 {
-    running_ = true;
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;
 #endif
@@ -266,7 +265,7 @@ void App::doDestroy() {
 
 void App::waitForKeyPress() {
 
-    while (running_) {
+    while (isRunning()) {
         // small pause while waiting for key, also mouse event
         system_->delay(20);
         menus_.handleEvents();

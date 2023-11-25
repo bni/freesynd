@@ -30,12 +30,9 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/leveldata.h"
 #include "ia/actions.h"
-
-class Mission;
-class MissionBriefing;
-class WeaponInstance;
-class VehicleInstance;
-class PedInstance;
+#include "mapmanager.h"
+#include "core/missionbriefing.h"
+#include "mission.h"
 
 /*!
  * Mission manager class.
@@ -43,7 +40,7 @@ class PedInstance;
  */
 class MissionManager {
 public:
-    MissionManager();
+    MissionManager(MapManager *pMapManager);
     //! Loads mission for the given mission id
     Mission *loadMission(int n);
     //! Loads briefing for the given mission id
@@ -98,6 +95,9 @@ private:
 
     //! Export data for debug (will be moved in editor)
     void exportMissionData(LevelData::LevelDataAll &level_data, Mission *pMission);
+
+private:
+    MapManager *pMapManager_;
 };
 
 #endif

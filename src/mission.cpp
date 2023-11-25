@@ -428,18 +428,21 @@ bool Mission::isStairs(char thisTile) {
     return thisTile > 0x00 && thisTile < 0x05;
 }
 
+/** \brief Creates map of walkable surfaces and directions where movement is possible
+ *
+ * \return bool
+ *
+ */
 bool Mission::setSurfaces() {
-
-    // Description: creates map of walkable surfaces, also
-    // defines directions where movement is possible
-
-    // NOTE: tiles walkdata type 0x0D are quiet special, and they
-    // are not handled correctly, these correction and andjustings
+    // TODO: tiles walkdata type 0x0D are quiet special, and they
+    // are not handled correctly, these correction and and adjustings
     // can create additional speed drain, as such I didn't
     // implemented them as needed. To make it possible a patch
     // required to walkdata and a lot of changes which I don't
     // want to do.
     // 0x10 appear above walking tile where train stops
+    LOG(Log::k_FLG_GAME, "Mission", "setSurfaces", ("Starting surfaces creation"));
+
     clrSurfaces();
     int mmax_m_all = mmax_x_ * mmax_y_ * mmax_z_;
     mtsurfaces_ = (uint8 *)malloc(mmax_m_all * sizeof(uint8));
@@ -468,7 +471,6 @@ bool Mission::setSurfaces() {
     {
         Static *s = *it;
         if (s->type() == Static::smt_LargeDoor) {
-            printf("Large door detected\n");
             int indx = s->tileX() + s->tileY() * mmax_x_
                 + s->tileZ() * mmax_m_xy;
             mtsurfaces_[indx] = 0x00;

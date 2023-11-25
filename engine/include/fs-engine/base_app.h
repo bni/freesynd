@@ -102,10 +102,11 @@ protected:
     std::unique_ptr<System> system_;
     MenuManager menus_;
     SoundManager game_sounds_;
-    GameSpriteManager game_sprites_;
     MusicManager music_;
 
+private:
     bool running_;
+    GameSpriteManager game_sprites_;
 };
 
 #endif // ENGINE_BASEAPP_H

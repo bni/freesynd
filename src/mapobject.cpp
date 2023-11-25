@@ -27,7 +27,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
-#include "app.h"
+//#include "app.h"
 #include "model/vehicle.h"
 #include "core/gamesession.h"
 #include "mission.h"
@@ -104,7 +104,7 @@ Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
             break;
         case 0x0A:
             s = new NeonSign(id, pMap, curanim);
-            s->setFrame(g_App.gameSprites().getFrameFromFrameIndx(curframe));
+            s->setFrame(g_SpriteMgr.getFrameFromFrameIndx(curframe));
             s->setExcludedFromBlockers(true);
             s->setSizeX(32);
             s->setSizeY(1);
@@ -461,14 +461,14 @@ bool Door::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
             } while (p);
             break;
         case Static::sttdoor_Closing:
-            if (frame_ >= g_App.gameSprites().lastFrame(closing_anim_)) {
+            if (frame_ >= g_SpriteMgr.lastFrame(closing_anim_)) {
                 state_ = Static::sttdoor_Closed;
                 setExcludedFromBlockers(false);
                 frame_ = 0;
             }
             break;
         case Static::sttdoor_Opening:
-            if (frame_ >= g_App.gameSprites().lastFrame(opening_anim_)) {
+            if (frame_ >= g_SpriteMgr.lastFrame(opening_anim_)) {
                 state_ = Static::sttdoor_Open;
                 setExcludedFromBlockers(true);
                 frame_ = 0;
@@ -497,13 +497,13 @@ void LargeDoor::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
         case Static::sttdoor_Open:
             break;
         case Static::sttdoor_Closing:
-            g_App.gameSprites().drawFrame(closing_anim_, frame_, posWithOffs);
+            g_SpriteMgr.drawFrame(closing_anim_, frame_, posWithOffs);
             break;
         case Static::sttdoor_Closed:
-            g_App.gameSprites().drawFrame(anim_, frame_, posWithOffs);
+            g_SpriteMgr.drawFrame(anim_, frame_, posWithOffs);
             break;
         case Static::sttdoor_Opening:
-            g_App.gameSprites().drawFrame(opening_anim_, frame_, posWithOffs);
+            g_SpriteMgr.drawFrame(opening_anim_, frame_, posWithOffs);
             break;
     }
 }
@@ -751,13 +751,13 @@ bool LargeDoor::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
             }
             break;
         case Static::sttdoor_Closing:
-            if (frame_ >= g_App.gameSprites().lastFrame(closing_anim_)) {
+            if (frame_ >= g_SpriteMgr.lastFrame(closing_anim_)) {
                 state_ = Static::sttdoor_Closed;
                 setExcludedFromBlockers(false);
             }
         case Static::sttdoor_Opening:
             if (state_ == Static::sttdoor_Opening
-                && frame_ >= g_App.gameSprites().lastFrame(opening_anim_))
+                && frame_ >= g_SpriteMgr.lastFrame(opening_anim_))
             {
                 state_ = Static::sttdoor_Open;
                 setExcludedFromBlockers(true);
@@ -854,13 +854,13 @@ void Tree::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     Point2D posWithOffs = addOffs(screenPos);
     switch (state_) {
         case Static::stttree_Healthy:
-            g_App.gameSprites().drawFrame(anim_, frame_, posWithOffs);
+            g_SpriteMgr.drawFrame(anim_, frame_, posWithOffs);
             break;
         case Static::stttree_Burning:
-            g_App.gameSprites().drawFrame(burning_anim_, frame_, posWithOffs);
+            g_SpriteMgr.drawFrame(burning_anim_, frame_, posWithOffs);
             break;
         case Static::stttree_Damaged:
-            g_App.gameSprites().drawFrame(damaged_anim_, frame_, posWithOffs);
+            g_SpriteMgr.drawFrame(damaged_anim_, frame_, posWithOffs);
             break;
     }
 }
@@ -904,7 +904,7 @@ bool WindowObj::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
     bool updated = MapObject::animate(elapsed, spriteMgr);
 
     if (state_ == Static::sttwnd_Breaking
-        && frame_ >= g_App.gameSprites().lastFrame(breaking_anim_)
+        && frame_ >= g_SpriteMgr.lastFrame(breaking_anim_)
     ) {
         state_ = sttwnd_Damaged;
         updated = true;
@@ -914,7 +914,7 @@ bool WindowObj::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
 
 void WindowObj::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
 {
-    g_App.gameSprites().drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
 /*!
@@ -940,7 +940,7 @@ EtcObj::EtcObj(uint16 anId, Map *pMap, int anim, int burningAnim, int damagedAni
 
 void EtcObj::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
 {
-    g_App.gameSprites().drawFrame(anim_, frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
 NeonSign::NeonSign(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, Static::smt_NeonSign) {
@@ -949,7 +949,7 @@ NeonSign::NeonSign(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, Static
 
 void NeonSign::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
 {
-    g_App.gameSprites().drawFrame(anim_, frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
 Semaphore::Semaphore(uint16 anId, Map *pMap, int anim, int damagedAnim) :
@@ -1037,7 +1037,7 @@ void Semaphore::handleHit(fs_dmg::DamageToInflict &d) {
 
 void Semaphore::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
 {
-    g_App.gameSprites().drawFrame(anim_ +  state_, frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(anim_ +  state_, frame_, addOffs(screenPos));
 }
 
 AnimWindow::AnimWindow(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, smt_AnimatedWindow) {
@@ -1052,7 +1052,7 @@ void AnimWindow::draw(const Point2D &screenPos, GameSpriteManager &spriteMgr)
     // because lighted window is part of the map
     if (state_ == Static::sttawnd_LightOn)
         return;
-    g_App.gameSprites().drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
 bool AnimWindow::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
@@ -1078,7 +1078,7 @@ bool AnimWindow::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr
             }
             break;
         case Static::sttawnd_PedAppears:
-            if (frame_ >= g_App.gameSprites().lastFrame(anim_
+            if (frame_ >= g_SpriteMgr.lastFrame(anim_
                 + (Static::sttawnd_PedAppears << 1)))
             {
                 state_ = Static::sttawnd_ShowPed;
@@ -1097,7 +1097,7 @@ bool AnimWindow::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr
             }
             break;
         case Static::sttawnd_PedDisappears:
-            if (frame_ >= g_App.gameSprites().lastFrame(anim_
+            if (frame_ >= g_SpriteMgr.lastFrame(anim_
                 + (Static::sttawnd_PedDisappears << 1)))
             {
                 state_ = Static::sttawnd_LightOn;

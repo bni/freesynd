@@ -45,7 +45,7 @@ class Mission;
  */
 class GameController : public Singleton < GameController > {
   public:
-    GameController();
+    GameController(MapManager *pMapManager);
     virtual ~GameController();
 
     /*!
@@ -96,6 +96,13 @@ class GameController : public Singleton < GameController > {
                             int logo, int color);
     //! Checks if mission is completed and updates game state
     void handle_mission_end(Mission *p_mission);
+
+    //*************************************
+    // Editor services
+    //*************************************
+    //! Return the list of missions found in the search menu
+    std::list<int> & getMissionResultList() { return searchResLst_;}
+
 private:
     //! Simulates syndicates fighting for countries
     void simulate_enemy_moves();
@@ -117,6 +124,11 @@ private:
     std::list<GameEventListener *> game_listeners_;
     /*! List of listeners for mission stream events.*/
     std::list<GameEventListener *> mission_listeners_;
+
+    /*!
+     * Use to store id of missions that are found in the search menu.
+     */
+    std::list<int> searchResLst_;
 };
 
 #define g_gameCtrl    GameController::singleton()

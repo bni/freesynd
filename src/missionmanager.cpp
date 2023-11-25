@@ -22,11 +22,12 @@
  *                                                                      *
  ************************************************************************/
 
+#include "missionmanager.h"
+
 #include <stdio.h>
 #include <assert.h>
 
-#include "missionmanager.h"
-#include "app.h"
+#include "fs-engine/appcontext.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "resources.h"
@@ -66,8 +67,8 @@ private:
     std::string msg;
 };
 
-MissionManager::MissionManager()
-{
+MissionManager::MissionManager(MapManager *pMapManager) {
+    pMapManager_ = pMapManager;
 }
 
 /*!
@@ -112,7 +113,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
     LevelData::LevelDataAll level_data;
     if (load_level_data(n, level_data)) {
         uint16 map_id = READ_LE_UINT16(level_data.mapinfos.map);
-        Map *p_map = g_App.maps().loadMap(map_id);
+        Map *p_map = pMapManager_->loadMap(map_id);
         if (p_map == NULL) {
             delete p_mb;
             return NULL;
@@ -317,7 +318,7 @@ void MissionManager::exportMissionData(LevelData::LevelDataAll &level_data, Miss
  * Creates a Mission object from the LevelDataAll structure.
  */
 Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
-    Map *pMap = g_App.maps().loadMap(READ_LE_UINT16(level_data.mapinfos.map));
+    Map *pMap = pMapManager_->loadMap(READ_LE_UINT16(level_data.mapinfos.map));
     if (pMap == NULL) {
         return NULL;
     }
@@ -338,6 +339,7 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
         LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Peds creation"));
         createPeds(level_data, di, p_mission);
 
+        LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Static creation"));
         for (uint16 i = 0; i < 400; i++) {
             LevelData::Statics & sref = level_data.statics[i];
             if(sref.desc == 0)

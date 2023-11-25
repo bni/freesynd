@@ -29,9 +29,9 @@
 
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
-#include "mission.h"
+#include "app.h"
 
-GameController::GameController() {
+GameController::GameController(MapManager *pMapManager) : missions_(pMapManager) {
     agents_.setModManager(&mods_);
     agents_.setWeaponManager(&weaponMgr_);
 }
