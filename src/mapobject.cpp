@@ -27,7 +27,6 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
-//#include "app.h"
 #include "model/vehicle.h"
 #include "core/gamesession.h"
 #include "mission.h"
@@ -367,7 +366,7 @@ void Door::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
-bool Door::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
+bool Door::animate(int elapsed, Mission *obj)
 {
     PedInstance *p = NULL;
     int x = tileX();
@@ -379,7 +378,7 @@ bool Door::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
     char *i = 0, *j = 0;
     bool found = false;
 
-    bool changed = MapObject::animate(elapsed, spriteMgr);
+    bool changed = MapObject::animate(elapsed);
     switch(state_) {
         case Static::sttdoor_Open:
             if (orientation_ == kStaticOrientation1) {
@@ -508,7 +507,7 @@ void LargeDoor::draw(const Point2D &screenPos)
     }
 }
 
-bool LargeDoor::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
+bool LargeDoor::animate(int elapsed, Mission *obj)
 {
     // TODO: there must be somewhere locked door
     GenericCar *v = NULL;
@@ -528,7 +527,7 @@ bool LargeDoor::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
     char sign;
     int set_wayFree = 0;
 
-    bool changed = MapObject::animate(elapsed, spriteMgr);
+    bool changed = MapObject::animate(elapsed);
     uint32 cur_state = state_;
     switch(state_) {
         case Static::sttdoor_Open:
@@ -865,7 +864,7 @@ void Tree::draw(const Point2D &screenPos)
     }
 }
 
-bool Tree::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
+bool Tree::animate(int elapsed, Mission *obj) {
 
     if (state_ == Static::stttree_Burning) {
         if (!(leftTimeShowAnim(elapsed))) {
@@ -876,7 +875,7 @@ bool Tree::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
         }
     }
 
-    return MapObject::animate(elapsed, spriteMgr);
+    return MapObject::animate(elapsed);
 }
 
 /*!
@@ -900,8 +899,8 @@ WindowObj::WindowObj(uint16 anId, Map *pMap, int anim, int openAnim, int breakin
         Static(anId, pMap, Static::smt_Window), anim_(anim), open_anim_(openAnim),
         breaking_anim_(breakingAnim), damaged_anim_(damagedAnim) {}
 
-bool WindowObj::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
-    bool updated = MapObject::animate(elapsed, spriteMgr);
+bool WindowObj::animate(int elapsed, Mission *obj) {
+    bool updated = MapObject::animate(elapsed);
 
     if (state_ == Static::sttwnd_Breaking
         && frame_ >= g_SpriteMgr.lastFrame(breaking_anim_)
@@ -960,7 +959,7 @@ Semaphore::Semaphore(uint16 anId, Map *pMap, int anim, int damagedAnim) :
     setFramesPerSec(2);
 }
 
-bool Semaphore::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
+bool Semaphore::animate(int elapsed, Mission *obj) {
     if (state_ == Static::sttsem_Damaged) {
         if (elapsed_left_bigger_ == 0)
             return false;
@@ -1003,7 +1002,7 @@ bool Semaphore::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
             state_ = Static::sttsem_Stt0;
     }
 
-    return MapObject::animate(elapsed, spriteMgr);
+    return MapObject::animate(elapsed);
 }
 
 /*!
@@ -1055,7 +1054,7 @@ void AnimWindow::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
-bool AnimWindow::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr)
+bool AnimWindow::animate(int elapsed, Mission *obj)
 {
     switch (state_) {
         case Static::sttawnd_LightOff:
@@ -1126,7 +1125,7 @@ bool AnimWindow::animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr
             break;
     }
 
-    return MapObject::animate(elapsed, spriteMgr);
+    return MapObject::animate(elapsed);
     return false;
 }
 

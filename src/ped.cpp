@@ -385,8 +385,8 @@ void PedInstance::leaveState(uint32 as) {
  * \param elapsed Time since the last frame
  * \return True if animation has ended.
  */
-bool PedInstance::updateAnimation(int elapsed, GameSpriteManager &spriteMgr) {
-    MapObject::animate(elapsed, spriteMgr);
+bool PedInstance::updateAnimation(int elapsed) {
+    MapObject::animate(elapsed);
 
     return handleDrawnAnim(elapsed);
 }
@@ -403,7 +403,7 @@ bool PedInstance::updateAnimation(int elapsed, GameSpriteManager &spriteMgr) {
  * \param mission Mission data
  * \return True if something has changed (so update rendering)
  */
-bool PedInstance::animate(int elapsed, Mission *mission, GameSpriteManager &spriteMgr) {
+bool PedInstance::animate(int elapsed, Mission *mission) {
     // Execute current behaviour
     behaviour_.execute(elapsed, mission);
 
@@ -415,7 +415,7 @@ bool PedInstance::animate(int elapsed, Mission *mission, GameSpriteManager &spri
         update |= executeUseWeaponAction(elapsed, mission);
     }
 
-    if (updateAnimation(elapsed, spriteMgr)) {
+    if (updateAnimation(elapsed)) {
         // An action was waiting for the animation to finish
         if (currentAction_ && currentAction_->isWaitingForAnimation()) {
             // so continue action

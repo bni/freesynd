@@ -115,8 +115,8 @@ public:
     //! Set whether to include static in search for blockers
     void setExcludedFromBlockers(bool exclude) { excludedFromBlockers_ = exclude; }
 
-    virtual bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) {
-        return MapObject::animate(elapsed, spriteMgr);
+    virtual bool animate(int elapsed, Mission *obj) {
+        return MapObject::animate(elapsed);
     }
 
 protected:
@@ -147,7 +147,7 @@ public:
     virtual ~Door() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed, Mission *obj) override;
     bool isPathBlocker();
 
 protected:
@@ -163,7 +163,7 @@ public:
     virtual ~LargeDoor() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed, Mission *obj) override;
     bool isPathBlocker();
 
 protected:
@@ -178,7 +178,7 @@ public:
     virtual ~Tree() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed, Mission *obj) override;
     void handleHit(fs_dmg::DamageToInflict &d);
 
 protected:
@@ -194,7 +194,7 @@ public:
               int damagedAnim);
     virtual ~WindowObj() {}
 
-    bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed, Mission *obj) override;
     void draw(const Point2D &screenPos) override;
     void handleHit(fs_dmg::DamageToInflict &d);
 
@@ -239,7 +239,7 @@ public:
     Semaphore(uint16 id, Map *pMap, int anim, int damagedAnim);
     virtual ~Semaphore() {}
 
-    bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed, Mission *obj) override;
     void draw(const Point2D &screenPos) override;
 
     void handleHit(fs_dmg::DamageToInflict &d);
@@ -266,7 +266,7 @@ public:
     AnimWindow(uint16 id, Map *pMap, int anim);
     virtual ~AnimWindow() {}
 
-    bool animate(int elapsed, Mission *obj, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed, Mission *obj) override;
     void draw(const Point2D &screenPos) override;
 
 protected:

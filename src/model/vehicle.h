@@ -99,7 +99,7 @@ public:
         delete animation_;
     }
 
-    bool animate(int elapsed, GameSpriteManager &spriteMgr) override;
+    bool animate(int elapsed) override;
     void draw(const Point2D &screenPos) override;
 
     //! Return type of vehicle

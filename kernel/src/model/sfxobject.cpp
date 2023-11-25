@@ -28,6 +28,7 @@
 #include "fs-kernel/model/sfxobject.h"
 
 #include "fs-utils/log/log.h"
+#include "fs-engine/gfx/spritemanager.h"
 
 uint16 SFXObject::sfxIdCnt = 0;
 
@@ -35,6 +36,7 @@ uint16 SFXObject::sfxIdCnt = 0;
  * Constructor of the class.
  * \param pMap a pointer to the map
  * \param type Type of SfxObject (see SFXObject::SfxTypeEnum)
+ * \param drawable True means the object will be drawn by default
  * \param t_show
  * \param managed True means object is destroyed by another object than Mission
  */
@@ -109,10 +111,10 @@ void SFXObject::draw(const Point2D &screenPos) {
     g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
-bool SFXObject::animate(int elapsed, GameSpriteManager &spriteMgr) {
+bool SFXObject::animate(int elapsed) {
 
     if (is_frame_drawn_) {
-        bool changed = draw_all_frames_ ? MapObject::animate(elapsed, spriteMgr) : false;
+        bool changed = draw_all_frames_ ? MapObject::animate(elapsed) : false;
         if (type_ == SFXObject::sfxt_ExplosionBall) {
             int z = pos_.tz * 128 + pos_.oz;
             // 250 per sec
@@ -124,7 +126,7 @@ bool SFXObject::animate(int elapsed, GameSpriteManager &spriteMgr) {
             pos_.oz = z % 128;
         }
 
-        if (frame_ > spriteMgr.lastFrame(anim_)
+        if (frame_ > g_SpriteMgr.lastFrame(anim_)
             && !leftTimeShowAnim(elapsed))
         {
             if (loopAnimation_) {

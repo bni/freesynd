@@ -260,11 +260,11 @@ public:
     bool switchActionStateTo(uint32 as);
     bool switchActionStateFrom(uint32 as);
     void synchDrawnAnimWithActionState(void);
-    bool animate(int elapsed, Mission *mission, GameSpriteManager &spriteMgr);
+    bool animate(int elapsed, Mission *mission);
 
     void drawSelectorAnim(const Point2D &screenPos);
     //! Update frame to render
-    bool updateAnimation(int elapsed, GameSpriteManager &spriteMgr);
+    bool updateAnimation(int elapsed);
     //! Set state for ped (replace switchActionStateTo)
     void goToState(uint32 as);
     //! Quit state for ped (replace switchActionStateFrom)

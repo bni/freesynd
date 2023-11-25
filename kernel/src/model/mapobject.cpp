@@ -109,7 +109,7 @@ Point2D MapObject::addOffs(const Point2D &screenPos)
     return posWithOffs;
 }
 
-bool MapObject::animate(int elapsed, GameSpriteManager &spriteMgr)
+bool MapObject::animate(int elapsed)
 {
     int frame_tics_ = 1000 / frames_per_sec_;
     int total_elapsed = elapsed + elapsed_carry_;

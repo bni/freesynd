@@ -34,7 +34,6 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/damage.h"
-#include "fs-engine/gfx/spritemanager.h"
 
 class Map;
 class Mission;
@@ -207,7 +206,13 @@ public:
         return pos_.ox < pOther->position().ox || pos_.oy < pOther->position().oy;
     }
 
-    virtual bool animate(int elapsed, GameSpriteManager &spriteMgr);
+    /** \brief Animates the object
+     * SubClasses can implement this method.
+     * \param elapsed int Time elapsed since last animation
+     * \return virtual bool True mean the object has changed
+     *
+     */
+    virtual bool animate(int elapsed);
 
     void setFramesPerSec(int framesPerSec)
     {
