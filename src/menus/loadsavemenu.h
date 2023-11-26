@@ -26,6 +26,8 @@
 #ifndef LOADSAVEMENU_H
 #define LOADSAVEMENU_H
 
+#include "fs-engine/menus/menumanager.h"
+
 /*!
  * Load/Save Menu class.
  */

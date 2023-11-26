@@ -25,9 +25,12 @@
  *                                                                      *
  ************************************************************************/
 
+#include "core/gamecontroller.h"
+
 #include <list>
 
-#include "core/gamecontroller.h"
+#include "fs-utils/log/log.h"
+#include "fs-utils/io/file.h"
 #include "core/gamesession.h"
 #include "app.h"
 
@@ -270,6 +273,205 @@ int GameController::get_nb_mvt_for_active_synds(int nb_active_synds) {
         return rand() % 2 + 1; // between 1 and 2 moves
     default:
         return 0;
+    }
+}
+
+bool GameController::saveGameToFile(int fileSlot, std::string name) {
+    LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving %s in slot %d", name.c_str(), fileSlot))
+
+    PortableFile outfile;
+    std::string path;
+
+    File::getFullPathForSaveSlot(fileSlot, path);
+    LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving to file %s", path.c_str()))
+
+    outfile.open_to_overwrite(path.c_str());
+
+    if (outfile) {
+        // write file format version
+        outfile.write8(1); // major
+        outfile.write8(2); // minor
+
+        // Slot name is 31 characters long, nul-padded
+        outfile.write_string(name, 31);
+
+        // Session
+        g_Session.saveToFile(outfile);
+
+        // Weapons
+        weaponManager().saveToFile(outfile);
+
+        // Mods
+        mods().saveToFile(outfile);
+
+        // Agents
+        // TODO move in sesion saveToFile
+        agents().saveToFile(outfile);
+
+        // save researches
+        // TODO move in sesion saveToFile
+        g_Session.researchManager().saveToFile(outfile);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool GameController::loadGameFromFile(int fileSlot) {
+
+    std::string path;
+    PortableFile infile;
+
+    File::getFullPathForSaveSlot(fileSlot, path);
+
+    infile.open_to_read(path.c_str());
+
+    if (infile) {
+        // FIXME: detect original game saves
+
+        // Read version
+        unsigned char vMaj = infile.read8();
+        unsigned char vMin = infile.read8();
+        FormatVersion v(vMaj, vMin);
+
+        // validate that this is a supported version.
+        if (v.gt(1,2)) {
+            FSERR(Log::k_FLG_IO, "App", "loadGameFromFile", ("Cannot load file, unsupported version %d.%d", vMaj, vMin))
+            return false;
+        }
+
+        if (v == 0x0100) {
+            // the 1.0 format is in native byte order instead of big-endian.
+            infile.set_system_endian();
+        }
+
+        reset();
+
+        // Read slot name
+        std::string slotName;
+        // Original game: 20 chars on screen, 20 written, 19 read.
+        // v1.0: 25 characters.
+        // v1.1: 31 characters.
+        slotName = infile.read_string((v == 0x0100) ? 25 : 31, true);
+
+        g_Session.loadFromFile(infile, v);
+
+        // Weapons
+        weaponManager().loadFromFile(infile, v);
+
+        // Mods
+        mods().loadFromFile(infile, v);
+
+        // Agents
+        agents().loadFromFile(infile, v);
+
+        // Research
+        g_Session.researchManager().loadFromFile(infile, v);
+
+        return true;
+    }
+
+    return false;
+}
+
+void GameController::cheatFunds() {
+    g_Session.setMoney(100000000);
+}
+/*!
+ * Activate cheat mode in which all completed missions can be replayed.
+ */
+void GameController::cheatRepeatOrCompleteMission() {
+    g_Session.cheatReplayMission();
+}
+
+void GameController::cheatWeaponsAndMods() {
+    weaponManager().cheatEnableAllWeapons();
+    mods().cheatEnableAllMods();
+}
+
+void GameController::cheatEquipAllMods() {
+    for (int agent = 0; agent < AgentManager::MAX_AGENT; agent++) {
+        Agent *pAgent = agents().agent(agent);
+        if (pAgent) {
+            pAgent->clearSlots();
+
+            pAgent->addMod(mods().getMod(Mod::MOD_LEGS, Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(Mod::MOD_ARMS, Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(Mod::MOD_EYES, Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(Mod::MOD_BRAIN, Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(Mod::MOD_CHEST, Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(Mod::MOD_HEART, Mod::MOD_V3));
+        }
+    }
+}
+
+/*!
+ * Activate cheat mode in which all missions are playable.
+ */
+void GameController::cheatAnyMission() {
+    g_Session.cheatEnableAllMission();
+}
+
+void GameController::cheatResurrectAgents() {
+    // TODO: Implement cheatResurrectAgents()
+}
+
+void GameController::cheatOwnAllCountries() {
+    // TODO: Implement cheatOwnAllCountries()
+}
+
+void GameController::cheatAccelerateTime() {
+    g_Session.cheatAccelerateTime();
+}
+
+void GameController::cheatFemaleRecruits() {
+    agents().reset(true);
+
+    for (size_t i = 0; i < AgentManager::kMaxSlot; i++)
+        agents().setSquadMember(i, agents().agent(i));
+}
+
+void GameController::cheatEquipFancyWeapons() {
+    for (int i = 0; i < AgentManager::MAX_AGENT; i++) {
+        if (agents().agent(i)) {
+        agents().agent(i)->destroyAllWeapons();
+#ifdef _DEBUG
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::TimeBomb)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::GaussGun)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Flamer)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Uzi)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Persuadatron)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::EnergyShield)));
+        agents().agent(i)->addWeapon(
+            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Shotgun)));
+#else
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Persuadatron)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::TimeBomb)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::EnergyShield)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::EnergyShield)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Laser)));
+        agents().agent(i)->addWeapon(
+                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Laser)));
+#endif
+        }
     }
 }
 

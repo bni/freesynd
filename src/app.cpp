@@ -46,7 +46,6 @@
 #undef ChunkHeader
 #endif
 
-#include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/io/portablefile.h"
@@ -83,102 +82,6 @@ bool App::doInitialize(const CliParam& param) {
     return reset();
 }
 
-/*!
- * Activate cheat mode in which all completed missions can be replayed.
- */
-void App::cheatRepeatOrCompleteMission() {
-    g_Session.cheatReplayMission();
-}
-
-void App::cheatWeaponsAndMods() {
-    g_gameCtrl.weaponManager().cheatEnableAllWeapons();
-    g_gameCtrl.mods().cheatEnableAllMods();
-}
-
-void App::cheatEquipAllMods() {
-    for (int agent = 0; agent < AgentManager::MAX_AGENT; agent++) {
-        Agent *pAgent = g_gameCtrl.agents().agent(agent);
-        if (pAgent) {
-            pAgent->clearSlots();
-
-            pAgent->addMod(g_gameCtrl.mods().getMod(Mod::MOD_LEGS, Mod::MOD_V3));
-            pAgent->addMod(g_gameCtrl.mods().getMod(Mod::MOD_ARMS, Mod::MOD_V3));
-            pAgent->addMod(g_gameCtrl.mods().getMod(Mod::MOD_EYES, Mod::MOD_V3));
-            pAgent->addMod(g_gameCtrl.mods().getMod(Mod::MOD_BRAIN, Mod::MOD_V3));
-            pAgent->addMod(g_gameCtrl.mods().getMod(Mod::MOD_CHEST, Mod::MOD_V3));
-            pAgent->addMod(g_gameCtrl.mods().getMod(Mod::MOD_HEART, Mod::MOD_V3));
-        }
-    }
-}
-
-/*!
- * Activate cheat mode in which all missions are playable.
- */
-void App::cheatAnyMission() {
-    g_Session.cheatEnableAllMission();
-}
-
-void App::cheatResurrectAgents() {
-    // TODO: Implement cheatResurrectAgents()
-}
-
-void App::cheatOwnAllCountries() {
-    // TODO: Implement cheatOwnAllCountries()
-}
-
-void App::cheatAccelerateTime() {
-    g_Session.cheatAccelerateTime();
-}
-
-void App::cheatFemaleRecruits() {
-    g_gameCtrl.agents().reset(true);
-
-    for (size_t i = 0; i < AgentManager::kMaxSlot; i++)
-        g_gameCtrl.agents().setSquadMember(i, g_gameCtrl.agents().agent(i));
-}
-
-void App::cheatEquipFancyWeapons() {
-    for (int i = 0; i < AgentManager::MAX_AGENT; i++) {
-        if (g_gameCtrl.agents().agent(i)) {
-        g_gameCtrl.agents().agent(i)->destroyAllWeapons();
-#ifdef _DEBUG
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Minigun)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::TimeBomb)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::GaussGun)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Flamer)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Uzi)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Persuadatron)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::EnergyShield)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Shotgun)));
-#else
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Minigun)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Minigun)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Persuadatron)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::TimeBomb)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::EnergyShield)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::EnergyShield)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Laser)));
-        g_gameCtrl.agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(g_gameCtrl.weaponManager().getWeapon(Weapon::Laser)));
-#endif
-        }
-    }
-}
 
 /*!
  * Activate a cheat code with the given name. Possible
@@ -199,37 +102,37 @@ void App::setCheatCode(const char *name) {
     // Repeat mission with previously obtained items, press 'C' or 'Ctrl-C'
     // to instantly complete a mission
     if (!strcmp(name, "DO IT AGAIN"))
-        cheatRepeatOrCompleteMission();
+        game_ctlr_->cheatRepeatOrCompleteMission();
     else if (!strcmp(name, "NUK THEM")) {
         // Select any mission, resurrect dead agents
-        cheatAnyMission();
-        cheatResurrectAgents();
+        game_ctlr_->cheatAnyMission();
+        game_ctlr_->cheatResurrectAgents();
     }
     else if (!strcmp(name, "OWN THEM")) {
         // Own all countries
-        cheatOwnAllCountries();
+        game_ctlr_->cheatOwnAllCountries();
     }
     else if (!strcmp(name, "ROB A BANK")) {
         // $100 000 000 in funds
-        cheatFunds();
+        game_ctlr_->cheatFunds();
     }
     else if (!strcmp(name, "TO THE TOP")) {
         // $100 000 000 in funds, select any mission
-        cheatFunds();
-        cheatAnyMission();
+        game_ctlr_->cheatFunds();
+        game_ctlr_->cheatAnyMission();
     }
     else if (!strcmp(name, "COOPER TEAM")) {
         // $100 000 000 in funds, select any mission, all weapons and mods
-        cheatFemaleRecruits();
-        cheatFunds();
-        cheatAnyMission();
-        cheatWeaponsAndMods();
-        cheatEquipAllMods();
-        cheatEquipFancyWeapons();
+        game_ctlr_->cheatFemaleRecruits();
+        game_ctlr_->cheatFunds();
+        game_ctlr_->cheatAnyMission();
+        game_ctlr_->cheatWeaponsAndMods();
+        game_ctlr_->cheatEquipAllMods();
+        game_ctlr_->cheatEquipFancyWeapons();
     }
     else if (!strcmp(name, "WATCH THE CLOCK")) {
         // Accelerate time for faster research completion
-        cheatAccelerateTime();
+        game_ctlr_->cheatAccelerateTime();
     }
 }
 
@@ -299,104 +202,4 @@ int App::getStartMenuId(const CliParam& param) {
         // Then we go to the brief menu
         return fs_game_menus::kMenuIdBrief;
     }
-}
-
-
-bool App::saveGameToFile(int fileSlot, std::string name) {
-    LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving %s in slot %d", name.c_str(), fileSlot))
-
-    PortableFile outfile;
-    std::string path;
-
-    File::getFullPathForSaveSlot(fileSlot, path);
-    LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving to file %s", path.c_str()))
-
-    outfile.open_to_overwrite(path.c_str());
-
-    if (outfile) {
-        // write file format version
-        outfile.write8(1); // major
-        outfile.write8(2); // minor
-
-        // Slot name is 31 characters long, nul-padded
-        outfile.write_string(name, 31);
-
-        // Session
-        g_Session.saveToFile(outfile);
-
-        // Weapons
-        g_gameCtrl.weaponManager().saveToFile(outfile);
-
-        // Mods
-        g_gameCtrl.mods().saveToFile(outfile);
-
-        // Agents
-        // TODO move in sesion saveToFile
-        g_gameCtrl.agents().saveToFile(outfile);
-
-        // save researches
-        // TODO move in sesion saveToFile
-        g_Session.researchManager().saveToFile(outfile);
-
-        return true;
-    }
-
-    return false;
-}
-
-bool App::loadGameFromFile(int fileSlot) {
-
-    std::string path;
-    PortableFile infile;
-
-    File::getFullPathForSaveSlot(fileSlot, path);
-
-    infile.open_to_read(path.c_str());
-
-    if (infile) {
-        // FIXME: detect original game saves
-
-        // Read version
-        unsigned char vMaj = infile.read8();
-        unsigned char vMin = infile.read8();
-        FormatVersion v(vMaj, vMin);
-
-        // validate that this is a supported version.
-        if (v.gt(1,2)) {
-            FSERR(Log::k_FLG_IO, "App", "loadGameFromFile", ("Cannot load file, unsupported version %d.%d", vMaj, vMin))
-            return false;
-        }
-
-        if (v == 0x0100) {
-            // the 1.0 format is in native byte order instead of big-endian.
-            infile.set_system_endian();
-        }
-
-        reset();
-
-        // Read slot name
-        std::string slotName;
-        // Original game: 20 chars on screen, 20 written, 19 read.
-        // v1.0: 25 characters.
-        // v1.1: 31 characters.
-        slotName = infile.read_string((v == 0x0100) ? 25 : 31, true);
-
-        g_Session.loadFromFile(infile, v);
-
-        // Weapons
-        g_gameCtrl.weaponManager().loadFromFile(infile, v);
-
-        // Mods
-        g_gameCtrl.mods().loadFromFile(infile, v);
-
-        // Agents
-        g_gameCtrl.agents().loadFromFile(infile, v);
-
-        // Research
-        g_Session.researchManager().loadFromFile(infile, v);
-
-        return true;
-    }
-
-    return false;
 }

@@ -24,12 +24,17 @@
  *                                                                      *
  ************************************************************************/
 
+#include "loadsavemenu.h"
+
 #include <stdio.h>
 #include <assert.h>
-#include "app.h"
-#include "loadsavemenu.h"
-#include "menus/gamemenuid.h"
+
 #include "fs-utils/io/file.h"
+#include "fs-engine/gfx/screen.h"
+#include "fs-engine/appcontext.h"
+#include "fs-engine/system/system.h"
+#include "core/gamecontroller.h"
+#include "menus/gamemenuid.h"
 
 const int LoadSaveMenu::X_ORIGIN = 165;
 const int LoadSaveMenu::Y_ORIGIN = 100;
@@ -91,14 +96,14 @@ void LoadSaveMenu::handleLeave() {
 void LoadSaveMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
     if (actionId == loadButId_) {
         if (editNameId_ != -1) {
-            if (g_App.loadGameFromFile(editNameId_)) {
+            if (g_gameCtrl.loadGameFromFile(editNameId_)) {
                 editNameId_ = -1;
                 menu_manager_->gotoMenu(fs_game_menus::kMenuIdMain);
             }
         }
     } else if (actionId == saveButId_) {
         if (editNameId_ != -1 && pTextFields_[editNameId_]->getText().size() != 0) {
-            if (g_App.saveGameToFile(editNameId_, pTextFields_[editNameId_]->getText())) {
+            if (g_gameCtrl.saveGameToFile(editNameId_, pTextFields_[editNameId_]->getText())) {
                 editNameId_ = -1;
                 menu_manager_->gotoMenu(fs_game_menus::kMenuIdMain);
             }

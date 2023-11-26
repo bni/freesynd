@@ -97,6 +97,22 @@ class GameController : public Singleton < GameController > {
     //! Checks if mission is completed and updates game state
     void handle_mission_end(Mission *p_mission);
 
+    //! Save game to a file
+    bool saveGameToFile(int fileSlot, std::string name);
+    //! Load game from a file
+    bool loadGameFromFile(int fileSlot);
+
+    void cheatFunds();
+    void cheatRepeatOrCompleteMission();
+    void cheatWeaponsAndMods();
+    void cheatEquipAllMods();
+    void cheatAnyMission();
+    void cheatResurrectAgents();
+    void cheatOwnAllCountries();
+    void cheatAccelerateTime();
+    void cheatFemaleRecruits();
+    void cheatEquipFancyWeapons();
+
     //*************************************
     // Editor services
     //*************************************

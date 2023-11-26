@@ -57,11 +57,6 @@ class App : public BaseApp, public Singleton < App > {
 
     void waitForKeyPress();
 
-    //! Save game to a file
-    bool saveGameToFile(int fileSlot, std::string name);
-    //! Load game from a file
-    bool loadGameFromFile(int fileSlot);
-
 #ifdef _DEBUG
 public:
     uint8 debug_breakpoint_trigger_;
@@ -74,21 +69,6 @@ protected:
     void doDestroy();
     //! Define the menuid that will be displayed at the application's start
     int getStartMenuId(const CliParam& param);
-
-private:
-    void cheatFunds() {
-        g_Session.setMoney(100000000);
-    }
-
-    void cheatRepeatOrCompleteMission();
-    void cheatWeaponsAndMods();
-    void cheatEquipAllMods();
-    void cheatAnyMission();
-    void cheatResurrectAgents();
-    void cheatOwnAllCountries();
-    void cheatAccelerateTime();
-    void cheatFemaleRecruits();
-    void cheatEquipFancyWeapons();
 
 private:
     /*! A structure to hold player information.*/
