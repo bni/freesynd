@@ -46,6 +46,10 @@ void GameController::destroy() {
 }
 
 bool GameController::reset() {
+    // Reset user session
+    if (!g_Session.reset()) {
+        return false;
+    }
     // Reset default mods and weapons
     mods_.reset();
     weaponMgr_.reset();

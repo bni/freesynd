@@ -52,11 +52,6 @@ class App : public BaseApp, public Singleton < App > {
         return maps_;
     }
 
-    //! Reset the application data
-    bool reset();
-
-    void waitForKeyPress();
-
 #ifdef _DEBUG
 public:
     uint8 debug_breakpoint_trigger_;

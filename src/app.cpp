@@ -79,7 +79,7 @@ bool App::doInitialize(const CliParam& param) {
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
     g_gameCtrl.agents().loadAgents();
-    return reset();
+    return g_gameCtrl.reset();
 }
 
 
@@ -137,36 +137,12 @@ void App::setCheatCode(const char *name) {
 }
 
 /*!
- * Reset application data.
- * \returns True if reset is ok.
- */
-bool App::reset() {
-    g_gameCtrl.reset();
-
-    // Reset user session
-    if (!g_Session.reset()) {
-        return false;
-    }
-
-    return true;
-}
-
-/*!
  * Destroy the application.
  */
 void App::doDestroy() {
     game_ctlr_->clearAllListeners();
 
     game_ctlr_->destroy();
-}
-
-void App::waitForKeyPress() {
-
-    while (isRunning()) {
-        // small pause while waiting for key, also mouse event
-        system_->delay(20);
-        menus().handleEvents();
-    }
 }
 
 /*!

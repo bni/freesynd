@@ -84,6 +84,8 @@ protected:
     //! Define the menuid that will be displayed at the application's start
     virtual int getStartMenuId(const CliParam& param) = 0;
 
+    void waitForKeyPress();
+
     /*! A structure to hold general application information.*/
     std::unique_ptr<AppContext> context_;
     std::unique_ptr<Screen> screen_;

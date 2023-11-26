@@ -25,6 +25,8 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
+#include "fs-engine/menus/menumanager.h"
+
 /*!
  * Main Menu class.
  */

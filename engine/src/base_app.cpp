@@ -156,3 +156,12 @@ void BaseApp::run(const CliParam& param) {
 #endif
 }
 
+void BaseApp::waitForKeyPress() {
+
+    while (isRunning()) {
+        // small pause while waiting for key, also mouse event
+        system_->delay(20);
+        menus().handleEvents();
+    }
+}
+

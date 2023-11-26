@@ -23,10 +23,14 @@
  *                                                                      *
  ************************************************************************/
 
+#include "mainmenu.h"
+
 #include <stdio.h>
 #include <assert.h>
-#include "app.h"
-#include "mainmenu.h"
+
+#include "fs-engine/gfx/screen.h"
+#include "fs-engine/system/system.h"
+#include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
 MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain, "moption.dat",
@@ -62,7 +66,7 @@ void MainMenu::handleLeave() {
 void MainMenu::handleAction(const int actionId, void *ctx, const int modKeys)
 {
     if (actionId == resetButId_)
-        g_App.reset();
+        g_gameCtrl.reset();
     if (actionId == quitButId_)
         menu_manager_->gotoMenu(Menu::kMenuIdLogout);
 }
