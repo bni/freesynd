@@ -22,9 +22,11 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-kernel/mgr/mapmanager.h"
+
 #include <stdio.h>
 #include <assert.h>
-#include "mapmanager.h"
+
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 

@@ -30,7 +30,7 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/leveldata.h"
 #include "ia/actions.h"
-#include "mapmanager.h"
+#include "fs-kernel/mgr/mapmanager.h"
 #include "core/missionbriefing.h"
 #include "mission.h"
 

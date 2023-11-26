@@ -7,6 +7,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/sfxobject.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/damage.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/map.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/mapmanager.h"
     )
 
 set(SOURCE_LIST
@@ -14,6 +15,7 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/kernel/src/model/map.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mapobject.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/sfxobject.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/mgr/mapmanager.cpp"
     )
 
 # Make an automatic library - will be static or dynamic based on user setting

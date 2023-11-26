@@ -29,13 +29,11 @@
 #define APP_H
 
 #include <memory>
-#include <vector>
 
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
 #include "fs-engine/appcontext.h"
-#include "path.h"
-#include "mapmanager.h"
+#include "fs-kernel/mgr/mapmanager.h"
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 

@@ -29,15 +29,10 @@
 #define EDITORAPP_H
 
 #include <memory>
-#include <vector>
-
 
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
-#include "path.h"
-#include "fs-engine/menus/menumanager.h"
-#include "mapmanager.h"
-#include "fs-engine/sound/soundmanager.h"
+#include "fs-kernel/mgr/mapmanager.h"
 #include "core/gamecontroller.h"
 
 /*!
@@ -51,12 +46,6 @@ class EditorApp : public BaseApp, public Singleton < EditorApp > {
     MapManager &maps() {
         return maps_;
     }
-
-    SoundManager &introSounds() {
-        return intro_sounds_;
-    }
-
-
 
 #ifdef _DEBUG
 public:
@@ -76,7 +65,6 @@ private:
     std::unique_ptr<GameController> game_ctlr_;
 
     MapManager maps_;
-    SoundManager intro_sounds_;
 };
 
 #define g_App   EditorApp::singleton()
