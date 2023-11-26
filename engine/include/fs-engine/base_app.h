@@ -92,13 +92,13 @@ protected:
     std::unique_ptr<AppContext> context_;
     std::unique_ptr<Screen> screen_;
     std::unique_ptr<System> system_;
-    MenuManager menus_;
-    MusicManager music_;
 
 private:
     bool running_;
     GameSpriteManager game_sprites_;
-    SoundManager game_sounds_;
+    SoundManager soundManager_;
+    MusicManager music_;
+    MenuManager menus_;
 };
 
 #endif // ENGINE_BASEAPP_H

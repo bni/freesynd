@@ -29,6 +29,10 @@
 
 #include "fs-utils/common.h"
 
+enum IntroSample {
+    kSound1 = 0,
+    kNoSound = -1
+};
 /*!
  * These enum values match the indices in the vector containing the samples
  * so don't mess up the order in which they are in.

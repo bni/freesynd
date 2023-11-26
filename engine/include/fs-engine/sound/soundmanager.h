@@ -48,12 +48,17 @@ public:
     SoundManager();
     ~SoundManager();
 
-    void initialize(bool disabled, Audio* audio,  SampleSet set);
+    //! Loads the sounds for the game and possibly for the intro
+    void initialize(Audio* audio, bool disabled, bool doLoadIntroSounds);
 
     //! Plays the sound a number a time on the given channel
     void play(InGameSample sample, int channel = 0, int loops = 0);
     //! Stops the sound
     void stop(InGameSample sample);
+    //! Plays the sound a number a time on the given channel
+    void playIntro(IntroSample sample, int channel = 0, int loops = 0);
+    //! Stops the sound
+    void stopIntro(IntroSample sample);
 
     //! Sets the music volume to the given level
     void setVolume(int volume);
@@ -63,15 +68,21 @@ public:
     void toggleSound();
 
 protected:
-    Sound *sound(InGameSample sample);
+    Sound *soundFromInGame(InGameSample sample);
+    Sound *soundFromIntro(IntroSample sample);
+
     void loadSounds(SampleSet set);
-    bool loadSounds(uint8 *tabData, int tabSize, uint8 *soundData);
+
+    void loadSounds(const std::string &tabFile, const std::string &datFile, std::vector<std::unique_ptr<Sound>> &sounds);
     bool canUseAudio();
 
 protected:
     const int tabentry_startoffset_;
     const int tabentry_offset_;
+    //!Store the sounds that are used during the game
     std::vector<std::unique_ptr<Sound>> sounds_;
+    //! Store the sounds used only for the intro
+    std::vector<std::unique_ptr<Sound>> introSounds_;
     /*!
      * Saves the volume level before a mute so
      * we can restore it after a unmute.

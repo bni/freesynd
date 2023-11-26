@@ -57,7 +57,6 @@
 App::App()
     : BaseApp(new GameMenuFactory()),
       session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>(&maps_))
-      /*intro_sounds_()*/
 {
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;
@@ -78,11 +77,6 @@ bool App::doInitialize(const CliParam& param) {
     if (!maps().initialize()) {
         return false;
     }
-
- /*   if (context_->isPlayIntro()) {
-        LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading intro sounds..."))
-        intro_sounds_.initialize(param.disableSound, system_->getAudio(), SoundManager::SAMPLES_INTRO);
-    }*/
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
     g_gameCtrl.agents().loadAgents();
@@ -268,7 +262,7 @@ void App::waitForKeyPress() {
     while (isRunning()) {
         // small pause while waiting for key, also mouse event
         system_->delay(20);
-        menus_.handleEvents();
+        menus().handleEvents();
     }
 }
 
@@ -283,9 +277,9 @@ void App::waitForKeyPress() {
 int App::getStartMenuId(const CliParam& param) {
     if (param.startMission == -1) {
         if (context_->isPlayIntro()) {
-            return fs_game_menus::kMenuIdFliIntro;
             // Update intro flag so intro won't be played next time
             context_->updateIntroFlag();
+            return fs_game_menus::kMenuIdFliIntro;
         } else {
             // play title before going to main menu
             return fs_game_menus::kMenuIdFliTitle;

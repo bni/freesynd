@@ -40,61 +40,56 @@ SoundManager::SoundManager():tabentry_startoffset_(58), tabentry_offset_(32)
 
 SoundManager::~SoundManager() {}
 
-Sound *SoundManager::sound(InGameSample sample)
+Sound *SoundManager::soundFromInGame(InGameSample sample)
 {
     if (sample == NO_SOUND)
         return NULL;
     return sounds_.at(sample).get();
 }
 
-void SoundManager::initialize(bool disabled, Audio* audio, SampleSet set) {
+Sound *SoundManager::soundFromIntro(IntroSample sample)
+{
+    if (sample == kNoSound)
+        return NULL;
+    return introSounds_.at(sample).get();
+}
+
+void SoundManager::initialize(Audio* audio, bool disabled, bool doLoadIntroSounds) {
+    audio_ = audio;
     disabled_ = disabled;
+
+    LOG(Log::k_FLG_INFO, "SoundManager", "initialize", ("Loading sounds..."))
+
     if (disabled_) {
         FSINFO(Log::k_FLG_SND, "SoundManager", "initialize", ("Sound will be disabled\n"))
+    } else {
+        // Always load ingame sounds
+        loadSounds(SAMPLES_GAME);
+        if (doLoadIntroSounds) {
+            loadSounds(SAMPLES_INTRO);
+        }
     }
-    audio_ = audio;
-    loadSounds(set);
 }
 
 void SoundManager::loadSounds(SampleSet set)
 {
-    int tabSize, size;
-    uint8 *tabData, *data;
     switch (set) {
     case SAMPLES_INTRO:
         {
-            tabData = File::loadOriginalFile("ISNDS-0.TAB", tabSize);
-            data = File::loadOriginalFile("ISNDS-0.DAT", size);
-            bool loaded = loadSounds(tabData, tabSize, data);
-            delete[] tabData;
-            delete[] data;
-            if (!loaded) {
-                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load intro sounds from file ISNDS-0.DAT\n"))
-                return;
-            }
-            tabData = File::loadOriginalFile("ISNDS-1.TAB", tabSize);
-            data = File::loadOriginalFile("ISNDS-1.DAT", size);
-            loadSounds(tabData, tabSize, data);
-            delete[] tabData;
-            delete[] data;
-            if (!loaded) {
-                FSERR(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Error : Could not load intro sounds from file ISNDS-1.DAT\n"))
-                return;
-            }
+            LOG(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Loading intro sounds 1/2"))
+            loadSounds("ISNDS-0.TAB", "ISNDS-0.DAT", introSounds_);
+
+            LOG(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Loading intro sounds 2/2"))
+            loadSounds("ISNDS-1.TAB", "ISNDS-1.DAT", introSounds_);
         }
         break;
     case SAMPLES_GAME:
         {
-            tabData = File::loadOriginalFile("SOUND-0.TAB", tabSize);
-            data = File::loadOriginalFile("SOUND-0.DAT", size);
-            loadSounds(tabData, tabSize, data);
-            delete[] tabData;
-            delete[] data;
-            tabData = File::loadOriginalFile("SOUND-1.TAB", tabSize);
-            data = File::loadOriginalFile("SOUND-1.DAT", size);
-            loadSounds(tabData, tabSize, data);
-            delete[] tabData;
-            delete[] data;
+            LOG(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Loading game sounds 1/2"))
+            loadSounds("SOUND-0.TAB", "SOUND-0.DAT", sounds_);
+
+            LOG(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Loading game sounds 2/2"))
+            loadSounds("SOUND-1.TAB", "SOUND-1.DAT", sounds_);
         }
         break;
     default:
@@ -102,12 +97,15 @@ void SoundManager::loadSounds(SampleSet set)
     }
 }
 
-bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
-                              uint8 * soundData)
+void SoundManager::loadSounds(const std::string &tabFile, const std::string &datFile, std::vector<std::unique_ptr<Sound>> &sounds)
 {
-    if (!tabData || !soundData) {
-        return false;
-    }
+    int tabSize, datSize;
+
+    uint8 *tabDataOri = File::loadOriginalFile(tabFile, tabSize);
+    uint8 *soundDataOri = File::loadOriginalFile(datFile, datSize);
+
+    uint8 *tabData = tabDataOri;
+    uint8 *soundData = soundDataOri;
 
     tabData += tabentry_startoffset_;
     uint32 offset = 0;
@@ -119,19 +117,19 @@ bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
 
         // Samples with size < 144 are bogus
         if (soundsize > 144) {
-            sounds_.push_back(audio_->createSound());
+            sounds.push_back(audio_->createSound());
             uint8 *sample = new uint8[soundsize];
             memcpy(sample, soundData, soundsize);
-            //printf("sample rate %x\n", sample[0x1e]);
             // patching wrong sample rate
-            if (sounds_.size() == 13)
+            if (sounds.size() == 13)
                 sample[0x1e] = 0x9c;
-            else if (sounds_.size() == 24)
+            else if (sounds.size() == 24)
                 sample[0x1e] = 0x9c;
-            else if (sounds_.size() == 25)
+            else if (sounds.size() == 25)
                 sample[0x1e] = 0x38;
-            sounds_.back()->loadSound(sample, soundsize);
-            LOG(Log::k_FLG_INFO, "SoundManager", "loadSounds", ("Sound %d loaded", i))
+
+            sounds.back()->loadSound(sample, soundsize);
+            LOG(Log::k_FLG_SND, "SoundManager", "loadSounds", ("Sound loaded at offset %d", i))
             delete []sample;
         }
         soundData += soundsize;
@@ -139,7 +137,9 @@ bool SoundManager::loadSounds(uint8 * tabData, int tabSize,
 
         tabData += tabentry_offset_;
     }
-    return true;
+
+    delete[] tabDataOri;
+    delete[] soundDataOri;
 }
 
 bool SoundManager::canUseAudio() {
@@ -148,12 +148,18 @@ bool SoundManager::canUseAudio() {
             audio_->isInitialized();
 }
 
-/*!
+
+/** \brief Play a sound from in game library
+ *
+ * \param sample InGameSample
+ * \param channel int
+ * \param loops int
+ * \return void
  *
  */
 void SoundManager::play(InGameSample sample, int channel, int loops) {
     if (canUseAudio()) {
-        Sound *pSound = sound(sample);
+        Sound *pSound = soundFromInGame(sample);
 
         if (pSound) {
             // Sound is played on first available channel (value -1)
@@ -162,15 +168,55 @@ void SoundManager::play(InGameSample sample, int channel, int loops) {
     }
 }
 
-/*!
+/** \brief Play a sound from in intro library
+ *
+ * \param sample IntroSample
+ * \param channel int
+ * \param loops int
+ * \return void
+ *
+ */
+void SoundManager::playIntro(IntroSample sample, int channel, int loops) {
+    if (canUseAudio()) {
+        Sound *pSound = soundFromIntro(sample);
+
+        if (pSound) {
+            // Sound is played on first available channel (value -1)
+            pSound->play(loops, -1);
+        }
+    }
+}
+
+
+/** \brief
+ *
+ * \param sample InGameSample
+ * \return void
  *
  */
 void SoundManager::stop(InGameSample sample) {
     if (canUseAudio()) {
-        Sound *pSound = sound(sample);
+        Sound *pSound = soundFromInGame(sample);
 
         if (pSound) {
             pSound->stop(sample >= MENU_UP ? 1 : 0);
+        }
+    }
+}
+
+/** \brief
+ *
+ * \param sample IntroSample
+ * \return void
+ *
+ */
+void SoundManager::stopIntro(IntroSample sample) {
+    if (canUseAudio()) {
+        Sound *pSound = soundFromIntro(sample);
+
+        if (pSound) {
+            // TODO (benblan): understand what channel to use
+            pSound->stop(0);
         }
     }
 }

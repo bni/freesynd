@@ -157,6 +157,7 @@ void AppContext::getMessage(const std::string & id, std::string & msg) {
  */
 void AppContext::updateIntroFlag() {
     try {
+        LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Setting play_intro to false in %s", iniPath_.c_str()))
         ConfigFile conf(iniPath_);
         conf.add("play_intro", false);
 
@@ -165,10 +166,10 @@ void AppContext::updateIntroFlag() {
             file << conf;
             file.close();
         } else {
-            LOG(Log::k_FLG_GFX, "App", "updateIntroFlag", ("Could not update configuration file!"))
+            LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Could not update configuration file!"))
         }
     } catch (...) {
-        LOG(Log::k_FLG_GFX, "App", "updateIntroFlag", ("Could not update configuration file!"))
+        LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Could not update configuration file!"))
     }
 }
 

@@ -34,8 +34,11 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
     : context_(std::make_unique<AppContext>()),
       screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
       system_(System::createSystem()),
-      game_sounds_(), music_(),
-      menus_(pMenuFactory, &game_sounds_) {
+      game_sprites_(),
+      soundManager_(),
+      music_(),
+      menus_(pMenuFactory, &soundManager_) {
+    running_ = false;
 }
 
 BaseApp::~BaseApp() {}
@@ -67,8 +70,7 @@ bool BaseApp::initialize(const CliParam& param) {
         game_sprites_.load();
     }
 
-    LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("Loading game sounds..."))
-    game_sounds_.initialize(param.disableSound, system_->getAudio(), SoundManager::SAMPLES_GAME);
+    soundManager_.initialize(system_->getAudio(), param.disableSound, context_->isPlayIntro());
 
     music_.initialize(param.disableSound, system_->getAudio());
 
