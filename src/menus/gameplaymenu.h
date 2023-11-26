@@ -27,6 +27,7 @@
 #ifndef GAMEPLAYMENU_H
 #define GAMEPLAYMENU_H
 
+#include "fs-engine/menus/menumanager.h"
 #include "agentselectorrenderer.h"
 #include "maprenderer.h"
 #include "minimaprenderer.h"

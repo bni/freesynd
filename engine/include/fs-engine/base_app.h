@@ -76,10 +76,6 @@ public:
         return menus_;
     }
 
-    MusicManager &music() {
-        return music_;
-    }
-
 protected:
     //! Child class implements this method for initialization
     virtual bool doInitialize(const CliParam& param);

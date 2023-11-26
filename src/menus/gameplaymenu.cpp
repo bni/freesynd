@@ -26,15 +26,20 @@
  *                                                                      *
  ************************************************************************/
 
+#include "gameplaymenu.h"
+
 #include <stdio.h>
 #include <assert.h>
-#include "app.h"
-#include "gameplaymenu.h"
+
+#include "fs-engine/sound/musicmanager.h"
 #include "menus/gamemenuid.h"
 #include "fs-engine/menus/fliplayer.h"
+#include "fs-engine/gfx/screen.h"
 #include "model/vehicle.h"
 #include "mission.h"
 #include "model/shot.h"
+#include "core/gamecontroller.h"
+#include "core/gamesession.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -311,7 +316,7 @@ void GameplayMenu::handleShow() {
     g_System.showCursor();
 
     // play game track
-    g_App.music().playTrack(msc::TRACK_ASSASSINATE);
+    g_MusicMgr.playTrack(msc::TRACK_ASSASSINATE);
     menu_manager_->resetSinceMouseDown();
 }
 
@@ -413,7 +418,7 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
 
 #ifdef _DEBUG
     // drawing of different sprites
-//    g_App.gameSprites().sprite(9 * 40 + 1)->draw(0, 0, 0, false, true);
+//    g_SpriteMgr.sprite(9 * 40 + 1)->draw(0, 0, 0, false, true);
 #if 0
     // 1601 == start of weapons icons for sidebar
     // 1621 == start of selected weapons icons for sidebar
@@ -421,8 +426,8 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
     // 1772 == start of selected agent selectors for sidebar
     g_Screen.clear(1);
     int x = 0, y = 0, my = 0;
-    for (int i = 1756; i < g_App.gameSprites().spriteCount(); i++) {
-        Sprite *s = g_App.gameSprites().sprite(i);
+    for (int i = 1756; i < g_SpriteMgr.spriteCount(); i++) {
+        Sprite *s = g_SpriteMgr.sprite(i);
 
         if (y + s->height() > GAME_SCREEN_HEIGHT) {
             printf("last sprite %i\n", i - 1);
@@ -443,7 +448,7 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
 #endif
     // this is used in combination with keys
 #ifdef ANIM_PLUS_FRAME_VIEW
-    g_App.gameSprites().drawFrame(qanim, qframe, 320, 200);
+    g_SpriteMgr.drawFrame(qanim, qframe, 320, 200);
 #endif
 #endif
 
@@ -471,7 +476,7 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
 
 void GameplayMenu::handleLeave()
 {
-    g_App.music().stopPlayback();
+    g_MusicMgr.stopPlayback();
 
     g_System.hideCursor();
     menu_manager_->setDefaultPalette();
@@ -979,7 +984,7 @@ bool GameplayMenu::handleUnknownKey(Key key, const int modKeys) {
     } else if (key.keyFunc == KFC_DOWN) { // Scroll the map to the bottom
         scroll_y_ = SCROLL_STEP;
     } else if (key.keyFunc == KFC_F1) { // Music Control
-        g_App.music().toggleMusic();
+        g_MusicMgr.toggleMusic();
     } else if (key.keyFunc == KFC_F2) { // Sound Control
         g_SoundMgr.toggleSound();
     }

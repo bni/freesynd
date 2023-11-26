@@ -20,11 +20,12 @@
  *                                                                      *
  ************************************************************************/
 
-#include "app.h"
 #include "menus/flimenu.h"
+
 #include "menus/gamemenuid.h"
 #include "fs-utils/io/file.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/sound/musicmanager.h"
 
 const FrameEvent intro[] = {
     { 1,  msc::TRACK_INTRO, NO_SOUND, 0x0, NULL }, // Play track
@@ -170,7 +171,7 @@ void FliMenu::addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool 
  */
 bool FliMenu::loadNextFli() {
     // Stop all music if one was being played
-    g_App.music().stopPlayback();
+    g_MusicMgr.stopPlayback();
     playingFli_ = false;
     // loads Fli
     if ( fliIndex_ < fliList_.size()) {
@@ -238,7 +239,7 @@ void FliMenu::handleTick(int elapsed)
                 else if (desc.evtList[i].frame == frameIndex_) {
                     // Play music
                     if (desc.evtList[i].music != msc::NO_TRACK) {
-                        g_App.music().playTrack(desc.evtList[i].music);
+                        g_MusicMgr.playTrack(desc.evtList[i].music);
                     }
                     // Play sound
                     if (desc.evtList[i].sound != NO_SOUND) {

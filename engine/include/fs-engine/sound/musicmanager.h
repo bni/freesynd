@@ -31,13 +31,14 @@
 #include <memory>
 
 #include "fs-utils/common.h"
+#include "fs-utils/misc/singleton.h"
 #include "fs-engine/sound/music.h"
 #include "fs-engine/sound/audio.h"
 
 /*!
  * Music manager class.
  */
-class MusicManager {
+class MusicManager : public Singleton < MusicManager > {
 public:
     MusicManager();
     ~MusicManager();
@@ -68,5 +69,7 @@ protected:
     bool disabled_;
     Audio* audio_;
 };
+
+#define g_MusicMgr   MusicManager::singleton()
 
 #endif
