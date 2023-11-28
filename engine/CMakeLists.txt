@@ -24,6 +24,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/menumanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/widget.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/fliplayer.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/events/event.h"
     )
 
 set(SOURCE_LIST
@@ -51,7 +52,7 @@ set(SOURCE_LIST
 
 find_package (PNG REQUIRED)
 
-# Make an automatic library - will be static or dynamic based on user setting
+# This is the main library for this directory
 add_library(fs_engine ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Engine ALIAS fs_engine)
 
@@ -120,8 +121,6 @@ if (USE_SDL_MIXER)
     target_link_libraries(fs_engine_sdl PUBLIC Freesynd::Engine::SdlMixer)
 endif()
 
-# All users of this library will need at least C++11
-#target_compile_features(modern_library PUBLIC cxx_std_11)
 
 # IDEs should put the headers in a nice place
 source_group(

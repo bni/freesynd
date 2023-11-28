@@ -46,15 +46,17 @@ void GameController::destroy() {
 }
 
 bool GameController::reset() {
-    // Reset user session
-    if (!g_Session.reset()) {
-        return false;
-    }
     // Reset default mods and weapons
     mods_.reset();
     weaponMgr_.reset();
     // TODO add reading cheatcode for onlywomen parameter
     agents_.reset();
+
+    // Reset user session
+    if (!g_Session.reset()) {
+        return false;
+    }
+
     return true;
 }
 

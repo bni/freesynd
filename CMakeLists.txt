@@ -74,8 +74,8 @@ else ()
 endif ()
 
 # Build the sources in this subdirectory.
-add_subdirectory(utils)
-add_subdirectory(engine)
-add_subdirectory(kernel)
-subdirs (src)
+add_subdirectory (utils)
+add_subdirectory (engine)
+add_subdirectory (kernel)
+add_subdirectory (src)
 

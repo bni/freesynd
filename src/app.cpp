@@ -78,8 +78,7 @@ bool App::doInitialize(const CliParam& param) {
     }
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
-    g_gameCtrl.agents().loadAgents();
-    return g_gameCtrl.reset();
+    return game_ctlr_->reset();
 }
 
 

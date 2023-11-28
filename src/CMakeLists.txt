@@ -114,13 +114,8 @@ set(HEADERS
 	menus/squadselection.h
 )
 
-#source_group(Sources REGULAR_EXPRESSION .*.cpp)
-#source_group(Headers REGULAR_EXPRESSION .*.h)
 source_group(Menus REGULAR_EXPRESSION menus/*)
-#source_group(Utils REGULAR_EXPRESSION utils/*)
 source_group(Core REGULAR_EXPRESSION core/*)
-source_group(Gfx REGULAR_EXPRESSION gfx/*)
-#source_group(Sound REGULAR_EXPRESSION sound/*)
 source_group(Model REGULAR_EXPRESSION model/*)
 source_group(Editor REGULAR_EXPRESSION editor/*)
 source_group(IA REGULAR_EXPRESSION ia/*)
