@@ -286,7 +286,7 @@ void GameplayMenu::initWorldCoords()
 
 /*!
  * Called before the menu is first shown.
- * Place to do some initialising.
+ * Place to do some initializing.
  */
 void GameplayMenu::handleShow() {
     mission_ = g_Session.getMission();
@@ -310,6 +310,10 @@ void GameplayMenu::handleShow() {
     mm_renderer_.init(mission_, mission_->getSquad()->hasScanner());
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
+
+    // Register event handlers
+    handleAgentDied_ = EventManager::listen<AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
+    handleWeaponSelected_ = EventManager::listen<ShootingWeaponSelectedEvent>(this, &GameplayMenu::onShootingWeaponSelectedEvent);
 
     // Change cursor to game cursor
     g_System.usePointerCursor();
@@ -477,6 +481,10 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
 void GameplayMenu::handleLeave()
 {
     g_MusicMgr.stopPlayback();
+
+    // Remove handlers to prevent events coming after the end of mission
+    EventManager::remove_listener(handleAgentDied_);
+    EventManager::remove_listener(handleWeaponSelected_);
 
     g_System.hideCursor();
     menu_manager_->setDefaultPalette();
@@ -1458,21 +1466,34 @@ void GameplayMenu::handleWeaponSelection(uint8 selectorIndex, bool ctrl) {
  * Method to intercept game events.
  */
 void GameplayMenu::handleGameEvent(GameEvent evt) {
-    if (evt.type == GameEvent::kAgentDied) {
-        // checking agents, if all are dead -> mission failed
-        if (mission_->getSquad()->isAllDead()) {
-            mission_->endWithStatus(Mission::kMissionStatusFailed);
-            // clear signal on minimap
-            GameEvent sigEvt;
-            sigEvt.type = GameEvent::kObjFailed;
-            mm_renderer_.handleGameEvent(sigEvt);
+    if (evt.type == GameEvent::kEvtWarnAgent) {
+        if (canPlayPoliceWarnSound_) {
+            // warn
+            g_SoundMgr.play(PUTDOWN_WEAPON);
+            canPlayPoliceWarnSound_ = false;
         }
+    }
+}
 
-        // Anyway update selection
-        PedInstance *p_ped = static_cast<PedInstance *> (evt.pCtxt);
-        updateSelectionForDeadAgent(p_ped);
-    } else if (evt.type == GameEvent::kEvtShootingWeaponSelected) {
-        PedInstance *pPedSource = static_cast<PedInstance *> (evt.pCtxt);
+void GameplayMenu::onAgentDiedEvent(AgentDiedEvent *pEvt) {
+    LOG(Log::k_FLG_INFO, "GameplayMenu", "onAgentDiedEvent", ("AgentDiedEvent received"))
+    // checking agents, if all are dead -> mission failed
+    if (mission_->getSquad()->isAllDead()) {
+        mission_->endWithStatus(Mission::kMissionStatusFailed);
+        // clear signal on minimap
+        GameEvent sigEvt;
+        sigEvt.type = GameEvent::kObjFailed;
+        mm_renderer_.handleGameEvent(sigEvt);
+    }
+
+    // Anyway update selection
+    updateSelectionForDeadAgent(pEvt->pPed);
+}
+
+void GameplayMenu::onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pEvt) {
+    if (pEvt->isSelected) {
+        LOG(Log::k_FLG_INFO, "GameplayMenu", "onShootingWeaponSelectedEvent", ("shooting weapon was selected"))
+        PedInstance *pPedSource = pEvt->pPed;
         mission_->addArmedPed(pPedSource);
         for (size_t i = 0; i < mission_->numPeds(); i++) {
             PedInstance *pPed = mission_->ped(i);
@@ -1480,20 +1501,15 @@ void GameplayMenu::handleGameEvent(GameEvent evt) {
                 pPed->behaviour().handleBehaviourEvent(Behaviour::kBehvEvtWeaponOut, pPedSource);
             }
         }
-    } else if (evt.type == GameEvent::kEvtShootingWeaponDeselected) {
-        PedInstance *pPedSource = static_cast<PedInstance *> (evt.pCtxt);
+    } else {
+        LOG(Log::k_FLG_INFO, "GameplayMenu", "onShootingWeaponSelectedEvent", ("shooting weapon was deselected"))
+        PedInstance *pPedSource = pEvt->pPed;
         mission_->removeArmedPed(pPedSource);
         for (size_t i = 0; i < mission_->numPeds(); i++) {
             PedInstance *pPed = mission_->ped(i);
             if (pPed != pPedSource) {
                 pPed->behaviour().handleBehaviourEvent(Behaviour::kBehvEvtWeaponCleared, pPedSource);
             }
-        }
-    } else if (evt.type == GameEvent::kEvtWarnAgent) {
-        if (canPlayPoliceWarnSound_) {
-            // warn
-            g_SoundMgr.play(PUTDOWN_WEAPON);
-            canPlayPoliceWarnSound_ = false;
         }
     }
 }

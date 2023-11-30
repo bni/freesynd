@@ -746,4 +746,18 @@ protected:
     WeaponInstance *pSelectedWeaponBeforeMedikit_;
 };
 
+/** \brief Event sent when our agent has died
+ */
+struct AgentDiedEvent {
+    PedInstance *pPed;
+};
+
+/** \brief Event sent when an agent has selected or deselected a shooting weapon.
+ */
+struct ShootingWeaponSelectedEvent {
+    //! The agent who has selected/deselected the weapon
+    PedInstance *pPed;
+    //! True means it was a selection, false a deselection
+    bool isSelected;
+};
 #endif

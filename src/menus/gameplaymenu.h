@@ -28,6 +28,7 @@
 #define GAMEPLAYMENU_H
 
 #include "fs-engine/menus/menumanager.h"
+#include "fs-engine/events/event.h"
 #include "agentselectorrenderer.h"
 #include "maprenderer.h"
 #include "minimaprenderer.h"
@@ -53,6 +54,10 @@ public:
     void handleGameEvent(GameEvent evt);
 
 protected:
+    /**
+     * @name Mouse/Key events handling
+     */
+    ///@{
     bool handleUnknownKey(Key key, const int modKeys);
 
     void handleMouseMotion(int x, int y, int state, const int modKeys);
@@ -66,7 +71,19 @@ protected:
     void handleClickOnMap(int x, int y, int button, const int modKeys);
     //! Handles the user's click on the minimap
     void handleClickOnMinimap(int x, int y);
+    ///@}
 
+    /**
+     * @name In game events handling
+     */
+    ///@{
+    //! Handle when an agent has died
+    void onAgentDiedEvent(AgentDiedEvent *pEvt);
+    //! Handle when a shooting weapon was selected or deselected
+    void onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pEvt);
+    ///@}
+
+    //!
     void drawSelectAllButton();
     void drawMissionHint(int elapsed);
     void drawWeaponSelectors();
@@ -137,6 +154,9 @@ protected:
     bool canPlayPoliceWarnSound_;
     /*! Delay between 2 police warnings.*/
     fs_utils::Timer warningTimer_;
+
+    ListenerHandle handleAgentDied_;
+    ListenerHandle handleWeaponSelected_;
 
     // when ipa is manipulated this represents
     struct IPA_manipulation {

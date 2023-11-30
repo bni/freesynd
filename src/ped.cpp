@@ -29,6 +29,7 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/spritemanager.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/events/event.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "model/shot.h"
@@ -926,7 +927,7 @@ void PedInstance::handleWeaponDeselected(WeaponInstance * wi) {
         behaviour_.handleBehaviourEvent(Behaviour::kBehvEvtPersuadotronDeactivated);
     } else if (wi->canShoot() && (type_ != kPedTypePolice || isPersuaded())) {
         // don't warn if ped is police to limit calls
-        GameEvent::sendEvt(GameEvent::kMission, GameEvent::kEvtShootingWeaponDeselected, this);
+        EventManager::fire<ShootingWeaponSelectedEvent>(this, false);
     }
 }
 
@@ -959,9 +960,9 @@ void PedInstance::handleWeaponSelected(WeaponInstance * wi, WeaponInstance * pre
     }
 
     if (type_ != kPedTypePolice || isPersuaded()) {
-        if (previousWeapon == NULL && selectedWeapon()->canShoot()) {
-            // alert if it's the first time the ped shows a shooting weapon
-            GameEvent::sendEvt(GameEvent::kMission, GameEvent::kEvtShootingWeaponSelected, this);
+        if ((previousWeapon == NULL || !previousWeapon->canShoot()) && selectedWeapon()->canShoot()) {
+            // alert if the ped shows a shooting weapon and either was not holding anything or a non shooting weapon
+            EventManager::fire<ShootingWeaponSelectedEvent>(this, true);
         } else if (previousWeapon != NULL && previousWeapon->canShoot() && !selectedWeapon()->canShoot()) {
             // or alert if ped go from a shooting weapon to a no shooting weapon like the persuadotron
             GameEvent::sendEvt(GameEvent::kMission, GameEvent::kEvtShootingWeaponDeselected, this);
@@ -1265,7 +1266,7 @@ bool PedInstance::handleDeath(Mission *pMission, fs_dmg::DamageToInflict &d) {
 
         // send an event to alert agent died
         if (isOurAgent()) {
-            GameEvent::sendEvt(GameEvent::kMission, GameEvent::kAgentDied, this);
+            EventManager::fire<AgentDiedEvent>(this);
         }
     }
 

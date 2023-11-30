@@ -38,7 +38,7 @@
 /*!
  * Editor Application class.
  */
-class EditorApp : public BaseApp, public Singleton < EditorApp > {
+class EditorApp : public BaseApp {
   public:
     EditorApp();
     virtual ~EditorApp();
@@ -66,7 +66,5 @@ private:
 
     MapManager maps_;
 };
-
-#define g_App   EditorApp::singleton()
 
 #endif // EDITORAPP_H
