@@ -760,4 +760,11 @@ struct ShootingWeaponSelectedEvent {
     //! True means it was a selection, false a deselection
     bool isSelected;
 };
+
+/** \brief Event sent when a policeman warns an armed agent.
+ */
+struct PoliceWarningEmittedEvent {
+    // for compilation
+    int id;
+};
 #endif

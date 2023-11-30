@@ -67,7 +67,6 @@ mm_renderer_(), warningTimer_(20000)
     scroll_y_ = 0;
     ipa_chng_.ipa_chng = -1;
     canPlayPoliceWarnSound_ = true;
-    g_gameCtrl.addListener(this, GameEvent::kMission);
 }
 
 /*!
@@ -314,6 +313,7 @@ void GameplayMenu::handleShow() {
     // Register event handlers
     handleAgentDied_ = EventManager::listen<AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
     handleWeaponSelected_ = EventManager::listen<ShootingWeaponSelectedEvent>(this, &GameplayMenu::onShootingWeaponSelectedEvent);
+    handleAgentWarned_ = EventManager::listen<PoliceWarningEmittedEvent>(this, &GameplayMenu::onPoliceWarningEmittedEvent);
 
     // Change cursor to game cursor
     g_System.usePointerCursor();
@@ -485,6 +485,7 @@ void GameplayMenu::handleLeave()
     // Remove handlers to prevent events coming after the end of mission
     EventManager::remove_listener(handleAgentDied_);
     EventManager::remove_listener(handleWeaponSelected_);
+    EventManager::remove_listener(handleAgentWarned_);
 
     g_System.hideCursor();
     menu_manager_->setDefaultPalette();
@@ -1465,18 +1466,16 @@ void GameplayMenu::handleWeaponSelection(uint8 selectorIndex, bool ctrl) {
 /**
  * Method to intercept game events.
  */
-void GameplayMenu::handleGameEvent(GameEvent evt) {
-    if (evt.type == GameEvent::kEvtWarnAgent) {
-        if (canPlayPoliceWarnSound_) {
-            // warn
-            g_SoundMgr.play(PUTDOWN_WEAPON);
-            canPlayPoliceWarnSound_ = false;
-        }
+void GameplayMenu::onPoliceWarningEmittedEvent(PoliceWarningEmittedEvent *pEvt) {
+    if (canPlayPoliceWarnSound_) {
+        // warn
+        g_SoundMgr.play(PUTDOWN_WEAPON);
+        canPlayPoliceWarnSound_ = false;
     }
 }
 
 void GameplayMenu::onAgentDiedEvent(AgentDiedEvent *pEvt) {
-    LOG(Log::k_FLG_INFO, "GameplayMenu", "onAgentDiedEvent", ("AgentDiedEvent received"))
+    LOG(Log::k_FLG_GAME, "GameplayMenu", "onAgentDiedEvent", ("AgentDiedEvent received"))
     // checking agents, if all are dead -> mission failed
     if (mission_->getSquad()->isAllDead()) {
         mission_->endWithStatus(Mission::kMissionStatusFailed);
@@ -1492,7 +1491,7 @@ void GameplayMenu::onAgentDiedEvent(AgentDiedEvent *pEvt) {
 
 void GameplayMenu::onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pEvt) {
     if (pEvt->isSelected) {
-        LOG(Log::k_FLG_INFO, "GameplayMenu", "onShootingWeaponSelectedEvent", ("shooting weapon was selected"))
+        LOG(Log::k_FLG_GAME, "GameplayMenu", "onShootingWeaponSelectedEvent", ("shooting weapon was selected"))
         PedInstance *pPedSource = pEvt->pPed;
         mission_->addArmedPed(pPedSource);
         for (size_t i = 0; i < mission_->numPeds(); i++) {
@@ -1502,7 +1501,7 @@ void GameplayMenu::onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pE
             }
         }
     } else {
-        LOG(Log::k_FLG_INFO, "GameplayMenu", "onShootingWeaponSelectedEvent", ("shooting weapon was deselected"))
+        LOG(Log::k_FLG_GAME, "GameplayMenu", "onShootingWeaponSelectedEvent", ("shooting weapon was deselected"))
         PedInstance *pPedSource = pEvt->pPed;
         mission_->removeArmedPed(pPedSource);
         for (size_t i = 0; i < mission_->numPeds(); i++) {

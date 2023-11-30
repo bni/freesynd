@@ -33,7 +33,6 @@
 #include "maprenderer.h"
 #include "minimaprenderer.h"
 #include "squadselection.h"
-#include "core/gameevent.h"
 
 class Mission;
 class IPAStim;
@@ -41,7 +40,7 @@ class IPAStim;
 /*!
  * Gameplay Menu class.
  */
-class GameplayMenu : public Menu, GameEventListener {
+class GameplayMenu : public Menu {
 public:
     GameplayMenu(MenuManager *m);
     //! Update the menu state
@@ -49,9 +48,6 @@ public:
     void handleShow();
     void handleRender(DirtyList &dirtyList);
     void handleLeave();
-
-    //! Handles game events
-    void handleGameEvent(GameEvent evt);
 
 protected:
     /**
@@ -81,6 +77,8 @@ protected:
     void onAgentDiedEvent(AgentDiedEvent *pEvt);
     //! Handle when a shooting weapon was selected or deselected
     void onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pEvt);
+    //!
+    void onPoliceWarningEmittedEvent(PoliceWarningEmittedEvent *pEvt);
     ///@}
 
     //!
@@ -157,6 +155,7 @@ protected:
 
     ListenerHandle handleAgentDied_;
     ListenerHandle handleWeaponSelected_;
+    ListenerHandle handleAgentWarned_;
 
     // when ipa is manipulated this represents
     struct IPA_manipulation {

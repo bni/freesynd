@@ -28,6 +28,7 @@
 #include "ia/actions.h"
 
 #include "fs-engine/sound/soundmanager.h"
+#include "fs-engine/events/event.h"
 #include "core/gamecontroller.h"
 #include "ped.h"
 #include "model/weapon.h"
@@ -712,10 +713,7 @@ bool WaitBeforeShootingAction::doExecute(int elapsed, Mission *pMission, PedInst
     if (waitTimer_.update(elapsed)) {
         if (pPed->type() == PedInstance::kPedTypeAgent && pTarget_->isOurAgent()) {
             // Warn only for player agents
-            GameEvent evt;
-            evt.stream = GameEvent::kMission;
-            evt.type = GameEvent::kEvtWarnAgent;
-            g_gameCtrl.fireGameEvent(evt);
+            EventManager::fire<PoliceWarningEmittedEvent>(0);
         }
         setSucceeded();
         return true;
