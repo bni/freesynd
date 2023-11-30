@@ -27,14 +27,14 @@
 #define DEBRIEFMENU_H
 
 #include "fs-engine/menus/menu.h"
-#include "core/gameevent.h"
+#include "model/research.h"
 
 class Mission;
 
 /*!
  * Menu displaying statistics about the last mission played.
  */
-class DebriefMenu : public Menu, public GameEventListener {
+class DebriefMenu : public Menu {
 public:
     DebriefMenu(MenuManager *m);
 
@@ -42,11 +42,11 @@ public:
     void handleRender(DirtyList &dirtyList);
     void handleLeave();
 
-    void handleGameEvent(GameEvent evt);
-
     void updateStatsFields(Mission *pMission);
     void checkNewWeaponFound();
 
+protected:
+    void onResearchEndEvent(ResearchEndEvent *pEvt);
 protected:
     /*! Id of the text widget for mission status.*/
     int txtStatusId_;

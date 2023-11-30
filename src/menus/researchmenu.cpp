@@ -22,13 +22,17 @@
  *  The full text of the license is also included in the file COPYING.  *
  *                                                                      *
  ************************************************************************/
+#include "researchmenu.h"
 
 #include <stdio.h>
 #include <assert.h>
-#include "app.h"
-#include "model/research.h"
-#include "researchmenu.h"
+
 #include "menus/gamemenuid.h"
+#include "fs-engine/menus/menumanager.h"
+#include "fs-engine/system/system.h"
+#include "fs-engine/gfx/screen.h"
+#include "core/gamesession.h"
+#include "core/gamecontroller.h"
 
 ResearchMenu::ResearchMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect, "mresrch.dat", "mresout.dat")
 {
@@ -79,7 +83,12 @@ ResearchMenu::ResearchMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdResear
     fundCurrLblId_ = addStatic(16, 242, 129, "", FontManager::SIZE_2, true);    // Current Funding label
     searchTitleLblId_ = addStatic(158, 86, "", FontManager::SIZE_2, true);    // Current search title
 
-    g_gameCtrl.addListener(this, GameEvent::kGame);
+    // Register for the ResearchEndEvent
+    handleResearchEnd_ = EventManager::listen<ResearchEndEvent>(this, &ResearchMenu::onResearchEndEvent);
+}
+
+ResearchMenu::~ResearchMenu() {
+    EventManager::remove_listener(handleResearchEnd_);
 }
 
 /*!
@@ -391,22 +400,23 @@ void ResearchMenu::handleAction(const int actionId, void *ctx, const int modKeys
     }
 }
 
-void ResearchMenu::handleGameEvent(GameEvent evt) {
-    if (evt.type == GameEvent::kResearch) {
-        // A research has ended
-        Research *pRes = static_cast<Research *> (evt.pCtxt);
+/** \brief Handle the ResearchEndEvent
+ *
+ * \param pEvt ResearchEndEvent*
+ * \return void
+ *
+ */
+void ResearchMenu::onResearchEndEvent(ResearchEndEvent *pEvt) {
+    // If current graph was for this research, make it disappear
+    if (pResForGraph_ && pResForGraph_->getId() == pEvt->pResearch->getId()) {
+        pResForGraph_ = NULL;
+        redrawGraph();
+        getStatic(fundCurrLblId_)->setVisible(false);
+        getStatic(searchTitleLblId_)->setText("");
+    }
 
-        // If current graph was for this research, make it disappear
-        if (pResForGraph_ && pResForGraph_->getId() == pRes->getId()) {
-            pResForGraph_ = NULL;
-            redrawGraph();
-            getStatic(fundCurrLblId_)->setVisible(false);
-            getStatic(searchTitleLblId_)->setText("");
-        }
-
-        // If there was a research info panel opened -> close it
-        if (pSelectedRes_ && pSelectedRes_->getId() == pRes->getId()) {
-            showFieldList();
-        }
+    // If there was a research info panel opened -> close it
+    if (pSelectedRes_ && pSelectedRes_->getId() == pEvt->pResearch->getId()) {
+        showFieldList();
     }
 }

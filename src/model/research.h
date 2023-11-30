@@ -130,4 +130,12 @@ protected:
     std::list<ProgressPoint> progressList_;
 };
 
+/**
+ * This event is sent when a research has come to an end.
+ */
+struct ResearchEndEvent {
+    //! The research that has ended
+    Research *pResearch;
+};
+
 #endif //RESEARCH_H

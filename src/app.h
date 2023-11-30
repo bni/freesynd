@@ -41,7 +41,7 @@
  * Application class.
  * Used for managing game settings and workflows.
  */
-class App : public BaseApp, public Singleton < App > {
+class App : public BaseApp {
   public:
     App();
     virtual ~App();
@@ -73,8 +73,6 @@ private:
 
     MapManager maps_;
 };
-
-#define g_App   App::singleton()
 
 #endif  // APP_H
 

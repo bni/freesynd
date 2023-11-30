@@ -28,6 +28,7 @@
 #include "fs-utils/io/configfile.h"
 #include "core/gamecontroller.h"
 #include "fs-engine/appcontext.h"
+#include "fs-engine/events/event.h"
 
 ResearchManager::ResearchManager() {
     pCurrResearch_ = NULL;
@@ -178,14 +179,6 @@ bool ResearchManager::reset() {
     return true;
 }
 
-void ResearchManager::fireGameEvent(Research *pResearch) {
-    GameEvent evt;
-    evt.stream = GameEvent::kGame;
-    evt.type = GameEvent::kResearch;
-    evt.pCtxt = pResearch;
-    g_gameCtrl.fireGameEvent(evt);
-}
-
 void ResearchManager::start(Research *pResearch) {
     // If there is already a running search => suspends it
     if (pCurrResearch_) {
@@ -231,7 +224,7 @@ void ResearchManager::complete(Research *pResearch) {
     }
 
     // alerts of change
-    fireGameEvent(pResearch);
+    EventManager::fire<ResearchEndEvent>(pResearch);
 
     if (pResearch == pCurrResearch_) {
         pCurrResearch_ = NULL;

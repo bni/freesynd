@@ -36,6 +36,7 @@
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/sound/musicmanager.h"
 #include "fs-engine/menus/menumanager.h"
+#include "fs-engine/events/default_events.h"
 
 struct CliParam {
     std::string iniPath;
@@ -62,11 +63,6 @@ public:
     //! running loop
     void run(const CliParam& param);
 
-    //! Stop the running loop
-    void quit() {
-        running_ = false;
-    }
-
     //! Returns true if the application is running
     bool isRunning() const {
         return running_;
@@ -85,6 +81,9 @@ protected:
     virtual int getStartMenuId(const CliParam& param) = 0;
 
     void waitForKeyPress();
+
+    //! Stop the running loop
+    void onQuitHandler(QuitEvent *evt);
 
     /*! A structure to hold general application information.*/
     std::unique_ptr<AppContext> context_;

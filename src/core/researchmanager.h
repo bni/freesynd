@@ -79,7 +79,6 @@ protected:
     void removeSearch(Research *pOldSearch);
     void replaceSearch(Research *pOldSearch, Research *pNewSearch);
     void destroy();
-    void fireGameEvent(Research *pResearch);
 
 protected:
     /*! List of all currently available research on mods.*/

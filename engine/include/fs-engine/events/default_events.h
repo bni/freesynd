@@ -2,11 +2,7 @@
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
  *                                                                      *
- *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
- *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
- *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2023  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -24,23 +20,15 @@
  *                                                                      *
  ************************************************************************/
 
-#include "logoutmenu.h"
+#ifndef ENGINE_DEFAULT_EVENT_H
+#define ENGINE_DEFAULT_EVENT_H
 
-#include "menus/gamemenuid.h"
-#include "fs-engine/events/event.h"
-#include "fs-engine/events/default_events.h"
-#include "fs-engine/gfx/screen.h"
+/*!
+ * This event is sent when the user wants to end the application.
+ */
+struct QuitEvent {
+    //! No used, only for compilation
+    int id;
+};
 
-LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, fs_game_menus::kMenuIdMain),
-tick_count_(0)
-{
-    isCachable_ = false;
-    addStatic(0, 180, g_Screen.gameScreenWidth(), "#LGOUT_TITLE", FontManager::SIZE_4, true);
-}
-
-void LogoutMenu::handleTick(int elapsed)
-{
-    tick_count_ += elapsed;
-    if (tick_count_ > 2000)
-        EventManager::fire<QuitEvent>(0);
-}
+#endif //ENGINE_DEFAULT_EVENT_H

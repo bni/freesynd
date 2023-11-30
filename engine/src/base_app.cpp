@@ -25,6 +25,9 @@
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 
+#include "fs-engine/events/event.h"
+#include "fs-engine/events/default_events.h"
+
 #ifdef HAVE_SDL_MIXER
 
 #include "mixer/sdlmixeraudio.h"
@@ -78,6 +81,8 @@ bool BaseApp::initialize(const CliParam& param) {
     if (resInit) {
         LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialized with success"))
     }
+
+    EventManager::listen<QuitEvent>(this, &BaseApp::onQuitHandler);
 
     return resInit;
 }
@@ -164,4 +169,10 @@ void BaseApp::waitForKeyPress() {
         menus().handleEvents();
     }
 }
+
+void BaseApp::onQuitHandler(QuitEvent *evt) {
+    LOG(Log::k_FLG_INFO, "BaseApp", "onQuitHandler", ("Received Quit Evt : quitting"))
+    running_ = false;
+}
+
 

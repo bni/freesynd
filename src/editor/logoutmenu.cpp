@@ -26,7 +26,9 @@
 
 #include "editor/logoutmenu.h"
 #include "editor/editormenuid.h"
-#include "editorapp.h"
+#include "fs-engine/events/event.h"
+#include "fs-engine/events/default_events.h"
+#include "fs-engine/gfx/screen.h"
 
 LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, fs_edit_menus::kMenuIdMain, "mdeout.dat"),
 tick_count_(0)
@@ -39,5 +41,5 @@ void LogoutMenu::handleTick(int elapsed)
 {
     tick_count_ += elapsed;
     if (tick_count_ > 2000)
-        g_App.quit();
+        EventManager::fire<QuitEvent>(0);
 }

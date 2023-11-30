@@ -25,6 +25,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/widget.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/fliplayer.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/events/event.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/events/default_events.h"
     )
 
 set(SOURCE_LIST

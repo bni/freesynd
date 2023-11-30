@@ -24,10 +24,11 @@
  *                                                                      *
  ************************************************************************/
 
+#include "debriefmenu.h"
+
 #include <stdio.h>
 #include <assert.h>
 
-#include "debriefmenu.h"
 #include "menus/gamemenuid.h"
 #include "mission.h"
 #include "model/squad.h"
@@ -35,6 +36,8 @@
 #include "core/gamesession.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/events/event.h"
+#include "fs-utils/log/log.h"
 
 DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain, "mdebrief.dat",
      "mdeout.dat") {
@@ -105,9 +108,9 @@ void DebriefMenu::handleShow() {
     Mission *pMission = g_Session.getMission();
 
     // update game state and listen for any change
-    g_gameCtrl.addListener(this, GameEvent::kGame);
+    ListenerHandle handleResearchEnd = EventManager::listen<ResearchEndEvent>(this, &DebriefMenu::onResearchEndEvent);
     g_gameCtrl.handle_mission_end(pMission);
-    g_gameCtrl.removeListener(this, GameEvent::kGame);
+    EventManager::remove_listener(handleResearchEnd);
 
     updateStatsFields(pMission);
 
@@ -189,25 +192,24 @@ void DebriefMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void DebriefMenu::handleGameEvent(GameEvent evt) {
-    if (evt.type == GameEvent::kResearch) {
-        // A research has ended, so check which type
-        Research *pRes = static_cast<Research *> (evt.pCtxt);
-         // Is it equipment or mods research?
-         if (pRes->getType() == Research::EQUIPS) {
-             // Get researched weapon type
-             Weapon::WeaponType wt= pRes->getSearchWeapon();
-             assert(wt);
+void DebriefMenu::onResearchEndEvent(ResearchEndEvent *pEvt) {
+    LOG(Log::k_FLG_GAME, "DebriefMenu", "onResearchEndEvent", ("Received ResearchEndEvent"))
+    // A research has ended, so check which type
+    Research *pRes = pEvt->pResearch;
+    // Is it equipment or mods research?
+    if (pRes->getType() == Research::EQUIPS) {
+        // Get researched weapon type
+        Weapon::WeaponType wt= pRes->getSearchWeapon();
+        assert(wt);
 
-             // Get weapon
-             Weapon *pWeap = g_gameCtrl.weaponManager().getWeapon(wt);
-             assert(pWeap);
+        // Get weapon
+        Weapon *pWeap = g_gameCtrl.weaponManager().getWeapon(wt);
+        assert(pWeap);
 
-             // Draw name of it
-             getStatic(txtSearchId_)->setTextFormated("#DEBRIEF_SEARCH", pWeap->getName());
-         } else {
-             // Must be mods research so draw it
-             getStatic(txtSearchId_)->setTextFormated("#DEBRIEF_SEARCH", pRes->getName().c_str());
-         }
+        // Draw name of it
+        getStatic(txtSearchId_)->setTextFormated("#DEBRIEF_SEARCH", pWeap->getName());
+    } else {
+        // Must be mods research so draw it
+        getStatic(txtSearchId_)->setTextFormated("#DEBRIEF_SEARCH", pRes->getName().c_str());
     }
 }

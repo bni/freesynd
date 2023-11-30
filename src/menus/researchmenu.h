@@ -26,23 +26,23 @@
 #ifndef RESEARCHMENU_H
 #define RESEARCHMENU_H
 
-#include "core/gameevent.h"
 #include "fs-engine/menus/menu.h"
+#include "fs-engine/events/event.h"
+#include "model/research.h"
 
-class Research;
 /*!
  * Research class.
  */
-class ResearchMenu : public Menu, public GameEventListener {
+class ResearchMenu : public Menu {
 public:
     ResearchMenu(MenuManager *m);
+    ~ResearchMenu();
 
     void handleTick(int elapsed);
     void handleShow();
     void handleRender(DirtyList &dirtyList);
     void handleLeave();
     void handleAction(const int actionId, void *ctx, const int modKeys);
-    void handleGameEvent(GameEvent evt);
 
 protected:
     void updateClock();
@@ -61,6 +61,8 @@ protected:
     void drawSelectedModInfos(int x, int y);
 
     void redrawGraph() { addDirtyRect(200, 110, 250, 250); }
+
+    void onResearchEndEvent(ResearchEndEvent *pEvt);
 
 protected:
     enum ETab {
@@ -113,6 +115,8 @@ protected:
     ListBox *pModsLBox_;
     /*! List box for all available euips.*/
     ListBox *pEquipsLBox_;
+    /*! A handler for the event.*/
+    ListenerHandle handleResearchEnd_;
 };
 
 #endif
