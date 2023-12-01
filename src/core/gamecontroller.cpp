@@ -60,79 +60,6 @@ bool GameController::reset() {
     return true;
 }
 
-void GameController::clearAllListeners() {
-    game_listeners_.clear();
-    mission_listeners_.clear();
-}
-
-/*!
- * Adds a listener to the list of listeners for a stream.
- * \param pListener The listener
- * \param stream The stream
- */
-void GameController::addListener(GameEventListener *pListener, GameEvent::EEventStream stream) {
-    if (pListener) {
-        if (stream == GameEvent::kGame) {
-            // Check if listener has already subscribed
-            for (std::list < GameEventListener * >::iterator it = game_listeners_.begin();
-             it != game_listeners_.end(); it++) {
-                 if (pListener == *it) {
-                     return;
-                 }
-            }
-            game_listeners_.push_back(pListener);
-        } else if (stream == GameEvent::kMission) {
-            // Check if listener has already subscribed
-            for (std::list < GameEventListener * >::iterator it = mission_listeners_.begin();
-             it != mission_listeners_.end(); it++) {
-                 if (pListener == *it) {
-                     return;
-                 }
-            }
-            mission_listeners_.push_back(pListener);
-        }
-    }
-}
-
-//! Removes the listener from the given stream of events
-void GameController::removeListener(GameEventListener *pListener, GameEvent::EEventStream stream) {
-    if (pListener) {
-        if (stream == GameEvent::kGame) {
-            for (std::list < GameEventListener * >::iterator it = game_listeners_.begin();
-             it != game_listeners_.end(); it++) {
-                 if (pListener == *it) {
-                     game_listeners_.erase(it);
-                     return;
-                 }
-            }
-        } else if (stream == GameEvent::kMission) {
-            for (std::list < GameEventListener * >::iterator it = mission_listeners_.begin();
-             it != mission_listeners_.end(); it++) {
-                 if (pListener == *it) {
-                     mission_listeners_.erase(it);
-                     return;
-                 }
-            }
-        }
-    }
-}
-//! Sends the event to the listeners
-void GameController::fireGameEvent(GameEvent & evt) {
-    switch (evt.stream) {
-    case GameEvent::kGame:
-        for (std::list < GameEventListener * >::iterator it = game_listeners_.begin();
-                        it != game_listeners_.end(); it++) {
-            (*it)->handleGameEvent(evt);
-        }
-        break;
-    case GameEvent::kMission:
-        for (std::list < GameEventListener * >::iterator it = mission_listeners_.begin();
-                        it != mission_listeners_.end(); it++) {
-            (*it)->handleGameEvent(evt);
-        }
-        break;
-    }
-}
 
 /*!
  * Changes the user informations.
@@ -481,16 +408,3 @@ void GameController::cheatEquipFancyWeapons() {
     }
 }
 
-/*!
- * This method is just a wrapper for the call of GameController.fireGameEvent().
- * \param stream The stream of the event
- * \param type The type of the event
- * \param pCtx The context of the event.
- */
-void GameEvent::sendEvt(EEventStream stream, EEventType type, void *pCtx) {
-    GameEvent evt;
-    evt.stream = stream;
-    evt.type = type;
-    evt.pCtxt = pCtx;
-    g_gameCtrl.fireGameEvent(evt);
-}

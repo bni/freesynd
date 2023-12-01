@@ -139,9 +139,7 @@ void App::setCheatCode(const char *name) {
  * Destroy the application.
  */
 void App::doDestroy() {
-    game_ctlr_->clearAllListeners();
-
-    game_ctlr_->destroy();
+     game_ctlr_->destroy();
 }
 
 /*!

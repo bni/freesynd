@@ -35,6 +35,7 @@
 #include "core/gamecontroller.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/events/event.h"
 #include "model/objectivedesc.h"
 #include "fs-utils/log/log.h"
 #include "model/vehicle.h"
@@ -272,6 +273,7 @@ void Mission::endWithStatus(Status status) {
     }
 
     status_ = status;
+    EventManager::fire<MissionEndedEvent>(status);
 }
 
 /**

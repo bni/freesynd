@@ -29,9 +29,9 @@
 #include "fs-utils/misc/timer.h"
 #include "fs-kernel/model/map.h"
 #include "pathsurfaces.h"
-#include "core/gameevent.h"
+#include "model/objectivedesc.h"
+#include "mission.h"
 
-class Mission;
 class MissionBriefing;
 
 /*!
@@ -143,7 +143,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
  * Renderer for minimap.
  * This class is used to display a minimap in the gameplay menu.
  */
-class GamePlayMinimapRenderer : public MinimapRenderer, GameEventListener {
+class GamePlayMinimapRenderer : public MinimapRenderer {
  public:
     //! Constructor for the class
     GamePlayMinimapRenderer();
@@ -166,8 +166,6 @@ class GamePlayMinimapRenderer : public MinimapRenderer, GameEventListener {
     //! Returns the map coordinates of the point on the minimap.
     TilePoint minimapToMapPoint(int mm_x, int mm_y);
 
-    //! Handles game events
-    void handleGameEvent(GameEvent evt);
  protected:
 
     /*!
@@ -279,8 +277,10 @@ class GamePlayMinimapRenderer : public MinimapRenderer, GameEventListener {
 
     //! Clear all signals on map
     void handleClearSignal();
-    void handleTargetSet(GameEvent &evt);
-    void handleEvacuationSet(GameEvent &evt);
+    void onTargetObjectiveStartedEvent(TargetObjectiveStartedEvent *pEvt);
+    void onEvacuateObjectiveStartedEvent(EvacuateObjectiveStartedEvent *pEvt);
+    void onObjectiveEndedEvent(ObjectiveEndedEvent *pEvt);
+    void onMissionEndedEvent(MissionEndedEvent *pEvt);
  private:
      /*! Radius of the red evacuation circle.*/
     static const int kEvacuationRadius;

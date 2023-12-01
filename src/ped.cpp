@@ -965,7 +965,7 @@ void PedInstance::handleWeaponSelected(WeaponInstance * wi, WeaponInstance * pre
             EventManager::fire<ShootingWeaponSelectedEvent>(this, true);
         } else if (previousWeapon != NULL && previousWeapon->canShoot() && !selectedWeapon()->canShoot()) {
             // or alert if ped go from a shooting weapon to a no shooting weapon like the persuadotron
-            GameEvent::sendEvt(GameEvent::kMission, GameEvent::kEvtShootingWeaponDeselected, this);
+            EventManager::fire<ShootingWeaponSelectedEvent>(this, false);
         }
     }
 }

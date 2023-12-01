@@ -32,7 +32,6 @@
 #include <list>
 
 #include "fs-utils/misc/singleton.h"
-#include "core/gameevent.h"
 #include "agentmanager.h"
 #include "weaponmanager.h"
 #include "modmanager.h"
@@ -56,18 +55,6 @@ class GameController : public Singleton < GameController > {
 
     //! Delete all ressources. Called by App:destroy()
     void destroy();
-
-    //*************************************
-    // Event management
-    //*************************************
-    //! Adds a listener to the given stream of events
-    void addListener(GameEventListener *pListener, GameEvent::EEventStream stream);
-    //! Removes the listener from the given stream of events
-    void removeListener(GameEventListener *pListener, GameEvent::EEventStream stream);
-    //! Sends the event to the listeners
-    void fireGameEvent(GameEvent & evt);
-    //! Removes all listeners from every stream
-    void clearAllListeners();
 
     //*************************************
     // Managers
@@ -136,10 +123,6 @@ private:
     ModManager mods_;
     /*! Manager of missions.*/
     MissionManager missions_;
-    /*! List of listeners for game stream events.*/
-    std::list<GameEventListener *> game_listeners_;
-    /*! List of listeners for mission stream events.*/
-    std::list<GameEventListener *> mission_listeners_;
 
     /*!
      * Use to store id of missions that are found in the search menu.

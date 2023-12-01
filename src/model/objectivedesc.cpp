@@ -22,7 +22,9 @@
  ************************************************************************/
 
 #include "model/objectivedesc.h"
+
 #include "fs-engine/appcontext.h"
+#include "fs-engine/events/event.h"
 #include "ped.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
@@ -36,22 +38,14 @@
 void ObjectiveDesc::endObjective(bool succeeded) {
     status = succeeded ? kCompleted : kFailed;
 
-    GameEvent evt;
-    evt.stream = GameEvent::kMission;
-    evt.type = succeeded ? GameEvent::kObjCompleted : GameEvent::kObjFailed;
-    evt.pCtxt = NULL;
-    g_gameCtrl.fireGameEvent(evt);
+    EventManager::fire<ObjectiveEndedEvent>(succeeded);
 }
 
 /*!
  * All targeted objectives sets the current target to the objective target.
  */
 void TargetObjective::handleStart(Mission *p_mission) {
-    GameEvent evt;
-    evt.stream = GameEvent::kMission;
-    evt.type = GameEvent::kObjTargetSet;
-    evt.pCtxt = p_target_;
-    g_gameCtrl.fireGameEvent(evt);
+    EventManager::fire<TargetObjectiveStartedEvent>(p_target_);
 }
 
 ObjPersuade::ObjPersuade(MapObject * pMapObject) : TargetObjective(pMapObject) {
@@ -236,11 +230,7 @@ ObjEvacuate::ObjEvacuate(int x, int y, int z, std::vector <PedInstance *> &lstOf
 }
 
 void ObjEvacuate::handleStart(Mission *p_mission) {
-    GameEvent evt;
-    evt.stream = GameEvent::kMission;
-    evt.type = GameEvent::kObjEvacuate;
-    evt.pCtxt = &objectiveLocw_;
-    g_gameCtrl.fireGameEvent(evt);
+    EventManager::fire<EvacuateObjectiveStartedEvent>(objectiveLocw_);
 }
 
 

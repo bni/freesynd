@@ -1479,10 +1479,6 @@ void GameplayMenu::onAgentDiedEvent(AgentDiedEvent *pEvt) {
     // checking agents, if all are dead -> mission failed
     if (mission_->getSquad()->isAllDead()) {
         mission_->endWithStatus(Mission::kMissionStatusFailed);
-        // clear signal on minimap
-        GameEvent sigEvt;
-        sigEvt.type = GameEvent::kObjFailed;
-        mm_renderer_.handleGameEvent(sigEvt);
     }
 
     // Anyway update selection

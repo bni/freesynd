@@ -28,7 +28,6 @@
 
 #include "fs-utils/common.h"
 #include "ped.h"
-#include "core/gameevent.h"
 
 /*!
  * Defines all possible status for the current objective.
@@ -100,6 +99,10 @@ public:
      */
     virtual void evaluate(Mission *pMission) = 0;
 
+    void forceEnd() {
+        endObjective(false);
+    }
+
 protected:
     /*!
      * Subclasses should implements this method to do specific tasks on starting.
@@ -111,6 +114,27 @@ protected:
      * \param succeeded True means objective is completed with success.
      */
     void endObjective(bool succeeded);
+};
+
+/** \brief Event sent when an objective has ended.
+ */
+struct ObjectiveEndedEvent {
+    //! True means objective has end with success, false means failed
+    bool succeeded;
+};
+
+/** \brief Event sent when an objective to evacuate has started.
+ */
+struct EvacuateObjectiveStartedEvent {
+    //! Position of the evacuation point
+    WorldPoint evacuationPoint;
+};
+
+/** \brief Event sent when an objective to a target has started.
+ */
+struct TargetObjectiveStartedEvent {
+    //! the target
+    MapObject *pTarget;
 };
 
 /*!

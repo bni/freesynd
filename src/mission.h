@@ -36,7 +36,6 @@
 #include "fs-kernel/model/sfxobject.h"
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/leveldata.h"
-#include "core/gameevent.h"
 
 class Vehicle;
 class PedInstance;
@@ -374,6 +373,13 @@ protected:
      * The squad selected for the mission. It contains only active agents.
      */
     Squad *p_squad_;
+};
+
+/** \brief Event sent when a mission has ended.
+ */
+struct MissionEndedEvent {
+    // mission status
+    Mission::Status status;
 };
 
 #endif

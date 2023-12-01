@@ -24,8 +24,8 @@
 
 #include "core/gamecontroller.h"
 #include "core/missionbriefing.h"
-#include "mission.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/events/event.h"
 #include "model/vehicle.h"
 #include "ped.h"
 
@@ -220,7 +220,11 @@ GamePlayMinimapRenderer::GamePlayMinimapRenderer() :
     mm_timer_signal(250) {
     p_mission_ = NULL;
     handleClearSignal();
-    g_gameCtrl.addListener(this, GameEvent::kMission);
+
+    EventManager::listen<ObjectiveEndedEvent>(this, &GamePlayMinimapRenderer::onObjectiveEndedEvent);
+    EventManager::listen<MissionEndedEvent>(this, &GamePlayMinimapRenderer::onMissionEndedEvent);
+    EventManager::listen<EvacuateObjectiveStartedEvent>(this, &GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent);
+    EventManager::listen<TargetObjectiveStartedEvent>(this, &GamePlayMinimapRenderer::onTargetObjectiveStartedEvent);
 }
 
 /*!
@@ -299,35 +303,21 @@ void GamePlayMinimapRenderer::centerOn(uint16 tileX, uint16 tileY, int offX, int
     cross_y_ = mapToMiniMapY(tileY + 1, offY);
 }
 
-/**
- * Method to intercept game events.
- * The catched events are for detecting signals setup.
- */
-void GamePlayMinimapRenderer::handleGameEvent(GameEvent evt) {
-    switch (evt.type) {
-    case GameEvent::kObjEvacuate:
-        handleEvacuationSet(evt);
-        break;
-    case GameEvent::kObjTargetSet:
-        handleTargetSet(evt);
-        break;
-    case GameEvent::kObjCompleted:
-    case GameEvent::kObjFailed:
-        p_minimap_->clearTarget();
-        handleClearSignal();
-        break;
-    default:
-
-        break;
-    }
+void GamePlayMinimapRenderer::onObjectiveEndedEvent(ObjectiveEndedEvent *pEvt) {
+    p_minimap_->clearTarget();
+    handleClearSignal();
 }
 
-void GamePlayMinimapRenderer::handleEvacuationSet(GameEvent &evt) {
+void GamePlayMinimapRenderer::onMissionEndedEvent(MissionEndedEvent *pEvt) {
+    p_minimap_->clearTarget();
     handleClearSignal();
-    WorldPoint * pPoint = static_cast<WorldPoint *>(evt.pCtxt);
-    signalSourceLocW_.x = pPoint->x;
-    signalSourceLocW_.y = pPoint->y;
-    signalSourceLocW_.z = pPoint->z;
+}
+
+void GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent(EvacuateObjectiveStartedEvent *pEvt) {
+    handleClearSignal();
+    signalSourceLocW_.x = pEvt->evacuationPoint.x;
+    signalSourceLocW_.y = pEvt->evacuationPoint.y;
+    signalSourceLocW_.z = pEvt->evacuationPoint.z;
 
     signalType_ = kEvacuation;
 
@@ -353,12 +343,11 @@ void GamePlayMinimapRenderer::handleClearSignal() {
 /*!
  * Defines a signal position on the map.
  */
-void GamePlayMinimapRenderer::handleTargetSet(GameEvent &evt) {
+void GamePlayMinimapRenderer::onTargetObjectiveStartedEvent(TargetObjectiveStartedEvent *pEvt) {
     handleClearSignal();
     // get the target current position
-    MapObject *pTarget = static_cast<MapObject *>(evt.pCtxt);
-    p_minimap_->setTarget(pTarget);
-    signalSourceLocW_.convertFromTilePoint(pTarget->position());
+    p_minimap_->setTarget(pEvt->pTarget);
+    signalSourceLocW_.convertFromTilePoint(pEvt->pTarget->position());
     signalType_ = kTarget;
 }
 

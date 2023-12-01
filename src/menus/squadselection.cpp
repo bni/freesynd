@@ -23,7 +23,6 @@
 #include "menus/squadselection.h"
 #include "ped.h"
 #include "model/vehicle.h"
-#include "core/gameevent.h"
 #include "mission.h"
 
 
