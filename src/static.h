@@ -179,7 +179,7 @@ public:
 
     void draw(const Point2D &screenPos) override;
     bool animate(int elapsed, Mission *obj) override;
-    void handleHit(fs_dmg::DamageToInflict &d);
+    void handleHit(fs_dmg::DamageToInflict &d)override;
 
 protected:
     int anim_, burning_anim_, damaged_anim_;
@@ -196,7 +196,7 @@ public:
 
     bool animate(int elapsed, Mission *obj) override;
     void draw(const Point2D &screenPos) override;
-    void handleHit(fs_dmg::DamageToInflict &d);
+    void handleHit(fs_dmg::DamageToInflict &d) override;
 
 protected:
     int anim_, open_anim_, breaking_anim_, damaged_anim_;
@@ -242,7 +242,7 @@ public:
     bool animate(int elapsed, Mission *obj) override;
     void draw(const Point2D &screenPos) override;
 
-    void handleHit(fs_dmg::DamageToInflict &d);
+    void handleHit(fs_dmg::DamageToInflict &d) override;
 
 protected:
     int anim_, damaged_anim_;

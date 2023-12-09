@@ -74,6 +74,11 @@ void InstantImpactShot::inflictDamage(Mission *pMission) {
     for (it = hitsByObject.begin(); it != hitsByObject.end(); it++) {
         dmg_.dvalue = (*it).second * dmg_.pWeapon->getClass()->damagePerShot();
         (*it).first->handleHit(dmg_);
+
+        if (dmg_.pWeapon->owner()->isOurAgent()) {
+            // we don't differentiate hitting a tree and a ped
+            pMission->stats()->incrHits();
+        }
     }
 }
 
@@ -232,9 +237,10 @@ void Explosion::createExplosion(Mission *pMission, ShootableMapObject *pOwner, d
 void Explosion::createExplosion(Mission *pMission, ShootableMapObject *pOwner, const WorldPoint &location, double range, int dmgValue) {
     fs_dmg::DamageToInflict dmg;
     if (pOwner && pOwner->is(MapObject::kNatureWeapon)) {
-        // It's a bomb that exploded (other waepons do not explode)
+        // Explosion is coming from a Bomb or a GaussGun
         dmg.pWeapon = dynamic_cast<WeaponInstance *>(pOwner);
     } else {
+        // Else it can be car or an agent suicide
         dmg.pWeapon = NULL;
     }
 
@@ -266,12 +272,27 @@ void Explosion::inflictDamage(Mission *pMission) {
     // Get all destructible objects in range
     getAllShootablesWithinRange(pMission, dmg_.originLocW, objInRangeLst);
 
+    bool updateStat = false;
+    if (dmg_.pWeapon && dmg_.pWeapon->isInstanceOf(Weapon::GaussGun)) {
+        // We only count explosions from Gaussgun in stats
+        // Gaussgun should always have a PedInstance as an owner
+        if (dmg_.pWeapon->owner()->isOurAgent()) {
+            updateStat = true;
+        }
+    }
+
     for (std::vector<ShootableMapObject *>::iterator it = objInRangeLst.begin();
         it != objInRangeLst.end(); it++)
     {
         ShootableMapObject *smo = *it;
         // distribute damage
         smo->handleHit(dmg_);
+        if (updateStat && smo->is(MapObject::kNaturePed)) {
+            // We update stats on when a ped is damaged and we stop
+            // at the first ped otherwise hit percentage is > 100% for 1 shot
+            pMission->stats()->incrHits();
+            updateStat = false;
+        }
         // draw a explosion ball above each object that was hit
         SFXObject *so = new SFXObject(pMission->get_map(), SFXObject::sfxt_ExplosionBall);
         so->setPosition(smo->tileX(), smo->tileY(), smo->tileZ(), smo->offX(),
@@ -621,6 +642,10 @@ void FlamerShot::inflictDamage(Mission *pMission) {
     pFlame_ = NULL;
     if (pShootableHit_ != NULL) {
         pShootableHit_->handleHit(dmg_);
+        if (dmg_.pWeapon->owner()->isOurAgent()) {
+            // we don't differentiate hitting a tree and a ped
+            pMission->stats()->incrHits();
+        }
     }
 }
 

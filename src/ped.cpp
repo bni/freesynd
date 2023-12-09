@@ -1209,11 +1209,6 @@ void PedInstance::handleHit(fs_dmg::DamageToInflict &d) {
     if (health_ > 0) {
         decreaseHealth(getRealDamage(d));
 
-        PedInstance *pShooter = dynamic_cast<PedInstance *>(d.d_owner);
-        if (pShooter && pShooter->isOurAgent()) {
-            g_Session.getMission()->stats()->incrHits();
-        }
-
         // Only add a hit if ped is not currently being hit
         if (currentAction_ == NULL || currentAction_->type() != Action::kActTypeHit) {
             insertHitAction(d);

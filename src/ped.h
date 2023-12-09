@@ -370,7 +370,7 @@ public:
     //! Return the damage after applying protection of Mod
     int getRealDamage(fs_dmg::DamageToInflict &d);
     //! Method called when object is hit by a weapon shot.
-    void handleHit(fs_dmg::DamageToInflict &d);
+    void handleHit(fs_dmg::DamageToInflict &d) override;
     //! Method called to check if ped has died
     bool handleDeath(Mission *pMission, fs_dmg::DamageToInflict &d);
 

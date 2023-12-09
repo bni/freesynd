@@ -448,7 +448,7 @@ void WeaponInstance::fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, int e
 
     if (updateStats) {
         if (pOwner_ && pOwner_->isOurAgent()) {
-            pMission->stats()->incrShots(ammoUsed);
+            pMission->stats()->incrShots(1);
         }
     }
 }
