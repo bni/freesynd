@@ -157,7 +157,7 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int mo
         g_gameCtrl.getMissionResultList().clear();
 
         for (int misId = 1; misId <= 50; misId++) {
-            Mission *pMission = g_gameCtrl.missions().loadMission(misId);
+            Mission *pMission = g_missionCtrl.loadMission(misId);
 
             if (pMission) {
                 bool keepMission = matchMissionWithPedType(pMission);
@@ -170,7 +170,7 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int mo
                     g_gameCtrl.getMissionResultList().push_back(misId);
                 }
 
-                delete pMission;
+                g_missionCtrl.destroyMission();
             }
         }
 
