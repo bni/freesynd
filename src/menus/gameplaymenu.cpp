@@ -383,7 +383,7 @@ void GameplayMenu::handleTick(int elapsed)
             change |= mission_->weaponOnGround(i)->animate(diff);
 
         for (size_t i = 0; i < mission_->numStatics(); i++)
-            change |= mission_->statics(i)->animate(diff, mission_);
+            change |= mission_->statics(i)->animate(diff);
 
         for (size_t i = 0; i < mission_->numPrjShots(); i++) {
             change |= mission_->prjShots(i)->animate(diff, mission_);

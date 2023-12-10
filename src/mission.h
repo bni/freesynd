@@ -36,6 +36,7 @@
 #include "fs-kernel/model/sfxobject.h"
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/leveldata.h"
+#include "fs-kernel/model/pathsurfaces.h"
 
 class Vehicle;
 class PedInstance;

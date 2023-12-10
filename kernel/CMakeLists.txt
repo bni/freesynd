@@ -2,6 +2,8 @@
 set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mod.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/position.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/path.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/pathsurfaces.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/leveldata.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mapobject.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/sfxobject.h"

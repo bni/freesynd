@@ -28,7 +28,8 @@
 #include "fs-utils/common.h"
 #include "fs-utils/misc/timer.h"
 #include "fs-kernel/model/map.h"
-#include "pathsurfaces.h"
+#include "fs-kernel/model/pathsurfaces.h"
+
 #include "model/objectivedesc.h"
 #include "mission.h"
 

@@ -37,7 +37,6 @@
 #include "ped.h"
 #include "missionmanager.h"
 #include "model/shot.h"
-#include "core/gamesession.h"
 
 #define Z_SHIFT_TO_AIR   4
 

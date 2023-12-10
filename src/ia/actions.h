@@ -24,7 +24,7 @@
 #ifndef IA_ACTIONS_H_
 #define IA_ACTIONS_H_
 
-#include "path.h"
+#include "fs-kernel/model/path.h"
 #include "static.h"
 #include "fs-utils/misc/timer.h"
 
