@@ -36,7 +36,7 @@
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
 #include "model/vehicle.h"
-#include "mission.h"
+#include "missionmanager.h"
 #include "model/shot.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
@@ -288,7 +288,7 @@ void GameplayMenu::initWorldCoords()
  * Place to do some initializing.
  */
 void GameplayMenu::handleShow() {
-    mission_ = g_Session.getMission();
+    mission_ = g_missionCtrl.mission();
     mission_->start();
     // init selection to the first selectable agent
     selection_.setSquad(mission_->getSquad());

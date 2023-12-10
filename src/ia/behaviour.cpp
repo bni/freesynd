@@ -27,7 +27,7 @@
 
 #include "ia/behaviour.h"
 #include "ped.h"
-#include "mission.h"
+#include "missionmanager.h"
 #include "model/squad.h"
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
@@ -334,7 +334,7 @@ void PanicComponent::handleBehaviourEvent(PedInstance *pCivil, Behaviour::Behavi
         }
         break;
     case Behaviour::kBehvEvtWeaponCleared:
-        if (g_Session.getMission()->numArmedPeds() == 0) {
+        if (g_missionCtrl.mission()->numArmedPeds() == 0) {
             setEnabled(false);
             if (!pCivil->isCurrentActionFromSource(Action::kActionDefault)) {
                 pCivil->setCurrentActionWithSource(Action::kActionDefault);

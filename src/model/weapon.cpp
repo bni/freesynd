@@ -35,7 +35,7 @@
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-utils/log/log.h"
 #include "ped.h"
-#include "mission.h"
+#include "missionmanager.h"
 #include "model/shot.h"
 #include "core/gamesession.h"
 
@@ -295,7 +295,7 @@ bool WeaponInstance::animate(int elapsed) {
 
             if (bombExplosionTimer.update(elapsed)) {
                 fs_dmg::DamageToInflict dmg;
-                fire(g_Session.getMission(), dmg, elapsed);
+                fire(g_missionCtrl.mission(), dmg, elapsed);
                 return true;
             }
         }
@@ -461,6 +461,6 @@ void WeaponInstance::handleHit(fs_dmg::DamageToInflict & d)
         // we pass the given DamageToInflict just for the compiler
         // as it is not used by the fire method for a Bomb
         // same for elapsed
-        fire(g_Session.getMission(), d, 0);
+        fire(g_missionCtrl.mission(), d, 0);
     }
 }

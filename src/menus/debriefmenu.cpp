@@ -30,7 +30,7 @@
 #include <assert.h>
 
 #include "menus/gamemenuid.h"
-#include "mission.h"
+#include "missionmanager.h"
 #include "model/squad.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
@@ -105,7 +105,7 @@ void DebriefMenu::handleShow() {
     g_System.useMenuCursor();
     g_System.showCursor();
 
-    Mission *pMission = g_Session.getMission();
+    Mission *pMission = g_missionCtrl.mission();
 
     // update game state and listen for any change
     ListenerHandle handleResearchEnd = EventManager::listen<ResearchEndEvent>(this, &DebriefMenu::onResearchEndEvent);
@@ -183,7 +183,7 @@ void DebriefMenu::handleLeave() {
     // We're leaving to the map menu
     // So at this point the current mission is no more needed
     // as a new one will be selected in the map menu
-    g_Session.setMission(NULL);
+    g_missionCtrl.destroyMission();
 
     getStatic(txtNewWeap1Id_)->setText("");
     getStatic(txtNewWeap2Id_)->setText("");

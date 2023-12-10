@@ -69,6 +69,7 @@ private:
 
 MissionManager::MissionManager(MapManager *pMapManager) {
     pMapManager_ = pMapManager;
+    pMission_ = nullptr;
 }
 
 /*!
@@ -138,18 +139,26 @@ Mission *MissionManager::loadMission(int n)
     // Initialize LevelData structure from data read in file
     LevelData::LevelDataAll level_data;
     if (load_level_data(n, level_data)) {
-        Mission *m = create_mission(level_data);
+        pMission_ = create_mission(level_data);
 
-        if (m) {
-            if (m->setSurfaces()) {
-                return m;
+        if (pMission_) {
+            if (pMission_->setSurfaces()) {
+                return pMission_;
             } else {
-                delete m;
+                destroyMission();
             }
         }
     }
 
     return NULL;
+}
+
+void MissionManager::destroyMission() {
+    if (pMission_) {
+        LOG(Log::k_FLG_IO, "MissionManager", "destroyMission()", ("destroy mission"));
+        delete pMission_;
+        pMission_ = NULL;
+    }
 }
 
 /*!

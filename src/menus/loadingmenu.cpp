@@ -48,14 +48,18 @@ void LoadingMenu::handleTick(int elapsed)
     if (do_load_) {
         // Loads mission
         int id = g_Session.getSelectedBlock().mis_id;
-        Mission *pMission = g_gameCtrl.missions().loadMission(id);
-        assert(pMission != NULL);
-        g_Session.setMission(pMission);
+        g_missionCtrl.loadMission(id);
 
         do_load_ = false;
     }
 
     if (timer_.update(elapsed)) {
-        menu_manager_->gotoMenu(fs_game_menus::kMenuIdGameplay);
+        if (g_missionCtrl.mission()) {
+            menu_manager_->gotoMenu(fs_game_menus::kMenuIdGameplay);
+        } else {
+            // there was a problem during loading the mission => quit game
+            menu_manager_->gotoMenu(kMenuIdLogout);
+        }
+
     }
 }

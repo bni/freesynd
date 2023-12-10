@@ -227,18 +227,6 @@ public:
     //! Change the player color for the enemy syndicate color.
     void exchange_color_wt_syndicate(uint8 player_color);
 
-    /*!
-     * Return the currently played mission.
-     * \return Can be NULL.
-     */
-    Mission * getMission() { return mission_; }
-
-    /*!
-     * Sets the mission.
-     * \param pMission The mission the user will play.
-     */
-    void setMission(Mission *pMission);
-
     //! Update state when finishing a mission
     void mark_selected_block_completed();
 
@@ -300,10 +288,7 @@ private:
      * region on the mission map.
      */
     uint8 selected_blck_;
-    /*!
-     * Currently played mission.
-     */
-    Mission *mission_;
+
     /*! Cheat flag to tell that all missions are playable.*/
     bool enable_all_mis_;
     /*! Cheat flag to enable replay of finished missions. */

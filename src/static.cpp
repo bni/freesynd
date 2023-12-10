@@ -28,8 +28,7 @@
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
 #include "model/vehicle.h"
-#include "core/gamesession.h"
-#include "mission.h"
+#include "missionmanager.h"
 
 const int Static::kStaticOrientation1 = 0;
 const int Static::kStaticOrientation2 = 2;
@@ -1016,14 +1015,14 @@ void Semaphore::handleHit(fs_dmg::DamageToInflict &d) {
         if (isDead()) {
             state_ = Static::sttsem_Damaged;
             // To make this thing reach the ground need to get solid surface 0x0F
-            Mission * m = g_Session.getMission();
+            Mission * pMission = g_missionCtrl.mission();
             int z = pos_.tz;
-            int indx = pos_.tx + pos_.ty * m->mmax_x_ + pos_.tz * m->mmax_m_xy;
+            int indx = pos_.tx + pos_.ty * pMission->mmax_x_ + pos_.tz * pMission->mmax_m_xy;
             elapsed_left_bigger_ = 0;
             while (z != 0) {
                 z--;
-                indx -= m->mmax_m_xy;
-                int twd = m->mtsurfaces_[indx];
+                indx -= pMission->mmax_m_xy;
+                int twd = pMission->mtsurfaces_[indx];
                 if (twd == 0x0F) {
                     elapsed_left_bigger_ = (pos_.tz - z) * 128 + pos_.oz;
                     break;

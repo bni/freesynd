@@ -71,10 +71,6 @@ class GameController : public Singleton < GameController > {
         return mods_;
     }
 
-    MissionManager &missions() {
-        return missions_;
-    }
-
     //*************************************
     // Game services
     //*************************************

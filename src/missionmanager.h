@@ -28,6 +28,7 @@
 #include <map>
 
 #include "fs-utils/common.h"
+#include "fs-utils/misc/singleton.h"
 #include "fs-kernel/model/leveldata.h"
 #include "ia/actions.h"
 #include "fs-kernel/mgr/mapmanager.h"
@@ -38,13 +39,19 @@
  * Mission manager class.
  * Stores information about all missions.
  */
-class MissionManager {
+class MissionManager : public Singleton < MissionManager > {
 public:
     MissionManager(MapManager *pMapManager);
     //! Loads mission for the given mission id
     Mission *loadMission(int n);
     //! Loads briefing for the given mission id
     MissionBriefing *loadBriefing(int n);
+
+    Mission * mission() {
+        return pMission_;
+    }
+
+    void destroyMission();
 
 private:
     /*!
@@ -98,6 +105,12 @@ private:
 
 private:
     MapManager *pMapManager_;
+    /*!
+     * Currently played mission.
+     */
+    Mission *pMission_;
 };
+
+#define g_missionCtrl    MissionManager::singleton()
 
 #endif

@@ -46,6 +46,7 @@ void GameController::destroy() {
 }
 
 bool GameController::reset() {
+    g_missionCtrl.destroyMission();
     // Reset default mods and weapons
     mods_.reset();
     weaponMgr_.reset();

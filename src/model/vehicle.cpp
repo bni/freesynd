@@ -32,7 +32,7 @@
 #include <assert.h>
 
 #include "mission.h"
-#include "core/gamesession.h"
+#include "missionmanager.h"
 #include "fs-engine/gfx/screen.h"
 #include "model/shot.h"
 
@@ -813,7 +813,7 @@ void GenericCar::handleHit(fs_dmg::DamageToInflict &d) {
             dropPassenger(p);
         }
 
-        Explosion::createExplosion(g_Session.getMission(), this, 512.0);
+        Explosion::createExplosion(g_missionCtrl.mission(), this, 512.0);
     } else if (pDriver_ != NULL && !pDriver_->isOurAgent()) {
         // in case the car is drived by someone else than our agents
         // and one of our agent shot the car then

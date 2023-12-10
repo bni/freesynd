@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "gamesession.h"
-#include "mission.h"
 
 // List of logo colours
 extern int g_Colours[8];
@@ -46,14 +45,14 @@ Block g_Blocks[50] = {
     {"#CNTRY_09", 42000000, 42000000, 9, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "23:24", 0, 0, 0},          // 12 - KAZAKHSTAN
     {"#CNTRY_03", 52000000, 52000000, 3, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "14", 0, 0, 0},             // 13 - MONGOLIA
     {"#CNTRY_02", 42000000, 42000000, 2, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 14 - FAR EAST
-    {"#CNTRY_42", 44000000, 44000000, 42, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 15 - 
-    {"#CNTRY_05", 46000000, 46000000, 5, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 16 - 
-    {"#CNTRY_23", 56000000, 56000000, 23, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 17 - 
-    {"#CNTRY_34", 58000000, 58000000, 34, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 18 - 
-    {"#CNTRY_29", 40000000, 40000000, 29, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 19 - 
-    {"#CNTRY_28", 50000000, 50000000, 28, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 20 - 
-    {"#CNTRY_35", 40000000, 40000000, 35, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 21 - 
-    {"#CNTRY_06", 50000000, 50000000, 6, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 22 - 
+    {"#CNTRY_42", 44000000, 44000000, 42, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 15 -
+    {"#CNTRY_05", 46000000, 46000000, 5, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 16 -
+    {"#CNTRY_23", 56000000, 56000000, 23, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 17 -
+    {"#CNTRY_34", 58000000, 58000000, 34, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 18 -
+    {"#CNTRY_29", 40000000, 40000000, 29, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 19 -
+    {"#CNTRY_28", 50000000, 50000000, 28, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 20 -
+    {"#CNTRY_35", 40000000, 40000000, 35, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 21 -
+    {"#CNTRY_06", 50000000, 50000000, 6, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 22 -
     {"#CNTRY_04", 52000000, 52000000, 4, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 23 - Iran
     {"#CNTRY_50", 54000000, 54000000, 50, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 24 - China
     {"#CNTRY_32", 40000000, 40000000, 32, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
@@ -89,26 +88,14 @@ const int GameSession::HOUR_DELAY = 4000;
 const int GameSession::NB_MISSION = 50;
 
 GameSession::GameSession() {
-    mission_ = NULL;
     enable_all_mis_ = false;
     replay_mission_ = false;
     hour_delay_ = HOUR_DELAY;
 }
 
-GameSession::~GameSession() {
-    destroy();
-}
-
-void GameSession::destroy() {
-    if (mission_) {
-        delete mission_;
-        mission_ = NULL;
-    }
-}
+GameSession::~GameSession() {}
 
 bool GameSession::reset() {
-    destroy();
-
     // Init default colors for enemy syndicates
     g_syndicate_color_id[0] = 7;
     g_syndicate_color_id[1] = 14;
@@ -203,15 +190,6 @@ void GameSession::exchange_color_wt_syndicate(uint8 new_color) {
     setLogoColour(new_color);
 }
 
-void GameSession::setMission(Mission *pMission) {
-    if ((pMission == NULL && mission_) || pMission != mission_) {
-        if (mission_) {
-            delete mission_;
-        }
-        mission_ = pMission;
-    }
-}
-
 /*!
  * Called when user finishes the current mission.
  * The block cannot be played again, a tax is set
@@ -223,8 +201,8 @@ void GameSession::mark_selected_block_completed() {
     g_Blocks[selected_blck_].syndicate_owner = 0;
 }
 
-void GameSession::cheatEnableAllMission() { 
-    enable_all_mis_ = true; 
+void GameSession::cheatEnableAllMission() {
+    enable_all_mis_ = true;
 
     for (int i=0; i<NB_MISSION; i++) {
         if (g_Blocks[i].status == BLK_UNAVAIL) {
@@ -234,7 +212,7 @@ void GameSession::cheatEnableAllMission() {
 }
 
 /*!
- * Returns the number of hours and days for the given period 
+ * Returns the number of hours and days for the given period
  * in millisecond.
  * \param elapsed
  * \param days
@@ -258,7 +236,7 @@ void GameSession::getDayHourFromPeriod(int elapsed, int & days, int & hours) {
  * \return True if time has changed.
  */
 bool GameSession::updateTime(int elapsed) {
-    
+
     if (elapsed == -1) {
         time_elapsed_ = 0;
         return false;
@@ -342,7 +320,7 @@ int GameSession::getTaxRevenue(int population, int rate) {
  */
 bool GameSession::addToTaxRate(int amount) {
     int newRate = g_Blocks[selected_blck_].tax + g_Blocks[selected_blck_].addToTax + amount;
-    
+
     if (newRate <= 100 && newRate >= 0) {
         g_Blocks[selected_blck_].addToTax += amount;
         return true;
@@ -418,7 +396,7 @@ int GameSession::updateCountries() {
             // update the population status
             if (g_Blocks[i].daysStatusElapsed < g_Blocks[i].daysToNextStatus) {
                 g_Blocks[i].daysStatusElapsed += 1;
-                
+
                 if (g_Blocks[i].daysStatusElapsed == g_Blocks[i].daysToNextStatus) {
                     // We have reached the limit -> Change population status
                     // reset the counter

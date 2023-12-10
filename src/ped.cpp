@@ -33,7 +33,7 @@
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "model/shot.h"
-#include "mission.h"
+#include "missionmanager.h"
 #include "core/gamesession.h"
 #include "ia/behaviour.h"
 #include "agentmanager.h"
@@ -622,7 +622,7 @@ int PedInstance::getTimeBetweenShoots(WeaponInstance *pWeapon) {
 void PedInstance::commitSuicide() {
     if (hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2)) {
         // Having a chest v2 makes agent explode
-        Explosion::createExplosion(g_Session.getMission(), this, 512.0, 16);
+        Explosion::createExplosion(g_missionCtrl.mission(), this, 512.0, 16);
     } else {
         // else he just shoot himself
         fs_dmg::DamageToInflict dit;
@@ -984,7 +984,7 @@ WeaponInstance * PedInstance::dropWeapon(uint8 index) {
     if(pWeapon) {
         pWeapon->setDrawable(true);
         pWeapon->setPosition(pos_);
-        g_Session.getMission()->addWeaponToGround(pWeapon);
+        g_missionCtrl.mission()->addWeaponToGround(pWeapon);
     }
 
     return pWeapon;
@@ -996,9 +996,8 @@ WeaponInstance * PedInstance::dropWeapon(uint8 index) {
  *
  */
 void PedInstance::dropAllWeapons() {
-    Mission *m = g_Session.getMission();
-    uint8 twd = m->mtsurfaces_[pos_.tx + m->mmax_x_ * pos_.ty
-        + m->mmax_m_xy * pos_.tz];
+    uint8 twd = g_missionCtrl.mission()->mtsurfaces_[pos_.tx + g_missionCtrl.mission()->mmax_x_ * pos_.ty
+        + g_missionCtrl.mission()->mmax_m_xy * pos_.tz];
 
     while (weapons_.size()) {
         WeaponInstance *w = dropWeapon(0);
