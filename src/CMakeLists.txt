@@ -68,11 +68,11 @@ set(HEADERS
 	app.h
     ipastim.h
 #	mapmanager.h
-	static.h
+#	static.h
 	mission.h
 	missionmanager.h
 	modmanager.h
-	modowner.h
+#	modowner.h
 #	path.h
 #	pathsurfaces.h
 	ped.h

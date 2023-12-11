@@ -96,6 +96,12 @@ public:
         return 0;
     }
 
+    void transferMods(ModOwner &modOwner) {
+        for (int i = 0; i < 6; i++) {
+            modOwner.addMod(slots_[i]);
+        }
+    }
+
 protected:
     Mod *slots_[6];
 };

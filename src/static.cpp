@@ -25,7 +25,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "static.h"
+#include "fs-kernel/model/static.h"
 
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"

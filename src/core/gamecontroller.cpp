@@ -32,7 +32,8 @@
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 #include "core/gamesession.h"
-#include "app.h"
+#include "model/squad.h"
+#include "ped.h"
 
 GameController::GameController(MapManager *pMapManager) : missions_(pMapManager) {
     agents_.setModManager(&mods_);
@@ -83,6 +84,9 @@ void GameController::handle_mission_end(Mission *p_mission) {
     int elapsed = p_mission->stats()->missionDuration();
     g_Session.updateTime(elapsed);
 
+    // synch ped agents with agent from cryo chamber
+    transferAgentToCryoChamber(p_mission);
+
     if (p_mission->completed()) {
         g_Session.mark_selected_block_completed();
 
@@ -105,6 +109,37 @@ void GameController::handle_mission_end(Mission *p_mission) {
 
         // simulate other syndicates activity
         simulate_enemy_moves();
+    }
+}
+
+void GameController::transferAgentToCryoChamber(Mission *pMission) {
+    // Update for squad
+    for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
+        PedInstance *pPedAgent = pMission->getSquad()->member(i);
+        if (pPedAgent) {
+            Agent *pAg = agents().squadMember(i);
+            if (pPedAgent->isDead()) {
+                // an agent died -> remove him from cryo
+                agents().destroyAgentSlot(i);
+            } else {
+                // synch only weapons
+                pPedAgent->transferWeapons(*pAg);
+            }
+        }
+    }
+
+    // Add persuaded agents only in case of mission success
+    if (pMission->stats()->agentCaptured() > 0 && pMission->completed()) {
+        for (size_t i = pMission->getSquad()->size(); i < pMission->numPeds(); i++) {
+            PedInstance *pPed = pMission->ped(i);
+            if (pPed->objGroupDef() == PedInstance::og_dmAgent) {
+                Agent *pAg = agents().createAgent(false);
+                if (pAg) {
+                    pPed->transferWeapons(*pAg);
+                    pPed->transferMods(*pAg);
+                }
+            }
+        }
     }
 }
 

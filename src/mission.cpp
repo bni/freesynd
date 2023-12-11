@@ -32,12 +32,11 @@
 #include <assert.h>
 #include <string>
 
-#include "core/gamecontroller.h"
+#include "fs-utils/log/log.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
 #include "model/objectivedesc.h"
-#include "fs-utils/log/log.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "model/shot.h"
@@ -167,7 +166,7 @@ int Mission::mapHeight()
     return p_map_->height();
 }
 
-void Mission::start()
+void Mission::start(WeaponManager& weaponMgr)
 {
     LOG(Log::k_FLG_GAME, "Mission", "start()", ("Start mission"));
     // Reset mission statistics
@@ -178,7 +177,7 @@ void Mission::start()
     // creating a list of available weapons
     // TODO: consider weight of weapons when adding?
     std::vector <Weapon *> wpns;
-    g_gameCtrl.weaponManager().getAvailable(fs_dmg::kDmgTypeBullet, wpns);
+    weaponMgr.getAvailable(fs_dmg::kDmgTypeBullet, wpns);
     int indx_best = -1;
     int indx_second = -1;
     for (int i = 0, sz = wpns.size(), rank_best = -1, rank_second = -1;
@@ -194,7 +193,7 @@ void Mission::start()
             indx_second = i;
         }
     }
-    Weapon *bomb = g_gameCtrl.weaponManager().getAvailable(Weapon::TimeBomb);
+    Weapon *bomb = weaponMgr.getAvailable(Weapon::TimeBomb);
 
     // TODO: check whether enemy agents weapons are equal to best two
     // if not set them
@@ -260,12 +259,15 @@ void Mission::checkObjectives() {
 void Mission::endWithStatus(Status status) {
     switch (status) {
     case kMissionStatusCompleted:
+        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission succeeded"));
         g_SoundMgr.play(SPEECH_MISSION_COMPLETED);
         break;
     case kMissionStatusFailed:
+        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission failed"));
         g_SoundMgr.play(SPEECH_MISSION_FAILED);
         break;
     case kMissionStatusAborted:
+        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission aborted"));
         break;
     default:
         // leave without changing status
@@ -274,31 +276,19 @@ void Mission::endWithStatus(Status status) {
 
     status_ = status;
     EventManager::fire<MissionEndedEvent>(status);
+
+    updateStats();
 }
 
-/**
- * When mission is over, weapons from agents are saved for
- * reuse in other missions. So they are transfered to Agent.
- * \param p PedInstance* The agent in the mission
- * \param pAg Agent* The Agent in cryo chamber
+
+/** \brief
+ *
+ * \return void
  *
  */
-void Mission::transferWeaponsFromPedInstanceToAgent(PedInstance* p, Agent* pAg)
+void Mission::updateStats()
 {
-    while (p->numWeapons()) {
-        WeaponInstance *wi = p->removeWeaponAtIndex(0);
-        wi->deactivate();
-        // auto-reload for pistol
-        if (wi->isInstanceOf(Weapon::Pistol))
-            wi->reload();
-        pAg->addWeapon(wi);
-    }
-}
-
-
-void Mission::end()
-{
-    LOG(Log::k_FLG_GAME, "Mission", "end()", ("End mission"));
+    LOG(Log::k_FLG_GAME, "Mission", "updateStats()", ("calculate statistics for mission"));
     for (unsigned int i = p_squad_->size(); i < peds_.size(); i++) {
         PedInstance *p = peds_[i];
         // TODO: influence country happiness with number of killed overall
@@ -325,35 +315,11 @@ void Mission::end()
         } else if (p->isPersuaded()) {
             if (p->objGroupDef() == PedInstance::og_dmAgent) {
                 stats_.incrAgentCaptured();
-                if (completed()) {
-                    Agent *pAg = g_gameCtrl.agents().createAgent(false);
-                    if (pAg) {
-                        transferWeaponsFromPedInstanceToAgent(p, pAg);
-                        *((ModOwner *)pAg) = *((ModOwner *)p);
-                    }
-                }
-            } else
-                stats_.incrConvinced();
-        }
-    }
-
-    // synch ped agents with agent from cryo chamber
-    for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
-        PedInstance *p_pedAgent = p_squad_->member(i);
-        if (p_pedAgent) {
-            Agent *pAg = g_gameCtrl.agents().squadMember(i);
-            if (p_pedAgent->isDead()) {
-                // an agent died -> remove him from cryo
-                g_gameCtrl.agents().destroyAgentSlot(i);
             } else {
-                // synch only weapons
-                transferWeaponsFromPedInstanceToAgent(p_pedAgent, pAg);
+                stats_.incrConvinced();
             }
         }
     }
-
-    // reset squad
-    p_squad_->clear();
 }
 
 void Mission::addWeaponToGround(WeaponInstance * w)

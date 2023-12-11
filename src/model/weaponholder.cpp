@@ -103,6 +103,17 @@ void WeaponHolder::removeWeapon(WeaponInstance *wi) {
     }
 }
 
+void WeaponHolder::transferWeapons(WeaponHolder &anotherHolder) {
+    while (numWeapons()) {
+        WeaponInstance *wi = removeWeaponAtIndex(0);
+        wi->deactivate();
+        // auto-reload for pistol
+        if (wi->isInstanceOf(Weapon::Pistol))
+            wi->reload();
+        anotherHolder.addWeapon(wi);
+    }
+}
+
 /*!
  * Removes and delete all weapons from the inventory.
  */

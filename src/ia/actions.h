@@ -24,9 +24,9 @@
 #ifndef IA_ACTIONS_H_
 #define IA_ACTIONS_H_
 
-#include "fs-kernel/model/path.h"
-#include "static.h"
 #include "fs-utils/misc/timer.h"
+#include "fs-kernel/model/path.h"
+#include "fs-kernel/model/static.h"
 
 class Mission;
 class PedInstance;

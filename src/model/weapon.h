@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "static.h"
+#include "fs-kernel/model/static.h"
 #include "fs-kernel/model/sfxobject.h"
 #include "fs-engine/sound/sound.h"
 #include "fs-utils/io/configfile.h"

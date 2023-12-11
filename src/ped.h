@@ -32,9 +32,10 @@
 #include <set>
 
 #include "fs-utils/common.h"
-#include "static.h"
-#include "modowner.h"
 #include "fs-engine/gfx/spritemanager.h"
+#include "fs-kernel/model/static.h"
+#include "fs-kernel/model/modowner.h"
+
 #include "model/weaponholder.h"
 #include "model/weapon.h"
 #include "ipastim.h"

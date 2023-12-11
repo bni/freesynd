@@ -32,11 +32,13 @@
 #include <set>
 
 #include "fs-utils/common.h"
-#include "static.h"
+#include "fs-kernel/model/static.h"
 #include "fs-kernel/model/sfxobject.h"
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/leveldata.h"
 #include "fs-kernel/model/pathsurfaces.h"
+
+#include "weaponmanager.h"
 
 class Vehicle;
 class PedInstance;
@@ -45,7 +47,6 @@ class ObjectiveDesc;
 class Squad;
 class ProjectileShot;
 class GaussGunShot;
-class Weapon;
 
 /*!
  * A class that holds mission statistics.
@@ -140,12 +141,10 @@ public:
     //*************************************
 
     //! Init mission data
-    void start();
-    //! Destroy mission
-    void end();
-
+    void start(WeaponManager& weaponMgr);
     //! Ends mission with the given status
     void endWithStatus(Status status);
+
     //! Returns true if mission status is failed
     bool failed() { return status_ == kMissionStatusFailed; }
     //! Returns true if mission status is completed
@@ -317,7 +316,8 @@ protected:
     bool isSurface(char thisTile);
     bool isStairs(char thisTile);
 
-    void transferWeaponsFromPedInstanceToAgent(PedInstance *p, Agent *pAg);
+    //! At the end of the mission calculate all stats
+    void updateStats();
 
     /*!
      * Sets the given map for the mission.

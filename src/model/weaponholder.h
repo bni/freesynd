@@ -83,6 +83,8 @@ public:
     void selectShootingWeaponWithSameTypeFirst(WeaponInstance *pLeaderWeapon);
     void selectMedikitOrShield(Weapon::WeaponType weaponType);
 
+    void transferWeapons(WeaponHolder &anotherHolder);
+
 protected:
     struct WeaponSelectCriteria {
         union {

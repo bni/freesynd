@@ -37,8 +37,6 @@
 #include "modmanager.h"
 #include "missionmanager.h"
 
-class Mission;
-
 /*!
  * The game controller holds the game logic.
  */
@@ -103,6 +101,8 @@ class GameController : public Singleton < GameController > {
     std::list<int> & getMissionResultList() { return searchResLst_;}
 
 private:
+    //! Sync the returning agents with the cryo chamber roster
+    void transferAgentToCryoChamber(Mission *pMission);
     //! Simulates syndicates fighting for countries
     void simulate_enemy_moves();
     // helper method

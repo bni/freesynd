@@ -289,7 +289,7 @@ void GameplayMenu::initWorldCoords()
  */
 void GameplayMenu::handleShow() {
     mission_ = g_missionCtrl.mission();
-    mission_->start();
+    mission_->start(g_gameCtrl.weaponManager());
     // init selection to the first selectable agent
     selection_.setSquad(mission_->getSquad());
 
@@ -489,7 +489,6 @@ void GameplayMenu::handleLeave()
 
     g_System.hideCursor();
     menu_manager_->setDefaultPalette();
-    mission_->end();
     selection_.clear();
 
     tick_count_ = 0;
