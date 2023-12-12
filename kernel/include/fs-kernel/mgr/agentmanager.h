@@ -27,9 +27,9 @@
 #define AGENTMANAGER_H
 
 #include "fs-utils/common.h"
-#include "agent.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
+#include "fs-kernel/model/agent.h"
 
 extern const char * const g_AgentNames[];
 extern const int g_NumAgentNames;

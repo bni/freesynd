@@ -49,7 +49,6 @@
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/io/portablefile.h"
-#include "agent.h"
 #include "menus/gamemenufactory.h"
 #include "menus/gamemenuid.h"
 

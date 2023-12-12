@@ -24,7 +24,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "modmanager.h"
+#include "fs-kernel/mgr/modmanager.h"
 
 #include <stdio.h>
 #include <assert.h>

@@ -32,9 +32,9 @@
 #include <list>
 
 #include "fs-utils/misc/singleton.h"
-#include "agentmanager.h"
-#include "weaponmanager.h"
-#include "modmanager.h"
+#include "fs-kernel/mgr/agentmanager.h"
+#include "fs-kernel/mgr/weaponmanager.h"
+#include "fs-kernel/mgr/modmanager.h"
 #include "missionmanager.h"
 
 /*!

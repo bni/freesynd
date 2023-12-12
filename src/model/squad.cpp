@@ -21,7 +21,8 @@
  ************************************************************************/
 
 #include "model/squad.h"
-#include "agentmanager.h"
+
+#include "fs-kernel/mgr/agentmanager.h"
 #include "ped.h"
 
 

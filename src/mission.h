@@ -37,8 +37,7 @@
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/leveldata.h"
 #include "fs-kernel/model/pathsurfaces.h"
-
-#include "weaponmanager.h"
+#include "fs-kernel/mgr/weaponmanager.h"
 
 class Vehicle;
 class PedInstance;

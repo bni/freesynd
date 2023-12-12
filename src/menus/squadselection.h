@@ -24,8 +24,8 @@
 #define MENUS_SQUADSELECTION_H_
 
 #include "model/squad.h"
-#include "agentmanager.h"
 #include "fs-kernel/model/position.h"
+#include "fs-kernel/mgr/agentmanager.h"
 #include "model/vehicle.h"
 #include "mission.h"
 

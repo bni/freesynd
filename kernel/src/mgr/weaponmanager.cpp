@@ -26,7 +26,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "weaponmanager.h"
+#include "fs-kernel/mgr/weaponmanager.h"
 
 #include <stdio.h>
 #include <assert.h>

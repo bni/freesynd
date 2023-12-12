@@ -28,12 +28,12 @@
 #include "menus/maprenderer.h"
 
 #include "mission.h"
-#include "agentmanager.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/tile.h"
 #include "fs-engine/system/system.h"
+#include "fs-kernel/mgr/agentmanager.h"
 #include "menus/squadselection.h"
 #include "fs-engine/config.h"
 

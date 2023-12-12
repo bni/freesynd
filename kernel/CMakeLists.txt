@@ -6,6 +6,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/path.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/pathsurfaces.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/leveldata.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/agent.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mapobject.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/research.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/sfxobject.h"
@@ -15,17 +16,24 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/map.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/weapon.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/weaponholder.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/agentmanager.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/mapmanager.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/modmanager.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/weaponmanager.h"
     )
 
 set(SOURCE_LIST
+    "${Freesynd_SOURCE_DIR}/kernel/src/model/agent.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mod.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/map.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mapobject.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/research.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/sfxobject.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/weaponholder.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/mgr/agentmanager.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/mgr/mapmanager.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/mgr/modmanager.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/mgr/weaponmanager.cpp"
     )
 
 # Make an automatic library - will be static or dynamic based on user setting

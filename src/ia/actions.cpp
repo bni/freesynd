@@ -30,6 +30,7 @@
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/events/event.h"
 #include "fs-kernel/model/weapon.h"
+#include "fs-kernel/mgr/agentmanager.h"
 
 #include "core/gamecontroller.h"
 #include "ped.h"
@@ -37,7 +38,6 @@
 #include "model/train.h"
 #include "model/squad.h"
 #include "mission.h"
-#include "agentmanager.h"
 
 
 //*************************************

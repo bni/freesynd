@@ -7,8 +7,8 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 #include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 set (SOURCES
-	agent.cpp
-	agentmanager.cpp
+#	agent.cpp
+#	agentmanager.cpp
 	app.cpp
 	model/objectivedesc.cpp
 #	model/weaponholder.cpp
@@ -47,12 +47,12 @@ set (SOURCES
 	menus/squadselection.cpp
 	mission.cpp
 	missionmanager.cpp
-	modmanager.cpp
+#	modmanager.cpp
 	ped.cpp
 	pedactions.cpp
 	pedmanager.cpp
 	pedpathfinding.cpp
-	weaponmanager.cpp
+#	weaponmanager.cpp
 )
 
 if (APPLE AND "${SDL_INCLUDE_DIR}" MATCHES ".framework")
@@ -63,22 +63,22 @@ endif()
 
 set(HEADERS
     version.h
-	agent.h
-	agentmanager.h
+#	agent.h
+#	agentmanager.h
 	app.h
     ipastim.h
 #	mapmanager.h
 #	static.h
 	mission.h
 	missionmanager.h
-	modmanager.h
+#	modmanager.h
 #	modowner.h
 #	path.h
 #	pathsurfaces.h
 	ped.h
 	pedmanager.h
 	resources.h
-	weaponmanager.h
+#	weaponmanager.h
 	core/gameevent.h
 	core/gamesession.h
 	core/gamecontroller.h
@@ -147,18 +147,18 @@ if (BUILD_DEV_TOOLS)
 		dump.cpp
 #		mapmanager.cpp
 		static.cpp
-		agent.cpp
-		agentmanager.cpp
+#		agent.cpp
+#		agentmanager.cpp
 		ipastim.cpp
 		pedmanager.cpp
 		ped.cpp
 		pedactions.cpp
 		pedpathfinding.cpp
-		modmanager.cpp
+#		modmanager.cpp
 		missionmanager.cpp
 		model/vehicle.cpp
 		model/train.cpp
-		weaponmanager.cpp
+#		weaponmanager.cpp
 		core/gamecontroller.cpp
 		core/gamesession.cpp
 		core/missionbriefing.cpp

@@ -24,7 +24,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "agent.h"
+#include "fs-kernel/model/agent.h"
 
 #include <stdio.h>
 #include <string.h>

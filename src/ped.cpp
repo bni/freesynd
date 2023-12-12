@@ -33,10 +33,10 @@
 #include "model/vehicle.h"
 #include "model/squad.h"
 #include "fs-kernel/model/shot.h"
+#include "fs-kernel/mgr/agentmanager.h"
 #include "missionmanager.h"
 #include "core/gamesession.h"
 #include "ia/behaviour.h"
-#include "agentmanager.h"
 
 //*************************************
 // Constant definition
