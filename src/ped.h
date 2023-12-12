@@ -35,9 +35,9 @@
 #include "fs-engine/gfx/spritemanager.h"
 #include "fs-kernel/model/static.h"
 #include "fs-kernel/model/modowner.h"
+#include "fs-kernel/model/weapon.h"
+#include "fs-kernel/model/weaponholder.h"
 
-#include "model/weaponholder.h"
-#include "model/weapon.h"
 #include "ipastim.h"
 #include "ia/actions.h"
 #include "ia/behaviour.h"

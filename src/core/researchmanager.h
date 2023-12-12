@@ -26,10 +26,10 @@
 #include <list>
 #include <fstream>
 
-#include "model/research.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
+#include "fs-kernel/model/research.h"
 
 
 /*!

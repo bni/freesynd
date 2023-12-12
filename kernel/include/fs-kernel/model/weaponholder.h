@@ -29,7 +29,7 @@
 
 #include <vector>
 
-#include "weapon.h"
+#include "fs-kernel/model/weapon.h"
 
 /*!
  * A weapon holder is an object that can hold weapons.

@@ -36,10 +36,10 @@
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
+#include "fs-kernel/model/shot.h"
 #include "model/objectivedesc.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
-#include "model/shot.h"
 
 const uint8 Mission::kBMaskBlockerTargetOutOfMap = 0x20;
 const uint8 Mission::kBMaskBlockerTargetObjectUpdated = 0x02;

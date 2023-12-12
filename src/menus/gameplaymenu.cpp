@@ -37,7 +37,7 @@
 #include "fs-engine/gfx/screen.h"
 #include "model/vehicle.h"
 #include "missionmanager.h"
-#include "model/shot.h"
+#include "fs-kernel/model/shot.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
 

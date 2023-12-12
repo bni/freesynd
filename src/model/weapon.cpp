@@ -25,7 +25,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "weapon.h"
+#include "fs-kernel/model/weapon.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -36,7 +36,7 @@
 #include "fs-utils/log/log.h"
 #include "ped.h"
 #include "missionmanager.h"
-#include "model/shot.h"
+#include "fs-kernel/model/shot.h"
 
 #define Z_SHIFT_TO_AIR   4
 

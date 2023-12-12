@@ -7,10 +7,14 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/pathsurfaces.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/leveldata.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mapobject.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/research.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/sfxobject.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/shot.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/static.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/damage.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/map.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/weapon.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/weaponholder.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/mapmanager.h"
     )
 
@@ -18,7 +22,9 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mod.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/map.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mapobject.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/model/research.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/sfxobject.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/model/weaponholder.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/mgr/mapmanager.cpp"
     )
 

@@ -29,9 +29,10 @@
 
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/events/event.h"
+#include "fs-kernel/model/weapon.h"
+
 #include "core/gamecontroller.h"
 #include "ped.h"
-#include "model/weapon.h"
 #include "model/vehicle.h"
 #include "model/train.h"
 #include "model/squad.h"

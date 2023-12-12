@@ -32,10 +32,10 @@
 #include <fstream>
 
 #include "fs-utils/common.h"
-#include "model/weapon.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
+#include "fs-kernel/model/weapon.h"
 
 /*!
  * Weapon manager class.

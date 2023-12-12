@@ -11,12 +11,12 @@ set (SOURCES
 	agentmanager.cpp
 	app.cpp
 	model/objectivedesc.cpp
-	model/weaponholder.cpp
+#	model/weaponholder.cpp
 	model/shot.cpp
 	model/vehicle.cpp
 	model/train.cpp
 	model/weapon.cpp
-	model/research.cpp
+#	model/research.cpp
 	model/squad.cpp
 	core/gamesession.cpp
 	core/gamecontroller.cpp
@@ -87,12 +87,12 @@ set(HEADERS
 	ia/actions.h
 	ia/behaviour.h
 	model/vehicle.h
-	model/weapon.h
+#	model/weapon.h
 	model/objectivedesc.h
-	model/shot.h
-	model/weaponholder.h
+#	model/shot.h
+#	model/weaponholder.h
 	model/train.h
-	model/research.h
+#	model/research.h
 	model/squad.h
 	menus/agentselectorrenderer.h
 	menus/maprenderer.h
@@ -163,11 +163,11 @@ if (BUILD_DEV_TOOLS)
 		core/gamesession.cpp
 		core/missionbriefing.cpp
 		core/researchmanager.cpp
-		model/research.cpp
+#		model/research.cpp
 		model/squad.cpp
 		model/objectivedesc.cpp
 		model/shot.cpp
-		model/weaponholder.cpp
+#		model/weaponholder.cpp
 		model/weapon.cpp
 		ia/actions.cpp
 		ia/behaviour.cpp

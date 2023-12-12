@@ -32,7 +32,7 @@
 #include "fs-engine/events/event.h"
 #include "model/vehicle.h"
 #include "model/squad.h"
-#include "model/shot.h"
+#include "fs-kernel/model/shot.h"
 #include "missionmanager.h"
 #include "core/gamesession.h"
 #include "ia/behaviour.h"

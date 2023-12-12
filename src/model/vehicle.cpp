@@ -34,7 +34,7 @@
 #include "mission.h"
 #include "missionmanager.h"
 #include "fs-engine/gfx/screen.h"
-#include "model/shot.h"
+#include "fs-kernel/model/shot.h"
 
 const uint8 Vehicle::kVehicleTypeLargeArmored = 0x01;
 const uint8 Vehicle::kVehicleTypeLargeArmoredDamaged = 0x04;

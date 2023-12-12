@@ -27,7 +27,7 @@
 #define DEBRIEFMENU_H
 
 #include "fs-engine/menus/menu.h"
-#include "model/research.h"
+#include "fs-kernel/model/research.h"
 
 class Mission;
 

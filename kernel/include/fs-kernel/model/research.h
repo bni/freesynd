@@ -27,7 +27,7 @@
 #include <list>
 #include <fstream>
 
-#include "model/weapon.h"
+#include "fs-kernel/model/weapon.h"
 #include "fs-kernel/model/mod.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"

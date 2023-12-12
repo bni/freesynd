@@ -21,11 +21,11 @@
  *                                                                      *
  ************************************************************************/
 
-#include "research.h"
+#include "fs-kernel/model/research.h"
 
 int Research::researchCnt = 1;
 
-/*! This is a list of multiplicator to compute current funding 
+/*! This is a list of multiplicator to compute current funding
  * based on the minimun funding.
  */
 const short g_CoeffsFund[] = {1, 2, 4, 6, 10, 15, 30, 50, 75 , 100};
@@ -70,7 +70,7 @@ void Research::init(std::string name, int min) {
     progressList_.push_back(p);
 }
 
-int Research::getCurrFunding() { 
+int Research::getCurrFunding() {
     if (coeffInd_ == -1) {
         return 0;
     } else {
@@ -211,18 +211,18 @@ bool Research::saveToFile(PortableFile &file) {
 
     // Research name : 15 characters max, nul-padded
     file.write_string(name_, 15);
-            
+
     // Current funding
     file.write32(currFunding_);
     // Current status
     file.write32(status_);
     // Coeff index
     file.write16(coeffInd_);
-        
+
     // Progression points
     file.write32(progressList_.size());
-            
-    for (std::list < ProgressPoint >::iterator it = progressList_.begin(); 
+
+    for (std::list < ProgressPoint >::iterator it = progressList_.begin();
             it != progressList_.end(); it++) {
         ProgressPoint pt = *it;
         file.write_float(pt.percentage);

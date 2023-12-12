@@ -28,7 +28,7 @@
 
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/events/event.h"
-#include "model/research.h"
+#include "fs-kernel/model/research.h"
 
 /*!
  * Research class.

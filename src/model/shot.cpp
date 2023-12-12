@@ -25,7 +25,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "model/shot.h"
+#include "fs-kernel/model/shot.h"
 
 #include <map>
 

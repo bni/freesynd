@@ -25,7 +25,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "weaponholder.h"
+#include "fs-kernel/model/weaponholder.h"
 
 //*************************************
 // Constant definition
