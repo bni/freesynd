@@ -23,9 +23,9 @@
 #include "menus/minimaprenderer.h"
 
 #include "core/gamecontroller.h"
-#include "core/missionbriefing.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
+#include "fs-kernel/model/missionbriefing.h"
 #include "model/vehicle.h"
 #include "ped.h"
 

@@ -29,9 +29,9 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
-#include "core/researchmanager.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
+#include "fs-kernel/mgr/researchmanager.h"
 
 enum Status_Pop {
     STAT_VERY_HAPPY = 5,
@@ -103,7 +103,7 @@ public:
     /*! Total number of missions. */
     static const int NB_MISSION;
 
-    GameSession();
+    GameSession(WeaponManager *pWeaponManager, ModManager *pModManager);
     ~GameSession();
 
     /*!

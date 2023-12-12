@@ -34,7 +34,6 @@
 #include "fs-engine/base_app.h"
 #include "fs-engine/appcontext.h"
 #include "fs-kernel/mgr/mapmanager.h"
-#include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
 /*!
@@ -66,8 +65,6 @@ protected:
     int getStartMenuId(const CliParam& param);
 
 private:
-    /*! A structure to hold player information.*/
-    std::unique_ptr<GameSession> session_;
     /*! Controls the game logic. */
     std::unique_ptr<GameController> game_ctlr_;
 

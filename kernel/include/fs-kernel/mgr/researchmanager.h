@@ -30,15 +30,17 @@
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 #include "fs-kernel/model/research.h"
+#include "fs-kernel/mgr/weaponmanager.h"
+#include "fs-kernel/mgr/modmanager.h"
 
 
 /*!
- * This class manages all research functionnality.
+ * This class manages all research functionality.
  */
 class ResearchManager {
 public:
     //! Default constructor
-    ResearchManager();
+    ResearchManager(WeaponManager *pWeaponManager, ModManager *pModManager);
     ~ResearchManager();
 
     bool reset();
@@ -87,6 +89,8 @@ protected:
     VectorModel<Research *> availableWeaponsSearch_;
     /*! There is only one active search at a time.*/
     Research *pCurrResearch_;
+    WeaponManager *pWeaponManager_;
+    ModManager *pModManager_;
 };
 
 #endif //RESEARCHMANAGER_H

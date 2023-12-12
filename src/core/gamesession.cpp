@@ -87,7 +87,7 @@ int g_syndicate_color_id[7];
 const int GameSession::HOUR_DELAY = 4000;
 const int GameSession::NB_MISSION = 50;
 
-GameSession::GameSession() {
+GameSession::GameSession(WeaponManager *pWeaponManager, ModManager *pModManager) : researchMan_(pWeaponManager, pModManager) {
     enable_all_mis_ = false;
     replay_mission_ = false;
     hour_delay_ = HOUR_DELAY;

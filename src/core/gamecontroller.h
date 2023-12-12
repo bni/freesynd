@@ -30,12 +30,14 @@
 
 #include <cassert>
 #include <list>
+#include <memory>
 
 #include "fs-utils/misc/singleton.h"
 #include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 #include "fs-kernel/mgr/modmanager.h"
 #include "missionmanager.h"
+#include "core/gamesession.h"
 
 /*!
  * The game controller holds the game logic.
@@ -119,6 +121,8 @@ private:
     ModManager mods_;
     /*! Manager of missions.*/
     MissionManager missions_;
+    /*! A structure to hold player information.*/
+    std::unique_ptr<GameSession> session_;
 
     /*!
      * Use to store id of missions that are found in the search menu.

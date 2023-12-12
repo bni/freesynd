@@ -21,17 +21,18 @@
  *                                                                      *
  ************************************************************************/
 
-#include "researchmanager.h"
+#include "fs-kernel/mgr/researchmanager.h"
 
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/io/configfile.h"
-#include "core/gamecontroller.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/events/event.h"
 
-ResearchManager::ResearchManager() {
+ResearchManager::ResearchManager(WeaponManager *pWeaponManager, ModManager *pModManager) {
     pCurrResearch_ = NULL;
+    pWeaponManager_ = pWeaponManager;
+    pModManager_ = pModManager;
 }
 
 ResearchManager::~ResearchManager() {
@@ -109,7 +110,7 @@ Research *ResearchManager::loadResearch(Weapon::WeaponType wt) {
             Research *pRes = new Research(wt, name, fund, nextWeap);
 
             // Check if searched weapon has already been discovered
-            Weapon *pW = g_gameCtrl.weaponManager().getWeapon(wt);
+            Weapon *pW = pWeaponManager_->getWeapon(wt);
             if (pW->wasSubmittedToSearch()) {
                 pRes->improve(pW);
             }
@@ -200,14 +201,14 @@ void ResearchManager::complete(Research *pResearch) {
     Research *pNextRes = NULL;
     // Enable new weapon or mods
     if (pResearch->getType() == Research::EQUIPS) {
-        g_gameCtrl.weaponManager().enableWeapon(pResearch->getSearchWeapon());
+        pWeaponManager_->enableWeapon(pResearch->getSearchWeapon());
         // Loads next research
         if (pResearch->getNextWeaponRes() != Weapon::Unknown) {
             pNextRes = loadResearch(pResearch->getNextWeaponRes());
         }
 
     } else {
-        g_gameCtrl.mods().enableMod(pResearch->getSearchModType(), pResearch->getSearchModVersion());
+        pModManager_->enableMod(pResearch->getSearchModType(), pResearch->getSearchModVersion());
         // Loads next research
         if (pResearch->getSearchModVersion() == Mod::MOD_V2) {
             pNextRes = loadResearch(pResearch->getSearchModType(), Mod::MOD_V3);

@@ -20,7 +20,8 @@
  *                                                                      *
  ************************************************************************/
 
-#include "ipastim.h"
+#include "fs-kernel/model/ipastim.h"
+
 #include <assert.h>
 
 #ifdef _DEBUG
@@ -51,19 +52,19 @@ float IPAStim::getMultiplier() const
     // With an agent with no mods and his adrenaline dependency in the
     // center: his speed will be halved or doubled with the adrenaline
     // bar at the respective extreme.
-    
+
     // An agent with no adrenaline, no mods and no weaponry walks at
     // the same speed as a civilian.
-    
+
     // This function has been implemented to assume that FULL adrenaline
     // would give a 2x increase in speed and the worst case would leave
     // you walking at a half speed. With neutral adrenaline it has no
     // effect and therefore returns 1.
-    
+
     // Thus, the algortithm used here goes from 0.5 to 1 for 'negative'
     // adrenaline and 1 to 2 on the positive side.
     int magnitude = getMagnitude();
-    
+
     if(direction() == IPA_boost) {
         // return value is 1 to 2 for values
         // of 'magnitude' from 0 to 100
@@ -102,7 +103,7 @@ void IPAStim::processTicks(int elapsed)
     //   other side effect will stay where it was.
     // * there appear to be 50 'positions' on the bar so it looks
     //   like the levels move in notches, 1% at a time.
-    
+
     if(effect_timer_.update(elapsed))
     {
         if(effect_ > amount_)

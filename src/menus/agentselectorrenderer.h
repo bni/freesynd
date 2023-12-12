@@ -23,7 +23,8 @@
 #ifndef MENUS_AGENTSELECTORRENDERER_H_
 #define MENUS_AGENTSELECTORRENDERER_H_
 
-#include "ipastim.h"
+#include "fs-kernel/model/ipastim.h"
+
 #include "menus/squadselection.h"
 
 /*!
@@ -91,7 +92,7 @@ private:
             top = kIpaBarTop34;
         else
             top = kIpaBarTop12;
-        
+
         switch (type) {
             case IPAStim::Adrenaline:
                 break;
@@ -106,7 +107,7 @@ private:
         }
         return top;
     }
-    
+
     /*!
      * Returns the X coord for all IPA bars for a given agent slot.
      */
@@ -114,7 +115,7 @@ private:
     {
         return (agent % 2 == 1) ? kIpaBarLeft24 : kIpaBarLeft13;
     }
-    
+
     /*!
      * Returns the color for drawing the IPA bar of given type.
      */
@@ -149,8 +150,8 @@ private:
         }
         return -1;
     }
-    
-    
+
+
     /*!
      *
      */

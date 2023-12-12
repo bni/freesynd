@@ -20,12 +20,12 @@ set (SOURCES
 	model/squad.cpp
 	core/gamesession.cpp
 	core/gamecontroller.cpp
-	core/missionbriefing.cpp
-	core/researchmanager.cpp
+#	core/missionbriefing.cpp
+#	core/researchmanager.cpp
 	ia/actions.cpp
 	ia/behaviour.cpp
 	freesynd.cpp
-    ipastim.cpp
+#    ipastim.cpp
 	static.cpp
 #	mapmanager.cpp
 	menus/agentselectorrenderer.cpp
@@ -66,7 +66,7 @@ set(HEADERS
 #	agent.h
 #	agentmanager.h
 	app.h
-    ipastim.h
+#   ipastim.h
 #	mapmanager.h
 #	static.h
 	mission.h
@@ -82,8 +82,8 @@ set(HEADERS
 	core/gameevent.h
 	core/gamesession.h
 	core/gamecontroller.h
-	core/missionbriefing.h
-	core/researchmanager.h
+#	core/missionbriefing.h
+#	core/researchmanager.h
 	ia/actions.h
 	ia/behaviour.h
 	model/vehicle.h
@@ -149,7 +149,7 @@ if (BUILD_DEV_TOOLS)
 		static.cpp
 #		agent.cpp
 #		agentmanager.cpp
-		ipastim.cpp
+#		ipastim.cpp
 		pedmanager.cpp
 		ped.cpp
 		pedactions.cpp
@@ -161,8 +161,8 @@ if (BUILD_DEV_TOOLS)
 #		weaponmanager.cpp
 		core/gamecontroller.cpp
 		core/gamesession.cpp
-		core/missionbriefing.cpp
-		core/researchmanager.cpp
+#		core/missionbriefing.cpp
+#		core/researchmanager.cpp
 #		model/research.cpp
 		model/squad.cpp
 		model/objectivedesc.cpp

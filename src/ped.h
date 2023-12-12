@@ -37,8 +37,8 @@
 #include "fs-kernel/model/modowner.h"
 #include "fs-kernel/model/weapon.h"
 #include "fs-kernel/model/weaponholder.h"
+#include "fs-kernel/model/ipastim.h"
 
-#include "ipastim.h"
 #include "ia/actions.h"
 #include "ia/behaviour.h"
 

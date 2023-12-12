@@ -54,7 +54,7 @@
 
 App::App()
     : BaseApp(new GameMenuFactory()),
-      session_(std::make_unique<GameSession>()), game_ctlr_(std::make_unique<GameController>(&maps_))
+      game_ctlr_(std::make_unique<GameController>(&maps_))
 {
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;

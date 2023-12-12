@@ -7,7 +7,9 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/pathsurfaces.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/leveldata.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/agent.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/ipastim.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/mapobject.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/missionbriefing.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/research.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/sfxobject.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/model/shot.h"
@@ -19,20 +21,24 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/agentmanager.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/mapmanager.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/modmanager.h"
+    "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/researchmanager.h"
     "${Freesynd_SOURCE_DIR}/kernel/include/fs-kernel/mgr/weaponmanager.h"
     )
 
 set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/kernel/src/model/agent.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/model/ipastim.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mod.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/map.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/mapobject.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/model/missionbriefing.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/research.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/sfxobject.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/model/weaponholder.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/mgr/agentmanager.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/mgr/mapmanager.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/mgr/modmanager.cpp"
+    "${Freesynd_SOURCE_DIR}/kernel/src/mgr/researchmanager.cpp"
     "${Freesynd_SOURCE_DIR}/kernel/src/mgr/weaponmanager.cpp"
     )
 

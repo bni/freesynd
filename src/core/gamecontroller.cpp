@@ -35,7 +35,9 @@
 #include "model/squad.h"
 #include "ped.h"
 
-GameController::GameController(MapManager *pMapManager) : missions_(pMapManager) {
+GameController::GameController(MapManager *pMapManager) :
+        missions_(pMapManager),
+        session_(std::make_unique<GameSession>(&weaponMgr_, &mods_)) {
     agents_.setModManager(&mods_);
     agents_.setWeaponManager(&weaponMgr_);
 }

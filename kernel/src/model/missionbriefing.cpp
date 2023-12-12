@@ -21,10 +21,11 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-kernel/model/missionbriefing.h"
+
 #include <stdlib.h>
 #include <string>
 
-#include "core/missionbriefing.h"
 #include "fs-kernel/model/map.h"
 
 const int MissionBriefing::kMaxInfos = MAX_INFOS;

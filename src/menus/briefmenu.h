@@ -28,12 +28,13 @@
 #ifndef BRIEFMENU_H
 #define BRIEFMENU_H
 
+#include "fs-engine/menus/menu.h"
+#include "fs-kernel/model/missionbriefing.h"
+
 #include "menus/minimaprenderer.h"
 
-class MissionBriefing;
-
 /*!
- * Brief Menu class. 
+ * Brief Menu class.
  */
 class BriefMenu : public Menu {
 public:
@@ -45,7 +46,7 @@ public:
     void handleRender(DirtyList &dirtyList);
     void handleLeave();
     void handleAction(const int actionId, void *ctx, const int modKeys);
-    
+
 protected:
     /*! Origin of the minimap on the screen.*/
     static const int kMiniMapScreenX;

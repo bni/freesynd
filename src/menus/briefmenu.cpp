@@ -25,12 +25,12 @@
  *                                                                      *
  ************************************************************************/
 
+#include "briefmenu.h"
+
 #include <stdio.h>
 #include <assert.h>
 #include "app.h"
-#include "briefmenu.h"
 #include "menus/gamemenuid.h"
-#include "core/missionbriefing.h"
 
 const int BriefMenu::kMiniMapScreenX = 504;
 const int BriefMenu::kMiniMapScreenY = 220;
