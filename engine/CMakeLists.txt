@@ -20,6 +20,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/soundmanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/xmidi.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/io/keys.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/io/resources.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/menu.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/menumanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/menus/widget.h"

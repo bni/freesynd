@@ -29,15 +29,17 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "menus/gamemenuid.h"
-#include "missionmanager.h"
-#include "model/squad.h"
-#include "core/gamecontroller.h"
-#include "core/gamesession.h"
+#include "fs-kernel/mgr/missionmanager.h"
+#include "fs-kernel/model/squad.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
 #include "fs-utils/log/log.h"
+
+#include "menus/gamemenuid.h"
+#include "core/gamecontroller.h"
+#include "core/gamesession.h"
+
 
 DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain, "mdebrief.dat",
      "mdeout.dat") {

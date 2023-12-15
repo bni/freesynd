@@ -21,9 +21,10 @@
  ************************************************************************/
 
 #include "menus/agentselectorrenderer.h"
+
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/spritemanager.h"
-#include "ped.h"
+#include "fs-kernel/model/ped.h"
 
 const int AgentSelectorRenderer::kIpaBarWidth = 56;
 const int AgentSelectorRenderer::kIpaBarHeight = 10;

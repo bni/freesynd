@@ -23,11 +23,11 @@
 #ifndef MENUS_SQUADSELECTION_H_
 #define MENUS_SQUADSELECTION_H_
 
-#include "model/squad.h"
+#include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/mgr/agentmanager.h"
-#include "model/vehicle.h"
-#include "mission.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/mission.h"
 
 /*!
  * This class manages the agents selection during a gameplay session.

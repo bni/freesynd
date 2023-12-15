@@ -24,12 +24,14 @@
  *                                                                      *
  ************************************************************************/
 
+#include "fs-kernel/mgr/pedmanager.h"
+
 #include <stdio.h>
 #include <assert.h>
 
 #include "fs-utils/log/log.h"
-#include "pedmanager.h"
-#include "core/gamecontroller.h"
+#include "fs-kernel/mgr/agentmanager.h"
+#include "fs-kernel/mgr/modmanager.h"
 
 PedManager::PedManager()
 {
@@ -152,7 +154,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 
         return NULL;
 
     bool isOurAgent = ped_idx < AgentManager::kMaxSlot;
-    if (isOurAgent && !g_gameCtrl.agents().isSquadSlotActive(ped_idx)) {
+    if (isOurAgent && !g_agentMgr.isSquadSlotActive(ped_idx)) {
         // Creates agent only if he's active
         return NULL;
     }if (ped_idx >= 4 && ped_idx < 8) {
@@ -208,7 +210,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 
 
     if (isOurAgent) {
         // We're loading one of our agents
-        Agent *pAg = g_gameCtrl.agents().squadMember(ped_idx);
+        Agent *pAg = g_agentMgr.squadMember(ped_idx);
         initOurAgent(pAg, playerGroupId, newped);
     } else {
         unsigned int mt = newped->type();
@@ -273,13 +275,13 @@ void PedManager::initEnemyAgent(PedInstance *pPed) {
     pPed->addEnemyGroupDef(1);
     pPed->setBaseSpeed(256);
     // enemies get top version of mods
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_LEGS));
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_LEGS));
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_ARMS));
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_CHEST));
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_HEART));
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_EYES));
-    pPed->addMod(g_gameCtrl.mods().getHighestVersion(Mod::MOD_BRAIN));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_LEGS));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_LEGS));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_ARMS));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_CHEST));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_HEART));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_EYES));
+    pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_BRAIN));
     pPed->setTimeBeforeCheck(400);
     pPed->setBaseModAcc(0.5);
 

@@ -31,13 +31,14 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/mod.h"
 #include "fs-utils/misc/seqmodel.h"
+#include "fs-utils/misc/singleton.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 
 /*!
  * Modifications manager class.
  */
-class ModManager {
+class ModManager : public Singleton < ModManager > {
 public:
     //! Constructor
     ModManager();
@@ -75,5 +76,7 @@ protected:
     //! The list of currently available mods
     VectorModel<Mod *> mods_;
 };
+
+#define g_modMgr    ModManager::singleton()
 
 #endif

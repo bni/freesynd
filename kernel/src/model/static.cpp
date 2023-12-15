@@ -30,9 +30,8 @@
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/spritemanager.h"
-
-#include "missionmanager.h"
-#include "ped.h"
+#include "fs-kernel/mgr/missionmanager.h"
+#include "fs-kernel/model/ped.h"
 
 const int Static::kStaticOrientation1 = 0;
 const int Static::kStaticOrientation2 = 2;

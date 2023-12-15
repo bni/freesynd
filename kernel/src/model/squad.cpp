@@ -20,10 +20,10 @@
  *                                                                      *
  ************************************************************************/
 
-#include "model/squad.h"
+#include "fs-kernel/model/squad.h"
 
 #include "fs-kernel/mgr/agentmanager.h"
-#include "ped.h"
+#include "fs-kernel/model/ped.h"
 
 
 //! Default constructor

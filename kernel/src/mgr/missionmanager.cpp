@@ -22,23 +22,23 @@
  *                                                                      *
  ************************************************************************/
 
-#include "missionmanager.h"
+#include "fs-kernel/mgr/missionmanager.h"
 
 #include <stdio.h>
 #include <assert.h>
 
 #include "fs-engine/appcontext.h"
+#include "fs-engine/io/resources.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-kernel/model/missionbriefing.h"
-#include "resources.h"
-#include "core/gamecontroller.h"
-#include "model/objectivedesc.h"
-#include "model/vehicle.h"
-#include "model/train.h"
-#include "model/squad.h"
-#include "mission.h"
-#include "pedmanager.h"
+#include "fs-kernel/model/objectivedesc.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/train.h"
+#include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/mission.h"
+#include "fs-kernel/mgr/pedmanager.h"
+#include "fs-kernel/mgr/weaponmanager.h"
 
 /*!
  * Offset in the game data from the start to find the scenario section.
@@ -491,7 +491,7 @@ WeaponInstance * MissionManager::create_weapon_instance(const LevelData::Weapons
             return NULL;
     }
 
-    Weapon *pWeapon = g_gameCtrl.weaponManager().getWeapon(wType);
+    Weapon *pWeapon = g_weaponMgr.getWeapon(wType);
     if (pWeapon) {
         pNewWeapon = WeaponInstance::createInstance(pWeapon);
         pNewWeapon->setMap(pMap);

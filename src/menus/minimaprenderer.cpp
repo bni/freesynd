@@ -26,8 +26,8 @@
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
 #include "fs-kernel/model/missionbriefing.h"
-#include "model/vehicle.h"
-#include "ped.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/ped.h"
 
 const int MinimapRenderer::kMiniMapSizePx = 128;
 const int GamePlayMinimapRenderer::kEvacuationRadius = 15;

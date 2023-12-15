@@ -24,14 +24,13 @@
  *                                                                      *
  ************************************************************************/
 
-#include "ped.h"
+#include "fs-kernel/model/ped.h"
 
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/pathsurfaces.h"
-
-#include "mission.h"
+#include "fs-kernel/model/mission.h"
 
 #if 0
 #include "SDL.h"

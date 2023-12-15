@@ -29,9 +29,8 @@
 #include "fs-utils/misc/timer.h"
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/pathsurfaces.h"
-
-#include "model/objectivedesc.h"
-#include "mission.h"
+#include "fs-kernel/model/objectivedesc.h"
+#include "fs-kernel/model/mission.h"
 
 class MissionBriefing;
 

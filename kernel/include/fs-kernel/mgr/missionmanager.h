@@ -30,10 +30,10 @@
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
 #include "fs-kernel/model/leveldata.h"
-#include "ia/actions.h"
+#include "fs-kernel/ia/actions.h"
 #include "fs-kernel/mgr/mapmanager.h"
 #include "fs-kernel/model/missionbriefing.h"
-#include "mission.h"
+#include "fs-kernel/model/mission.h"
 
 /*!
  * Mission manager class.

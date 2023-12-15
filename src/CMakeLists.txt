@@ -7,27 +7,19 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 #include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 set (SOURCES
-#	agent.cpp
-#	agentmanager.cpp
 	app.cpp
-	model/objectivedesc.cpp
-#	model/weaponholder.cpp
+#	model/objectivedesc.cpp
 	model/shot.cpp
-	model/vehicle.cpp
-	model/train.cpp
+#	model/vehicle.cpp
+#	model/train.cpp
 	model/weapon.cpp
-#	model/research.cpp
-	model/squad.cpp
+#	model/squad.cpp
 	core/gamesession.cpp
 	core/gamecontroller.cpp
-#	core/missionbriefing.cpp
-#	core/researchmanager.cpp
-	ia/actions.cpp
-	ia/behaviour.cpp
+#	ia/actions.cpp
+#	ia/behaviour.cpp
 	freesynd.cpp
-#    ipastim.cpp
-	static.cpp
-#	mapmanager.cpp
+#	static.cpp
 	menus/agentselectorrenderer.cpp
 	menus/maprenderer.cpp
 	menus/minimaprenderer.cpp
@@ -46,13 +38,11 @@ set (SOURCES
 	menus/selectmenu.cpp
 	menus/squadselection.cpp
 	mission.cpp
-	missionmanager.cpp
-#	modmanager.cpp
+#	missionmanager.cpp
 	ped.cpp
 	pedactions.cpp
-	pedmanager.cpp
+#	pedmanager.cpp
 	pedpathfinding.cpp
-#	weaponmanager.cpp
 )
 
 if (APPLE AND "${SDL_INCLUDE_DIR}" MATCHES ".framework")
@@ -63,37 +53,21 @@ endif()
 
 set(HEADERS
     version.h
-#	agent.h
-#	agentmanager.h
 	app.h
-#   ipastim.h
-#	mapmanager.h
-#	static.h
-	mission.h
-	missionmanager.h
-#	modmanager.h
-#	modowner.h
-#	path.h
-#	pathsurfaces.h
-	ped.h
-	pedmanager.h
-	resources.h
-#	weaponmanager.h
+#	mission.h
+#	missionmanager.h
+#	ped.h
+#	pedmanager.h
+#	resources.h
 	core/gameevent.h
 	core/gamesession.h
 	core/gamecontroller.h
-#	core/missionbriefing.h
-#	core/researchmanager.h
-	ia/actions.h
-	ia/behaviour.h
-	model/vehicle.h
-#	model/weapon.h
-	model/objectivedesc.h
-#	model/shot.h
-#	model/weaponholder.h
-	model/train.h
-#	model/research.h
-	model/squad.h
+#	ia/actions.h
+#	ia/behaviour.h
+#	model/vehicle.h
+#	model/objectivedesc.h
+#	model/train.h
+#	model/squad.h
 	menus/agentselectorrenderer.h
 	menus/maprenderer.h
 	menus/minimaprenderer.h
@@ -145,32 +119,22 @@ if (BUILD_DEV_TOOLS)
 
 	add_executable (dump
 		dump.cpp
-#		mapmanager.cpp
-		static.cpp
-#		agent.cpp
-#		agentmanager.cpp
-#		ipastim.cpp
-		pedmanager.cpp
+#		static.cpp
+#		pedmanager.cpp
 		ped.cpp
 		pedactions.cpp
 		pedpathfinding.cpp
-#		modmanager.cpp
-		missionmanager.cpp
-		model/vehicle.cpp
-		model/train.cpp
-#		weaponmanager.cpp
+	#	missionmanager.cpp
+#		model/vehicle.cpp
+#		model/train.cpp
 		core/gamecontroller.cpp
 		core/gamesession.cpp
-#		core/missionbriefing.cpp
-#		core/researchmanager.cpp
-#		model/research.cpp
-		model/squad.cpp
-		model/objectivedesc.cpp
+#		model/squad.cpp
+#		model/objectivedesc.cpp
 		model/shot.cpp
-#		model/weaponholder.cpp
 		model/weapon.cpp
-		ia/actions.cpp
-		ia/behaviour.cpp
+#		ia/actions.cpp
+#		ia/behaviour.cpp
 		mission.cpp
 		editor/editorapp.cpp
 		editor/editormenufactory.cpp

@@ -29,6 +29,7 @@
 #include "fs-utils/common.h"
 #include "fs-utils/misc/seqmodel.h"
 #include "fs-utils/io/portablefile.h"
+#include "fs-utils/misc/singleton.h"
 #include "fs-kernel/model/agent.h"
 
 extern const char * const g_AgentNames[];
@@ -45,7 +46,7 @@ class ModManager;
  * An agent can be selected for a squad but not active : in this case, he will not
  * participate
  */
-class AgentManager {
+class AgentManager : public Singleton < AgentManager > {
 public:
     /*! Max number of agents in cryo chamber.*/
     static const int MAX_AGENT;
@@ -131,5 +132,7 @@ protected:
     //! The mod manager
     ModManager *pModManager_;
 };
+
+#define g_agentMgr    AgentManager::singleton()
 
 #endif

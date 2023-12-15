@@ -29,7 +29,7 @@
 
 #include "loadingmenu.h"
 #include "fs-engine/gfx/screen.h"
-#include "mission.h"
+#include "fs-kernel/model/mission.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
 #include "fs-engine/menus/menumanager.h"

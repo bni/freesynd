@@ -21,15 +21,15 @@
  *                                                                      *
  ************************************************************************/
 
-#include "model/objectivedesc.h"
+#include "fs-kernel/model/objectivedesc.h"
 
 #include "fs-engine/appcontext.h"
 #include "fs-engine/events/event.h"
-#include "ped.h"
-#include "model/vehicle.h"
-#include "model/squad.h"
-#include "mission.h"
-#include "core/gamecontroller.h"
+#include "fs-kernel/model/ped.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/mission.h"
+#include "fs-kernel/mgr/agentmanager.h"
 
 /*!
  * A common method to end targeted objective.

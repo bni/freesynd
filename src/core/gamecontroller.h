@@ -36,7 +36,7 @@
 #include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 #include "fs-kernel/mgr/modmanager.h"
-#include "missionmanager.h"
+#include "fs-kernel/mgr/missionmanager.h"
 #include "core/gamesession.h"
 
 /*!

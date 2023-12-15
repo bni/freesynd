@@ -25,19 +25,18 @@
  *                                                                      *
  ************************************************************************/
 
-#include "ia/actions.h"
+#include "fs-kernel/ia/actions.h"
 
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/events/event.h"
 #include "fs-kernel/model/weapon.h"
 #include "fs-kernel/mgr/agentmanager.h"
-
-#include "core/gamecontroller.h"
-#include "ped.h"
-#include "model/vehicle.h"
-#include "model/train.h"
-#include "model/squad.h"
-#include "mission.h"
+#include "fs-kernel/model/ped.h"
+//#include "core/gamecontroller.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/train.h"
+#include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/mission.h"
 
 
 //*************************************

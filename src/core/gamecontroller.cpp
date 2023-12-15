@@ -31,9 +31,10 @@
 
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
+#include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/ped.h"
+
 #include "core/gamesession.h"
-#include "model/squad.h"
-#include "ped.h"
 
 GameController::GameController(MapManager *pMapManager) :
         missions_(pMapManager),

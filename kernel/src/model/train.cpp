@@ -25,9 +25,10 @@
  *                                                                      *
  ************************************************************************/
 
-#include "train.h"
-#include "mission.h"
-#include "model/squad.h"
+#include "fs-kernel/model/train.h"
+
+#include "fs-kernel/model/mission.h"
+#include "fs-kernel/model/squad.h"
 
 TrainBody::TrainBody(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
     Vehicle(anId, aType, pMap, pAnimation) {

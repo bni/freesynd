@@ -25,12 +25,12 @@
  *                                                                      *
  ************************************************************************/
 
-#include "ia/behaviour.h"
-#include "ped.h"
-#include "missionmanager.h"
-#include "model/squad.h"
-#include "core/gamesession.h"
-#include "core/gamecontroller.h"
+#include "fs-kernel/ia/behaviour.h"
+
+#include "fs-kernel/model/ped.h"
+#include "fs-kernel/model/squad.h"
+#include "fs-kernel/mgr/missionmanager.h"
+#include "fs-kernel/mgr/weaponmanager.h"
 
 //*************************************
 // Constant definition
@@ -129,7 +129,7 @@ void CommonAgentBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Beha
 PersuaderBehaviourComponent::PersuaderBehaviourComponent():
         BehaviourComponent() {
     doUsePersuadotron_ = false;
-    persuadotronRange_ = g_gameCtrl.weaponManager().getWeapon(Weapon::Persuadatron)->range();
+    persuadotronRange_ = g_weaponMgr.getWeapon(Weapon::Persuadatron)->range();
 }
 
 void PersuaderBehaviourComponent::execute(int elapsed, Mission *pMission, PedInstance *pPed) {

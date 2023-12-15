@@ -30,9 +30,9 @@
 #include <map>
 
 #include "fs-engine/sound/soundmanager.h"
-#include "mission.h"
-#include "ped.h"
-#include "vehicle.h"
+#include "fs-kernel/model/mission.h"
+#include "fs-kernel/model/ped.h"
+#include "fs-kernel/model/vehicle.h"
 
 void InstantImpactShot::inflictDamage(Mission *pMission) {
     WorldPoint originLocW(dmg_.d_owner->position()); // origin of shooting

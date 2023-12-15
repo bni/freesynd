@@ -25,16 +25,16 @@
  *                                                                      *
  ************************************************************************/
 
-#include "vehicle.h"
+#include "fs-kernel/model/vehicle.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#include "mission.h"
-#include "missionmanager.h"
+#include "fs-kernel/model/mission.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-kernel/model/shot.h"
+#include "fs-kernel/mgr/missionmanager.h"
 
 const uint8 Vehicle::kVehicleTypeLargeArmored = 0x01;
 const uint8 Vehicle::kVehicleTypeLargeArmoredDamaged = 0x04;

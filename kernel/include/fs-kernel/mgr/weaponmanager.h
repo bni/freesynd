@@ -33,6 +33,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/seqmodel.h"
+#include "fs-utils/misc/singleton.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 #include "fs-kernel/model/weapon.h"
@@ -40,7 +41,7 @@
 /*!
  * Weapon manager class.
  */
-class WeaponManager {
+class WeaponManager : public Singleton < WeaponManager > {
 public:
     //! Constructor
     WeaponManager();
@@ -89,5 +90,7 @@ protected:
     /*! This is the list of all weapons available to the user.*/
     VectorModel<Weapon *> availableWeapons_;
 };
+
+#define g_weaponMgr    WeaponManager::singleton()
 
 #endif

@@ -34,8 +34,8 @@
 #include "fs-engine/appcontext.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-utils/log/log.h"
-#include "ped.h"
-#include "missionmanager.h"
+#include "fs-kernel/model/ped.h"
+#include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/shot.h"
 
 #define Z_SHIFT_TO_AIR   4

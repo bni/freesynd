@@ -21,9 +21,10 @@
  ************************************************************************/
 
 #include "menus/squadselection.h"
-#include "ped.h"
-#include "model/vehicle.h"
-#include "mission.h"
+
+#include "fs-kernel/model/ped.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/mission.h"
 
 
 /*!

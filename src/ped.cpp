@@ -30,13 +30,13 @@
 #include "fs-engine/gfx/spritemanager.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
-#include "model/vehicle.h"
-#include "model/squad.h"
+#include "fs-kernel/model/vehicle.h"
+#include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/shot.h"
 #include "fs-kernel/mgr/agentmanager.h"
-#include "missionmanager.h"
+#include "fs-kernel/mgr/missionmanager.h"
 #include "core/gamesession.h"
-#include "ia/behaviour.h"
+#include "fs-kernel/ia/behaviour.h"
 
 //*************************************
 // Constant definition
