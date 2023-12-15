@@ -1,25 +1,11 @@
 # Add this folder to the include directories.
 include_directories (${CMAKE_CURRENT_SOURCE_DIR})
 
-# Generate the ini header, add it's location to the include directories.
-#include (tools/embed.cmake)
-#embed_data (../freesynd.ini embedded_default_ini default_ini.h)
-#include_directories (${CMAKE_CURRENT_BINARY_DIR})
-
 set (SOURCES
 	app.cpp
-#	model/objectivedesc.cpp
-	model/shot.cpp
-#	model/vehicle.cpp
-#	model/train.cpp
-	model/weapon.cpp
-#	model/squad.cpp
 	core/gamesession.cpp
 	core/gamecontroller.cpp
-#	ia/actions.cpp
-#	ia/behaviour.cpp
 	freesynd.cpp
-#	static.cpp
 	menus/agentselectorrenderer.cpp
 	menus/maprenderer.cpp
 	menus/minimaprenderer.cpp
@@ -37,12 +23,6 @@ set (SOURCES
 	menus/researchmenu.cpp
 	menus/selectmenu.cpp
 	menus/squadselection.cpp
-	mission.cpp
-#	missionmanager.cpp
-	ped.cpp
-	pedactions.cpp
-#	pedmanager.cpp
-	pedpathfinding.cpp
 )
 
 if (APPLE AND "${SDL_INCLUDE_DIR}" MATCHES ".framework")
@@ -54,20 +34,8 @@ endif()
 set(HEADERS
     version.h
 	app.h
-#	mission.h
-#	missionmanager.h
-#	ped.h
-#	pedmanager.h
-#	resources.h
-	core/gameevent.h
 	core/gamesession.h
 	core/gamecontroller.h
-#	ia/actions.h
-#	ia/behaviour.h
-#	model/vehicle.h
-#	model/objectivedesc.h
-#	model/train.h
-#	model/squad.h
 	menus/agentselectorrenderer.h
 	menus/maprenderer.h
 	menus/minimaprenderer.h
@@ -119,23 +87,8 @@ if (BUILD_DEV_TOOLS)
 
 	add_executable (dump
 		dump.cpp
-#		static.cpp
-#		pedmanager.cpp
-		ped.cpp
-		pedactions.cpp
-		pedpathfinding.cpp
-	#	missionmanager.cpp
-#		model/vehicle.cpp
-#		model/train.cpp
 		core/gamecontroller.cpp
 		core/gamesession.cpp
-#		model/squad.cpp
-#		model/objectivedesc.cpp
-		model/shot.cpp
-		model/weapon.cpp
-#		ia/actions.cpp
-#		ia/behaviour.cpp
-		mission.cpp
 		editor/editorapp.cpp
 		editor/editormenufactory.cpp
 		editor/logoutmenu.cpp

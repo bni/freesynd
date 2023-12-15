@@ -27,7 +27,8 @@
  ************************************************************************/
 
 #include "fs-utils/misc/seqmodel.h"
-#include "ped.h"
+#include "fs-engine/menus/menu.h"
+#include "fs-kernel/model/ped.h"
 
 class Mission;
 

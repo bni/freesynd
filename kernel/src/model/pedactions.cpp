@@ -22,7 +22,6 @@
  ************************************************************************/
 
 #include "fs-kernel/model/ped.h"
-#include "core/gamecontroller.h"
 #include "fs-utils/log/log.h"
 
 /*!

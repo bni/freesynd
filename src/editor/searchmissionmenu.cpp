@@ -23,16 +23,18 @@
  *                                                                      *
  ************************************************************************/
 
+#include "editor/searchmissionmenu.h"
+
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/menus/menumanager.h"
-#include "editor/editorapp.h"
-#include "editor/searchmissionmenu.h"
-#include "editor/editormenuid.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
-#include "missionmanager.h"
-#include "mission.h"
-#include "model/vehicle.h"
+#include "fs-kernel/mgr/missionmanager.h"
+#include "fs-kernel/model/mission.h"
+#include "fs-kernel/model/vehicle.h"
+
+#include "editor/editorapp.h"
+#include "editor/editormenuid.h"
 
 std::string PedTypeAdapter::getName() {
     switch (type_) {

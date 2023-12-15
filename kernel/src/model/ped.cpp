@@ -35,7 +35,6 @@
 #include "fs-kernel/model/shot.h"
 #include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/mgr/missionmanager.h"
-#include "core/gamesession.h"
 #include "fs-kernel/ia/behaviour.h"
 
 //*************************************
