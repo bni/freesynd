@@ -5,9 +5,7 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
- *   Copyright (C) 2010  Bohdan Stelmakh <chamel@users.sourceforge.net> *
- *   Copyright (C) 2011  Joey Parrish  <joey.parrish@gmail.com>         *
+ *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -25,69 +23,65 @@
  *                                                                      *
  ************************************************************************/
 
-#include "editorapp.h"
+#include "fontmenu.h"
 
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#include <sys/stat.h>
-#endif
+#include "fs-engine/menus/menumanager.h"
+#include "fs-engine/gfx/screen.h"
+#include "fs-engine/system/system.h"
 
-#include <iostream>
-#include <fstream>
-#include <set>
+#include "editormenuid.h"
 
-#ifdef __APPLE__
-// Carbon includes an AIFF header which conflicts with fliplayer.h
-// So we will redefine ChunkHeader temporarily to work around that.
-#define ChunkHeader CarbonChunkHeader
-#include <Carbon/Carbon.h>
-#undef ChunkHeader
-#endif
-
-#include "fs-utils/io/file.h"
-#include "fs-utils/log/log.h"
-#include "fs-utils/io/configfile.h"
-#include "fs-utils/io/portablefile.h"
-#include "editor/editormenufactory.h"
-#include "editor/editormenuid.h"
-
-EditorApp::EditorApp()
-    : BaseApp(new EditorMenuFactory()),
-      game_ctlr_(std::make_unique<GameController>(&maps_))
+FontMenu::FontMenu(MenuManager * m):
+    Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, "", "")
 {
-#ifdef _DEBUG
-    debug_breakpoint_trigger_ = 0;
-#endif
+    isCachable_ = false;
+
 }
 
-EditorApp::~EditorApp() {
+void FontMenu::handleShow()
+{
+    // If we came from the intro, the cursor is invisible
+    // otherwise, it does no harm
+    g_System.useMenuCursor();
+    g_System.showCursor();
+
+    g_Screen.clear(0);
+    menu_manager_->setDefaultPalette();
+    displayFont();
 }
 
+void FontMenu::handleLeave() {
+    g_System.hideCursor();
+}
 
-/*!
- * Initialize application.
- * \param iniPath The path to the config file.
- * \return True if initialization is ok.
- */
-bool EditorApp::doInitialize(const CliParam& param) {
+void FontMenu::displayFont() {
 
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game tileset..."))
-    if (!maps().initialize()) {
-        return false;
+    int spriteX = 0;
+    int spriteY = 0;
+    int lineMaxHeight = 0;
+    for (int s = 0; s < menuSprites().spriteCount(); s++) {
+        int sprh = menuSprites().sprite(s)->height();
+        int sprw = menuSprites().sprite(s)->width();
+
+        if (sprw != 0 && sprh != 0) {
+            if (sprh > lineMaxHeight) {
+                lineMaxHeight = sprh;
+            }
+
+            if (spriteX + sprw > g_Screen.gameScreenWidth()) {
+                spriteX = 0;
+                spriteY += lineMaxHeight;
+                lineMaxHeight = sprh;
+            }
+
+            if (spriteY + sprh > g_Screen.gameScreenHeight()) {
+                printf("Fin de boucle\n");
+                break;
+            }
+
+            menuSprites().drawSpriteXYZ(s, spriteX, spriteY, 0);
+            spriteX += sprw;
+        }
     }
-
-    g_gameCtrl.reset();
-
-    return true;
-}
-
-/*!
- * This method returns the menu Id used to start the app.
- */
-int EditorApp::getStartMenuId(const CliParam& param) {
-    // Go directly to the main menu
-    return fs_edit_menus::kMenuIdMain;
 }
 

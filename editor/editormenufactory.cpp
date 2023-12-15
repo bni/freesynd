@@ -23,41 +23,36 @@
  *                                                                      *
  ************************************************************************/
 
-#include "fs-engine/menus/menu.h"
-#include "fs-engine/menus/menumanager.h"
-#include "editor/mainmenu.h"
-#include "editor/editormenuid.h"
-#include "fs-engine/gfx/screen.h"
-#include "fs-engine/system/system.h"
+#include "editormenufactory.h"
 
-MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
-{
-    isCachable_ = false;
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "GAME EDITOR", FontManager::SIZE_4, false);
+#include "fs-utils/log/log.h"
 
-    addStatic(201, 130, 100, "GRAPHICS", FontManager::SIZE_3, false);
-    addOption(201, 155, 130, 25, "- MENU SPRITES", FontManager::SIZE_2, fs_edit_menus::kMenuIdFont, true, false);
-    addOption(201, 180, 130, 25, "- ANIMATIONS", FontManager::SIZE_2, fs_edit_menus::kMenuIdAnim, true, false);
+#include "editormenuid.h"
+#include "mainmenu.h"
+#include "logoutmenu.h"
+#include "fontmenu.h"
+#include "animmenu.h"
+#include "searchmissionmenu.h"
+#include "listmissionmenu.h"
 
-    addStatic(201, 210, 100, "MISSIONS", FontManager::SIZE_3, false);
-    addOption(210, 235, 130, 25, "- SEARCH", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis, true, false);
-    quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
-}
+Menu * EditorMenuFactory::createMenu(const int menuId) {
+    Menu *pMenu = NULL;
 
-void MainMenu::handleShow()
-{
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
-}
+    if (menuId == fs_edit_menus::kMenuIdMain) {
+        pMenu =  new MainMenu(pManager_);
+    } else if (menuId == Menu::kMenuIdLogout) {
+        pMenu =  new LogoutMenu(pManager_);
+    } else if (menuId == fs_edit_menus::kMenuIdFont) {
+        pMenu =  new FontMenu(pManager_);
+    } else if (menuId == fs_edit_menus::kMenuIdAnim) {
+        pMenu =  new AnimMenu(pManager_);
+    } else if (menuId == fs_edit_menus::kMenuIdSrchMis) {
+        pMenu = new SearchMissionMenu(pManager_);
+    } else if (menuId == fs_edit_menus::kMenuIdListMis) {
+        pMenu = new ListMissionMenu(pManager_);
+    } else {
+        FSERR(Log::k_FLG_UI, "EditorMenuFactory", "createMenu", ("Cannot create Menu : unknown id (%d)", menuId));
+    }
 
-void MainMenu::handleLeave() {
-    g_System.hideCursor();
-}
-
-void MainMenu::handleAction(const int actionId, void *ctx, const int modKeys)
-{
-    if (actionId == quitButId_)
-        menu_manager_->gotoMenu(Menu::kMenuIdLogout);
+    return pMenu;
 }

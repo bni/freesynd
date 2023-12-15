@@ -59,7 +59,6 @@ set(HEADERS
 source_group(Menus REGULAR_EXPRESSION menus/*)
 source_group(Core REGULAR_EXPRESSION core/*)
 source_group(Model REGULAR_EXPRESSION model/*)
-source_group(Editor REGULAR_EXPRESSION editor/*)
 source_group(IA REGULAR_EXPRESSION ia/*)
 
 add_executable (freesynd ${SOURCES} ${HEADERS})
@@ -73,42 +72,11 @@ if(NOT BIN_DIR)
     endif(UNIX)
 endif(NOT BIN_DIR)
 
-if (BUILD_DEV_TOOLS)
-	set(DEV_TOOLS_HEADERS
-		editor/editorapp.h
-		editor/editormenufactory.h
-		editor/editormenuid.h
-		editor/logoutmenu.h
-		editor/mainmenu.h
-		editor/fontmenu.h
-		editor/animmenu.h
-		editor/searchmissionmenu.h
-		editor/listmissionmenu.h)
-
-	add_executable (dump
-		dump.cpp
-		core/gamecontroller.cpp
-		core/gamesession.cpp
-		editor/editorapp.cpp
-		editor/editormenufactory.cpp
-		editor/logoutmenu.cpp
-		editor/mainmenu.cpp
-		editor/fontmenu.cpp
-		editor/animmenu.cpp
-		editor/searchmissionmenu.cpp
-		editor/listmissionmenu.cpp
-		${DEV_TOOLS_HEADERS}
-	)
-
-	target_link_libraries (dump PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
-
-else ()
-	# We only define an install target if we're doing a release build.
-	if (APPLE)
-		install (TARGETS freesynd DESTINATION /Applications)
-	elseif (UNIX)
-		install (TARGETS freesynd DESTINATION ${BIN_DIR})
-	endif ()
+# We only define an install target if we're doing a release build.
+if (APPLE)
+    install (TARGETS freesynd DESTINATION /Applications)
+elseif (UNIX)
+    install (TARGETS freesynd DESTINATION ${BIN_DIR})
 endif ()
 
 if (APPLE)

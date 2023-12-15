@@ -23,13 +23,15 @@
  *                                                                      *
  ************************************************************************/
 
-#include "fs-engine/menus/menu.h"
+#include "listmissionmenu.h"
+
 #include "fs-engine/menus/menumanager.h"
-#include "editor/listmissionmenu.h"
-#include "editor/editormenuid.h"
-#include "editor/editorapp.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
+
+#include "editormenuid.h"
+#include "editorapp.h"
+
 
 ListMissionMenu::ListMissionMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdListMis, fs_edit_menus::kMenuIdSrchMis, "mscrenup.dat", "")
@@ -42,8 +44,8 @@ ListMissionMenu::ListMissionMenu(MenuManager * m):
     int x = 20;
     int y, topY = 100;
 
-    for (std::list < int >::iterator it = g_gameCtrl.getMissionResultList().begin();
-         it != g_gameCtrl.getMissionResultList().end(); it++) {
+    for (std::list < int >::iterator it = g_editorCtrl.getMissionResultList().begin();
+         it != g_editorCtrl.getMissionResultList().end(); it++) {
 
              int missionId = *it;
              char label[50];

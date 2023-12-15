@@ -5,7 +5,9 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2010  Bohdan Stelmakh <chamel@users.sourceforge.net> *
+ *   Copyright (C) 2011  Joey Parrish  <joey.parrish@gmail.com>         *
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -23,34 +25,70 @@
  *                                                                      *
  ************************************************************************/
 
-#include "editor/editormenufactory.h"
-#include "editor/editormenuid.h"
+#include "editorapp.h"
+
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <sys/stat.h>
+#endif
+
+#include <iostream>
+#include <fstream>
+#include <set>
+
+#ifdef __APPLE__
+// Carbon includes an AIFF header which conflicts with fliplayer.h
+// So we will redefine ChunkHeader temporarily to work around that.
+#define ChunkHeader CarbonChunkHeader
+#include <Carbon/Carbon.h>
+#undef ChunkHeader
+#endif
+
+#include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
-#include "editor/mainmenu.h"
-#include "editor/logoutmenu.h"
-#include "editor/fontmenu.h"
-#include "editor/animmenu.h"
-#include "editor/searchmissionmenu.h"
-#include "editor/listmissionmenu.h"
+#include "fs-utils/io/configfile.h"
+#include "fs-utils/io/portablefile.h"
 
-Menu * EditorMenuFactory::createMenu(const int menuId) {
-    Menu *pMenu = NULL;
+#include "editormenufactory.h"
+#include "editormenuid.h"
 
-    if (menuId == fs_edit_menus::kMenuIdMain) {
-        pMenu =  new MainMenu(pManager_);
-    } else if (menuId == Menu::kMenuIdLogout) {
-        pMenu =  new LogoutMenu(pManager_);
-    } else if (menuId == fs_edit_menus::kMenuIdFont) {
-        pMenu =  new FontMenu(pManager_);
-    } else if (menuId == fs_edit_menus::kMenuIdAnim) {
-        pMenu =  new AnimMenu(pManager_);
-    } else if (menuId == fs_edit_menus::kMenuIdSrchMis) {
-        pMenu = new SearchMissionMenu(pManager_);
-    } else if (menuId == fs_edit_menus::kMenuIdListMis) {
-        pMenu = new ListMissionMenu(pManager_);
-    } else {
-        FSERR(Log::k_FLG_UI, "EditorMenuFactory", "createMenu", ("Cannot create Menu : unknown id (%d)", menuId));
+EditorApp::EditorApp()
+    : BaseApp(new EditorMenuFactory()),
+      editorCtlr_(std::make_unique<EditorController>(&maps_))
+{
+#ifdef _DEBUG
+    debug_breakpoint_trigger_ = 0;
+#endif
+}
+
+EditorApp::~EditorApp() {
+}
+
+
+/*!
+ * Initialize application.
+ * \param iniPath The path to the config file.
+ * \return True if initialization is ok.
+ */
+bool EditorApp::doInitialize(const CliParam& param) {
+
+    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game tileset..."))
+    if (!maps().initialize()) {
+        return false;
     }
 
-    return pMenu;
+    editorCtlr_->reset();
+
+    return true;
 }
+
+/*!
+ * This method returns the menu Id used to start the app.
+ */
+int EditorApp::getStartMenuId(const CliParam& param) {
+    // Go directly to the main menu
+    return fs_edit_menus::kMenuIdMain;
+}
+

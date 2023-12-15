@@ -23,13 +23,14 @@
  *                                                                      *
  ************************************************************************/
 
-#include "editor/animmenu.h"
+#include "animmenu.h"
 
 #include "fs-engine/menus/menumanager.h"
-#include "editor/editormenuid.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/gfx/spritemanager.h"
+
+#include "editormenuid.h"
 
 AnimMenu::AnimMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")

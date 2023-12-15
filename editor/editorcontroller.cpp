@@ -2,11 +2,7 @@
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
  *                                                                      *
- *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
- *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
- *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2023  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -24,22 +20,39 @@
  *                                                                      *
  ************************************************************************/
 
-#include "editor/logoutmenu.h"
-#include "editor/editormenuid.h"
-#include "fs-engine/events/event.h"
-#include "fs-engine/events/default_events.h"
-#include "fs-engine/gfx/screen.h"
+#include "editorcontroller.h"
 
-LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, fs_edit_menus::kMenuIdMain, "mdeout.dat"),
-tick_count_(0)
-{
-    isCachable_ = false;
-    addStatic(0, 180, g_Screen.gameScreenWidth(), "#LGOUT_TITLE", FontManager::SIZE_4, true);
+#include <list>
+
+#include "fs-utils/log/log.h"
+#include "fs-utils/io/file.h"
+#include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/ped.h"
+
+EditorController::EditorController(MapManager *pMapManager) :
+        missions_(pMapManager) {
+    agents_.setModManager(&mods_);
+    agents_.setWeaponManager(&weaponMgr_);
+    LOG(Log::k_FLG_INFO, "EditorController", "EditorController", ("EditorController constructor"))
 }
 
-void LogoutMenu::handleTick(int elapsed)
-{
-    tick_count_ += elapsed;
-    if (tick_count_ > 2000)
-        EventManager::fire<QuitEvent>(0);
+EditorController::~EditorController() {
+    LOG(Log::k_FLG_INFO, "EditorController", "~EditorController", ("EditorController destructor"))
 }
+
+bool EditorController::reset() {
+    g_missionCtrl.destroyMission();
+    // Reset default mods and weapons
+    mods_.reset();
+    weaponMgr_.reset();
+    // TODO add reading cheatcode for onlywomen parameter
+    agents_.reset();
+
+    return true;
+}
+
+void EditorController::destroy() {
+    LOG(Log::k_FLG_INFO, "EditorController", "destroy", ("destruction"))
+    agents_.destroy();
+}
+

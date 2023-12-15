@@ -1,6 +1,3 @@
-#ifndef RESULTMISSIONMENU_H_
-#define RESULTMISSIONMENU_H_
-
 /************************************************************************
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
@@ -8,7 +5,7 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2015  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -26,19 +23,42 @@
  *                                                                      *
  ************************************************************************/
 
-/*!
- * Search mission menu.
- */
-class ListMissionMenu : public Menu {
-public:
-    ListMissionMenu(MenuManager *m);
+#include "mainmenu.h"
 
-    void handleShow();
-    void handleLeave();
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+#include "fs-engine/menus/menumanager.h"
+#include "fs-engine/gfx/screen.h"
+#include "fs-engine/system/system.h"
 
-protected:
+#include "editormenuid.h"
 
-};
+MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
+{
+    isCachable_ = false;
+    addStatic(0, 40, g_Screen.gameScreenWidth(), "GAME EDITOR", FontManager::SIZE_4, false);
 
-#endif // RESULTMISSIONMENU_H_
+    addStatic(201, 130, 100, "GRAPHICS", FontManager::SIZE_3, false);
+    addOption(201, 155, 130, 25, "- MENU SPRITES", FontManager::SIZE_2, fs_edit_menus::kMenuIdFont, true, false);
+    addOption(201, 180, 130, 25, "- ANIMATIONS", FontManager::SIZE_2, fs_edit_menus::kMenuIdAnim, true, false);
+
+    addStatic(201, 210, 100, "MISSIONS", FontManager::SIZE_3, false);
+    addOption(210, 235, 130, 25, "- SEARCH", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis, true, false);
+    quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
+}
+
+void MainMenu::handleShow()
+{
+    // If we came from the intro, the cursor is invisible
+    // otherwise, it does no harm
+    g_System.useMenuCursor();
+    g_System.showCursor();
+}
+
+void MainMenu::handleLeave() {
+    g_System.hideCursor();
+}
+
+void MainMenu::handleAction(const int actionId, void *ctx, const int modKeys)
+{
+    if (actionId == quitButId_)
+        menu_manager_->gotoMenu(Menu::kMenuIdLogout);
+}

@@ -504,9 +504,10 @@ void Screen::scale2x(int x, int y, int width, int height,
 #endif
 
 #include "fs-utils/common.h"
-#include "editor/editorapp.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+
+#include "editorapp.h"
 
 #ifdef SYSTEM_SDL
 #ifdef _WIN32

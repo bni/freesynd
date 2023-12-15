@@ -23,7 +23,7 @@
  *                                                                      *
  ************************************************************************/
 
-#include "editor/searchmissionmenu.h"
+#include "searchmissionmenu.h"
 
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/menus/menumanager.h"
@@ -33,8 +33,8 @@
 #include "fs-kernel/model/mission.h"
 #include "fs-kernel/model/vehicle.h"
 
-#include "editor/editorapp.h"
-#include "editor/editormenuid.h"
+#include "editorapp.h"
+#include "editormenuid.h"
 
 std::string PedTypeAdapter::getName() {
     switch (type_) {
@@ -156,7 +156,7 @@ bool SearchMissionMenu::matchMissionWithVehicleType(Mission *pMission) {
 void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
     if (actionId == searchButId_) {
         // first clear result list
-        g_gameCtrl.getMissionResultList().clear();
+        g_editorCtrl.getMissionResultList().clear();
 
         for (int misId = 1; misId <= 50; misId++) {
             Mission *pMission = g_missionCtrl.loadMission(misId);
@@ -169,7 +169,7 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int mo
                 }
 
                 if (keepMission) {
-                    g_gameCtrl.getMissionResultList().push_back(misId);
+                    g_editorCtrl.getMissionResultList().push_back(misId);
                 }
 
                 g_missionCtrl.destroyMission();

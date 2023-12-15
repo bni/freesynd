@@ -2,12 +2,7 @@
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
  *                                                                      *
- *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
- *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
- *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
- *   Copyright (C) 2010  Bohdan Stelmakh <chamel@users.sourceforge.net> *
+ *   Copyright (C) 2023  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -25,8 +20,8 @@
  *                                                                      *
  ************************************************************************/
 
-#ifndef CORE_GAMECONTROLLER_H_
-#define CORE_GAMECONTROLLER_H_
+#ifndef EDITOR_EDITORCONTROLLER_H_
+#define EDITOR_EDITORCONTROLLER_H_
 
 #include <cassert>
 #include <list>
@@ -37,15 +32,14 @@
 #include "fs-kernel/mgr/weaponmanager.h"
 #include "fs-kernel/mgr/modmanager.h"
 #include "fs-kernel/mgr/missionmanager.h"
-#include "core/gamesession.h"
 
 /*!
  * The game controller holds the game logic.
  */
-class GameController : public Singleton < GameController > {
+class EditorController : public Singleton < EditorController > {
   public:
-    GameController(MapManager *pMapManager);
-    virtual ~GameController();
+    EditorController(MapManager *pMapManager);
+    virtual ~EditorController();
 
     /*!
      * Resets controller.
@@ -72,37 +66,10 @@ class GameController : public Singleton < GameController > {
     }
 
     //*************************************
-    // Game services
+    // Editor services
     //*************************************
-    //! Changes the user preferences (from the config menu)
-    void change_user_infos(const char *company_name, const char *player_name,
-                            int logo, int color);
-    //! Checks if mission is completed and updates game state
-    void handle_mission_end(Mission *p_mission);
-
-    //! Save game to a file
-    bool saveGameToFile(int fileSlot, std::string name);
-    //! Load game from a file
-    bool loadGameFromFile(int fileSlot);
-
-    void cheatFunds();
-    void cheatRepeatOrCompleteMission();
-    void cheatWeaponsAndMods();
-    void cheatEquipAllMods();
-    void cheatAnyMission();
-    void cheatResurrectAgents();
-    void cheatOwnAllCountries();
-    void cheatAccelerateTime();
-    void cheatFemaleRecruits();
-    void cheatEquipFancyWeapons();
-
-private:
-    //! Sync the returning agents with the cryo chamber roster
-    void transferAgentToCryoChamber(Mission *pMission);
-    //! Simulates syndicates fighting for countries
-    void simulate_enemy_moves();
-    // helper method
-    int get_nb_mvt_for_active_synds(int nb_active_synds);
+    //! Return the list of missions found in the search menu
+    std::list<int> & getMissionResultList() { return searchResLst_;}
 
 private:
     /*!
@@ -115,10 +82,13 @@ private:
     ModManager mods_;
     /*! Manager of missions.*/
     MissionManager missions_;
-    /*! A structure to hold player information.*/
-    std::unique_ptr<GameSession> session_;
+
+    /*!
+     * Use to store id of missions that are found in the search menu.
+     */
+    std::list<int> searchResLst_;
 };
 
-#define g_gameCtrl    GameController::singleton()
+#define g_editorCtrl    EditorController::singleton()
 
-#endif  // CORE_GAMECONTROLLER_H_
+#endif  // EDITOR_EDITORCONTROLLER_H_

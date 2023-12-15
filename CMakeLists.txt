@@ -78,4 +78,5 @@ add_subdirectory (utils)
 add_subdirectory (engine)
 add_subdirectory (kernel)
 add_subdirectory (src)
+add_subdirectory (editor)
 
