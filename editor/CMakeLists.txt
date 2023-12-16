@@ -26,5 +26,11 @@ add_executable (editor
 
 target_link_libraries (editor PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
+# We only define an install target if we're doing a release build.
+if (APPLE)
+    install (TARGETS editor DESTINATION /Applications)
+else ()
+    install (TARGETS editor DESTINATION ${BIN_DIR})
+endif ()
 
 

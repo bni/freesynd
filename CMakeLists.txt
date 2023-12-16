@@ -6,6 +6,10 @@ project(
   DESCRIPTION "FreeSynd is a cross-platform, GPLed reimplementation of the classic Bullfrog game, Syndicate."
   LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/game/version.h)
 
 if (WIN32)
@@ -44,34 +48,71 @@ endif ()
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_FLAGS}")
 
+# Use -DBIN_DIR to override binary installation location
+if(NOT BIN_DIR)
+    if(UNIX)
+        SET(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+    endif(UNIX)
+endif(NOT BIN_DIR)
+
 # Use -DDATA_DIR to override data location
 if(NOT DATA_DIR)
-    if(UNIX)
-        SET(DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/freesynd/")
-    endif(UNIX)
+    if (WIN32)
+        SET(DATA_DIR "${CMAKE_INSTALL_PREFIX}")
+    elseif (UNIX)
+        SET(DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/freesynd")
+    endif()
 endif(NOT DATA_DIR)
 
 # Set standard definitions for all platforms.
 add_definitions (-DPREFIX=\"${DATA_DIR}\")
+if (APPLE)
+    # On Mac, the data folder is a part of the app bundle.
+else ()
+    install (DIRECTORY data DESTINATION ${DATA_DIR})
+endif()
 
-set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+# Generate a version of freesynd.ini with data dir
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/freesynd.ini.in ${CMAKE_CURRENT_SOURCE_DIR}/freesynd.ini)
+if (WIN32)
+    # On windows it is install next to the freesynd exe file
+    install(FILES freesynd.ini DESTINATION ${BIN_DIR})
+elseif (UNIX)
+    if($ENV{SUDO_USER})
+        # If installed with sudo, use the home directory of the invoking user
+        execute_process(
+            COMMAND sh -c "eval echo ~$ENV{SUDO_USER}"
+            OUTPUT_VARIABLE USER
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+    else()
+        # If not installed with sudo, use the current user's home directory
+        execute_process(
+            COMMAND sh -c "echo $HOME"
+            OUTPUT_VARIABLE USER_HOME
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        execute_process(
+            COMMAND sh -c "echo $USER"
+            OUTPUT_VARIABLE USER
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+    endif()
+
+    # On linux, it's in the user directory
+    install(FILES freesynd.ini DESTINATION "${USER_HOME}/.freesynd")
+
+    # Change the owner of the file in case the install has been made with sudo
+    install(CODE "execute_process(COMMAND sh -c \"chown ${USER} ${USER_HOME}/.freesynd\" )")
+    install(CODE "execute_process(COMMAND sh -c \"chown ${USER} ${USER_HOME}/.freesynd/freesynd.ini\" )")
+
+endif()
+
 
 if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE "debug")
 endif ()
 
-if (CMAKE_BUILD_TYPE STREQUAL "debug" OR CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set (BUILD_DEV_TOOLS TRUE)
-else ()
-	set (BUILD_DEV_TOOLS FALSE)
-	# We only define an install target if we're doing a release build.
-	# Furthermore, on Mac, the data folder is a part of the app bundle.
-	if (UNIX)
-		install (DIRECTORY data DESTINATION ${DATA_DIR} PATTERN .svn EXCLUDE)
-	endif ()
-endif ()
 
 # Build the sources in this subdirectory.
 add_subdirectory (utils)

@@ -51,32 +51,36 @@ To build Freesynd, you will need to install :
 
 **Note** : On Windows, required librairies (for development and run) are available with the source code (in the /extern/MSVC directory)
 
-#### Notes on CMake
-- When configuring the build, use `-G"My tool"` to specify a particular build system. See CMake documentation for a list of options.
+#### Build the source
+On any platform, from the command line :
+
+	$ cd FS_ROOT
+	$ cmake -S . -B <build_dir> [-G"<generator>"]
+	$ cmake --build <build_dir>
+
+- Use optionally `-G"<generator>"` to specify a particular build system. See CMake documentation for a list of options.
 - It is a best practice to specify a build directory inside the source code directory. Name your build directory starting with "build" so that Git ignores it automatically.
 - You can set options when running CMake to configure the build. 
     - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -LH` to list available options
     - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -D<OPTION>=ON|OFF` to set the value of an option
     - Available options :
+        - `CMAKE_INSTALL_PREFIX`: You can change this standard CMAKE variable to specify the location of installation for all files
+        - `BIN_DIR` : Set this variable to a directory specifically for the binary files
+        - `DATA_DIR` : Set this variable to a directory specifically for the data files
         - `USE_ASSASSINATE_OGG`: Use Ogg file for assassinate music instead of midi file
         - `USE_INTRO_OGG`: Use Ogg file for intro music instead of midi file
         - `USE_SDL_MIXER`: Use SDL Mixer library
         - `USE_SYSTEM_SDL`: Use SDL library
 
-#### Build the source
-On any platform, from the command line :
-
-	$ cd FS_ROOT
-	$ cmake -S . -B build
-	$ cmake --build build
-
 **Windows**
-Then you need to copy all dll files that are in FS_ROOT/extern/MSVC/lib/ to the directory where the feesynd.exe file has been 
+Then you need to copy all dll files that are in FS_ROOT/extern/MSVC/lib/ to the directory where the freesynd.exe file has been installed
 
 **Linux**
 Install the application :
 
-    $ sudo make install
+    $ sudo cmake --install <build_dir>
+
+Install will generate a default freesynd.ini file in the user home directory.
 
 **Mac**
 TBC
@@ -112,7 +116,7 @@ After launch, `play_intro` will be turned off automatically.
 ## Saved Games
 Saved games are located in a different place on each platform.
 
-- Windows: the folder containing freesynd.exe, + "save"
+- Windows: a "save" folder inside the folder containing freesynd.exe
 - Linux: $HOME/.freesynd/save/
 - Mac: $HOME/Library/Application Support/FreeSynd/save/
 

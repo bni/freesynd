@@ -65,17 +65,10 @@ add_executable (freesynd ${SOURCES} ${HEADERS})
 
 target_link_libraries (freesynd PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
-# Use -DBIN_DIR to override binary installation location
-if(NOT BIN_DIR)
-    if(UNIX)
-        SET(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
-    endif(UNIX)
-endif(NOT BIN_DIR)
-
 # We only define an install target if we're doing a release build.
 if (APPLE)
     install (TARGETS freesynd DESTINATION /Applications)
-elseif (UNIX)
+else ()
     install (TARGETS freesynd DESTINATION ${BIN_DIR})
 endif ()
 
