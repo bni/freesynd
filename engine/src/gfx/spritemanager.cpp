@@ -28,6 +28,7 @@
 #include <assert.h>
 
 #include "fs-utils/io/file.h"
+#include "fs-utils/log/log.h"
 
 SpriteManager::SpriteManager():sprites_(NULL), sprite_count_(0)
 {
@@ -60,6 +61,7 @@ bool SpriteManager::loadSprites(uint8 * tabData, int tabSize,
     for (int i = 0; i < sprite_count_; ++i) {
         if (!sprites_[i].loadSprite(tabData, spriteData, i, rle)) {
             printf("Failed to load sprite: %d\n", i);
+            FSERR(Log::k_FLG_IO, "SpriteManager", "loadSprites", ("Failed to load sprite: %d\n", i))
         }
     }
 
@@ -69,8 +71,7 @@ bool SpriteManager::loadSprites(uint8 * tabData, int tabSize,
 Sprite *SpriteManager::sprite(int spriteNum)
 {
     if (spriteNum >= sprite_count_) {
-        printf("SpriteManager::drawSpriteXYZ: sprite %d not loaded!\n",
-               spriteNum);
+        FSERR(Log::k_FLG_IO, "SpriteManager", "sprite", ("spriteNum %d is out of bound!\n", spriteNum))
         return NULL;
     }
     return &sprites_[spriteNum];
@@ -81,8 +82,7 @@ bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
                                   bool flipped, bool x2)
 {
     if (spriteNum >= sprite_count_) {
-        printf("SpriteManager::drawSpriteXYZ: sprite %d not loaded!\n",
-               spriteNum);
+        FSERR(Log::k_FLG_IO, "SpriteManager", "drawSpriteXYZ", ("spriteNum %d is out of bound!\n", spriteNum))
         return false;
     }
 
@@ -107,7 +107,7 @@ void GameSpriteManager::load()
 #if 1
     tabData = File::loadOriginalFile("hspr-0.tab", tabSize);
     data = File::loadOriginalFile("hspr-0.dat", size);
-    printf("Loaded %d sprites from hspr-0.dat\n", tabSize / 6);
+    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("Loaded %d sprites from hspr-0.dat", tabSize / 6));
 #else
     tabData = File::loadOriginalFile("hspr-0-d.tab", tabSize);
     data = File::loadOriginalFile("hspr-0-d.dat", size);
@@ -158,7 +158,7 @@ void GameSpriteManager::load()
         delete[] data;
     }
 
-    printf("loaded %i frame elements\n", (int)elements_.size());
+    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frame elements", (int)elements_.size()))
 
     for (unsigned int i = 0; i < elements_.size(); i++) {
         int esprite = elements_[i].sprite_;
@@ -202,7 +202,7 @@ void GameSpriteManager::load()
         delete[] data;
     }
 
-    printf("loaded %i frames\n", (int)frames_.size());
+    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frames", (int)frames_.size()))
 
     fp = File::openOriginalFile("HSTA-0.TXT");
     if (fp) {
@@ -227,7 +227,7 @@ void GameSpriteManager::load()
         delete[] data;
     }
 
-    printf("index contains %i animations\n", (int)index_.size());
+    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("index contains %i animations", (int)index_.size()))
 }
 
 bool GameSpriteManager::drawFrame(int animNum, int frameNum, const Point2D &screenPos)
