@@ -6,7 +6,7 @@ project(
   DESCRIPTION "FreeSynd is a cross-platform, GPLed reimplementation of the classic Bullfrog game, Syndicate."
   LANGUAGES CXX)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/game/version.h)
 
 if (WIN32)
 	# Search the bundled libs directory when using MSVC.
