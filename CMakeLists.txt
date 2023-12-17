@@ -113,6 +113,13 @@ if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE "debug")
 endif ()
 
+# Docs only available if this is the main app
+find_package(Doxygen)
+if(Doxygen_FOUND)
+    add_subdirectory(docs)
+else()
+    message(STATUS "Doxygen not found, not building docs")
+endif()
 
 # Build the sources in this subdirectory.
 add_subdirectory (utils)
