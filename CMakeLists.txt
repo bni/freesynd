@@ -33,11 +33,8 @@ else ()
 	# Set extra warnings.
     if (APPLE)
         set (EXTRA_C_FLAGS "-Wall -Wshadow -Wimplicit -Wno-multichar")
-    else ()
-        set (EXTRA_C_FLAGS "-Wall -Wshadow -Wno-multichar")
+        set (EXTRA_CXX_FLAGS "${EXTRA_C_FLAGS} -Wreorder -Wnon-virtual-dtor")
     endif ()
-
-	set (EXTRA_CXX_FLAGS "${EXTRA_C_FLAGS} -Wreorder -Wnon-virtual-dtor")
 
 	# Set debug flag.
 	set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
@@ -109,10 +106,6 @@ elseif (UNIX)
 endif()
 
 
-if (NOT CMAKE_BUILD_TYPE)
-    set (CMAKE_BUILD_TYPE "debug")
-endif ()
-
 # Docs only available if this is the main app
 find_package(Doxygen)
 if(Doxygen_FOUND)
@@ -121,10 +114,19 @@ else()
     message(STATUS "Doxygen not found, not building docs")
 endif()
 
-# Build the sources in this subdirectory.
+# Build the sources in these subdirectory.
 add_subdirectory (utils)
 add_subdirectory (engine)
 add_subdirectory (kernel)
 add_subdirectory (game)
 add_subdirectory (editor)
+
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_IGNORE_FILES 
+        /build.*
+        /\\\\.git/
+        freesynd\\\\.ini$
+        game/version.h)
+
+include (CPack)
 
