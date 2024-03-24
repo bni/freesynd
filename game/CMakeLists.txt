@@ -69,7 +69,8 @@ target_link_libraries (freesynd PRIVATE Freesynd::Utils Freesynd::Engine Freesyn
 if (APPLE)
     install (TARGETS freesynd DESTINATION /Applications)
 else ()
-    install (TARGETS freesynd DESTINATION ${BIN_DIR})
+    # We use the default installation directory
+    install (TARGETS freesynd DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif ()
 
 if (APPLE)

@@ -28,29 +28,18 @@ Class CRC32 from NetworkDLS, see license in utils/ccrc32.h and utils/ccrc32.cpp.
 
 What's new in this release?
 ---------------------------
-See the file "NEWS".
+See the file "ChangeLog".
 
-Installing the game
+Known issues with this release
+------------------------------
+  * Agent AI is partially operational.
+  * PathFinding requires improvement (path smoothing)
+  * Trains that moves North/South have a buggy display (it flickers)
+  * Not all weapons correctly function.
+
+Installing & running the game
 -------------------
 See the file "INSTALL" for information on how to install the game.
-
-Running under Linux
---------------------
-After installing the game, type "freesynd".
-
-Running under Windows
----------------------
-Just double click freesynd.exe and enjoy.
-
-Running under Mac OS X
-----------------------
-Just double click the FreeSynd application.
-
-Configuration
--------------
-Edit the freesynd.ini file to configure the game. The location of the file
-and a description of the options can be found in the file INSTALL under the
-heading "Configuring FreeSynd".
 
 Running options
 ---------------

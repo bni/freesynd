@@ -20,9 +20,7 @@
     1/ Download and unzip the file in any directory you want.
            This directory will be called FS_ROOT in the following text.
 	2/ Install original game data files (see chapter "Original Game Data).
-	3/ Optionnaly edit FS_ROOT/bin/freesynd.ini to indicate where to find original 
-	   game data files (see chapter "Configuring FreeSynd")
-	4/ Run FS_ROOT/bin/freesynd.exe.
+	3/ Run FS_ROOT/bin/freesynd.exe.
 
 #### Mac
     1/ Unzip the application bundle and drag it to your "Applications" folder.

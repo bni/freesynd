@@ -30,7 +30,7 @@ target_link_libraries (editor PRIVATE Freesynd::Utils Freesynd::Engine Freesynd:
 if (APPLE)
     install (TARGETS editor DESTINATION /Applications)
 else ()
-    install (TARGETS editor DESTINATION ${BIN_DIR})
+    install (TARGETS editor DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif ()
 
 

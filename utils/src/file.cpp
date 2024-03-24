@@ -142,7 +142,7 @@ std::string File::getDefaultFreesyndDataFolder() {
         return false;
     }
 #else
-    fsDataFullPath = PREFIX"/data";
+    fsDataFullPath = FS_DATA_PREFIX"/data";
 #endif
     return fsDataFullPath;
 }

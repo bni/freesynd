@@ -36,6 +36,9 @@ add_library(Freesynd::Utils ALIAS fs_utils)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_utils PUBLIC include)
 
+# Set standard definitions for all platforms.
+target_compile_definitions(fs_utils PUBLIC FS_DATA_PREFIX=\"${DATA_DIR}\")
+
 # IDEs should put the headers in a nice place
 source_group(
   TREE "${PROJECT_SOURCE_DIR}/utils/include"
