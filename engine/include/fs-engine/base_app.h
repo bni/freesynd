@@ -55,6 +55,7 @@ public:
     bool hasCheatCodes() { return cheatCodes_.length() != 0; }
 
     std::string getIniPath() const { return iniPath_; }
+    std::string getUserConfDir() const { return ""; }
 private:
     void printUsage();
 

@@ -51,7 +51,7 @@ public:
     ~AppContext();
 
     //! Reads the game config file from the given path
-    bool readConfiguration(const std::string& iniPath);
+    bool readConfiguration(const std::string& iniPath, const std::string& userConfFolder);
 
     bool isFullScreen() { return fullscreen_; }
 
@@ -71,7 +71,9 @@ public:
     void getMessage(const std::string & id, std::string & msg);
 
 private:
-    bool readLanguage(const ConfigFile& conf);
+    bool readLanguage(const int languageId);
+    bool readFreesyndIni(const std::string& iniFolder);
+    bool readOrCreateUserConf(const std::string& userConfFolder);
 
 private:
     /*! True means the game will run in fullscreen. */
@@ -84,8 +86,8 @@ private:
     int32 time_for_click_;
     /*! True means data files will be verified.*/
     bool test_files_;
-    /*! Path to game config file. */
-    std::string iniPath_;
+    /*! Path to user config file. */
+    std::string userConfPath_;
     /*! Language file. */
     ConfigFile  *language_;
     FS_Lang curr_language_;

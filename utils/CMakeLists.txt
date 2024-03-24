@@ -37,7 +37,7 @@ add_library(Freesynd::Utils ALIAS fs_utils)
 target_include_directories(fs_utils PUBLIC include)
 
 # Set standard definitions for all platforms.
-target_compile_definitions(fs_utils PUBLIC FS_DATA_PREFIX=\"${DATA_DIR}\")
+target_compile_definitions(fs_utils PRIVATE FS_ETC_DIR=\"${FS_ETC_DIR}\")
 
 # IDEs should put the headers in a nice place
 source_group(

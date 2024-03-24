@@ -46,6 +46,7 @@ GameController::GameController(MapManager *pMapManager) :
 GameController::~GameController() {}
 
 void GameController::destroy() {
+    LOG(Log::k_FLG_MEM, "GameController", "destroy", ("Destruction..."))
     agents_.destroy();
 }
 
@@ -249,13 +250,13 @@ int GameController::get_nb_mvt_for_active_synds(int nb_active_synds) {
 }
 
 bool GameController::saveGameToFile(int fileSlot, std::string name) {
-    LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving %s in slot %d", name.c_str(), fileSlot))
+    LOG(Log::k_FLG_IO, "GameController", "saveGameToFile", ("Saving %s in slot %d", name.c_str(), fileSlot))
 
     PortableFile outfile;
     std::string path;
 
     File::getFullPathForSaveSlot(fileSlot, path);
-    LOG(Log::k_FLG_IO, "App", "saveGameToFile", ("Saving to file %s", path.c_str()))
+    LOG(Log::k_FLG_IO, "GameController", "saveGameToFile", ("Saving to file %s", path.c_str()))
 
     outfile.open_to_overwrite(path.c_str());
 
@@ -309,7 +310,7 @@ bool GameController::loadGameFromFile(int fileSlot) {
 
         // validate that this is a supported version.
         if (v.gt(1,2)) {
-            FSERR(Log::k_FLG_IO, "App", "loadGameFromFile", ("Cannot load file, unsupported version %d.%d", vMaj, vMin))
+            FSERR(Log::k_FLG_IO, "GameController", "loadGameFromFile", ("Cannot load file, unsupported version %d.%d", vMaj, vMin))
             return false;
         }
 

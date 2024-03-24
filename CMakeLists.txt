@@ -59,14 +59,23 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_FLAGS}")
 # Using GNU Coding Standards
 include(GNUInstallDirs)
 
-# Use -DDATA_DIR to override data location
-if(NOT DATA_DIR)
-    if (WIN32)
-        SET(DATA_DIR "${CMAKE_INSTALL_PREFIX}")
-    elseif (UNIX)
-        SET(DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/freesynd")
+# FS_ETC_DIR controls the location of the freesynd.ini directory
+if (NOT FS_ETC_DIR)
+    if (UNIX)
+        SET(FS_ETC_DIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/freesynd")
+    elseif (WIN32)
+        SET(FS_ETC_DIR "${CMAKE_INSTALL_PREFIX}")
     endif()
-endif(NOT DATA_DIR)
+endif (NOT FS_ETC_DIR)
+
+# FS_DATA_DIR controls the location of the freesynd data
+if (NOT FS_DATA_DIR)
+    if (UNIX)
+        SET(FS_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}/freesynd")
+    elseif (WIN32)
+        SET(FS_DATA_DIR "${CMAKE_INSTALL_PREFIX}")
+    endif()
+endif (NOT FS_DATA_DIR)
 
 #################################
 # Specify the project's components

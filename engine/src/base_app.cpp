@@ -123,7 +123,7 @@ BaseApp::~BaseApp() {}
 
 bool BaseApp::initialize(const CliParam& param) {
     LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
-    if (!context_->readConfiguration(param.getIniPath())) {
+    if (!context_->readConfiguration(param.getIniPath(), param.getUserConfDir())) {
         FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", param.getIniPath().c_str()))
         return false;
     }

@@ -16,12 +16,12 @@ play_intro = true
 # Everywhere else, defaults to $PREFIX/share/freesynd/data
 # Examples: freesynd_data_dir = C:\freesynd\data
 
-freesynd_data_dir = @DATA_DIR@/data
+freesynd_data_dir = @FS_DATA_DIR@
 
 # original game data files directory - defaults to freesynd_data_dir
 # only set this if you want to keep the two data sets separate
 # Examples: data_dir = C:\games\synd\DATA
-data_dir = @DATA_DIR@
+data_dir = @FS_DATA_DIR@/DATA
 
 # timeout to distinguish between click and dragging event
 time_for_click = 80

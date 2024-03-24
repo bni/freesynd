@@ -39,10 +39,11 @@ class File {
 public:
     //! Return the default dir path for the freesynd.ini file
     static std::string getDefaultIniFolder();
-    //! Return the default dir path for Freesynd data files
-    static std::string getDefaultFreesyndDataFolder();
+    static std::string getDefaultUserFolder();
     //! Return the path to ini file base on iniFolder
     static bool getIniFullPath(const std::string& iniFolder, std::string& iniFullPath);
+    //! Return the path for the user config file
+    static bool getUserConfFullPath(const std::string& confFolder, std::string& confFullPath);
     //! Sets the path to the original data files.*/
     static void setOriginalDataFolder(const std::string& path);
     //! Sets the path to our data files.*/
@@ -78,12 +79,13 @@ private:
     //! Returns the full path of the given original game resource using the current root path.
     static std::string getOriginalDataFullPath(const std::string& filename, bool uppercase);
 
+private:
     /*! The path to the original game data.*/
     static std::string dataPath_;
     /*! The path to our data files.*/
     static std::string ourDataPath_;
     /*! The path to the freesynd.ini file and save directory.*/
-    static std::string homePath_;
+    static std::string savePath_;
 };
 
 #endif

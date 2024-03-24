@@ -50,7 +50,7 @@
 
 std::string File::dataPath_ = "./data/";
 std::string File::ourDataPath_ = "./data/";
-std::string File::homePath_ = "./";
+std::string File::savePath_ = "./";
 
 #ifdef _WIN32
 static std::string exeFolder() {
@@ -115,10 +115,8 @@ std::string File::getDefaultIniFolder()
     folder.append("/Library/Application Support/FreeSynd");
     mkdir(folder.c_str(), 0755);
 #else
-    // Under unix it's in the user home directory
-    folder.assign(getenv("HOME"));
-    folder.append("/.freesynd");
-    mkdir(folder.c_str(), 0755);
+    folder.assign(FS_ETC_DIR);
+
 #endif
     // note that we don't care if the mkdir() calls above succeed or not.
     // if they fail because they already exist, then it's no problem.
@@ -128,10 +126,10 @@ std::string File::getDefaultIniFolder()
     return folder;
 }
 
-std::string File::getDefaultFreesyndDataFolder() {
-    std::string fsDataFullPath;
+std::string File::getDefaultUserFolder() {
+    std::string folderFullPath;
 #ifdef _WIN32
-    fsDataFullPath = getDefaultIniFolder() + "\\data";
+    folderFullPath = getDefaultIniFolder();
 #elif defined(__APPLE__)
     if (getResourcePath(fsDataFullPath)) {
         // this is an app bundle, so let's default the data dir
@@ -142,9 +140,32 @@ std::string File::getDefaultFreesyndDataFolder() {
         return false;
     }
 #else
-    fsDataFullPath = FS_DATA_PREFIX"/data";
+    // Under unix it's in the user home directory
+    folderFullPath.assign(getenv("HOME"));
+    folderFullPath.append("/.freesynd");
+    mkdir(folderFullPath.c_str(), 0755);
 #endif
-    return fsDataFullPath;
+
+    return folderFullPath;
+}
+
+bool File::getUserConfFullPath(const std::string& confFolder, std::string& confFullPath) {
+    if (confFolder.size() == 0) {
+        confFullPath.assign(getDefaultUserFolder());
+    } else {
+        confFullPath.assign(confFolder);
+    }
+
+    addMissingSlash(confFullPath);
+    confFullPath.append("user.conf");
+
+    // Test if file exists
+#ifdef _WIN32
+    return (_access(iniFullPath.c_str(), 0) == 0);
+#else
+    struct stat buf;
+    return (stat (confFullPath.c_str(), &buf) == 0);
+#endif
 }
 
 /*!
@@ -201,7 +222,7 @@ std::string File::getFreesyndDataFullPath(const std::string& filename) {
 void File::getFullPathForSaveSlot(int slot, std::string &path) {
     path.erase();
 
-    path.append(homePath_);
+    path.append(savePath_);
     char c = path[path.size() - 1];
     if (c != '\\' && c != '/')
         path.append("/");
@@ -274,8 +295,8 @@ void File::setFreesyndDataFolder(const std::string& path) {
 }
 
 void File::setSaveDataFolder(const std::string& path) {
-    homePath_ = path;
-    addMissingSlash(homePath_);
+    savePath_ = path;
+    addMissingSlash(savePath_);
     LOG(Log::k_FLG_IO, "File", "setSaveDataFolder", ("set save path to %s", path.c_str()));
 }
 
@@ -346,7 +367,7 @@ void File::processSaveFile(const std::string& filename, std::vector<std::string>
  * \param files
  */
 void File::getGameSavedNames(std::vector<std::string> &files) {
-    std::string savePath(homePath_);
+    std::string savePath(savePath_);
     char c = savePath[savePath.size() - 1];
     if (c != '\\' && c != '/')
         savePath.append("/");
@@ -380,7 +401,7 @@ void File::getGameSavedNames(std::vector<std::string> &files) {
 
     if (rep == NULL) {
         if (mkdir(savePath.c_str(), 0777) == -1) {  // Create the directory
-            FSERR(Log::k_FLG_IO, "File", "getGameSavedNames", ("Cannot create save directory in %s", homePath_.c_str()))
+            FSERR(Log::k_FLG_IO, "File", "getGameSavedNames", ("Cannot create save directory in %s", savePath_.c_str()))
             return;
          }
         rep = opendir(savePath.c_str());
