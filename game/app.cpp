@@ -150,7 +150,7 @@ void App::doDestroy() {
  * This method returns the menu Id used to start the app.
  */
 int App::getStartMenuId(const CliParam& param) {
-    if (param.startMission == -1) {
+    if (param.getStartingMission() == -1) {
         if (context_->isPlayIntro()) {
             // Update intro flag so intro won't be played next time
             context_->updateIntroFlag();
@@ -166,7 +166,7 @@ int App::getStartMenuId(const CliParam& param) {
         // First, we find the block associated with the given
         // mission number
         for (int i = 0; i < 50; i++) {
-            if (g_Session.getBlock(i).mis_id == param.startMission) {
+            if (g_Session.getBlock(i).mis_id == param.getStartingMission()) {
                 g_Session.setSelectedBlockId(i);
                 break;
             }

@@ -5,13 +5,11 @@ add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz"
 )
 
-add_custom_target(changelog ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz")
+add_custom_target(debian ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz")
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz"
     DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/doc/freesynd"
 )
-
-add_custom_target(copyright ALL DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/debian/copyright")
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/debian/copyright"
     DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/doc/freesynd"

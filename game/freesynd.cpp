@@ -121,28 +121,6 @@ void operator delete(void *p) {
 }
 #endif
 
-void print_usage() {
-    printf("usage: freesynd [options...]\n");
-    printf("    -h, --help            display this help and exit.\n");
-    printf("    -i, --ini <path>      specify the location of the FreeSynd config file.\n");
-    printf("    --nosound             disable all sound.\n");
-
-#ifdef _WIN32
-    printf(" (default: freesynd.ini in the same folder as freesynd.exe)\n");
-#elif defined(__APPLE__)
-    printf(" (default: $HOME/Library/Application Support/FreeSynd/freesynd.ini)\n");
-#else
-    printf(" (default: $HOME/.freesynd/freesynd.ini)\n");
-#endif
-
-#ifdef _DEBUG
-    printf("    -m, --mission <num>   jump directly to the specified mission.\n");
-    printf("    -c, --cheat <codes>   apply the specified cheat codes.\n");
-    printf("                          separate multiple codes with a colon.\n");
-    printf("    -l, --log <flags>     apply the specified log flags separated by colon.\n");
-#endif
-}
-
 int main(int argc, char *argv[]) {
 
     printf("Freesynd v%i.%i (may 2016)\n", FS_VERSION_MAJOR, FS_VERSION_MINOR);
@@ -157,74 +135,23 @@ int main(int argc, char *argv[]) {
     srand((unsigned) time(NULL));
 #endif
     CliParam param;
-    // If different from -1, the game will start directly on mission
-    // with the given id
-    param.startMission = -1;
-    param.disableSound = false;
 
-    // This variable stores the index of the cheat code param on
-    // the command line
-    int cheatCodeIndex = -1;
-    // This variable stores the log mask to init log. By default we activate all logs
-    std::string logMask = "ALL";
-
-    for (int i = 1; i < argc; ++i) {
-#ifdef _DEBUG
-        // This parameter is used in debug phase to accelerate the starting
-        // of a game and to jump directly to a mission
-        // Note : the argument is the index of the block in the structure g_MissionNumbers
-        // as defined in briefmenu.cpp and not the mission number itself.
-        if (0 == strcmp("-m", argv[i]) || 0 == strcmp("--mission", argv[i])) {
-            int mission = atoi(argv[i + 1]);
-            if (mission >= 0 && mission < 50) {
-                param.startMission = mission;
-            }
-            i++;
-        }
-
-        // This parameter is used to specify cheat codes on command line.
-        // You can specify multiple codes using the ':' as a separator.
-        // See available cheat codes in App::setCheatCode()
-        // example -c "DO IT AGAIN:NUK THEM"
-        if (0 == strcmp("-c", argv[i]) || 0 == strcmp("--cheat", argv[i])) {
-            cheatCodeIndex = i + 1;
-            i++;
-        }
-
-        // This parameter is used to specify debug flags on command line.
-        // You can specify multiple flags using the ':' as a separator.
-        // example -l "INFO:GFX"
-        if (0 == strcmp("-l", argv[i]) || 0 == strcmp("--log", argv[i])) {
-            i++;
-            logMask = argv[i];
-
-        }
-#endif
-        if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
-            print_usage();
-            return 1;
-        }
-        if (0 == strcmp("-i", argv[i]) || 0 == strcmp("--ini", argv[i])) {
-            i++;
-            param.iniPath = argv[i];
-        }
-        if (0 == strcmp("--nosound", argv[i])) {
-            param.disableSound = true;
-        }
+    if (param.parseCommandLine(argc, argv)) {
+        return 1;
     }
 
     // Initialize log
-    Log::initialize(logMask, "game.log");
+    Log::initialize(param.getLogMask(), "game.log");
 
     LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
     auto app = std::make_unique<App>();
 
     if (app->initialize(param)) {
         // setting the cheat codes
-        if (cheatCodeIndex != -1) {
-            std::string cheats = argv[cheatCodeIndex];
-            char *s = (char *)cheats.c_str();
-            char *token = strtok(s, ":");
+        if (param.hasCheatCodes()) {
+            std::string cheatCodes(param.getCheatCodes());
+            char *cheats = (char *)cheatCodes.c_str();
+            char *token = strtok(cheats, ":");
             while ( token != NULL ) {
                 LOG(Log::k_FLG_INFO, "Main", "main", ("Cheat code activated : %s", token))
                 app->setCheatCode(token);

@@ -33,6 +33,81 @@
 #include "mixer/sdlmixeraudio.h"
 #endif // HAVE_SDL_MIXER
 
+CliParam::CliParam() {
+    startMission_ = -1;
+    disableSound_ = false;
+}
+
+int CliParam::parseCommandLine(int argc, char *argv[]) {
+    for (int i = 1; i < argc; ++i) {
+#ifdef _DEBUG
+        // This parameter is used in debug phase to accelerate the starting
+        // of a game and to jump directly to a mission
+        // Note : the argument is the index of the block in the structure g_MissionNumbers
+        // as defined in briefmenu.cpp and not the mission number itself.
+        if (0 == strcmp("-m", argv[i]) || 0 == strcmp("--mission", argv[i])) {
+            int mission = atoi(argv[i + 1]);
+            if (mission >= 0 && mission < 50) {
+                startMission_ = mission;
+            }
+            i++;
+        }
+
+        // Find cheatcodes
+        if (0 == strcmp("-c", argv[i]) || 0 == strcmp("--cheat", argv[i])) {
+            cheatCodes_ = argv[i + 1];
+            i++;
+        }
+
+        // This parameter is used to specify debug flags on command line.
+        // You can specify multiple flags using the ':' as a separator.
+        // example -l "INFO:GFX"
+        if (0 == strcmp("-l", argv[i]) || 0 == strcmp("--log", argv[i])) {
+            i++;
+            logMask_ = argv[i];
+
+        }
+#endif
+
+        if (0 == strcmp("-i", argv[i]) || 0 == strcmp("--ini", argv[i])) {
+            i++;
+            iniPath_ = argv[i];
+        }
+        if (0 == strcmp("--nosound", argv[i])) {
+            disableSound_ = true;
+        }
+
+        if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
+            printUsage();
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void CliParam::printUsage() {
+    printf("usage: freesynd [options...]\n");
+    printf("    -h, --help            display this help and exit.\n");
+    printf("    -i, --ini <path>      specify the location of the FreeSynd config file.\n");
+    printf("    --nosound             disable all sound.\n");
+
+#ifdef _WIN32
+    printf(" (default: freesynd.ini in the same folder as freesynd.exe)\n");
+#elif defined(__APPLE__)
+    printf(" (default: $HOME/Library/Application Support/FreeSynd/freesynd.ini)\n");
+#else
+    printf(" (default: $HOME/.freesynd/freesynd.ini)\n");
+#endif
+
+#ifdef _DEBUG
+    printf("    -m, --mission <num>   jump directly to the specified mission.\n");
+    printf("    -c, --cheat <codes>   apply the specified cheat codes.\n");
+    printf("                          separate multiple codes with a colon.\n");
+    printf("    -l, --log <flags>     apply the specified log flags separated by colon.\n");
+#endif
+}
+
 BaseApp::BaseApp(MenuFactory *pMenuFactory)
     : context_(std::make_unique<AppContext>()),
       screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
@@ -48,8 +123,8 @@ BaseApp::~BaseApp() {}
 
 bool BaseApp::initialize(const CliParam& param) {
     LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
-    if (!context_->readConfiguration(param.iniPath)) {
-        FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", param.iniPath.c_str()))
+    if (!context_->readConfiguration(param.getIniPath())) {
+        FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", param.getIniPath().c_str()))
         return false;
     }
 
@@ -73,9 +148,9 @@ bool BaseApp::initialize(const CliParam& param) {
         game_sprites_.load();
     }
 
-    soundManager_.initialize(system_->getAudio(), param.disableSound, context_->isPlayIntro());
+    soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), context_->isPlayIntro());
 
-    music_.initialize(param.disableSound, system_->getAudio());
+    music_.initialize(param.isSoundDisabled(), system_->getAudio());
 
     bool resInit = doInitialize(param);
     if (resInit) {

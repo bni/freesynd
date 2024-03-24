@@ -38,10 +38,47 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/events/default_events.h"
 
-struct CliParam {
-    std::string iniPath;
-    bool disableSound = false;
-    int startMission =-1;
+class CliParam {
+
+public:
+    CliParam();
+
+    //! Parse command line parameters
+    int parseCommandLine(int argc, char *argv[]);
+
+    int getStartingMission() const { return startMission_; }
+    bool isSoundDisabled() const { return disableSound_; }
+
+    std::string getLogMask() const { return logMask_; }
+    std::string getCheatCodes() const { return cheatCodes_; }
+    //! Returns true if user has set cheatcodes
+    bool hasCheatCodes() { return cheatCodes_.length() != 0; }
+
+    std::string getIniPath() const { return iniPath_; }
+private:
+    void printUsage();
+
+private:
+    /*!
+     * Use in development mode to start directly on a mission and skip menus.
+     * Set the variable to a mission id using CLI param "-m".
+     */
+    int startMission_;
+    /*!
+     * Set to true to mute the sound and music using CLI param "--nosound".
+     */
+    bool disableSound_;
+    //! This variable stores the log mask to init log. By default we activate all logs
+    std::string logMask_ = "ALL";
+    /*!
+     * This parameter is used to specify cheat codes on command line (option -c).
+     * You can specify multiple codes using the ':' as a separator.
+     * See available cheat codes in App::setCheatCode()
+     * example -c "DO IT AGAIN:NUK THEM"
+     */
+    std::string cheatCodes_;
+
+    std::string iniPath_;
 };
 
 /*!

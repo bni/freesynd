@@ -517,21 +517,6 @@ void Screen::scale2x(int x, int y, int width, int height,
 #endif
 #endif
 
-void print_usage() {
-    printf("usage: freesynd [options...]\n");
-    printf("    -h, --help            display this help and exit.\n");
-    printf("    -i, --ini <path>      specify the location of the FreeSynd config file.\n");
-    printf("    --nosound             disable all sound.\n");
-
-#ifdef _WIN32
-    printf(" (default: freesynd.ini in the same folder as freesynd.exe)\n");
-#elif defined(__APPLE__)
-    printf(" (default: $HOME/Library/Application Support/FreeSynd/freesynd.ini)\n");
-#else
-    printf(" (default: $HOME/.freesynd/freesynd.ini)\n");
-#endif
-}
-
 int main(int argc, char *argv[]) {
 
 #ifdef _WIN32
@@ -541,19 +526,9 @@ int main(int argc, char *argv[]) {
 #endif
 
     CliParam params;
-    params.disableSound = true;
 
-    for (int i = 1; i < argc; ++i) {
-
-        if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
-            print_usage();
-            return 1;
-        }
-
-        if (0 == strcmp("-i", argv[i]) || 0 == strcmp("--ini", argv[i])) {
-            i++;
-            params.iniPath = argv[i];
-        }
+    if (params.parseCommandLine(argc, argv)) {
+        return 1;
     }
 
     // Initialize log
