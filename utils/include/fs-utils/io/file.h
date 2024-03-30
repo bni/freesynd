@@ -29,7 +29,11 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include <filesystem>
+
 #include "fs-utils/common.h"
+
+namespace fs = std::filesystem;
 
 /*!
  * File class gives a list of convenient methods to retrieve
@@ -37,19 +41,20 @@
  */
 class File {
 public:
-    //! Return the default dir path for the freesynd.ini file
-    static std::string getDefaultIniFolder();
-    static std::string getDefaultUserFolder();
+    static void getDefaultSaveFolder(std::string& confFolderPath);
     //! Return the path to ini file base on iniFolder
     static bool getIniFullPath(const std::string& iniFolder, std::string& iniFullPath);
     //! Return the path for the user config file
-    static bool getUserConfFullPath(const std::string& confFolder, std::string& confFullPath);
+    static bool getUserConfFullPath(fs::path& confFullPath);
+    //! Return the path for the user folder
+    //static bool getUserConfFolderPath(const std::string& confFolder, std::string& confFolderPath);
+    static bool upsertUserConfFolder(const std::string& userConfFolder);
     //! Sets the path to the original data files.*/
     static void setOriginalDataFolder(const std::string& path);
     //! Sets the path to our data files.*/
     static void setFreesyndDataFolder(const std::string& path);
     //! Sets the path where to save all files.*/
-    static void setSaveDataFolder(const std::string& path);
+    static void upsertSaveDataFolder(const std::string& path);
 
     //*************************************
     // Original files apis
@@ -73,6 +78,9 @@ public:
     static uint8 *loadOriginalFileToMem(const std::string& filename, int &filesize);
 
 private:
+    //! Return the default dir path for the freesynd.ini file
+    static std::string getDefaultIniFolder();
+
     static void processSaveFile(const std::string& filename, std::vector<std::string> &files);
     //! Adds a trailing slash to the string
     static void addMissingSlash(std::string& str);
@@ -84,8 +92,10 @@ private:
     static std::string dataPath_;
     /*! The path to our data files.*/
     static std::string ourDataPath_;
+    //! The path to the folder containing the user conf file
+    static fs::path userConfFolderPath_;
     /*! The path to the freesynd.ini file and save directory.*/
-    static std::string savePath_;
+    static fs::path savePath_;
 };
 
 #endif

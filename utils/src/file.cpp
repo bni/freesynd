@@ -50,7 +50,8 @@
 
 std::string File::dataPath_ = "./data/";
 std::string File::ourDataPath_ = "./data/";
-std::string File::savePath_ = "./";
+fs::path File::savePath_ = ".";
+fs::path File::userConfFolderPath_ = "";
 
 #ifdef _WIN32
 static std::string exeFolder() {
@@ -126,48 +127,6 @@ std::string File::getDefaultIniFolder()
     return folder;
 }
 
-std::string File::getDefaultUserFolder() {
-    std::string folderFullPath;
-#ifdef _WIN32
-    folderFullPath = getDefaultIniFolder();
-#elif defined(__APPLE__)
-    if (getResourcePath(fsDataFullPath)) {
-        // this is an app bundle, so let's default the data dir
-        // to the one included in the app bundle's resources.
-        fsDataFullPath += "data/";
-    } else {
-        FSERR(Log::k_FLG_GFX, "File", "getDefaultFreesyndDataFolder", ("Unable to locate app bundle resources.\n"));
-        return false;
-    }
-#else
-    // Under unix it's in the user home directory
-    folderFullPath.assign(getenv("HOME"));
-    folderFullPath.append("/.freesynd");
-    mkdir(folderFullPath.c_str(), 0755);
-#endif
-
-    return folderFullPath;
-}
-
-bool File::getUserConfFullPath(const std::string& confFolder, std::string& confFullPath) {
-    if (confFolder.size() == 0) {
-        confFullPath.assign(getDefaultUserFolder());
-    } else {
-        confFullPath.assign(confFolder);
-    }
-
-    addMissingSlash(confFullPath);
-    confFullPath.append("user.conf");
-
-    // Test if file exists
-#ifdef _WIN32
-    return (_access(iniFullPath.c_str(), 0) == 0);
-#else
-    struct stat buf;
-    return (stat (confFullPath.c_str(), &buf) == 0);
-#endif
-}
-
 /*!
  * Set iniFullPath with the absolute path to the freesynd.ini file.
  * \param iniFolder If empty that means we use getDefaultIniFolder. Else use the value.
@@ -191,6 +150,60 @@ bool File::getIniFullPath(const std::string& iniFolder, std::string& iniFullPath
     struct stat buf;
     return (stat (iniFullPath.c_str(), &buf) == 0);
 #endif
+}
+
+bool File::upsertUserConfFolder(const std::string& userConfFolder) {
+    if (userConfFolder.size() != 0) {
+        // The user has given a path using the cli so use it
+        userConfFolderPath_ = userConfFolder;
+        if (!fs::exists(userConfFolderPath_)) {
+            FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Directory does not exist: %s.\n", userConfFolder.c_str()));
+            return false;
+        }
+
+        return true;
+    }
+
+    // We need to use default path and create folder if it does not exist
+    //fs::path confPath;
+#ifdef _WIN32
+    // On windows we use the same path as the default ini folder
+    // it should exists as it is the folder where the exe is.
+    finalUserConfFolder.append(getDefaultIniFolder());
+#elif defined(__APPLE__)
+    if (getResourcePath(fsDataFullPath)) {
+        // this is an app bundle, so let's default the data dir
+        // to the one included in the app bundle's resources.
+        fsDataFullPath += "data/";
+    } else {
+        FSERR(Log::k_FLG_GFX, "File", "getDefaultFreesyndDataFolder", ("Unable to locate app bundle resources.\n"));
+        return false;
+    }
+#else
+    // Under unix it's in the user home directory
+    userConfFolderPath_ = getenv("HOME");
+    userConfFolderPath_ /= ".freesynd";
+
+    if (!fs::exists(userConfFolderPath_)) {
+        if (!fs::create_directories(userConfFolderPath_)) {
+            FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Could not create user conf folder.\n"));
+            return false;
+        }
+    }
+#endif
+
+    return true;
+}
+
+void File::getDefaultSaveFolder(std::string& confFolderPath) {
+    confFolderPath.assign((userConfFolderPath_ / "save").c_str());
+}
+
+bool File::getUserConfFullPath(fs::path& confFullPath) {
+    confFullPath = userConfFolderPath_ / "user.conf";
+
+    // Test if file exists
+    return fs::exists(confFullPath);
 }
 
 /*!
@@ -294,9 +307,15 @@ void File::setFreesyndDataFolder(const std::string& path) {
     LOG(Log::k_FLG_IO, "File", "setOurDataPath", ("set our data path to %s", path.c_str()));
 }
 
-void File::setSaveDataFolder(const std::string& path) {
+void File::upsertSaveDataFolder(const std::string& path) {
     savePath_ = path;
-    addMissingSlash(savePath_);
+
+    if (!fs::exists(savePath_)) {
+        if (!fs::create_directories(savePath_)) {
+            FSERR(Log::k_FLG_GFX, "File", "upsertSaveDataFolder", ("Could not create save folder.\n"));
+        }
+    }
+
     LOG(Log::k_FLG_IO, "File", "setSaveDataFolder", ("set save path to %s", path.c_str()));
 }
 

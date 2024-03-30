@@ -73,6 +73,12 @@ int CliParam::parseCommandLine(int argc, char *argv[]) {
             i++;
             iniPath_ = argv[i];
         }
+
+        if (0 == strcmp("-u", argv[i]) || 0 == strcmp("--user", argv[i])) {
+            i++;
+            userConfPath_ = argv[i];
+        }
+
         if (0 == strcmp("--nosound", argv[i])) {
             disableSound_ = true;
         }

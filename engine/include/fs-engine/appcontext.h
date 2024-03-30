@@ -86,8 +86,6 @@ private:
     int32 time_for_click_;
     /*! True means data files will be verified.*/
     bool test_files_;
-    /*! Path to user config file. */
-    std::string userConfPath_;
     /*! Language file. */
     ConfigFile  *language_;
     FS_Lang curr_language_;

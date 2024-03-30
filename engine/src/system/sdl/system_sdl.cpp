@@ -60,7 +60,9 @@ SystemSDL::~SystemSDL() {
         SDL_FreeSurface(cursor_surf_);
     }
 
-    audio_->quit();
+    if (audio_) {
+        audio_->quit();
+    }
 
     // Destroy SDL_Image Lib
     IMG_Quit();

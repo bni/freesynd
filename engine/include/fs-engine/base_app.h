@@ -55,7 +55,7 @@ public:
     bool hasCheatCodes() { return cheatCodes_.length() != 0; }
 
     std::string getIniPath() const { return iniPath_; }
-    std::string getUserConfDir() const { return ""; }
+    std::string getUserConfDir() const { return userConfPath_; }
 private:
     void printUsage();
 
@@ -78,8 +78,10 @@ private:
      * example -c "DO IT AGAIN:NUK THEM"
      */
     std::string cheatCodes_;
-
+    //! The path to the folder containing the application level parameters
     std::string iniPath_;
+    //! The path to the folder containing the user level parameters
+    std::string userConfPath_;
 };
 
 /*!

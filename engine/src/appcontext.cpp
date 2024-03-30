@@ -104,18 +104,23 @@ bool AppContext::readFreesyndIni(const std::string& iniFolder) {
 
 /** \brief
  *
- * \param userConfFolder const std::string&
+ * \param userConfFolder const std::string& Only set if there was a Cli param
  * \return bool
  *
  */
 bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     ConfigFile userConf;
-    bool confExist = File::getUserConfFullPath(userConfFolder, userConfPath_);
+    fs::path userConfFullpath;
 
+    if(!File::upsertUserConfFolder(userConfFolder)) {
+        return false;
+    }
+
+    bool confExist = File::getUserConfFullPath(userConfFullpath);
     if (confExist) {
         // Load file
-        FSINFO(Log::k_FLG_IO, "AppContext", "readOrCreateUserConf", ("Reading user configuration from existing file %s.\n", userConfPath_.c_str()));
-        std::ifstream in( userConfPath_.c_str() );
+        FSINFO(Log::k_FLG_IO, "AppContext", "readOrCreateUserConf", ("Reading user configuration from existing file.\n"));
+        std::ifstream in( userConfFullpath );
 
         if( !in ) {
             return false;
@@ -128,21 +133,22 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     playIntro_ = userConf.read("play_intro", true);
     test_files_ = userConf.read("test_data", true);
     const int languageID = userConf.read("language", 0);
-
-    std::string saveDataDir = userConf.read("save_data_dir", File::getDefaultUserFolder());
-    File::setSaveDataFolder(saveDataDir);
+    std::string defaultDir;
+    File::getDefaultSaveFolder(defaultDir);
+    std::string saveDataDir(userConf.read("save_data_dir", defaultDir));
+    File::upsertSaveDataFolder(saveDataDir);
 
     if (!confExist) {
         // Save first ini file with default parameters
         try {
-            FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Initializing user configuration file in %s\n", userConfPath_.c_str()));
+            FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Initializing user configuration file in %s\n", userConfFullpath.c_str()));
             userConf.add("fullscreen", fullscreen_);
             userConf.add("play_intro", playIntro_);
             userConf.add("test_data", test_files_);
             userConf.add("language", languageID);
             userConf.add("save_data_dir", saveDataDir);
 
-            std::ofstream file(userConfPath_.c_str(), std::ios::out | std::ios::trunc);
+            std::ofstream file(userConfFullpath.c_str(), std::ios::out | std::ios::trunc);
             if (file) {
                 file << userConf;
                 file.close();
@@ -210,11 +216,13 @@ void AppContext::getMessage(const std::string & id, std::string & msg) {
  */
 void AppContext::updateIntroFlag() {
     try {
-        LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Setting play_intro to false in %s", userConfPath_.c_str()))
-        ConfigFile conf(userConfPath_);
+        std::filesystem::path userConfPath;
+        File::getUserConfFullPath(userConfPath);
+        LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Setting play_intro to false in %s", userConfPath.c_str()))
+        ConfigFile conf(userConfPath);
         conf.add("play_intro", false);
 
-        std::ofstream file(userConfPath_.c_str(), std::ios::out | std::ios::trunc);
+        std::ofstream file(userConfPath.c_str(), std::ios::out | std::ios::trunc);
         if (file) {
             file << conf;
             file.close();
@@ -228,10 +236,12 @@ void AppContext::updateIntroFlag() {
 
 void AppContext::deactivateTestFlag() {
     try {
-        ConfigFile conf(userConfPath_);
+        std::filesystem::path userConfPath;
+        File::getUserConfFullPath(userConfPath);
+        ConfigFile conf(userConfPath);
         conf.add("test_data", false);
 
-        std::ofstream file(userConfPath_.c_str(), std::ios::out | std::ios::trunc);
+        std::ofstream file(userConfPath.c_str(), std::ios::out | std::ios::trunc);
         if (file) {
             file << conf;
             file.close();
