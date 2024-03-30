@@ -1,15 +1,3 @@
-# true to look for Original Syndicate Data and test it
-test_data = true
-
-# language - 0:english, 1:français, 2:italiano, 3:deutsch 
-language = 0
-
-# true to run in fullscreen
-fullscreen = false
-
-# true to play intro
-play_intro = true
-
 # freesynd data files directory - various defaults per platform
 # On Windows, defaults to the freesynd folder + "data".
 # On Mac, defaults to an internal path that refers to the application bundle.

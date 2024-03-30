@@ -117,6 +117,7 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     }
 
     bool confExist = File::getUserConfFullPath(userConfFullpath);
+
     if (confExist) {
         // Load file
         FSINFO(Log::k_FLG_IO, "AppContext", "readOrCreateUserConf", ("Reading user configuration from existing file.\n"));
@@ -140,29 +141,36 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
 
     if (!confExist) {
         // Save first ini file with default parameters
-        try {
-            FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Initializing user configuration file in %s\n", userConfFullpath.c_str()));
-            userConf.add("fullscreen", fullscreen_);
-            userConf.add("play_intro", playIntro_);
-            userConf.add("test_data", test_files_);
-            userConf.add("language", languageID);
-            userConf.add("save_data_dir", saveDataDir);
+        FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Initializing user configuration file in %s\n", userConfFullpath.c_str()));
+        userConf.add("fullscreen", fullscreen_);
+        userConf.add("play_intro", playIntro_);
+        userConf.add("test_data", test_files_);
+        userConf.add("language", languageID);
+        userConf.add("save_data_dir", saveDataDir);
 
-            std::ofstream file(userConfFullpath.c_str(), std::ios::out | std::ios::trunc);
-            if (file) {
-                file << userConf;
-                file.close();
-            } else {
-                FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot write new configuration to file"))
-                return false;
-            }
-        } catch (...) {
-            FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Error while writing configuration to file"))
+        if (!updateUserConf(userConf, userConfFullpath)) {
             return false;
         }
     }
 
     return readLanguage(languageID);
+}
+
+bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesystem::path userConfPath) {
+    try {
+        std::ofstream file(userConfPath.c_str(), std::ios::out | std::ios::trunc);
+        if (file) {
+            file << userConf;
+            file.close();
+        } else {
+            FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot write new configuration to file %s", userConfPath.c_str()))
+            return false;
+        }
+        return true;
+    } catch (...) {
+        FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Error while writing configuration to file"))
+        return false;
+    }
 }
 
 bool AppContext::readLanguage(const int languageId) {
@@ -215,40 +223,21 @@ void AppContext::getMessage(const std::string & id, std::string & msg) {
  * \param files
  */
 void AppContext::updateIntroFlag() {
-    try {
-        std::filesystem::path userConfPath;
-        File::getUserConfFullPath(userConfPath);
-        LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Setting play_intro to false in %s", userConfPath.c_str()))
-        ConfigFile conf(userConfPath);
-        conf.add("play_intro", false);
+    std::filesystem::path userConfPath;
+    File::getUserConfFullPath(userConfPath);
+    LOG(Log::k_FLG_IO, "AppContext", "updateIntroFlag", ("Setting play_intro to false in %s", userConfPath.c_str()))
+    ConfigFile conf(userConfPath);
+    conf.add("play_intro", false);
 
-        std::ofstream file(userConfPath.c_str(), std::ios::out | std::ios::trunc);
-        if (file) {
-            file << conf;
-            file.close();
-        } else {
-            LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Could not update configuration file!"))
-        }
-    } catch (...) {
-        LOG(Log::k_FLG_IO, "App", "updateIntroFlag", ("Could not update configuration file!"))
-    }
+    updateUserConf(conf, userConfPath);
 }
 
 void AppContext::deactivateTestFlag() {
-    try {
-        std::filesystem::path userConfPath;
-        File::getUserConfFullPath(userConfPath);
-        ConfigFile conf(userConfPath);
-        conf.add("test_data", false);
+    std::filesystem::path userConfPath;
+    File::getUserConfFullPath(userConfPath);
+    LOG(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Setting test_data to false in %s", userConfPath.c_str()))
+    ConfigFile conf(userConfPath);
+    conf.add("test_data", false);
 
-        std::ofstream file(userConfPath.c_str(), std::ios::out | std::ios::trunc);
-        if (file) {
-            file << conf;
-            file.close();
-        } else {
-            FSERR(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Could not update configuration file for test_data parameter!"))
-        }
-    } catch (...) {
-        FSERR(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Could not update configuration file for test_data parameter!"))
-    }
+    updateUserConf(conf, userConfPath);
 }

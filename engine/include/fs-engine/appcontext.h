@@ -28,6 +28,8 @@
 #ifndef CORE_APPCONTEXT_H_
 #define CORE_APPCONTEXT_H_
 
+#include <filesystem>
+
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
 #include "fs-utils/io/configfile.h"
@@ -74,6 +76,7 @@ private:
     bool readLanguage(const int languageId);
     bool readFreesyndIni(const std::string& iniFolder);
     bool readOrCreateUserConf(const std::string& userConfFolder);
+    bool updateUserConf(const ConfigFile& userConf, const std::filesystem::path userConfPath);
 
 private:
     /*! True means the game will run in fullscreen. */
