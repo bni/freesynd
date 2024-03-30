@@ -2,7 +2,7 @@
 if (APPLE)
     # On Mac, the data folder is a part of the app bundle.
 else ()
-    install (DIRECTORY . DESTINATION "${CMAKE_INSTALL_DATADIR}/freesynd"
+    install (DIRECTORY . DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/freesynd"
             PATTERN "freesynd.ini" EXCLUDE
             PATTERN "freesynd.ini.in" EXCLUDE
             PATTERN "CMakeLists.txt" EXCLUDE)

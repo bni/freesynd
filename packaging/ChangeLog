@@ -8,6 +8,10 @@ freesynd (0.8) UNRELEASED; urgency=low
   * Persuaded peds follow their leader in cars and trains
   * When player agents shoot on a vehicle, the driver is ejected
   * Energy Shield is now fully usable
+  * Debian package is now available
+  * freesynd.ini is now only for global parameters and user.conf is for user config
+  * Cmake 3.22 is required for building the app
+  * C++ 20 is the standard language for the app
 
  -- Benoit Blancard <benblan@users.sourceforge.net>  Sun, 24 Mar 2024 00:37:31 +0100
 

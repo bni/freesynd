@@ -26,7 +26,9 @@
     1/ Unzip the application bundle and drag it to your "Applications" folder.
 		
 #### Linux
-    See next chapter : Building from source
+    1/ Install the freesynd_X.X_amd64.deb
+    2/ Install original game data files (see chapter "Original Game Data).
+    3/ Run freesynd
     
 
 ### From building from source (packaged file or Git)
@@ -58,6 +60,7 @@ On any platform, from the command line :
 
 - Use optionally `-G"<generator>"` to specify a particular build system. See CMake documentation for a list of options.
 - It is a best practice to specify a build directory inside the source code directory. Name your build directory starting with "build" so that Git ignores it automatically.
+- Alternatively, you can use the preset configurations that come with freesynd. Type `cmake -S . --list-presets` to list the differents presets then `cmake -S . --preset <preset>`
 - You can set options when running CMake to configure the build. 
     - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -LH` to list available options
     - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -D<OPTION>=ON|OFF` to set the value of an option
@@ -85,30 +88,40 @@ TBC
 
 ## Configuring FreeSynd
 
-FreeSynd reads the file `freesynd.ini` to get its running configuration.
-You can edit the file with any text editor to customize your installation.
-When you run FreeSynd, a default ini file will be created for you if it does not already exist.
+FreeSynd comes with 2 differents configuration files :
+- `freesynd.ini` this file lists common parameters for all users
+- `user.conf` this file is per user.
+You can edit the files with any text editor to customize your installation.
+When you run FreeSynd for the first time, `freesynd.ini` is expected to exist.
+But a default `user.conf` file will be created for you if it does not already exist.
 
 The location of `freesynd.ini` is different on each platform.
   * Windows: the folder containing freesynd.exe
+  * Linux: /usr/local/etc/freesynd/
+  * Mac: $HOME/Library/Application Support/FreeSynd/ (TDC)
+
+The location of `user.conf` is different on each platform.
+  * Windows: the folder containing freesynd.exe
   * Linux: $HOME/.freesynd/
-  * Mac: $HOME/Library/Application Support/FreeSynd/
+  * Mac: $HOME/Library/Application Support/FreeSynd/ (TDC)
 
   (For Mac users who prefer the Linux/Unix way of doing things, a symlink will
 be created at $HOME/.freesynd for your convenience.)
 
-  The default location of `freesynd.ini` can be overridden on the command line.
+  The default location of both files can be overridden on the command line.
 Run freesynd --help to see usage information.
 
 Here is a description of each of the config file parameters:
-- `test_data`: (true/false) If true, the game will look for Original Syndicate Data and test it
-- `fullscreen`: (true/false) If true, the game will run in fullscreen mode.
-- `play_intro`: (true/false) If true, the introduction will be played.
-- `freesynd_data_dir`: Path to the FreeSynd "data" directory. This parameter should have a sensible default. Only set this if you really need to.
-- `data_dir`: Path to the original Syndicate "DATA" directory. By default, this will be the same as `freesynd_data_dir`.
-- `language`: 0:english, 1:français, 2:italiano, 3:deutsch 
+- freesynd.ini :
+    - `freesynd_data_dir`: Path to the FreeSynd "data" directory. This parameter should have a sensible default. Only set this if you really need to.
+    - `data_dir`: Path to the original Syndicate "DATA" directory. By default, this will be the same as `freesynd_data_dir`.
+- user.conf :
+    - `test_data`: (true/false) If true, the game will look for Original Syndicate Data and test it
+    - `fullscreen`: (true/false) If true, the game will run in fullscreen mode.
+    - `play_intro`: (true/false) If true, the introduction will be played.
+    - `language`: 0:english, 1:français, 2:italiano, 3:deutsch 
 
-After launch, `play_intro` will be turned off automatically.
+After launch, `play_intro` and `test_data` will be turned off automatically.
 
 
 ## Saved Games
