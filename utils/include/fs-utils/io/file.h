@@ -81,7 +81,7 @@ private:
     //! Return the default dir path for the freesynd.ini file
     static std::string getDefaultIniFolder();
 
-    static void processSaveFile(const std::string& filename, std::vector<std::string> &files);
+    static void addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files);
     //! Adds a trailing slash to the string
     static void addMissingSlash(std::string& str);
     //! Returns the full path of the given original game resource using the current root path.

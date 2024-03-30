@@ -72,9 +72,12 @@ void LoadSaveMenu::handleShow()
 {
     // List of savefile names.
     std::vector<std::string> files;
+
+    // initialize with 10 blanks
     for (int i=0; i<10; i++) {
         files.push_back("");
     }
+
     File::getGameSavedNames(files);
 
     for (int i=0; i<10; i++) {

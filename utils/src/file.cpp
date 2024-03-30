@@ -233,21 +233,13 @@ std::string File::getFreesyndDataFullPath(const std::string& filename) {
 }
 
 void File::getFullPathForSaveSlot(int slot, std::string &path) {
-    path.erase();
-
-    path.append(savePath_);
-    char c = path[path.size() - 1];
-    if (c != '\\' && c != '/')
-        path.append("/");
-    path.append("save/");
-
-    std::ostringstream out;
+    std::ostringstream filename;
     if (slot < 10) {
-        out << "0";
+        filename << "0";
     }
-    out << slot << ".fsg";
+    filename << slot << ".fsg";
 
-    path.append(out.str());
+    path.assign(savePath_ / filename.str());
 }
 
 /*!
@@ -348,34 +340,35 @@ uint8 *File::loadOriginalFile(const std::string& filename, int &filesize) {
     return data;
 }
 
-void File::processSaveFile(const std::string& filename, std::vector<std::string> &files) {
-    size_t extPos = filename.find_last_of('.');
-    if (extPos == std::string::npos) return;
+/** \brief
+ *
+ * \param filename const std::string&
+ * \param files std::vector<std::string>&
+ * \return void
+ *
+ */
+void File::addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files) {
 
-    std::string name = filename.substr(0, extPos);
-    std::string ext = filename.substr(extPos);
-    if (ext.compare(".fsg") != 0) return;
+    if (filename.extension().compare(".fsg") == 0) {
+        std::istringstream iss( filename.stem() );
+        int index;
+        iss >> index;
+        if (index < 10) {
+            PortableFile infile;
+            infile.open_to_read(filename.c_str());
 
-    std::istringstream iss( name );
-    int index;
-    iss >> index;
-    if (index < 10) {
-        PortableFile infile;
-        std::string full_filename;
-        getFullPathForSaveSlot(index, full_filename);
-        infile.open_to_read(full_filename.c_str());
-
-        if (infile) {
-            // FIXME: detect original game saves
-            // Read version first
-            unsigned char vMaj = infile.read8();
-            unsigned char vMin = infile.read8();
-            FormatVersion v(vMaj, vMin);
-            // Read slot name
-            if (v == 0x0100) {
-                files[index] = infile.read_string(25, true);
-            } else {
-                files[index] = infile.read_string(31, true);
+            if (infile) {
+                // FIXME: detect original game saves
+                // Read version first
+                unsigned char vMaj = infile.read8();
+                unsigned char vMin = infile.read8();
+                FormatVersion v(vMaj, vMin);
+                // Read slot name
+                if (v == 0x0100) {
+                    files[index] = infile.read_string(25, true);
+                } else {
+                    files[index] = infile.read_string(31, true);
+                }
             }
         }
     }
@@ -386,12 +379,6 @@ void File::processSaveFile(const std::string& filename, std::vector<std::string>
  * \param files
  */
 void File::getGameSavedNames(std::vector<std::string> &files) {
-    std::string savePath(savePath_);
-    char c = savePath[savePath.size() - 1];
-    if (c != '\\' && c != '/')
-        savePath.append("/");
-    savePath.append("save");
-
 #ifdef _WIN32
     SECURITY_ATTRIBUTES sa;
     WIN32_FIND_DATA File;
@@ -415,22 +402,9 @@ void File::getGameSavedNames(std::vector<std::string> &files) {
     }
     FindClose(hSearch);
 #else
-    DIR * rep = opendir(savePath.c_str());
-    struct dirent * ent;
-
-    if (rep == NULL) {
-        if (mkdir(savePath.c_str(), 0777) == -1) {  // Create the directory
-            FSERR(Log::k_FLG_IO, "File", "getGameSavedNames", ("Cannot create save directory in %s", savePath_.c_str()))
-            return;
-         }
-        rep = opendir(savePath.c_str());
+    for (const auto & entry : fs::directory_iterator(savePath_)) {
+        addSaveFilenameAtIndex(entry.path(), files);
     }
-
-    while ((ent = readdir(rep)) != NULL) {
-        processSaveFile(ent->d_name, files);
-    }
-
-    closedir(rep);
 #endif
 }
 
