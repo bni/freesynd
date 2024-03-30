@@ -169,7 +169,7 @@ bool File::upsertUserConfFolder(const std::string& userConfFolder) {
 #ifdef _WIN32
     // On windows we use the same path as the default ini folder
     // it should exists as it is the folder where the exe is.
-    finalUserConfFolder.append(getDefaultIniFolder());
+    userConfFolderPath_.append(getDefaultIniFolder());
 #elif defined(__APPLE__)
     if (getResourcePath(fsDataFullPath)) {
         // this is an app bundle, so let's default the data dir
@@ -196,7 +196,8 @@ bool File::upsertUserConfFolder(const std::string& userConfFolder) {
 }
 
 void File::getDefaultSaveFolder(std::string& confFolderPath) {
-    confFolderPath.assign((userConfFolderPath_ / "save").c_str());
+    fs::path savepath = userConfFolderPath_ / "save";
+    confFolderPath.append(savepath.string());
 }
 
 bool File::getUserConfFullPath(fs::path& confFullPath) {
@@ -239,7 +240,7 @@ void File::getFullPathForSaveSlot(int slot, std::string &path) {
     }
     filename << slot << ".fsg";
 
-    path.assign(savePath_ / filename.str());
+    path.assign((savePath_ / filename.str()).string());
 }
 
 /*!
@@ -350,12 +351,12 @@ uint8 *File::loadOriginalFile(const std::string& filename, int &filesize) {
 void File::addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files) {
 
     if (filename.extension().compare(".fsg") == 0) {
-        std::istringstream iss( filename.stem() );
+        std::istringstream iss( filename.stem().string() );
         int index;
         iss >> index;
         if (index < 10) {
             PortableFile infile;
-            infile.open_to_read(filename.c_str());
+            infile.open_to_read(filename.string().c_str());
 
             if (infile) {
                 // FIXME: detect original game saves
@@ -379,33 +380,9 @@ void File::addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::str
  * \param files
  */
 void File::getGameSavedNames(std::vector<std::string> &files) {
-#ifdef _WIN32
-    SECURITY_ATTRIBUTES sa;
-    WIN32_FIND_DATA File;
-    HANDLE hSearch;
-
-    sa.nLength = sizeof(sa);
-    sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = TRUE;
-
-    if (CreateDirectory(savePath.c_str(), &sa) == ERROR_PATH_NOT_FOUND) {
-        FSERR(Log::k_FLG_IO, "File", "getGameSavedNames", ("Cannot create save directory in %s", homePath_.c_str()))
-        return;
-    }
-
-    savePath.append("/*.fsg");
-    hSearch = FindFirstFile(savePath.c_str(), &File);
-    if (hSearch != INVALID_HANDLE_VALUE) {
-        do {
-            processSaveFile(File.cFileName, files);
-        } while (FindNextFile(hSearch, &File));
-    }
-    FindClose(hSearch);
-#else
     for (const auto & entry : fs::directory_iterator(savePath_)) {
         addSaveFilenameAtIndex(entry.path(), files);
     }
-#endif
 }
 
 bool File::testOriginalData() {

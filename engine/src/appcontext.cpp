@@ -141,7 +141,7 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
 
     if (!confExist) {
         // Save first ini file with default parameters
-        FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Initializing user configuration file in %s\n", userConfFullpath.c_str()));
+        FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Initializing user configuration file in %s\n", userConfFullpath.string().c_str()));
         userConf.add("fullscreen", fullscreen_);
         userConf.add("play_intro", playIntro_);
         userConf.add("test_data", test_files_);
@@ -163,7 +163,7 @@ bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesyste
             file << userConf;
             file.close();
         } else {
-            FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot write new configuration to file %s", userConfPath.c_str()))
+            FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot write new configuration to file %s", userConfPath.string().c_str()))
             return false;
         }
         return true;
@@ -226,7 +226,7 @@ void AppContext::updateIntroFlag() {
     std::filesystem::path userConfPath;
     File::getUserConfFullPath(userConfPath);
     LOG(Log::k_FLG_IO, "AppContext", "updateIntroFlag", ("Setting play_intro to false in %s", userConfPath.c_str()))
-    ConfigFile conf(userConfPath);
+    ConfigFile conf(userConfPath.string());
     conf.add("play_intro", false);
 
     updateUserConf(conf, userConfPath);
@@ -236,7 +236,7 @@ void AppContext::deactivateTestFlag() {
     std::filesystem::path userConfPath;
     File::getUserConfFullPath(userConfPath);
     LOG(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Setting test_data to false in %s", userConfPath.c_str()))
-    ConfigFile conf(userConfPath);
+    ConfigFile conf(userConfPath.string());
     conf.add("test_data", false);
 
     updateUserConf(conf, userConfPath);
