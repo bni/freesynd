@@ -8,41 +8,40 @@
 
   "configurePresets": [
     {
-      "name": "sdl-default",
-      "hidden": true,
-      "description": "Default Config for SDL and SDL Mixer",
-      "cacheVariables": {
-        "USE_SYSTEM_SDL": "ON",
-        "USE_SDL_MIXER": "ON"
-      }
+        "name": "base",
+        "description": "For more information: https://github.com/esweet431/box2d-lite/blob/vs-launch/CMakePresets.json",
+        "hidden": true,
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/${presetName}",
+        "installDir": "${sourceDir}/install/${presetName}",
+        "cacheVariables": {
+            "USE_SYSTEM_SDL": "ON",
+            "USE_SDL_MIXER": "ON"
+        }
     },
     {
-      "name": "codeblocks-unixmakefile",
-      "hidden": true,
-      "description": "Generator for CodeBlocks with makefile",
-      "generator": "CodeBlocks - Unix Makefiles"
+        "name": "x86-debug",
+        "displayName": "x86 Debug",
+        "description": "Sets debug build type and x86 arch",
+        "inherits": "base",
+        "hidden": true,
+        "architecture": {
+            "value": "x86",
+            "strategy": "external"
+          },
+        "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Debug"
+        }
     },
     {
-      "name": "unixmakefile",
-      "hidden": true,
-      "description": "Generator for Unix makefile",
-      "generator": "Unix Makefiles"
-    },
-    {
-      "name": "debug",
-      "hidden": true,
-      "description": "Single configuration Debug",
-      "environment": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "release",
-      "hidden": true,
-      "description": "Single configuration Release",
-      "environment": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
+        "name": "x86-release",
+        "displayName": "x86 Release",
+        "description": "Sets release build type",
+        "inherits": "x86-debug",
+        "hidden": true,
+        "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Release"
+        }
     },
     {
       "name": "gcc-flags",
@@ -53,36 +52,50 @@
       }
     },
     {
-      "name": "cb_makefile-x86_64-linux-debug",
+      "name": "cb_makefile-x86-linux-debug",
       "displayName": "Code::Blocks with Makefile with Debug configuration",
       "description": "Code::Blocks with Makefile with Debug configuration",
       "hidden": false,
-      "inherits": ["debug", "gcc-flags", "sdl-default", "codeblocks-unixmakefile"],
-      "binaryDir": "build-cb-debug"
+      "generator": "CodeBlocks - Unix Makefiles",
+      "inherits": ["x86-debug", "gcc-flags"]
     },
     {
-      "name": "cb_makefile-x86_64-linux-release",
+      "name": "cb_makefile-x86-linux-release",
       "displayName": "Code::Blocks with Makefile with Release configuration",
       "description": "Code::Blocks with Makefile with Release configuration",
       "hidden": false,
-      "inherits": ["release", "gcc-flags", "sdl-default", "codeblocks-unixmakefile"],
-      "binaryDir": "build-cb-release"
+      "generator": "CodeBlocks - Unix Makefiles",
+      "inherits": ["x86-release", "gcc-flags"]
     },
     {
-      "name": "makefile-x86_64-linux-debug",
+      "name": "makefile-x86-linux-debug",
       "displayName": "Linux Makefile with Debug configuration",
       "description": "Linux Makefile with Debug configuration",
       "hidden": false,
-      "inherits": ["debug", "gcc-flags", "sdl-default", "unixmakefile"],
-      "binaryDir": "build-mkf-debug"
+      "generator": "Unix Makefiles",
+      "inherits": ["x86-debug", "gcc-flags"]
     },
     {
-      "name": "makefile-x86_64-linux-release",
+      "name": "makefile-x86-linux-release",
       "displayName": "Linux Makefile with Release configuration",
       "description": "Single configuration Release",
       "hidden": false,
-      "inherits": ["release", "gcc-flags", "sdl-default", "unixmakefile"],
-      "binaryDir": "build-mkf-release"
+      "generator": "Unix Makefiles",
+      "inherits": ["x86-release", "gcc-flags"]
+    },
+    {
+        "name": "msvc-15-x86-debug",
+        "displayName": "Visual Studio Build Tools 2017 Debug - x86_amd64",
+        "description": "Using compilers for Visual Studio 15 2017 (x86_x64 architecture)",
+        "hidden": false,
+        "inherits": "x86-debug",
+        "generator": "Visual Studio 15 2017",
+        "toolset": {
+            "value": "host=x86"
+        },
+        "cacheVariables": {
+            "CMAKE_CXX_COMPILER": "cl.exe"
+        }
     }
   ]
 }
