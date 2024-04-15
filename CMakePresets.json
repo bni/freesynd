@@ -13,7 +13,7 @@
         "hidden": true,
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build/${presetName}",
-        "installDir": "${sourceDir}/install/${presetName}",
+        "installDir": "${sourceDir}/inst/${presetName}",
         "cacheVariables": {
             "USE_SYSTEM_SDL": "ON",
             "USE_SDL_MIXER": "ON"
@@ -96,6 +96,33 @@
         "cacheVariables": {
             "CMAKE_CXX_COMPILER": "cl.exe"
         }
+    },
+    {
+      "name": "msvc-15-x86-release",
+      "displayName": "Visual Studio Build Tools 2017 Release - x86_amd64",
+      "description": "Using compilers for Visual Studio 15 2017 (x86_x64 architecture)",
+      "hidden": false,
+      "inherits": "x86-release",
+      "generator": "Visual Studio 15 2017",
+      "toolset": {
+          "value": "host=x86"
+      },
+      "cacheVariables": {
+          "CMAKE_CXX_COMPILER": "cl.exe"
+      }
+  }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-msvc-15-x86-debug",
+      "displayName": "Build MSVC x86 Debug",
+      "configurePreset": "msvc-15-x86-debug"
+    },
+    {
+      "name": "build-msvc-15-x86-release",
+      "displayName": "Build MSVC x86 Release",
+      "configurePreset": "msvc-15-x86-release",
+      "configuration": "Release"
     }
   ]
 }

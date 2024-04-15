@@ -29,6 +29,8 @@ target_link_libraries (editor PRIVATE Freesynd::Utils Freesynd::Engine Freesynd:
 # We only define an install target if we're doing a release build.
 if (APPLE)
     install (TARGETS editor DESTINATION /Applications)
+elseif (WIN32)
+    install (TARGETS editor DESTINATION .)
 else ()
     install (TARGETS editor DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif ()

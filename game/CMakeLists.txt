@@ -68,6 +68,8 @@ target_link_libraries (freesynd PRIVATE Freesynd::Utils Freesynd::Engine Freesyn
 # We only define an install target if we're doing a release build.
 if (APPLE)
     install (TARGETS freesynd DESTINATION /Applications)
+elseif (WIN32)
+    install (TARGETS freesynd DESTINATION .)
 else ()
     # We use the default installation directory
     install (TARGETS freesynd DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
