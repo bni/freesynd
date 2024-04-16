@@ -10,6 +10,8 @@ freesynd (0.8) UNRELEASED; urgency=low
   * Energy Shield is now fully usable
   * Debian package is now available
   * freesynd.ini is now only for global parameters and user.conf is for user config
+  * In freesynd.ini, freesynd_data_dir and data_dir are empty by default so 
+     find dirs with new rules based on current platform
   * Cmake 3.22 is required for building the app
   * C++ 20 is the standard language for the app
 

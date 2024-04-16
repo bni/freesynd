@@ -81,7 +81,8 @@
       "description": "Single configuration Release",
       "hidden": false,
       "generator": "Unix Makefiles",
-      "inherits": ["x86-release", "gcc-flags"]
+      "inherits": ["x86-release", "gcc-flags"],
+      "installDir": "/usr/local"
     },
     {
         "name": "msvc-15-x86-debug",
@@ -122,6 +123,17 @@
       "name": "build-msvc-15-x86-release",
       "displayName": "Build MSVC x86 Release",
       "configurePreset": "msvc-15-x86-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "build-makefile-x86-linux-debug",
+      "displayName": "Build Makefile x86 Debug",
+      "configurePreset": "makefile-x86-linux-debug"
+    },
+    {
+      "name": "build-makefile-x86-linux-release",
+      "displayName": "Build Makefile x86 Release",
+      "configurePreset": "makefile-x86-linux-release",
       "configuration": "Release"
     }
   ]

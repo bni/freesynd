@@ -10,7 +10,7 @@ elseif (WIN32)
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../extern/MSVC/lib/" DESTINATION .
             FILES_MATCHING PATTERN "*.dll")
 else ()
-    
+
 # Generate a changelog file
 add_custom_command(
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog"
@@ -21,11 +21,11 @@ add_custom_command(
 add_custom_target(debian ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz")
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/changelog.gz"
-    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/doc/freesynd"
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
 )
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/debian/copyright"
-    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/doc/freesynd"
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
 )
 
 endif ()
