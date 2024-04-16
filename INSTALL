@@ -20,7 +20,7 @@
     1/ Download and unzip the file in any directory you want.
            This directory will be called FS_ROOT in the following text.
 	2/ Install original game data files (see chapter "Original Game Data).
-	3/ Run FS_ROOT/bin/freesynd.exe.
+	3/ Run FS_ROOT/freesynd.exe.
 
 #### Mac
     1/ Unzip the application bundle and drag it to your "Applications" folder.
@@ -28,7 +28,7 @@
 #### Linux
     1/ Install the freesynd_X.X_amd64.deb
     2/ Install original game data files (see chapter "Original Game Data).
-    3/ Run freesynd
+    3/ Type `freesynd` to run the game
     
 
 ### From building from source (packaged file or Git)
@@ -58,9 +58,14 @@ On any platform, from the command line :
 	$ cmake -S . -B <build_dir> [-G"<generator>"]
 	$ cmake --build <build_dir>
 
+Or you can use an existing CMake preset :
+    $ cd FS_ROOT
+    $ cmake -S . --list-presets  # To list available presets
+    $ cmake -S . --preset <preset> # To configure using a given preset
+    $ cmake --build --preset <preset> # To build using a given preset
+
 - Use optionally `-G"<generator>"` to specify a particular build system. See CMake documentation for a list of options.
-- It is a best practice to specify a build directory inside the source code directory. Name your build directory starting with "build" so that Git ignores it automatically.
-- Alternatively, you can use the preset configurations that come with freesynd. Type `cmake -S . --list-presets` to list the differents presets then `cmake -S . --preset <preset>`
+- It is a best practice to specify a build directory inside the source code directory. Put your build directory below the "build" directory so that Git ignores it automatically.
 - You can set options when running CMake to configure the build. 
     - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -LH` to list available options
     - Execute `cd FS_ROOT; cmake -S . -B <build_dir> -D<OPTION>=ON|OFF` to set the value of an option
@@ -80,8 +85,6 @@ Then you need to copy all dll files that are in FS_ROOT/extern/MSVC/lib/ to the 
 Install the application :
 
     $ sudo cmake --install <build_dir>
-
-Install will generate a default freesynd.ini file in the user home directory.
 
 **Mac**
 TBC
@@ -120,6 +123,7 @@ Here is a description of each of the config file parameters:
     - `fullscreen`: (true/false) If true, the game will run in fullscreen mode.
     - `play_intro`: (true/false) If true, the introduction will be played.
     - `language`: 0:english, 1:français, 2:italiano, 3:deutsch 
+    - `save_data_dir`: Directory to save file. By default, it is a save directory near the user.conf file.
 
 After launch, `play_intro` and `test_data` will be turned off automatically.
 
@@ -131,6 +135,6 @@ Saved games are located in a different place on each platform.
 - Linux: $HOME/.freesynd/save/
 - Mac: $HOME/Library/Application Support/FreeSynd/save/
 
-You may note that this location is based on the default ini file location.
-The saved games location will not be affected by specifying a different path for the ini file on the command line.
+You may note that this location is based on the user.conf file location.
+The saved games location can be changed using the `save_data_dir` parameter in the user.conf file.
 

@@ -96,6 +96,7 @@ void CliParam::printUsage() {
     printf("usage: freesynd [options...]\n");
     printf("    -h, --help            display this help and exit.\n");
     printf("    -i, --ini <path>      specify the location of the FreeSynd config file.\n");
+    printf("    -u, --user <path>      specify the location of the user.conf file.\n");
     printf("    --nosound             disable all sound.\n");
 
 #ifdef _WIN32
