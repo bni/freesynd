@@ -48,8 +48,8 @@
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 
-std::string File::dataPath_ = "./data/";
-std::string File::ourDataPath_ = "./data/";
+fs::path File::dataPath_ = "./data/";
+fs::path File::ourDataPath_ = "./data/";
 fs::path File::savePath_ = ".";
 fs::path File::userConfFolderPath_ = "";
 
@@ -221,7 +221,7 @@ std::string File::getOriginalDataFullPath(const std::string& filename, bool uppe
         (*it) = uppercase ? toupper(*it) : tolower(*it);
     }
 
-    return dataPath_ + second_part;
+    return (dataPath_ / second_part).string();
 }
 
 /*!
@@ -230,7 +230,7 @@ std::string File::getOriginalDataFullPath(const std::string& filename, bool uppe
  * \param filename The relative path to one of our data files.
  */
 std::string File::getFreesyndDataFullPath(const std::string& filename) {
-    return ourDataPath_ + filename;
+    return (ourDataPath_ / filename).string();
 }
 
 void File::getFullPathForSaveSlot(int slot, std::string &path) {
@@ -260,7 +260,7 @@ uint8 *File::loadOriginalFileToMem(const std::string& filename, int &filesize) {
         size_t  n = fread(mem, 1, filesize, fp);
         if (n == 0) {
             FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("WARN: File '%s' (using path: '%s') is empty\n",
-               filename.c_str(), dataPath_.c_str()));
+               filename.c_str(), dataPath_.string().c_str()));
          }
         fclose(fp);
         return mem;
@@ -268,7 +268,7 @@ uint8 *File::loadOriginalFileToMem(const std::string& filename, int &filesize) {
 
     // If we're here, there's a problem
     FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("ERROR: Couldn't open file '%s' (using path: '%s')\n",
-       filename.c_str(), dataPath_.c_str()));
+       filename.c_str(), dataPath_.string().c_str()));
 
     filesize = 0;
     return NULL;
@@ -289,15 +289,48 @@ void File::addMissingSlash(std::string& str) {
 }
 
 void File::setOriginalDataFolder(const std::string& path) {
-    dataPath_ = path;
-    addMissingSlash(dataPath_);
-    LOG(Log::k_FLG_IO, "File", "setOriginalDataPath", ("set data path to %s", path.c_str()));
+    if (path.size() != 0) {
+        dataPath_ = path;
+    } else {
+
+#if defined(__APPLE__)
+    // Under Mac, it can't be in the bundle as user should not access it
+#else
+    // Under Windows/unix it's in the same directory as our data
+    dataPath_ = ourDataPath_;
+#endif
+    }
+    LOG(Log::k_FLG_IO, "File", "setOriginalDataPath", ("set data path to %s", dataPath_.string().c_str()));
 }
 
+
+/*!
+ * @brief 
+ * @param path 
+ */
 void File::setFreesyndDataFolder(const std::string& path) {
-    ourDataPath_ = path;
-    addMissingSlash(ourDataPath_);
-    LOG(Log::k_FLG_IO, "File", "setOurDataPath", ("set our data path to %s", path.c_str()));
+    if (path.size() != 0) {
+        ourDataPath_ = path;
+    } else {
+#ifdef _WIN32
+    // On windows default installation of data is in the folder where the exe is.
+    ourDataPath_ = exeFolder();
+    ourDataPath_ /= "data";
+#elif defined(__APPLE__)
+    if (getResourcePath(fsDataFullPath)) {
+        // this is an app bundle, so let's default the data dir
+        // to the one included in the app bundle's resources.
+        fsDataFullPath += "data/";
+    } else {
+        FSERR(Log::k_FLG_GFX, "File", "getDefaultFreesyndDataFolder", ("Unable to locate app bundle resources.\n"));
+        return false;
+    }
+#else
+    // Under unix it's in the data directory
+    ourDataPath_ = FS_DATA_DIR;
+#endif
+    }
+    LOG(Log::k_FLG_IO, "File", "setOurDataPath", ("set our data path to %s", ourDataPath_.string().c_str()));
 }
 
 void File::upsertSaveDataFolder(const std::string& path) {

@@ -1,15 +1,15 @@
-# freesynd data files directory - various defaults per platform
+# freesynd data files directory.
+# If empty, uses default value per platform
 # On Windows, defaults to the freesynd folder + "data".
 # On Mac, defaults to an internal path that refers to the application bundle.
 # Everywhere else, defaults to $PREFIX/share/freesynd/data
 # Examples: freesynd_data_dir = C:\freesynd\data
-
-freesynd_data_dir = @FS_DATA_DIR@
+freesynd_data_dir =
 
 # original game data files directory - defaults to freesynd_data_dir
 # only set this if you want to keep the two data sets separate
 # Examples: data_dir = C:\games\synd\DATA
-data_dir = @FS_DATA_DIR@/DATA
+data_dir =
 
 # timeout to distinguish between click and dragging event
 time_for_click = 80

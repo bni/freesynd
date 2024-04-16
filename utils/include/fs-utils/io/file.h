@@ -89,9 +89,9 @@ private:
 
 private:
     /*! The path to the original game data.*/
-    static std::string dataPath_;
+    static fs::path dataPath_;
     /*! The path to our data files.*/
-    static std::string ourDataPath_;
+    static fs::path ourDataPath_;
     //! The path to the folder containing the user conf file
     static fs::path userConfFolderPath_;
     /*! The path to the freesynd.ini file and save directory.*/
