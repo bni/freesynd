@@ -14,11 +14,12 @@
 .\" You should have received a copy of the GNU General Public License
 .\" along with this package; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-.TH "Freesynd" "6" "2013-06-03" "" "ver.0.7.5"
+.TH "Freesynd" "6" "2024-04-01" "" "ver.0.8"
 .SH "NAME"
 Freesynd \- RTS engine.
 .SH "SYNOPSIS"
-freesynd [\fB\-h | \-\-help \fR] | [[\fB\-i | \-\-ini <path>\fR] | [ \fB\-\-nosound\fR]]
+.B freesynd
+[\fIOPTIONS\fR]
 .SH "DESCRIPTION"
 FreeSynd \- a cross-platform,  GPLed reimplementation of engine for the classic Bullfrog game, Syndicate (1993).
 .SH "OPTIONS"
@@ -30,8 +31,47 @@ Give the command line options.
 \fB\-i or \-\-ini <path>\fR
 Specify the location of the FreeSynd config file.
 .TP
+\fB\-u or \-\-user <path>\fR
+Specify the location of the user config file.
+.TP
 \fB\-\-nosound\fR
 Disable all sound.
+.SH CONFIGURATION
+\fBFreesynd\fR sources two configuration files on startup - \fI/usr/local/etc/freesynd.ini\fR and
+\fI$HOME/.freesynd/user.conf\fR, in that order.
+.PP
+The directory in which the application can read these files can be specified at runtime using the options described in OPTIONS section.
+.PP
+The configuration variables have to be set as follows:
+.TP
+.B VARIABLE=value
+VARIABLE is the name of the variable and value is the value.
+.TP
+Here is a list of options in the \fBfreesynd.ini\fR file:
+.TP
+.B freesynd_data_dir
+Path to the FreeSynd "data" directory. If empty, the application will look in a default directory.
+Only set this if you really need to.
+.TP
+.B data_dir
+Path to the original Syndicate "DATA" directory. If empty, this will be the same as \fBfreesynd_data_dir\fR.
+.TP
+Here is a list of options in the \fBuser.conf\fR file:
+.TP
+.B test_data
+(true/false) If true, the game will look for Original Syndicate Data and test it
+.TP
+.B fullscreen
+(true/false) If true, the game will run in fullscreen mode.
+.TP
+.B play_intro
+(true/false) If true, the introduction will be played.
+.TP
+.B language`
+0:english, 1:français, 2:italiano, 3:deutsch 
+.TP
+.B save_data_dir
+Directory to save files. By default, it is a save directory near the user.conf file.
 .SH NOTES
 .B In order to run FreeSynd a copy of ORIGINAL Syndicate is required.
 .SH "AUTHOR"
