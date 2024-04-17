@@ -10,7 +10,7 @@ set(DEV_TOOLS_HEADERS
 	searchmissionmenu.h
 	listmissionmenu.h)
 
-add_executable (editor
+add_executable (fs-editor
 	editor.cpp
 	editorapp.cpp
 	editorcontroller.cpp
@@ -24,15 +24,15 @@ add_executable (editor
 	${DEV_TOOLS_HEADERS}
 )
 
-target_link_libraries (editor PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
+target_link_libraries (fs-editor PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
 # We only define an install target if we're doing a release build.
 if (APPLE)
-    install (TARGETS editor DESTINATION /Applications)
+    install (TARGETS fs-editor DESTINATION /Applications)
 elseif (WIN32)
-    install (TARGETS editor DESTINATION .)
+    install (TARGETS fs-editor DESTINATION .)
 else ()
-    install (TARGETS editor DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+    install (TARGETS fs-editor DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif ()
 
 
