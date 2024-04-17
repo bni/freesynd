@@ -51,7 +51,6 @@ set(CPACK_SOURCE_IGNORE_FILES
         /build.*
         /\\\\.git/
         /\\\\.gitignore
-        freesynd\\\\.ini$
         game/version.h)
 
 # Sets CPack
