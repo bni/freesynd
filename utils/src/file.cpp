@@ -152,7 +152,7 @@ bool File::getIniFullPath(const std::string& iniFolder, std::string& iniFullPath
 #endif
 }
 
-bool File::upsertUserConfFolder(const std::string& userConfFolder) {
+bool File::getOrCreateUserConfFolder(const std::string& userConfFolder) {
     if (userConfFolder.size() != 0) {
         // The user has given a path using the cli so use it
         userConfFolderPath_ = userConfFolder;
@@ -165,12 +165,7 @@ bool File::upsertUserConfFolder(const std::string& userConfFolder) {
     }
 
     // We need to use default path and create folder if it does not exist
-    //fs::path confPath;
-#ifdef _WIN32
-    // On windows we use the same path as the default ini folder
-    // it should exists as it is the folder where the exe is.
-    userConfFolderPath_.append(getDefaultIniFolder());
-#elif defined(__APPLE__)
+#if defined(__APPLE__)
     if (getResourcePath(fsDataFullPath)) {
         // this is an app bundle, so let's default the data dir
         // to the one included in the app bundle's resources.
@@ -180,11 +175,18 @@ bool File::upsertUserConfFolder(const std::string& userConfFolder) {
         return false;
     }
 #else
+// On windows & Linux we use the user's home folder.
+#ifdef _WIN32
+    
+    userConfFolderPath_ = getenv("USERPROFILE");
+#else
     // Under unix it's in the user home directory
     userConfFolderPath_ = getenv("HOME");
+#endif
     userConfFolderPath_ /= ".freesynd";
 
     if (!fs::exists(userConfFolderPath_)) {
+        LOG(Log::k_FLG_IO, "File", "getOrCreateUserConfFolder", ("Creating user config folder %s", userConfFolderPath_.string().c_str()));
         if (!fs::create_directories(userConfFolderPath_)) {
             FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Could not create user conf folder.\n"));
             return false;

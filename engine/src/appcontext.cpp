@@ -112,7 +112,7 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     ConfigFile userConf;
     fs::path userConfFullpath;
 
-    if(!File::upsertUserConfFolder(userConfFolder)) {
+    if(!File::getOrCreateUserConfFolder(userConfFolder)) {
         return false;
     }
 

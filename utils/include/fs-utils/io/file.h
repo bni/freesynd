@@ -48,7 +48,7 @@ public:
     static bool getUserConfFullPath(fs::path& confFullPath);
     //! Return the path for the user folder
     //static bool getUserConfFolderPath(const std::string& confFolder, std::string& confFolderPath);
-    static bool upsertUserConfFolder(const std::string& userConfFolder);
+    static bool getOrCreateUserConfFolder(const std::string& userConfFolder);
     //! Sets the path to the original data files.*/
     static void setOriginalDataFolder(const std::string& path);
     //! Sets the path to our data files.*/
