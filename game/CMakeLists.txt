@@ -63,7 +63,7 @@ source_group(IA REGULAR_EXPRESSION ia/*)
 
 add_executable (freesynd ${SOURCES} ${HEADERS})
 
-target_link_libraries (freesynd PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
+target_link_libraries (freesynd PRIVATE freesynd_warnings Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
 # We only define an install target if we're doing a release build.
 if (APPLE)

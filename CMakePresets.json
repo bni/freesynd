@@ -44,20 +44,12 @@
         }
     },
     {
-      "name": "gcc-flags",
-      "hidden": true,
-      "description": "Compiler flags for GCC",
-      "cacheVariables": {
-        "EXTRA_CXX_FLAGS": "-Wall -Wshadow -Wno-multichar -Wreorder -Wnon-virtual-dtor"
-      }
-    },
-    {
       "name": "cb_makefile-x86-linux-debug",
       "displayName": "Code::Blocks with Makefile with Debug configuration",
       "description": "Code::Blocks with Makefile with Debug configuration",
       "hidden": false,
       "generator": "CodeBlocks - Unix Makefiles",
-      "inherits": ["x86-debug", "gcc-flags"]
+      "inherits": "x86-debug"
     },
     {
       "name": "cb_makefile-x86-linux-release",
@@ -65,7 +57,7 @@
       "description": "Code::Blocks with Makefile with Release configuration",
       "hidden": false,
       "generator": "CodeBlocks - Unix Makefiles",
-      "inherits": ["x86-release", "gcc-flags"]
+      "inherits": "x86-release"
     },
     {
       "name": "makefile-x86-linux-debug",
@@ -73,7 +65,7 @@
       "description": "Linux Makefile with Debug configuration",
       "hidden": false,
       "generator": "Unix Makefiles",
-      "inherits": ["x86-debug", "gcc-flags"]
+      "inherits": "x86-debug"
     },
     {
       "name": "makefile-x86-linux-release",
@@ -81,7 +73,7 @@
       "description": "Single configuration Release",
       "hidden": false,
       "generator": "Unix Makefiles",
-      "inherits": ["x86-release", "gcc-flags"],
+      "inherits": "x86-release",
       "installDir": "/usr/local"
     },
     {

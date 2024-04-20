@@ -61,7 +61,7 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include)
 
-target_link_libraries(fs_engine PRIVATE Freesynd::Utils PNG::PNG )
+target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG )
 
 # The USE_SYSTEM_SDL option enables the creation of the fs_engine_sdl
 # library. If not on, there will be an error as there is not other implementation

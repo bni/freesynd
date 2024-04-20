@@ -36,21 +36,13 @@ if (MSVC)
 	set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /Oi /Ot /GL")
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /Oi /Ot /GL")
 	set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /LTCG")
-else ()
-	# Set extra warnings.
-    if (APPLE)
-        set (EXTRA_C_FLAGS "-Wall -Wshadow -Wimplicit -Wno-multichar")
-        set (EXTRA_CXX_FLAGS "${EXTRA_C_FLAGS} -Wreorder -Wnon-virtual-dtor")
-    endif ()
-
-	# Set debug flag.
-	set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
-	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif ()
 
-# Set extra compiler flags, possibly different per-platform.
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_C_FLAGS}")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_FLAGS}")
+include(cmake/CompilerWarnings.cmake)
+
+add_library(freesynd_warnings INTERFACE)
+
+set_project_warnings(freesynd_warnings)
 
 #################################
 # Installation management

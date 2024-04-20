@@ -24,7 +24,7 @@ add_executable (fs-editor
 	${DEV_TOOLS_HEADERS}
 )
 
-target_link_libraries (fs-editor PRIVATE Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
+target_link_libraries (fs-editor PRIVATE freesynd_warnings Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
 # We only define an install target if we're doing a release build.
 if (APPLE)

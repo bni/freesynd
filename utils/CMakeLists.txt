@@ -33,6 +33,8 @@ set(SOURCE_LIST
 add_library(fs_utils ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Utils ALIAS fs_utils)
 
+target_link_libraries (fs_utils PRIVATE freesynd_warnings)
+
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_utils PUBLIC include)
 

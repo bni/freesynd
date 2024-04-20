@@ -74,7 +74,7 @@ add_library(Freesynd::Kernel ALIAS fs_kernel)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_kernel PUBLIC include)
 
-target_link_libraries(fs_kernel PRIVATE Freesynd::Utils Freesynd::Engine )
+target_link_libraries(fs_kernel PRIVATE freesynd_warnings Freesynd::Utils Freesynd::Engine )
 
 # IDEs should put the headers in a nice place
 source_group(
