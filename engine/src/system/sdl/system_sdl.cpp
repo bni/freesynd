@@ -72,32 +72,14 @@ SystemSDL::~SystemSDL() {
 
 bool SystemSDL::initialize(bool fullscreen) {
     LOG(Log::k_FLG_INFO, "SystemSDL", "initialize", ("initializing System SDL"))
-    int resInit = SDL_Init(SDL_INIT_VIDEO
-#ifdef GP2X
-                 | SDL_INIT_JOYSTICK
-#endif
-                );
+    int resInit = SDL_Init(SDL_INIT_VIDEO);
 
     if (resInit < 0) {
         FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Errcode : %i", resInit))
         return false;
     }
-#ifdef GP2X
-    if (SDL_NumJoysticks() > 0) {
-        joy = SDL_JoystickOpen(0);
-        if (!joy) {
-            fprintf(stderr, "Couldn't open joystick 0: %s\n",
-                    SDL_GetError());
-        }
-        printf("found joystick\n");
-    }
-#endif
 
-    SDL_WM_SetCaption("FreeSynd", NULL);
-
-    // Keyboard init
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-    SDL_EnableUNICODE(1);
+    //SDL_WM_SetCaption("FreeSynd", NULL);
 
     // Audio initialization
 #ifdef HAVE_SDL_MIXER
@@ -111,11 +93,6 @@ bool SystemSDL::initialize(bool fullscreen) {
     }
 
     // TODO(nobody): maybe use double buffering?
-#ifdef GP2X
-    screen_surf_ = SDL_SetVideoMode(320, 240, 16, SDL_SWSURFACE);
-    temp_surf_ =
-        SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 8, 0, 0, 0, 0);
-#else
     screen_surf_ =
         SDL_SetVideoMode(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, depth_,
                          SDL_DOUBLEBUF | SDL_HWSURFACE | (fullscreen ?
@@ -124,8 +101,6 @@ bool SystemSDL::initialize(bool fullscreen) {
     temp_surf_ =
         SDL_CreateRGBSurface(SDL_SWSURFACE, GAME_SCREEN_WIDTH,
                              GAME_SCREEN_HEIGHT, 8, 0, 0, 0, 0);
-
-#endif
 
     cursor_surf_ = NULL;
     // Init SDL_Image library
@@ -189,7 +164,7 @@ void SystemSDL::updateScreen() {
  * a not printable key) returns the corresponding entry in the KeyFunc enumeration.
  * \returns If key code is not a function key, returns KEY_UNKNOWN.
  */
-void SystemSDL::checkKeyCodes(SDL_keysym keysym, Key &key) {
+void SystemSDL::checkKeyCodes(SDL_Keysym keysym, Key &key) {
     key.keyFunc = KFC_UNKNOWN;
     key.keyVirt = KVT_UNKNOWN;
     switch(keysym.sym) {
@@ -282,7 +257,7 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     key.unicode = 0;
                     checkKeyCodes(evtIn.key.keysym, key);
                     if (key.keyFunc == KFC_UNKNOWN) {
-                        key.unicode = evtIn.key.keysym.unicode;
+                        key.unicode = evtIn.key.keysym.sym;
 #if _DEBUG
                         printf( "Scancode: 0x%02X", evtIn.key.keysym.scancode );
                         printf( ", Name: %s", SDL_GetKeyName( evtIn.key.keysym.sym ) );

@@ -70,15 +70,15 @@ option(USE_SYSTEM_SDL "Use SDL Library" ON)
 if (USE_SYSTEM_SDL)
     target_compile_definitions(fs_engine PRIVATE "SYSTEM_SDL")
 
-    # Locate libs we depend on directly.
-    find_package (SDL)
-    if (NOT SDL_FOUND)
-        message (FATAL_ERROR "Unable to locate SDL")
+    # Find the SDL2 library
+    find_package (SDL2 REQUIRED)
+    if (NOT SDL2_FOUND)
+        message (FATAL_ERROR "Unable to locate SDL2 Library")
     endif ()
 
-    find_package (SDL_image)
-    if (NOT SDLIMAGE_FOUND)
-        message (FATAL_ERROR "Unable to locate SDL_image")
+    find_package (SDL2_image)
+    if (NOT SDL2_IMAGE_FOUND)
+        message (FATAL_ERROR "Unable to locate SDL2_image")
     endif ()
 
     add_library(fs_engine_sdl STATIC
@@ -90,7 +90,7 @@ if (USE_SYSTEM_SDL)
 
     target_include_directories(fs_engine_sdl PUBLIC src/system)
     target_include_directories(fs_engine_sdl PRIVATE include)
-    target_link_libraries(fs_engine_sdl PUBLIC SDL::SDL ${SDLIMAGE_LIBRARY} Freesynd::Utils)
+    target_link_libraries(fs_engine_sdl PUBLIC SDL2::Main SDL2::Image Freesynd::Utils)
 
     target_link_libraries(fs_engine PRIVATE Freesynd::Engine::Sdl)
 endif()
@@ -101,7 +101,7 @@ option(USE_SDL_MIXER "Use SDL Mixer library" ON)
 
 if (USE_SDL_MIXER)
 
-    find_package (SDL_mixer REQUIRED)
+    find_package (SDL2_mixer REQUIRED)
 
     add_library(fs_engine_sdlmixer STATIC
                   "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp"
@@ -116,7 +116,7 @@ if (USE_SDL_MIXER)
 
     target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
     target_include_directories(fs_engine_sdlmixer PRIVATE include)
-    target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL::SDL ${SDL_MIXER_LIBRARIES})
+    target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL2::Main SDL2::Mixer)
 
     target_compile_definitions(fs_engine_sdl PRIVATE "HAVE_SDL_MIXER")
 

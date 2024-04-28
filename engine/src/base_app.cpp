@@ -214,7 +214,7 @@ void BaseApp::run(const CliParam& param) {
     exit(1);
 #endif
 
-    // Then we go to the brief menu
+    // Let the concrete app decide what menu to start with
     menus_.gotoMenu(getStartMenuId(param));
 
     running_ = true;
