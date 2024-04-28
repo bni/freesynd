@@ -33,7 +33,6 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-engine/appcontext.h"
-#include "fs-engine/system/system.h"
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/soundmanager.h"
@@ -346,20 +345,19 @@ void MenuManager::renderMenu() {
     }
 }
 
-void MenuManager::handleEvents() {
-    FS_Event evt;
-    while(g_System.pumpEvents(&evt)) {
-        switch(evt.type) {
-        case EVT_QUIT:
-            gotoMenu(Menu::kMenuIdLogout);
-            break;
-        case EVT_MSE_MOTION:
-            if (current_ && !drop_events_)
-                current_->mouseMotionEvent(evt.motion.x, evt.motion.y, evt.motion.state, evt.motion.keyMods);
-            break;
-        case EVT_MSE_DOWN:
-            since_mouse_down_ = 0;
-            mouseup_was_ = false;
+void MenuManager::handleEvent(const FS_Event& evt) {
+
+    switch(evt.type) {
+    case EVT_QUIT:
+        gotoMenu(Menu::kMenuIdLogout);
+        break;
+    case EVT_MSE_MOTION:
+        if (current_ && !drop_events_)
+            current_->mouseMotionEvent(evt.motion.x, evt.motion.y, evt.motion.state, evt.motion.keyMods);
+        break;
+    case EVT_MSE_DOWN:
+        since_mouse_down_ = 0;
+        mouseup_was_ = false;
 #ifdef _DEBUG
             // Display mouse coordinate
             if (evt.button.keyMods & KMD_SHIFT) {
@@ -367,24 +365,23 @@ void MenuManager::handleEvents() {
             }
 #endif
 
-            if (current_ && !drop_events_) {
-                current_->mouseDownEvent(evt.button.x, evt.button.y, evt.button.button, evt.button.keyMods);
-            }
-            break;
-        case EVT_MSE_UP:
-            mouseup_was_ = true;
-            if (current_ && !drop_events_) {
-                current_->mouseUpEvent(evt.button.x, evt.button.y, evt.button.button, evt.button.keyMods);
-            }
-            break;
-        case EVT_KEY_DOWN:
-            if (current_ && !drop_events_) {
-                current_->keyEvent(evt.key.key, evt.key.keyMods);
-            }
-            break;
-        case EVT_NONE:
-            break;
+        if (current_ && !drop_events_) {
+            current_->mouseDownEvent(evt.button.x, evt.button.y, evt.button.button, evt.button.keyMods);
         }
+        break;
+    case EVT_MSE_UP:
+        mouseup_was_ = true;
+        if (current_ && !drop_events_) {
+            current_->mouseUpEvent(evt.button.x, evt.button.y, evt.button.button, evt.button.keyMods);
+        }
+        break;
+    case EVT_KEY_DOWN:
+        if (current_ && !drop_events_) {
+            current_->keyEvent(evt.key.key, evt.key.keyMods);
+        }
+        break;
+    case EVT_NONE:
+        break;
     }
 }
 

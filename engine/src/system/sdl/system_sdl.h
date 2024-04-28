@@ -53,6 +53,7 @@ public:
     void updateScreen();
     //! Pumps an event from the event queue
     bool pumpEvents(FS_Event *pEvtOut);
+
     void delay(int msec);
     int getTicks();
 
@@ -98,13 +99,18 @@ protected:
     /*! Current cursor hotspot.*/
     int cursor_hs_y_;
 
-    SDL_Surface *screen_surf_;
+    //! The main window
+    SDL_Window *pWindow_;
+    //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
+    SDL_Renderer *pRenderer_;
+
+    SDL_Surface *pScreenSurface;
+    //SDL_Surface *screen_surf_;
     SDL_Surface *temp_surf_;
     /*!
-     * A surface that holds all cursors
-     * images.
+     * A texture that holds all cursors images.
      */
-    SDL_Surface *cursor_surf_;
+    SDL_Texture *pCursorTexture_;
     /*! A rect that identify the part of
      * the cursor surface for the current cursor.*/
     SDL_Rect cursor_rect_;

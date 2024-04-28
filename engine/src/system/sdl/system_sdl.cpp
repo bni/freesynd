@@ -46,9 +46,12 @@ const int SystemSDL::CURSOR_WIDTH = 24;
 SystemSDL::SystemSDL(int depth) {
     depth_ = depth;
     keyModState_ = 0;
-    screen_surf_ = NULL;
+//    screen_surf_ = NULL;
     temp_surf_ = NULL;
-    cursor_surf_ = NULL;
+    pCursorTexture_ = nullptr;
+    pWindow_ = nullptr;
+    pRenderer_ = nullptr;
+    pScreenSurface = nullptr;
 }
 
 SystemSDL::~SystemSDL() {
@@ -56,8 +59,8 @@ SystemSDL::~SystemSDL() {
         SDL_FreeSurface(temp_surf_);
     }
 
-    if (cursor_surf_) {
-        SDL_FreeSurface(cursor_surf_);
+    if (pCursorTexture_) {
+        SDL_DestroyTexture(pCursorTexture_);
     }
 
     if (audio_) {
@@ -67,19 +70,52 @@ SystemSDL::~SystemSDL() {
     // Destroy SDL_Image Lib
     IMG_Quit();
 
+    if (pRenderer_) {
+        SDL_DestroyRenderer(pRenderer_);
+        pRenderer_ = nullptr;
+    }
+
+    if (pWindow_) {
+        SDL_DestroyWindow( pWindow_ );
+        pWindow_ = nullptr;
+    }
+
     SDL_Quit();
 }
 
 bool SystemSDL::initialize(bool fullscreen) {
     LOG(Log::k_FLG_INFO, "SystemSDL", "initialize", ("initializing System SDL"))
-    int resInit = SDL_Init(SDL_INIT_VIDEO);
 
-    if (resInit < 0) {
-        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Errcode : %i", resInit))
+    if (SDL_Init( SDL_INIT_VIDEO ) < 0) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Error : %s", SDL_GetError()))
         return false;
     }
 
-    //SDL_WM_SetCaption("FreeSynd", NULL);
+    pWindow_ = SDL_CreateWindow("Freesynd",
+                          SDL_WINDOWPOS_UNDEFINED,
+                          SDL_WINDOWPOS_UNDEFINED,
+                          GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT,
+                          //SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL
+                          SDL_WINDOW_SHOWN
+                          );
+
+    if (pWindow_ == nullptr) {
+        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
+
+    pRenderer_ = SDL_CreateRenderer(pWindow_, -1, 0);
+    if (pRenderer_ == nullptr) {
+        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
+
+    // initialize the screen to black
+    SDL_SetRenderDrawColor(pRenderer_, 0, 0, 0, 255);
+    SDL_RenderClear(pRenderer_);
+
+    //Get window surface
+    //pScreenSurface = SDL_GetWindowSurface( pWindow_ );
 
     // Audio initialization
 #ifdef HAVE_SDL_MIXER
@@ -93,7 +129,7 @@ bool SystemSDL::initialize(bool fullscreen) {
     }
 
     // TODO(nobody): maybe use double buffering?
-    screen_surf_ =
+/*    screen_surf_ =
         SDL_SetVideoMode(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, depth_,
                          SDL_DOUBLEBUF | SDL_HWSURFACE | (fullscreen ?
                                                           SDL_FULLSCREEN :
@@ -101,13 +137,14 @@ bool SystemSDL::initialize(bool fullscreen) {
     temp_surf_ =
         SDL_CreateRGBSurface(SDL_SWSURFACE, GAME_SCREEN_WIDTH,
                              GAME_SCREEN_HEIGHT, 8, 0, 0, 0, 0);
+*/
 
-    cursor_surf_ = NULL;
     // Init SDL_Image library
-    int sdl_img_flags = IMG_INIT_PNG;
-    int initted = IMG_Init(sdl_img_flags);
-    if ( (initted & sdl_img_flags) != sdl_img_flags ) {
-        printf("Failed to init SDL_Image : %s\n", IMG_GetError());
+    int sdlImgFlags = IMG_INIT_PNG;
+    int initted = IMG_Init(sdlImgFlags);
+    if ( (initted & sdlImgFlags) != sdlImgFlags ) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "initialize", ("Critical error, SDL_Image could not be initialized! SDL Error : %s", IMG_GetError()))
+        return false;
     } else {
         // Load the cursor sprites
         if (loadCursorSprites()) {
@@ -115,7 +152,8 @@ bool SystemSDL::initialize(bool fullscreen) {
             SDL_ShowCursor(SDL_DISABLE);
         }
         // At first the cursor is hidden
-        hideCursor();
+        //hideCursor();
+        showCursor();
         useMenuCursor();
     }
 
@@ -123,40 +161,36 @@ bool SystemSDL::initialize(bool fullscreen) {
 }
 
 void SystemSDL::updateScreen() {
-    if (g_Screen.dirty()|| (cursor_visible_ && update_cursor_)) {
+/*    if (g_Screen.dirty()|| (cursor_visible_ && update_cursor_)) {
         SDL_LockSurface(temp_surf_);
-#ifdef GP2X
-        const uint8 *pixeldata = g_Screen.pixels();
-        uint8 *screen = (uint8 *) temp_surf_->pixels;
-        for (int j = 0; j < 240; j++)
-            for (int i = 0; i < 320; i++) {
-                int tx = i * GAME_SCREEN_WIDTH / 320;
-                int ty = j * GAME_SCREEN_HEIGHT / 240;
 
-                uint8 c = pixeldata[ty * GAME_SCREEN_WIDTH + tx];
-                screen[j * 320 + i] = c;
-            }
-#else
         memcpy(temp_surf_->pixels, g_Screen.pixels(),
                GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
-#endif
+
         SDL_UnlockSurface(temp_surf_);
 
         g_Screen.clearDirty();
 
         SDL_BlitSurface(temp_surf_, NULL, screen_surf_, NULL);
 
-        if (cursor_visible_) {
-            SDL_Rect dst;
+    }*/
 
-            dst.x = cursor_x_ - cursor_hs_x_;
-            dst.y = cursor_y_ - cursor_hs_y_;
-            SDL_BlitSurface(cursor_surf_, &cursor_rect_, screen_surf_, &dst);
-            update_cursor_ = false;
-        }
+    SDL_RenderClear(pRenderer_);
 
-        SDL_Flip(screen_surf_);
+    if (cursor_visible_) {
+        SDL_Rect dst;
+
+        dst.x = cursor_x_ - cursor_hs_x_;
+        dst.y = cursor_y_ - cursor_hs_y_;
+        dst.w = dst.h = CURSOR_WIDTH;
+
+        SDL_RenderCopy( pRenderer_, pCursorTexture_, &cursor_rect_, &dst );
+        update_cursor_ = false;
     }
+
+    // Flip screen
+    SDL_RenderPresent( pRenderer_ );
+
 }
 
 /*!
@@ -262,11 +296,11 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                         printf( "Scancode: 0x%02X", evtIn.key.keysym.scancode );
                         printf( ", Name: %s", SDL_GetKeyName( evtIn.key.keysym.sym ) );
                         printf(", Unicode: " );
-                        if( evtIn.key.keysym.unicode < 0x80 && evtIn.key.keysym.unicode > 0 ){
-                            printf( "%c (0x%04X)\n", (char)evtIn.key.keysym.unicode,
-                                    evtIn.key.keysym.unicode );
+                        if( evtIn.key.keysym.sym < 0x80 && evtIn.key.keysym.sym > 0 ){
+                            printf( "%c (0x%04X)\n", (char)evtIn.key.keysym.sym,
+                                    evtIn.key.keysym.sym );
                         } else{
-                            printf( "? (0x%04X)\n", evtIn.key.keysym.unicode );
+                            printf( "? (0x%04X)\n", evtIn.key.keysym.sym );
                         }
 #endif
                     }
@@ -365,7 +399,7 @@ void SystemSDL::setPalette6b3(const uint8 * pal, int cols) {
 #endif
     }
 
-    SDL_SetColors(temp_surf_, palette, 0, cols);
+//    SDL_SetColors(temp_surf_, palette, 0, cols);
 }
 
 void SystemSDL::setPalette8b3(const uint8 * pal, int cols) {
@@ -377,7 +411,7 @@ void SystemSDL::setPalette8b3(const uint8 * pal, int cols) {
         palette[i].b = pal[i * 3 + 2];
     }
 
-    SDL_SetColors(temp_surf_, palette, 0, cols);
+//    SDL_SetColors(temp_surf_, palette, 0, cols);
 }
 
 void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
@@ -387,7 +421,7 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
     color.g = g;
     color.b = b;
 
-    SDL_SetColors(temp_surf_, &color, index, 1);
+//    SDL_SetColors(temp_surf_, &color, index, 1);
 }
 
 /*!
@@ -395,15 +429,26 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
  * cursors/cursors.png under the root path.
  * The file is loaded into the cursor surface.
  * \return False if the loading has failed. If it's the case,
- * cursor_surf_ will be NULL.
+ * pCursorSurface_ will be NULL.
  */
 bool SystemSDL::loadCursorSprites() {
+    LOG(Log::k_FLG_GFX, "SystemSDL", "loadCursorSprites", ("loading cursor sprites from file cursors/cursors.png"))
     cursor_rect_.w = cursor_rect_.h = CURSOR_WIDTH;
 
-    cursor_surf_ = IMG_Load(File::getFreesyndDataFullPath("cursors/cursors.png").c_str());
+    SDL_Surface* pLoadedSurface = IMG_Load(File::getFreesyndDataFullPath("cursors/cursors.png").c_str());
 
-    if (!cursor_surf_) {
-        printf("Cannot load cursors image: %s\n", IMG_GetError());
+    if (!pLoadedSurface) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "loadCursorSprites", ("Cannot load cursors image : %s", IMG_GetError()))
+        return false;
+    }
+
+    pCursorTexture_ = SDL_CreateTextureFromSurface( pRenderer_, pLoadedSurface );
+
+    //Get rid of old loaded surface
+    SDL_FreeSurface( pLoadedSurface );
+
+    if( pCursorTexture_ == nullptr ) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "loadCursorSprites", ("Cannot create cursor texture : %s", SDL_GetError()))
         return false;
     }
 
@@ -421,7 +466,7 @@ int SystemSDL::getMousePos(int *x, int *y) {
 }
 
 void SystemSDL::hideCursor() {
-    if (cursor_surf_ != NULL) {
+    if (pCursorTexture_!= NULL) {
         cursor_visible_ = false;
     } else {
         // Custom cursor surface doesn't
@@ -431,7 +476,7 @@ void SystemSDL::hideCursor() {
 }
 
 void SystemSDL::showCursor() {
-    if (cursor_surf_ != NULL) {
+    if (pCursorTexture_ != NULL) {
         cursor_visible_ = true;
     } else {
         // Custom cursor surface doesn't

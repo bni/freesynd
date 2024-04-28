@@ -189,7 +189,7 @@ void BaseApp::doDestroy() {}
 void BaseApp::run(const CliParam& param) {
 
     // load palette
-    menus().setDefaultPalette();
+    //menus().setDefaultPalette();
 
 #if 0
     system_->updateScreen();
@@ -215,7 +215,7 @@ void BaseApp::run(const CliParam& param) {
 #endif
 
     // Let the concrete app decide what menu to start with
-    menus_.gotoMenu(getStartMenuId(param));
+    //menus_.gotoMenu(getStartMenuId(param));
 
     running_ = true;
     int lasttick = system_->getTicks();
@@ -223,24 +223,25 @@ void BaseApp::run(const CliParam& param) {
         int curtick = system_->getTicks();
         int diff_ticks = curtick - lasttick;
         menus_.updtSinceMouseDown(diff_ticks);
-        menus_.handleEvents();
+
+        FS_Event fsEvt;
+        while(system_->pumpEvents(&fsEvt)) {
+            if (fsEvt.type == EVT_QUIT) {
+                // temporaire
+                running_ = false;
+            } else {
+                menus_.handleEvent(fsEvt);
+            }
+        }
         if (diff_ticks < 30) {
             system_->delay(30 - diff_ticks);
             continue;
         }
-        menus_.handleTick(diff_ticks);
-        menus_.renderMenu();
+        //menus_.handleTick(diff_ticks);
+        //menus_.renderMenu();
         lasttick = curtick;
         system_->updateScreen();
     }
-
-#ifdef GP2X
-#ifndef WIN32
-    // return to the menu
-    chdir("/usr/gp2x");
-    execl("/usr/gp2x/gp2xmenu", "/usr/gp2x/gp2xmenu", NULL);
-#endif
-#endif
 }
 
 void BaseApp::waitForKeyPress() {
@@ -248,7 +249,10 @@ void BaseApp::waitForKeyPress() {
     while (isRunning()) {
         // small pause while waiting for key, also mouse event
         system_->delay(20);
-        menus().handleEvents();
+        FS_Event fsEvt;
+        while(system_->pumpEvents(&fsEvt)) {
+            menus_.handleEvent(fsEvt);
+        }
     }
 }
 

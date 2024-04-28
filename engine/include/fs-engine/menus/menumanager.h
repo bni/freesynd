@@ -32,6 +32,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/io/configfile.h"
+#include "fs-engine/system/system.h"
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/gfx/dirtylist.h"
 #include "fs-engine/gfx/spritemanager.h"
@@ -75,8 +76,8 @@ public:
         return fonts_;
     }
 
-    /*! Reads events from the event queue and dispatches them.*/
-    void handleEvents();
+    //! Dispatches event based on its type
+    void handleEvent(const FS_Event& evt);
 
     void handleTick(int elapsed) {
         if (current_)

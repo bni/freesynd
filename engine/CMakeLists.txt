@@ -91,6 +91,7 @@ if (USE_SYSTEM_SDL)
     target_include_directories(fs_engine_sdl PUBLIC src/system)
     target_include_directories(fs_engine_sdl PRIVATE include)
     target_link_libraries(fs_engine_sdl PUBLIC SDL2::Main SDL2::Image Freesynd::Utils)
+    target_link_libraries(fs_engine_sdl PRIVATE freesynd_warnings )
 
     target_link_libraries(fs_engine PRIVATE Freesynd::Engine::Sdl)
 endif()
@@ -116,7 +117,7 @@ if (USE_SDL_MIXER)
 
     target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
     target_include_directories(fs_engine_sdlmixer PRIVATE include)
-    target_link_libraries(fs_engine_sdlmixer PRIVATE Freesynd::Utils SDL2::Main SDL2::Mixer)
+    target_link_libraries(fs_engine_sdlmixer PRIVATE freesynd_warnings Freesynd::Utils SDL2::Main SDL2::Mixer)
 
     target_compile_definitions(fs_engine_sdl PRIVATE "HAVE_SDL_MIXER")
 
