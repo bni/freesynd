@@ -244,7 +244,7 @@ void SystemSDL::updateScreen() {
  * a not printable key) returns the corresponding entry in the KeyFunc enumeration.
  * \returns If key code is not a function key, returns KEY_UNKNOWN.
  */
-void SystemSDL::checkKeyCodes(SDL_Keysym keysym, Key &key) {
+void SystemSDL::checkKeyCodes(SDL_Keysym keysym, FS_Key &key) {
     key.keyFunc = KFC_UNKNOWN;
     key.keyVirt = KVT_UNKNOWN;
     switch(keysym.sym) {
@@ -261,7 +261,7 @@ void SystemSDL::checkKeyCodes(SDL_Keysym keysym, Key &key) {
         case SDLK_END:
         case SDLK_PAGEUP:
         case SDLK_PAGEDOWN:
-            key.keyFunc = static_cast < KeyFunc > (KFC_UP + (keysym.sym - SDLK_UP));
+            key.keyFunc = static_cast < FS_KeyFunc > (KFC_UP + (keysym.sym - SDLK_UP));
             break;
         case SDLK_F1:
         case SDLK_F2:
@@ -275,11 +275,11 @@ void SystemSDL::checkKeyCodes(SDL_Keysym keysym, Key &key) {
         case SDLK_F10:
         case SDLK_F11:
         case SDLK_F12:
-            key.keyFunc = static_cast < KeyFunc > (KFC_F1 + (keysym.sym - SDLK_F1));
+            key.keyFunc = static_cast < FS_KeyFunc > (KFC_F1 + (keysym.sym - SDLK_F1));
             break;
         case SDLK_0:case SDLK_1:case SDLK_2:case SDLK_3:case SDLK_4:
         case SDLK_5:case SDLK_6:case SDLK_7:case SDLK_8:case SDLK_9:
-            key.keyVirt = static_cast < KeyVirtual > (KVT_NUMPAD0 + (keysym.sym - SDLK_0));
+            key.keyVirt = static_cast < FS_KeyVirtual > (KVT_NUMPAD0 + (keysym.sym - SDLK_0));
             break;
         default:
             // unused key
@@ -333,7 +333,7 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     // Plus, the application receives event only when key is pressed
                     // not released.
                     pEvtOut->type = EVT_KEY_DOWN;
-                    Key key;
+                    FS_Key key;
                     key.unicode = 0;
                     checkKeyCodes(evtIn.key.keysym, key);
                     if (key.keyFunc == KFC_UNKNOWN) {

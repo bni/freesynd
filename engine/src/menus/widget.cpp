@@ -631,7 +631,7 @@ void TextField::handleDelete() {
 }
 
 // Insert new character at caret position
-void TextField::handleCharacter(Key key) {
+void TextField::handleCharacter(FS_Key key) {
     // Key can be displayed -> insert it at the caret position
     char src[100];
     size_t size = text_.getText().size();
@@ -670,7 +670,7 @@ void TextField::handleCharacter(Key key) {
     }
 }
 
-bool TextField::handleKey(Key key, const int modKeys) {
+bool TextField::handleKey(FS_Key key, const int modKeys) {
     bool needRedraw = false;
     if (key.keyFunc == KFC_LEFT) {
         // Move caret to the left until start of the text

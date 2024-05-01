@@ -299,7 +299,7 @@ bool FliMenu::handleMouseDown(int x, int y, int button, const int modKeys)
 /*!
  * Ends the animation.
  */
-bool FliMenu::handleUnknownKey(Key key, const int modKeys) {
+bool FliMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     if (fliIndex_ > 0) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);
         if ((playingFli_ && desc.skipable) || (!playingFli_ && desc.waitKeyPressed)) {

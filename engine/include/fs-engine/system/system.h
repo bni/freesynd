@@ -65,7 +65,7 @@ struct FS_MouseButtonEvent {
 
 struct FS_KeyEvent {
     FS_EventType type;    /**< EVT_KEY_DOWN */
-    Key key;
+    FS_Key key;
     int keyMods;
 };
 

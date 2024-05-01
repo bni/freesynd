@@ -99,7 +99,7 @@ public:
     //! Returns the Option with the given id
     Option * getOption(int buttonId);
     //! Adds a mapping between a Function Key and an Option
-    void registerHotKey(KeyFunc key, int optId);
+    void registerHotKey(FS_KeyFunc key, int optId);
     //! Adds a mapping between a Printable Key and an Option
     void registerHotKey(uint16 unicode, int optId);
 
@@ -124,7 +124,7 @@ public:
     virtual void handleLeave() {}
 
     //! Handles key pressed
-    void keyEvent(Key key, const int modKeys);
+    void keyEvent(FS_Key key, const int modKeys);
     //! Handles mouse moved
     void mouseMotionEvent(int x, int y, int state, const int modKeys);
     //! Handles mouse button pressed
@@ -166,7 +166,7 @@ protected:
     virtual bool handleMouseDown(int x, int y, int button, const int modKeys) { return false; }
     virtual void handleMouseUp(int x, int y, int button, const int modKeys) {}
     virtual void handleMouseMotion(int x, int y, int state, const int modKeys) {}
-    virtual bool handleUnknownKey(Key key, const int modKeys) { return false;}
+    virtual bool handleUnknownKey(FS_Key key, const int modKeys) { return false;}
 
     void needRendering();
 
@@ -182,12 +182,12 @@ protected:
 protected:
     class HotKey {
     public:
-        HotKey(KeyFunc code, uint16 unicode, Option *pOpt) {
+        HotKey(FS_KeyFunc code, uint16 unicode, Option *pOpt) {
             key.keyFunc = code;
             key.unicode = unicode;
             pOption = pOpt;
         }
-        Key key;
+        FS_Key key;
         Option *pOption;
     };
 

@@ -207,7 +207,7 @@ void ConfMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
     }
 }
 
-bool ConfMenu::handleUnknownKey(Key key, const int modKeys) {
+bool ConfMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     if (currPanel_ != PNL_MAIN) {
         if (key.keyFunc == KFC_ESCAPE) {
             showMainPanel();

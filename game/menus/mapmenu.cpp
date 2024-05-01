@@ -410,7 +410,7 @@ void MapMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
     }
 }
 
-bool MapMenu::handleUnknownKey(Key key, const int modKeys) {
+bool MapMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     bool consumed = false;
     if (key.keyFunc == KFC_LEFT) {
         // navigate among available missions by decreasing index

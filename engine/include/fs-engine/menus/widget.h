@@ -231,7 +231,7 @@ public:
 
     ~Option();
 
-    Key getHotKey() { return hotKey_; }
+    FS_Key getHotKey() { return hotKey_; }
 
     //! Draw the widget on screen
     void draw();
@@ -262,7 +262,7 @@ protected:
     /*!
      * This button can have an acceleration key.
      */
-    Key hotKey_;
+    FS_Key hotKey_;
 };
 
 class ToggleAction;
@@ -417,7 +417,7 @@ public:
     void handleCaptureGained();
     void handleCaptureLost();
 
-    bool handleKey(Key key, const int modKeys);
+    bool handleKey(FS_Key key, const int modKeys);
 
 protected:
     void drawCaret();
@@ -427,7 +427,7 @@ protected:
     // Removes one character forward
     void handleDelete();
     // Insert new character at caret position
-    void handleCharacter(Key key);
+    void handleCharacter(FS_Key key);
 
 protected:
     /*! Label for empty lines.*/

@@ -310,7 +310,7 @@ Option * Menu::getOption(int optionId) {
  * \param code The hot key
  * \param optId The option id
  */
-void  Menu::registerHotKey(KeyFunc code, int optId) {
+void  Menu::registerHotKey(FS_KeyFunc code, int optId) {
     Option *pOption = getOption(optId);
     if (pOption) {
         HotKey hc(code, 0, pOption);
@@ -349,7 +349,7 @@ void Menu::captureInputBy(TextField *pTextfield) {
  * \param key The key that was pressed
  * \param modKeys State of all modifier keys
  */
-void Menu::keyEvent(Key key, const int modKeys)
+void Menu::keyEvent(FS_Key key, const int modKeys)
 {
     // first pass the event to the textfield that has the cursor
     if (pCaptureInput_ != NULL) {

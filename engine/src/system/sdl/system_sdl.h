@@ -91,7 +91,7 @@ protected:
     bool loadCursorSprites();
 
     //! Sets the key arguments with some key codes
-    void checkKeyCodes(SDL_Keysym sym, Key &key);
+    void checkKeyCodes(SDL_Keysym sym, FS_Key &key);
 
 protected:
     /*! A constant that holds the cursor icon width and height.*/

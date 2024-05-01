@@ -74,7 +74,7 @@ protected:
 
     bool handleMouseDown(int x, int y, int button, const int modKeys);
 
-    bool handleUnknownKey(Key key, const int modKeys);
+    bool handleUnknownKey(FS_Key key, const int modKeys) override;
 
     bool loadNextFli();
 

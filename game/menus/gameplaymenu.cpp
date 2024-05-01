@@ -904,7 +904,7 @@ void GameplayMenu::handleMouseUp(int x, int y, int button, const int modKeys)
 
 }
 
-bool GameplayMenu::handleUnknownKey(Key key, const int modKeys) {
+bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     bool change = false; /* indicator whether menu should be redrawn */
     bool consumed = true;
 

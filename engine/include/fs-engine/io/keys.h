@@ -30,7 +30,7 @@
 /*!
  * All available key codes.
  */
-enum KeyFunc {
+enum FS_KeyFunc {
     KFC_UNKNOWN = 0,
     KFC_ESCAPE = 1,
     KFC_BACKSPACE = 2,
@@ -64,7 +64,7 @@ enum KeyFunc {
 };
 
 //! Valid key modifiers
-enum KeyMod {
+enum FS_KeyMod {
     KMD_NONE = 0x0000,
     KMD_LSHIFT = 0x0001,
     KMD_RSHIFT = 0x0002,
@@ -81,7 +81,7 @@ const int KMD_ALT = KMD_LALT | KMD_RALT;
 /*!
  * Virtual key represents the physical key on a keyboard.
  */
-enum KeyVirtual {
+enum FS_KeyVirtual {
     KVT_UNKNOWN = 0,
     KVT_NUMPAD0 = 1,
     KVT_NUMPAD1 = 2,
@@ -99,11 +99,11 @@ enum KeyVirtual {
 /*!
  * All available key codes.
  */
-typedef struct Key {
-    KeyFunc keyFunc;
-    KeyVirtual keyVirt;        /**< Virtual key : KVT_UNKNOWN if not set. */
+struct FS_Key {
+    FS_KeyFunc keyFunc;
+    FS_KeyVirtual keyVirt;        /**< Virtual key : KVT_UNKNOWN if not set. */
     uint16 unicode;            /**< Unicode for printable characters. */
-} Key;
+};
 
 // A list of macros to ease unicode comparisons (case insensitive)
 #define isLetterA(codePoint) codePoint == 0x0061 || codePoint == 0x0041
