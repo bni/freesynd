@@ -51,15 +51,15 @@ struct FS_QuitEvent {
 
 struct FS_MouseMotionEvent {
     FS_EventType type;    /**< SDL_MOUSEMOTION */
-    uint8 state;    /**< The current button state */
-    uint16 x, y;    /**< The X/Y coordinates of the mouse */
+    uint32 state;    /**< The current button state */
+    int32 x, y;    /**< The X/Y coordinates of the mouse */
     int keyMods;
 };
 
 struct FS_MouseButtonEvent {
     FS_EventType type;    /**< SDL_MOUSEMOTION */
     uint8 button;    /**< The current button state */
-    uint16 x, y;    /**< The X/Y coordinates of the mouse */
+    int32 x, y;    /**< The X/Y coordinates of the mouse */
     int keyMods;
 };
 
@@ -91,15 +91,15 @@ public:
     virtual void updateScreen() = 0;
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event *pEvtOut) = 0;
-    virtual void delay(int msec) = 0;
-    virtual int getTicks() = 0;
+    virtual void delay(uint32 msec) = 0;
+    virtual uint32 getTicks() = 0;
 
-    virtual void setPalette6b3(const uint8 *pal, int cols = 256) = 0;
-    virtual void setPalette8b3(const uint8 *pal, int cols = 256) = 0;
+    virtual bool setPalette6b3(const uint8 *pal, int cols = 256) = 0;
+    virtual bool setPalette8b3(const uint8 *pal, int cols = 256) = 0;
     virtual void setColor(uint8 index, uint8 r, uint8 g, uint8 b) = 0;
 
     //! Returns the mouse pointer coordinates
-    virtual int getMousePos(int *x, int *y) = 0;
+    virtual uint32 getMousePos(int *x, int *y) = 0;
     //! Hides the mouse cursor.
     virtual void hideCursor() = 0;
     //! Shows the mouse cursor.

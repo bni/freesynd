@@ -5,7 +5,8 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2010-2024                                            *
+ *      Benoit Blancard <benblan@users.sourceforge.net>                 *
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -31,12 +32,18 @@
 #include "fs-engine/system/system.h"
 #include "fs-engine/io/keys.h"
 
-//! Implementation of the System interface for SDL.
-/*!
- * This class implements the System interface based on the SDL library.
- *  - Mouse Cursor\n
+/*! \brief Implementation of the System interface for SDL.
+ *
+ * This class implements the System interface based on the SDL2 library.
+ *  - Display
+ *    Every object in the game is drawn on a simple uint8 array in the Screen
+ *    class. Then in SystemSDL::updateScreen(), we copy this array into a
+ *    Uint32 array that matches the display format and this array is then copied
+ *    to an SDL Texture. This texture is then copied on the back buffer before
+ *    presenting the scree.
+ *  - Mouse Cursor
  *    In order to display colorfull cursors, the SDL cursor display is disabled
- *    and is manually managed by this class.\n
+ *    and is manually managed by this class with a SDL_Texture.
  *    A surface is loaded with a collection of sprites, and every time the
  *    mouse moves, the corresponding sprite is blit on screen at the
  *    mouse coordinates.\n
@@ -45,38 +52,41 @@
  */
 class SystemSDL : public System {
 public:
-    SystemSDL(int depth = 32);
+    SystemSDL();
     ~SystemSDL();
 
-    bool initialize(bool fullscreen);
-
-    void updateScreen();
+    //! Initialize the SDL resources
+    bool initialize(bool fullscreen) override;
+    //! Render back buffer to the screen
+    void updateScreen() override;
     //! Pumps an event from the event queue
-    bool pumpEvents(FS_Event *pEvtOut);
+    bool pumpEvents(FS_Event *pEvtOut) override;
 
-    void delay(int msec);
-    int getTicks();
+    void delay(uint32 msec) override;
+    uint32 getTicks() override;
 
-    void setPalette6b3(const uint8 *pal, int cols = 256);
-    void setPalette8b3(const uint8 *pal, int cols = 256);
-    void setColor(uint8 index, uint8 r, uint8 g, uint8 b);
+    bool setPalette6b3(const uint8 *pal, int cols = 256) override;
+    bool setPalette8b3(const uint8 *pal, int cols = 256) override;
+    void setColor(uint8 index, uint8 r, uint8 g, uint8 b) override;
 
     //! Returns the mouse pointer coordinates
-    int getMousePos(int *x, int *y);
+    uint32 getMousePos(int *x, int *y) override;
 
-    void hideCursor();
-    void showCursor();
-    void useMenuCursor();
-    void usePointerCursor();
-    void usePointerYellowCursor();
-    void useTargetCursor();
-    void useTargetRedCursor();
-    void usePickupCursor();
-    int getKeyModState() {
+    void hideCursor() override;
+    void showCursor() override;
+    void useMenuCursor() override;
+    void usePointerCursor() override;
+    void usePointerYellowCursor() override;
+    void useTargetCursor() override;
+    void useTargetRedCursor() override;
+    void usePickupCursor() override;
+    int getKeyModState() override {
         return keyModState_;
     }
 
 protected:
+    //! Creates a SDL window either for fullscreen or not
+    SDL_Window * createWindow(bool fullscreen);
     //! Loads the graphic file that contains the cursor sprites.
     bool loadCursorSprites();
 
@@ -85,15 +95,13 @@ protected:
 
 protected:
     /*! A constant that holds the cursor icon width and height.*/
-    static const int CURSOR_WIDTH;
-    int depth_;
-    bool scale_;
+    static const int kCursorWidth;
     /*! Cursor visibility.*/
     bool cursor_visible_;
     /*! Cursor screen coordinates. */
-    int cursor_x_;
+    int32 cursor_x_;
     /*! Cursor screen coordinates. */
-    int cursor_y_;
+    int32 cursor_y_;
     /*! Current cursor hotspot.*/
     int cursor_hs_x_;
     /*! Current cursor hotspot.*/
@@ -104,9 +112,22 @@ protected:
     //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
     SDL_Renderer *pRenderer_;
 
-    SDL_Surface *pScreenSurface;
-    //SDL_Surface *screen_surf_;
-    SDL_Surface *temp_surf_;
+    /*!
+     * This array is used to transform the Screen::pixels that are uint8 into Uint32 pixels.
+     */
+    Uint32 *pixels_;
+    /*!
+     * This surface is only used to store the current palette. It should replace completely
+     * the pixels_ array.
+     * NOTE : There is currently a bug when using directly the surface to copy pixels : getting
+     * an error message "double free or corruption (!prev)" when exiting the application.
+     */
+    SDL_Surface *pScreenSurface_;
+    /*!
+     * A texture to render the screen using hardware acceleration.
+     */
+    SDL_Texture *pScreenTexture_;
+
     /*!
      * A texture that holds all cursors images.
      */

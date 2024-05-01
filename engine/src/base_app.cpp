@@ -189,7 +189,7 @@ void BaseApp::doDestroy() {}
 void BaseApp::run(const CliParam& param) {
 
     // load palette
-    //menus().setDefaultPalette();
+    menus().setDefaultPalette();
 
 #if 0
     system_->updateScreen();
@@ -215,7 +215,7 @@ void BaseApp::run(const CliParam& param) {
 #endif
 
     // Let the concrete app decide what menu to start with
-    //menus_.gotoMenu(getStartMenuId(param));
+    menus_.gotoMenu(getStartMenuId(param));
 
     running_ = true;
     int lasttick = system_->getTicks();
@@ -237,8 +237,8 @@ void BaseApp::run(const CliParam& param) {
             system_->delay(30 - diff_ticks);
             continue;
         }
-        //menus_.handleTick(diff_ticks);
-        //menus_.renderMenu();
+        menus_.handleTick(diff_ticks);
+        menus_.renderMenu();
         lasttick = curtick;
         system_->updateScreen();
     }
