@@ -1,11 +1,9 @@
-FreeSynd 0.8
-------------
+# FreeSynd 0.8
 FreeSynd is a free, cross-platform reimplementation of engine for the classic
 Bullfrog game "Syndicate". For more information see:
     http://freesynd.sourceforge.net/
 
-License information
--------------------
+## License information
 FreeSynd is released under the GNU General Public License, version 2.
 See the file "COPYING" for information on this license.
 
@@ -26,43 +24,39 @@ It is freely available. See license in the utils/utf8.h and utils/utf8/*.h files
 Class CRC32 from NetworkDLS, see license in utils/ccrc32.h and utils/ccrc32.cpp.
 
 
-What's new in this release?
----------------------------
+## What's new in this release?
 See the file "ChangeLog".
 
-Known issues with this release
-------------------------------
-  * Agent AI is partially operational.
-  * PathFinding requires improvement (path smoothing)
-  * Trains that moves North/South have a buggy display (it flickers)
-  * Not all weapons correctly function.
+## Known issues with this release
+- Agent AI is partially operational.
+- PathFinding requires improvement (path smoothing)
+- Trains that moves North/South have a buggy display (it flickers)
+- Not all weapons correctly function.
 
-Installing & running the game
--------------------
+## Installing & running the game
 See the file "INSTALL" for information on how to install the game.
 
-Running options
----------------
+## Running options
 Type "freesynd -h" to display the list of available arguments when starting the application.
  
-Commands
---------
--- Mission Selection:
+## Commands
+
+### Mission Selection
  * 0     : Puts the selector on first mission.
  * Left  : Puts the selector on the next mission.
  * Right : Puts the selector on the previous mission.
- * + / - : Increase / decrease tax rate on selected country by 1%.
+ * Up / Down : Increase / decrease tax rate on selected country by 1%.
            If control key is held while clicking with the mouse on the button , the rates will change by 10%.
            (Rates above 30% will downgrade the population status to rebellious
            and the mission will have to be played again. Rates below 30% will
            upgrade the population status to "very happy".)
  * Page Up / Page Down : Increase / decrease tax rate on selected country by 10%.
  
--- Agent Selection Menu:
+### Agent Selection Menu
  * Right Click on agents number: (de-)activates agent
  * Right Click and drag selected weapon to required agent number to exchange
  
--- In game:
+### In game
  * F1  : Turns music on/off.
  * F2  : Turns game sounds on/off.
  * F5 - F12 : each key selects/deselects one item in the inventory.
@@ -90,13 +84,12 @@ Commands
  * Ctrl + Right Click  : Sets a target to shoot for the selected agents.
  
  
--- Debug Mode :
+### Debug Mode
  * Alt  : shows agents walk path, if over an object shows its id and
 major type
  * Shift : mouse coordinates are printed
 
-Contact
--------
+## Contact
 If you find a bug or would like to help the development of FreeSynd, please 
 stop by the sourceforge project bug tracker, drop us an email or visit the
 forums.

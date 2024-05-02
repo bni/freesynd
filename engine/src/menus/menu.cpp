@@ -179,7 +179,7 @@ int Menu::addOption(int x, int y, int width, int height, const char *text, FontM
     std::unique_ptr<Option> pOption =
                 std::make_unique<Option>(this, x, y, width, height, text, getMenuFont(size), to, visible, centered, dark_widget, light_widget);
 
-    if (pOption->getHotKey().keyFunc != KFC_UNKNOWN || pOption->getHotKey().unicode != 0) {
+    if (pOption->getHotKey().keyCode != kKeyCode_Unknown || pOption->getHotKey().unicode != 0) {
         // The option already has an acceleration key
         registerHotKey(pOption->getHotKey().unicode, pOption->getId());
     }
@@ -310,7 +310,7 @@ Option * Menu::getOption(int optionId) {
  * \param code The hot key
  * \param optId The option id
  */
-void  Menu::registerHotKey(FS_KeyFunc code, int optId) {
+void  Menu::registerHotKey(FS_KeyCode code, int optId) {
     Option *pOption = getOption(optId);
     if (pOption) {
         HotKey hc(code, 0, pOption);
@@ -327,7 +327,7 @@ void  Menu::registerHotKey(FS_KeyFunc code, int optId) {
 void  Menu::registerHotKey(uint16 unicode, int optId) {
     Option *pOption = getOption(optId);
     if (pOption) {
-        HotKey hc(KFC_UNKNOWN, unicode, pOption);
+        HotKey hc(kKeyCode_Unknown, unicode, pOption);
         hotKeys_.push_back(hc);
     }
 }
@@ -368,7 +368,7 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
                         // so uppercase it
                         c -= 32;
                     }
-                    if ((*it).key.keyFunc == key.keyFunc && (*it).key.unicode == c) {
+                    if ((*it).key.keyCode == key.keyCode && (*it).key.unicode == c) {
                     Option *opt = (*it).pOption;
                     if (opt->isVisible() && opt->isWidgetEnabled()) {
                         opt->executeAction(modKeys);
@@ -382,7 +382,7 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
     if (!handleUnknownKey(key, modKeys)) {
         // Menu has not consummed key event :
         // Pressing Escape changes the current menu to its parent(like a back)
-        if (key.keyFunc == KFC_ESCAPE) {
+        if (key.keyCode == KFC_ESCAPE) {
             menu_manager_->gotoMenu(parentId_);
             return;
         }

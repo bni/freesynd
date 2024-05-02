@@ -60,7 +60,7 @@ public:
     //! Render back buffer to the screen
     void updateScreen() override;
     //! Pumps an event from the event queue
-    bool pumpEvents(FS_Event *pEvtOut) override;
+    bool pumpEvents(FS_Event &evtOut) override;
 
     void delay(uint32 msec) override;
     uint32 getTicks() override;
@@ -91,7 +91,7 @@ protected:
     bool loadCursorSprites();
 
     //! Sets the key arguments with some key codes
-    void checkKeyCodes(SDL_Keysym sym, FS_Key &key);
+    void fillKeyEvent(SDL_Keysym sym, FS_Event &evtOut);
 
 protected:
     /*! A constant that holds the cursor icon width and height.*/

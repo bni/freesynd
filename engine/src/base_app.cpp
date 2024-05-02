@@ -225,13 +225,8 @@ void BaseApp::run(const CliParam& param) {
         menus_.updtSinceMouseDown(diff_ticks);
 
         FS_Event fsEvt;
-        while(system_->pumpEvents(&fsEvt)) {
-            if (fsEvt.type == EVT_QUIT) {
-                // temporaire
-                running_ = false;
-            } else {
-                menus_.handleEvent(fsEvt);
-            }
+        while(system_->pumpEvents(fsEvt)) {
+            menus_.handleEvent(fsEvt);
         }
         if (diff_ticks < 30) {
             system_->delay(30 - diff_ticks);
@@ -250,7 +245,7 @@ void BaseApp::waitForKeyPress() {
         // small pause while waiting for key, also mouse event
         system_->delay(20);
         FS_Event fsEvt;
-        while(system_->pumpEvents(&fsEvt)) {
+        while(system_->pumpEvents(fsEvt)) {
             menus_.handleEvent(fsEvt);
         }
     }

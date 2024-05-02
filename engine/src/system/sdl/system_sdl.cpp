@@ -244,47 +244,58 @@ void SystemSDL::updateScreen() {
  * a not printable key) returns the corresponding entry in the KeyFunc enumeration.
  * \returns If key code is not a function key, returns KEY_UNKNOWN.
  */
-void SystemSDL::checkKeyCodes(SDL_Keysym keysym, FS_Key &key) {
-    key.keyFunc = KFC_UNKNOWN;
-    key.keyVirt = KVT_UNKNOWN;
+void SystemSDL::fillKeyEvent(SDL_Keysym keysym, FS_Event &evtOut) {
+    evtOut.type = EVT_KEY_DOWN;
+    FS_Key key;
+    key.unicode = 0;
+    key.keyCode = kKeyCode_Unknown;
     switch(keysym.sym) {
-        case SDLK_ESCAPE: key.keyFunc = KFC_ESCAPE; break;
-        case SDLK_BACKSPACE: key.keyFunc = KFC_BACKSPACE; break;
-        case SDLK_RETURN: key.keyFunc = KFC_RETURN; break;
-        case SDLK_DELETE: key.keyFunc = KFC_DELETE; break;
-        case SDLK_UP:
-        case SDLK_DOWN:
-        case SDLK_RIGHT:
-        case SDLK_LEFT:
-        case SDLK_INSERT:
-        case SDLK_HOME:
-        case SDLK_END:
-        case SDLK_PAGEUP:
-        case SDLK_PAGEDOWN:
-            key.keyFunc = static_cast < FS_KeyFunc > (KFC_UP + (keysym.sym - SDLK_UP));
-            break;
-        case SDLK_F1:
-        case SDLK_F2:
-        case SDLK_F3:
-        case SDLK_F4:
-        case SDLK_F5:
-        case SDLK_F6:
-        case SDLK_F7:
-        case SDLK_F8:
-        case SDLK_F9:
-        case SDLK_F10:
-        case SDLK_F11:
-        case SDLK_F12:
-            key.keyFunc = static_cast < FS_KeyFunc > (KFC_F1 + (keysym.sym - SDLK_F1));
-            break;
+        case SDLK_ESCAPE: key.keyCode = KFC_ESCAPE; break;
+        case SDLK_BACKSPACE: key.keyCode = KFC_BACKSPACE;break;
+        case SDLK_SPACE: key.keyCode = kKeyCode_Space;break;
+        case SDLK_RETURN: key.keyCode = KFC_RETURN; break;
+        case SDLK_DELETE: key.keyCode = KFC_DELETE;break;
+        case SDLK_UP: key.keyCode = KFC_UP;break;
+        case SDLK_DOWN: key.keyCode = KFC_DOWN;break;
+        case SDLK_RIGHT: key.keyCode = KFC_RIGHT;break;
+        case SDLK_LEFT: key.keyCode = KFC_LEFT;break;
+        case SDLK_INSERT: key.keyCode = KFC_INSERT;break;
+        case SDLK_HOME: key.keyCode = KFC_HOME;break;
+        case SDLK_END: key.keyCode = KFC_END;break;
+        case SDLK_PAGEUP: key.keyCode = KFC_PAGEUP;break;
+        case SDLK_PAGEDOWN: key.keyCode = KFC_PAGEDOWN;break;
+        case SDLK_F1: key.keyCode = KFC_F1;break;
+        case SDLK_F2: key.keyCode = KFC_F2;break;
+        case SDLK_F3: key.keyCode = KFC_F3;break;
+        case SDLK_F4: key.keyCode = KFC_F4;break;
+        case SDLK_F5: key.keyCode = KFC_F5;break;
+        case SDLK_F6: key.keyCode = KFC_F6;break;
+        case SDLK_F7: key.keyCode = KFC_F7;break;
+        case SDLK_F8: key.keyCode = KFC_F8;break;
+        case SDLK_F9: key.keyCode = KFC_F9;break;
+        case SDLK_F10: key.keyCode = KFC_F10;break;
+        case SDLK_F11: key.keyCode = KFC_F11;break;
+        case SDLK_F12: key.keyCode = KFC_F12;break;
         case SDLK_0:case SDLK_1:case SDLK_2:case SDLK_3:case SDLK_4:
-        case SDLK_5:case SDLK_6:case SDLK_7:case SDLK_8:case SDLK_9:
-            key.keyVirt = static_cast < FS_KeyVirtual > (KVT_NUMPAD0 + (keysym.sym - SDLK_0));
+            key.keyCode = static_cast < FS_KeyCode > (kKeyCode_0 + (keysym.sym - SDLK_0));
             break;
+        case SDLK_d:  key.keyCode = kKeyCode_D;break;
+        case SDLK_p:  key.keyCode = kKeyCode_P;break;
         default:
             // unused key
             break;
     }
+
+    if (key.keyCode == kKeyCode_Unknown) {
+        key.unicode = keysym.sym;
+#if _DEBUG
+        printf( "Scancode: 0x%02X", keysym.scancode );
+        printf( ", Name: %s", SDL_GetKeyName( keysym.sym ) );
+        printf(", Keycode: 0x%02X \n", keysym.sym );
+#endif
+    }
+    evtOut.key.key = key;
+    evtOut.key.keyMods = keyModState_;
 }
 
 //! Pumps an event from the event queue
@@ -296,16 +307,19 @@ void SystemSDL::checkKeyCodes(SDL_Keysym keysym, FS_Key &key) {
  * when a regular key is pressed. So that the application knows
  * if multiple modifier keys are pressed at the same time (ie Ctrl/Shift)
  */
-bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
+bool SystemSDL::pumpEvents(FS_Event &evtOut) {
     SDL_Event evtIn;
 
-    pEvtOut->type = EVT_NONE;
+    evtOut.type = EVT_NONE;
 
     if (SDL_PollEvent(&evtIn)) {
         switch (evtIn.type) {
         case SDL_QUIT:
-            pEvtOut->quit.type = EVT_QUIT;
+            evtOut.quit.type = EVT_QUIT;
             break;
+        /*case SDL_TEXTINPUT:
+            printf("Received text input: %s\n", evtIn.text.text);
+            break;*/
         case SDL_KEYDOWN:
             {
             // Check if key pressed is a modifier
@@ -332,26 +346,7 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
                     // We pass the event only if it's not a allowed modifier key
                     // Plus, the application receives event only when key is pressed
                     // not released.
-                    pEvtOut->type = EVT_KEY_DOWN;
-                    FS_Key key;
-                    key.unicode = 0;
-                    checkKeyCodes(evtIn.key.keysym, key);
-                    if (key.keyFunc == KFC_UNKNOWN) {
-                        key.unicode = evtIn.key.keysym.sym;
-#if _DEBUG
-                        printf( "Scancode: 0x%02X", evtIn.key.keysym.scancode );
-                        printf( ", Name: %s", SDL_GetKeyName( evtIn.key.keysym.sym ) );
-                        printf(", Unicode: " );
-                        if( evtIn.key.keysym.sym < 0x80 && evtIn.key.keysym.sym > 0 ){
-                            printf( "%c (0x%04X)\n", (char)evtIn.key.keysym.sym,
-                                    evtIn.key.keysym.sym );
-                        } else{
-                            printf( "? (0x%04X)\n", evtIn.key.keysym.sym );
-                        }
-#endif
-                    }
-                    pEvtOut->key.key = key;
-                    pEvtOut->key.keyMods = keyModState_;
+                    fillKeyEvent(evtIn.key.keysym, evtOut);
                     break;
                 } // end switch
             } // end case SDL_KEYDOWN
@@ -383,33 +378,33 @@ bool SystemSDL::pumpEvents(FS_Event *pEvtOut) {
             }
             break;
         case SDL_MOUSEBUTTONUP:
-            pEvtOut->button.type = EVT_MSE_UP;
-            pEvtOut->button.x = evtIn.button.x;
-            pEvtOut->button.y = cursor_y_ = evtIn.button.y;
-            pEvtOut->button.button = evtIn.button.button;
-            pEvtOut->button.keyMods = keyModState_;
+            evtOut.button.type = EVT_MSE_UP;
+            evtOut.button.x = evtIn.button.x;
+            evtOut.button.y = cursor_y_ = evtIn.button.y;
+            evtOut.button.button = evtIn.button.button;
+            evtOut.button.keyMods = keyModState_;
             break;
         case SDL_MOUSEBUTTONDOWN:
-            pEvtOut->button.type = EVT_MSE_DOWN;
-            pEvtOut->button.x = evtIn.button.x;
-            pEvtOut->button.y = cursor_y_ = evtIn.button.y;
-            pEvtOut->button.button = evtIn.button.button;
-            pEvtOut->button.keyMods = keyModState_;
+            evtOut.button.type = EVT_MSE_DOWN;
+            evtOut.button.x = evtIn.button.x;
+            evtOut.button.y = cursor_y_ = evtIn.button.y;
+            evtOut.button.button = evtIn.button.button;
+            evtOut.button.keyMods = keyModState_;
             break;
         case SDL_MOUSEMOTION:
             update_cursor_ = true;
-            pEvtOut->motion.type = EVT_MSE_MOTION;
-            pEvtOut->motion.x = cursor_x_ = evtIn.motion.x;
-            pEvtOut->motion.y = cursor_y_ = evtIn.motion.y;
-            pEvtOut->motion.state = evtIn.motion.state;
-            pEvtOut->motion.keyMods = keyModState_;
+            evtOut.motion.type = EVT_MSE_MOTION;
+            evtOut.motion.x = cursor_x_ = evtIn.motion.x;
+            evtOut.motion.y = cursor_y_ = evtIn.motion.y;
+            evtOut.motion.state = evtIn.motion.state;
+            evtOut.motion.keyMods = keyModState_;
             break;
         default:
             break;
         }
     }
 
-    return pEvtOut->type != EVT_NONE;
+    return evtOut.type != EVT_NONE;
 }
 
 void SystemSDL::delay(uint32 msec) {

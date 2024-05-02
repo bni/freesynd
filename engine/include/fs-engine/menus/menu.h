@@ -98,8 +98,8 @@ public:
     ActionWidget * getActionWidget(int buttonId);
     //! Returns the Option with the given id
     Option * getOption(int buttonId);
-    //! Adds a mapping between a Function Key and an Option
-    void registerHotKey(FS_KeyFunc key, int optId);
+    //! Adds a mapping between a Key and an Option
+    void registerHotKey(FS_KeyCode key, int optId);
     //! Adds a mapping between a Printable Key and an Option
     void registerHotKey(uint16 unicode, int optId);
 
@@ -182,8 +182,8 @@ protected:
 protected:
     class HotKey {
     public:
-        HotKey(FS_KeyFunc code, uint16 unicode, Option *pOpt) {
-            key.keyFunc = code;
+        HotKey(FS_KeyCode code, uint16 unicode, Option *pOpt) {
+            key.keyCode = code;
             key.unicode = unicode;
             pOption = pOpt;
         }

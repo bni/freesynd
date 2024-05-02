@@ -194,7 +194,7 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
         to_ = to;
         darkWidget_ = NULL;
         lightWidget_ = NULL;
-        hotKey_.keyFunc = KFC_UNKNOWN;
+        hotKey_.keyCode = kKeyCode_Unknown;
         hotKey_.unicode = 0;
 
         // If button label contains a '&' caracter, then the next
@@ -672,13 +672,13 @@ void TextField::handleCharacter(FS_Key key) {
 
 bool TextField::handleKey(FS_Key key, const int modKeys) {
     bool needRedraw = false;
-    if (key.keyFunc == KFC_LEFT) {
+    if (key.keyCode == KFC_LEFT) {
         // Move caret to the left until start of the text
         if (caretPosition_ > 0) {
             caretPosition_--;
             needRedraw = true;
         }
-    } else if (key.keyFunc == KFC_RIGHT) {
+    } else if (key.keyCode == KFC_RIGHT) {
         char src[100];
         size_t size = text_.getText().size();
 
@@ -690,14 +690,14 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
             caretPosition_++;
             needRedraw = true;
         }
-    } else if (key.keyFunc == KFC_BACKSPACE) {
+    } else if (key.keyCode == KFC_BACKSPACE) {
         handleBackSpace();
-    } else if (key.keyFunc == KFC_DELETE) {
+    } else if (key.keyCode == KFC_DELETE) {
         handleDelete();
-    } else if (key.keyFunc == KFC_HOME) {
+    } else if (key.keyCode == KFC_HOME) {
         caretPosition_ = 0;
         needRedraw = true;
-    } else if (key.keyFunc == KFC_END) {
+    } else if (key.keyCode == KFC_END) {
         char src[100];
         size_t size = text_.getText().size();
 

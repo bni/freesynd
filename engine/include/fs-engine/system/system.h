@@ -90,7 +90,7 @@ public:
     virtual bool initialize(bool fullscreen) = 0;
     virtual void updateScreen() = 0;
     //! Pumps an event from the event queue
-    virtual bool pumpEvents(FS_Event *pEvtOut) = 0;
+    virtual bool pumpEvents(FS_Event &evtOut) = 0;
     virtual void delay(uint32 msec) = 0;
     virtual uint32 getTicks() = 0;
 

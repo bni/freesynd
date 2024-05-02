@@ -909,7 +909,7 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     bool consumed = true;
 
     // Pause/unpause game
-    if (isLetterP(key.unicode)) {
+    if (key.keyCode == kKeyCode_P) {
         if (paused_) {
             paused_ = false;
         } else {
@@ -940,7 +940,7 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
 
     // SPACE is pressed when the mission failed or succeeded to return
     // to menu
-    if (key.unicode == K_SPACE) {
+    if (key.unicode == kKeyCode_Space) {
         if (mission_->completed() || mission_->failed()) {
             // Do not display default leaving animation because
             // a success/failed animation will be played
@@ -956,7 +956,7 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
 
             return true;
         }
-    } else if (key.keyFunc == KFC_ESCAPE) {
+    } else if (key.keyCode == KFC_ESCAPE) {
         // Abort mission
         mission_->endWithStatus(Mission::kMissionStatusAborted);
         // Return false so when can still go to parent menu with escape
@@ -967,51 +967,51 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
      * selection and all 4 agents.
      * Individual keys select the specified agent unless ctrl is pressed -
      * then they add/remove agent from current selection. */
-    if (key.keyVirt == KVT_NUMPAD0) {
+    if (key.keyCode == kKeyCode_0) {
         /* This code is exactly the same as for clicking on "group-button"
          * as you can see above. */
         selectAllAgents();
     }
-    else if (key.keyVirt == KVT_NUMPAD1) {
+    else if (key.keyCode == kKeyCode_1) {
         selectAgent(0, ctrl);
     }
-    else if (key.keyVirt == KVT_NUMPAD2) {
+    else if (key.keyCode == kKeyCode_2) {
         selectAgent(1, ctrl);
     }
-    else if (key.keyVirt == KVT_NUMPAD3) {
+    else if (key.keyCode == kKeyCode_3) {
         selectAgent(2, ctrl);
     }
-    else if (key.keyVirt == KVT_NUMPAD4) {
+    else if (key.keyCode == kKeyCode_4) {
         selectAgent(3, ctrl);
-    } else if (key.keyFunc == KFC_LEFT) { // Scroll the map to the left
+    } else if (key.keyCode == KFC_LEFT) { // Scroll the map to the left
         scroll_x_ = -SCROLL_STEP;
-    } else if (key.keyFunc == KFC_RIGHT) { // Scroll the map to the right
+    } else if (key.keyCode == KFC_RIGHT) { // Scroll the map to the right
         scroll_x_ = SCROLL_STEP;
-    } else if (key.keyFunc == KFC_UP) { // Scroll the map to the top
+    } else if (key.keyCode == KFC_UP) { // Scroll the map to the top
         scroll_y_ = -SCROLL_STEP;
-    } else if (key.keyFunc == KFC_DOWN) { // Scroll the map to the bottom
+    } else if (key.keyCode == KFC_DOWN) { // Scroll the map to the bottom
         scroll_y_ = SCROLL_STEP;
-    } else if (key.keyFunc == KFC_F1) { // Music Control
+    } else if (key.keyCode == KFC_F1) { // Music Control
         g_MusicMgr.toggleMusic();
-    } else if (key.keyFunc == KFC_F2) { // Sound Control
+    } else if (key.keyCode == KFC_F2) { // Sound Control
         g_SoundMgr.toggleSound();
     }
 
 #ifdef _DEBUG
-    else if (key.keyFunc == KFC_F3) {
+    else if (key.keyCode == KFC_F3) {
         mission_->endWithStatus(Mission::kMissionStatusCompleted);
         return true;
-    } else if (key.keyFunc == KFC_F4) {
+    } else if (key.keyCode == KFC_F4) {
         mission_->endWithStatus(Mission::kMissionStatusFailed);
         return true;
     }
 #endif
-    else if (key.keyFunc >= KFC_F5 && key.keyFunc <= KFC_F12) {
+    else if (key.keyCode >= KFC_F5 && key.keyCode <= KFC_F12) {
         // Those keys are direct access to inventory
-        uint8 weapon_idx = (uint8) key.keyFunc - (uint8) KFC_F5;
+        uint8 weapon_idx = (uint8) key.keyCode - (uint8) KFC_F5;
         handleWeaponSelection(weapon_idx, ctrl);
         return true;
-    } else if ((isLetterD(key.unicode)) && ctrl) { // selected agents are killed with 'd'
+    } else if ((key.keyCode == kKeyCode_D) && ctrl) { // selected agents are killed with 'd'
         // save current selection as it will be modified when agents die
         std::vector<PedInstance *> agents_suicide;
         for (SquadSelection::Iterator it = selection_.begin();

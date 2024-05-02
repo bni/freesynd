@@ -443,7 +443,7 @@ bool FliPlayer::play(bool intro, Font *pIntroFont) {
     while (hasFrames()) {
         // Consumes events now so they won't be piled up after the animation
         FS_Event fsEvt;
-        while(g_System.pumpEvents(&fsEvt)) {
+        while(g_System.pumpEvents(fsEvt)) {
             pManager_->handleEvent(fsEvt);
         }
 
