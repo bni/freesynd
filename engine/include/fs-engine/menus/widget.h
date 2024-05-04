@@ -231,7 +231,10 @@ public:
 
     ~Option();
 
-    FS_Key getHotKey() { return hotKey_; }
+    //! Return the KeyCode that serves as a hot key (if not set, kKeyCode_Unknown)
+    FS_KeyCode getHotKeyCode() { return hotKeyCode_; }
+    //! Return true if an acceleration key has been defined
+    bool isHotKeyDefined() { return hotKeyCode_ != kKeyCode_Unknown; }
 
     //! Draw the widget on screen
     void draw();
@@ -262,7 +265,7 @@ protected:
     /*!
      * This button can have an acceleration key.
      */
-    FS_Key hotKey_;
+    FS_KeyCode hotKeyCode_;
 };
 
 class ToggleAction;

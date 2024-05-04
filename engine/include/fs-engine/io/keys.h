@@ -25,19 +25,23 @@
 #ifndef KEYS_H
 #define KEYS_H
 
+#include "utf8.h"
+
 #include "fs-utils/common.h"
 
 /*!
  * All usable key codes for the game. A key code is dependent on keyboard layout.
  * We have defined only the keys that used in the game (plus some more in case).
+ * But when entering text in a textfield, we use the kKeyCode_Text to have the
+ * unicode codepoint of the key. Only for printable keys.
  */
 enum FS_KeyCode {
     kKeyCode_Unknown = 0,
     kKeyCode_Text = 99,
-    KFC_ESCAPE = 1,
-    KFC_BACKSPACE = 2,
+    kKeyCode_Escape = 1,
+    kKeyCode_Backspace = 2,
     kKeyCode_Space = 3,
-    KFC_RETURN = 4,
+    kKeyCode_Return = 4,
 
     // Arrows + Home/End pad
     KFC_UP = 11,
@@ -95,9 +99,17 @@ const int KMD_ALT = KMD_LALT | KMD_RALT;
  * Represents a key that has been pressed.
  */
 struct FS_Key {
+    /*!
+     * The keyCode represents the virtual key pressed.
+     * Except when the user in entering text in textfield.
+     * In that case, this field is set with kKeyCode_Text.
+     */
     FS_KeyCode keyCode;
-    uint16 unicode;            /**< Unicode for printable characters. */
-    char text[32];
+    /*! When keyCode is set to kKeyCode_Text, then
+     * codePoint is set with the unicode codepoint of the character
+     * corresponding to the key.
+     */
+    utf8::utfchar32_t codePoint;
 };
 
 #endif

@@ -59,7 +59,7 @@ add_library(fs_engine ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Engine ALIAS fs_engine)
 
 # We need this directory, and users of our library will need it too
-target_include_directories(fs_engine PUBLIC include)
+target_include_directories(fs_engine PUBLIC include "${Freesynd_SOURCE_DIR}/extern/utfcpp")
 
 target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG )
 
@@ -88,8 +88,9 @@ if (USE_SYSTEM_SDL)
                 )
     add_library(Freesynd::Engine::Sdl ALIAS fs_engine_sdl)
 
-    target_include_directories(fs_engine_sdl PUBLIC src/system)
+    target_include_directories(fs_engine_sdl PUBLIC src/system "${Freesynd_SOURCE_DIR}/extern/utfcpp")
     target_include_directories(fs_engine_sdl PRIVATE include)
+
     target_link_libraries(fs_engine_sdl PUBLIC SDL2::Main SDL2::Image Freesynd::Utils)
     target_link_libraries(fs_engine_sdl PRIVATE freesynd_warnings )
 

@@ -209,10 +209,10 @@ void ConfMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
 
 bool ConfMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     if (currPanel_ != PNL_MAIN) {
-        if (key.keyCode == KFC_ESCAPE) {
+        if (key.keyCode == kKeyCode_Escape) {
             showMainPanel();
             return true;
-        } else if (key.keyCode == KFC_RETURN) {
+        } else if (key.keyCode == kKeyCode_Return) {
             if (currPanel_ == PNL_LOGO) {
                 toAcceptColourId_ = tempColourId_;
                 toAcceptLogo_ = tempLogo_;

@@ -100,8 +100,6 @@ public:
     Option * getOption(int buttonId);
     //! Adds a mapping between a Key and an Option
     void registerHotKey(FS_KeyCode key, int optId);
-    //! Adds a mapping between a Printable Key and an Option
-    void registerHotKey(uint16 unicode, int optId);
 
     //! Does common actions before leaving
     void leave();
@@ -182,9 +180,8 @@ protected:
 protected:
     class HotKey {
     public:
-        HotKey(FS_KeyCode code, uint16 unicode, Option *pOpt) {
+        HotKey(FS_KeyCode code, Option *pOpt) {
             key.keyCode = code;
-            key.unicode = unicode;
             pOption = pOpt;
         }
         FS_Key key;

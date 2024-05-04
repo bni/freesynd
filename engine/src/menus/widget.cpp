@@ -25,7 +25,8 @@
 
 #include <stdarg.h>
 
-#include "fs-utils/io/utf8.h"
+#include "utf8.h"
+
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/gfx/screen.h"
@@ -194,8 +195,7 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
         to_ = to;
         darkWidget_ = NULL;
         lightWidget_ = NULL;
-        hotKey_.keyCode = kKeyCode_Unknown;
-        hotKey_.unicode = 0;
+        hotKeyCode_ = kKeyCode_Unknown;
 
         // If button label contains a '&' caracter, then the next
         // caracter is the acceleration key for that button
@@ -223,9 +223,9 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
                     foundAmp = true;
                     continue;
                 }
-            } else if (foundAmp && hotKey_.unicode == 0) {
+            } else if (foundAmp && hotKeyCode_ == kKeyCode_Unknown) {
                 if (cp >= 'A' && cp <= 'z') {
-                    hotKey_.unicode = cp;
+                    // TODO (benblan) : add code to find KeyCode from codepoint
                 }
             }
             // copy char
@@ -655,12 +655,12 @@ void TextField::handleCharacter(FS_Key key) {
             i++;
         }
         // Add the new key
-        if (key.unicode >= 0x0061 && key.unicode <= 0x007A) {
+        if (key.codePoint >= 0x0061 && key.codePoint <= 0x007A) {
             // If the key is a letter between 'a' and 'z'
             // => capitalize it because MenuFont only displays capital letters
-            itDst = utf8::append(key.unicode - 32, itDst);
+            itDst = utf8::append(key.codePoint - 32, itDst);
         } else {
-            itDst = utf8::append(key.unicode, itDst);
+            itDst = utf8::append(key.codePoint, itDst);
         }
 
         while(i<nbCdpt) {
@@ -694,7 +694,7 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
             caretPosition_++;
             needRedraw = true;
         }
-    } else if (key.keyCode == KFC_BACKSPACE) {
+    } else if (key.keyCode == kKeyCode_Backspace) {
         handleBackSpace();
     } else if (key.keyCode == KFC_DELETE) {
         handleDelete();
@@ -710,10 +710,11 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
         caretPosition_ = utf8::distance(src, src + size);
         needRedraw = true;
     } else if (key.keyCode == kKeyCode_Text) {
-        //TODO(benblan) : implement the use of text
-        /*if (text_.getFont()->isPrintable(key.unicode)) {
+        printf("TextField: received character with codepoint %i\n", key.codePoint);
+        //TODO(benblan) : implement the use of isPrintable
+        //if (text_.getFont()->isPrintable(key.unicode)) {
             handleCharacter(key);
-        }*/
+        //}
     } else {
         return false;
     }

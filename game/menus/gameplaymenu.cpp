@@ -940,7 +940,7 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
 
     // SPACE is pressed when the mission failed or succeeded to return
     // to menu
-    if (key.unicode == kKeyCode_Space) {
+    if (key.keyCode == kKeyCode_Space) {
         if (mission_->completed() || mission_->failed()) {
             // Do not display default leaving animation because
             // a success/failed animation will be played
@@ -956,7 +956,7 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
 
             return true;
         }
-    } else if (key.keyCode == KFC_ESCAPE) {
+    } else if (key.keyCode == kKeyCode_Escape) {
         // Abort mission
         mission_->endWithStatus(Mission::kMissionStatusAborted);
         // Return false so when can still go to parent menu with escape

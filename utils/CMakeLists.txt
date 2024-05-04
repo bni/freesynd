@@ -10,10 +10,10 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/configfile.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/portablefile.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/formatversion.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/checked.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/core.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/unchecked.h"
+#    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8.h"
+#    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/checked.h"
+#    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/core.h"
+#    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/utf8/unchecked.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/misc/singleton.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/misc/seqmodel.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/misc/timer.h"
@@ -29,13 +29,13 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/utils/src/seqmodel.cpp"
     )
 
-# Make an automatic library - will be static or dynamic based on user setting
+# Definition of the fs_utils library - will be static or dynamic based on user setting
 add_library(fs_utils ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Utils ALIAS fs_utils)
 
 target_link_libraries (fs_utils PRIVATE freesynd_warnings)
 
-# We need this directory, and users of our library will need it too
+# We need this directory, and users of our library will need it too (ie PUBLIC)
 target_include_directories(fs_utils PUBLIC include)
 
 # Set standard definitions for all platforms.

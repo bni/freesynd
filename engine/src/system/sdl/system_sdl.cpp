@@ -34,6 +34,7 @@
 
 #include <SDL_image.h>
 #include <algorithm>
+#include "utf8.h"
 
 #include "fs-engine/config.h"
 #include "fs-engine/gfx/screen.h"
@@ -251,13 +252,12 @@ void SystemSDL::updateScreen() {
 void SystemSDL::fillKeyEvent(SDL_Keysym keysym, FS_Event &evtOut) {
     evtOut.type = EVT_KEY_DOWN;
     FS_Key key;
-    key.unicode = 0;
     key.keyCode = kKeyCode_Unknown;
     switch(keysym.sym) {
-        case SDLK_ESCAPE: key.keyCode = KFC_ESCAPE; break;
-        case SDLK_BACKSPACE: key.keyCode = KFC_BACKSPACE;break;
+        case SDLK_ESCAPE: key.keyCode = kKeyCode_Escape; break;
+        case SDLK_BACKSPACE: key.keyCode = kKeyCode_Backspace;break;
         case SDLK_SPACE: key.keyCode = kKeyCode_Space;break;
-        case SDLK_RETURN: key.keyCode = KFC_RETURN; break;
+        case SDLK_RETURN: key.keyCode = kKeyCode_Return; break;
         case SDLK_DELETE: key.keyCode = KFC_DELETE;break;
         case SDLK_UP: key.keyCode = KFC_UP;break;
         case SDLK_DOWN: key.keyCode = KFC_DOWN;break;
@@ -314,14 +314,15 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
             evtOut.quit.type = EVT_QUIT;
             break;
         case SDL_TEXTINPUT:
+            {
             evtOut.key.type = EVT_KEY_DOWN;
-            FS_Key key;
-            std::copy(evtIn.text.text,
-                      evtIn.text.text + SDL_TEXTINPUTEVENT_TEXT_SIZE - 1,
-                      key.text);
-            key.keyCode = kKeyCode_Text;
-            evtOut.key.key = key;
+            evtOut.key.key.keyCode = kKeyCode_Text;
+            // ensure we have only one character in the event as SDL_TEXTINPUT can have a long text
+            // which should not be the case in our game
+            char* w = evtIn.text.text;
+            evtOut.key.key.codePoint = utf8::next(w, evtIn.text.text + SDL_TEXTINPUTEVENT_TEXT_SIZE);
             evtOut.key.keyMods = keyModState_;
+            }
             break;
         case SDL_KEYDOWN:
             {

@@ -179,9 +179,9 @@ int Menu::addOption(int x, int y, int width, int height, const char *text, FontM
     std::unique_ptr<Option> pOption =
                 std::make_unique<Option>(this, x, y, width, height, text, getMenuFont(size), to, visible, centered, dark_widget, light_widget);
 
-    if (pOption->getHotKey().keyCode != kKeyCode_Unknown || pOption->getHotKey().unicode != 0) {
+    if (pOption->isHotKeyDefined()) {
         // The option already has an acceleration key
-        registerHotKey(pOption->getHotKey().unicode, pOption->getId());
+        registerHotKey(pOption->getHotKeyCode(), pOption->getId());
     }
 
     actions_.push_back(std::move(pOption));
@@ -313,25 +313,18 @@ Option * Menu::getOption(int optionId) {
 void  Menu::registerHotKey(FS_KeyCode code, int optId) {
     Option *pOption = getOption(optId);
     if (pOption) {
-        HotKey hc(code, 0, pOption);
+        HotKey hc(code, pOption);
         hotKeys_.push_back(hc);
     }
 }
 
-/*!
- * Adds an acceleration key to the given option so it can be activated by that key.
- * If id is not an option id, then nothing is done.
- * \param unicode The hot key
- * \param optId The option id
+
+/*! \brief Set the given TextField as receiving Key events.
+ *
+ * \param pTextfield TextField*
+ * \return void
+ *
  */
-void  Menu::registerHotKey(uint16 unicode, int optId) {
-    Option *pOption = getOption(optId);
-    if (pOption) {
-        HotKey hc(kKeyCode_Unknown, unicode, pOption);
-        hotKeys_.push_back(hc);
-    }
-}
-
 void Menu::captureInputBy(TextField *pTextfield) {
     if (pTextfield != pCaptureInput_ && pCaptureInput_ != NULL) {
         pCaptureInput_->handleCaptureLost();
@@ -362,13 +355,7 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
         // Then look for a mapped key to execute an action
         for (std::list < HotKey >::iterator it = hotKeys_.begin();
                 it != hotKeys_.end(); it++) {
-                    uint16 c = key.unicode;
-                    // Hotkey can only be character from 'A' to 'Z'
-                    if (c >= 'a' && c <= 'z') {
-                        // so uppercase it
-                        c -= 32;
-                    }
-                    if ((*it).key.keyCode == key.keyCode && (*it).key.unicode == c) {
+                    if ((*it).key.keyCode == key.keyCode) {
                     Option *opt = (*it).pOption;
                     if (opt->isVisible() && opt->isWidgetEnabled()) {
                         opt->executeAction(modKeys);
@@ -382,7 +369,7 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
     if (!handleUnknownKey(key, modKeys)) {
         // Menu has not consummed key event :
         // Pressing Escape changes the current menu to its parent(like a back)
-        if (key.keyCode == KFC_ESCAPE) {
+        if (key.keyCode == kKeyCode_Escape) {
             menu_manager_->gotoMenu(parentId_);
             return;
         }
