@@ -33,6 +33,7 @@
 #endif // HAVE_SDL_MIXER
 
 #include <SDL_image.h>
+#include <algorithm>
 
 #include "fs-engine/config.h"
 #include "fs-engine/gfx/screen.h"
@@ -167,6 +168,9 @@ bool SystemSDL::initialize(bool fullscreen) {
         FSINFO(Log::k_FLG_SND, "SystemSDL", "Init", ("Couldn't initialize Sound System : no sound will be played."))
     }
 
+    // Be sure that we don't receive unusefull text events
+    SDL_StopTextInput();
+
     return true;
 }
 
@@ -286,14 +290,6 @@ void SystemSDL::fillKeyEvent(SDL_Keysym keysym, FS_Event &evtOut) {
             break;
     }
 
-    if (key.keyCode == kKeyCode_Unknown) {
-        key.unicode = keysym.sym;
-#if _DEBUG
-        printf( "Scancode: 0x%02X", keysym.scancode );
-        printf( ", Name: %s", SDL_GetKeyName( keysym.sym ) );
-        printf(", Keycode: 0x%02X \n", keysym.sym );
-#endif
-    }
     evtOut.key.key = key;
     evtOut.key.keyMods = keyModState_;
 }
@@ -317,9 +313,16 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
         case SDL_QUIT:
             evtOut.quit.type = EVT_QUIT;
             break;
-        /*case SDL_TEXTINPUT:
-            printf("Received text input: %s\n", evtIn.text.text);
-            break;*/
+        case SDL_TEXTINPUT:
+            evtOut.key.type = EVT_KEY_DOWN;
+            FS_Key key;
+            std::copy(evtIn.text.text,
+                      evtIn.text.text + SDL_TEXTINPUTEVENT_TEXT_SIZE - 1,
+                      key.text);
+            key.keyCode = kKeyCode_Text;
+            evtOut.key.key = key;
+            evtOut.key.keyMods = keyModState_;
+            break;
         case SDL_KEYDOWN:
             {
             // Check if key pressed is a modifier
@@ -573,4 +576,20 @@ void SystemSDL::usePickupCursor() {
     cursor_rect_.x = 0;
     cursor_rect_.y = 24;
     cursor_hs_x_ = cursor_hs_y_ = 2;
+}
+
+/*!
+ * Calls SDL_StartTextInput() will tell SDL2 to send SDL_TEXTINPUT events.
+ * This method is called when a textfield widget receives focus.
+ */
+void SystemSDL::startReceiveText() {
+    SDL_StartTextInput();
+}
+
+/*!
+ * Calls SDL_StartTextInput() will tell SDL2 to stop sendeing SDL_TEXTINPUT events.
+ * This method is called when a textfield widget loses focus.
+ */
+void SystemSDL::stopReceiveText() {
+    SDL_StopTextInput();
 }

@@ -104,18 +104,20 @@ public:
     virtual void hideCursor() = 0;
     //! Shows the mouse cursor.
     virtual void showCursor() = 0;
-    //! Use the cursor for the menu screen
-    /*!
-     * The menu cursor is the cursor used when dealing
-     * with game menus.
-     */
+    //! Use this cursor for menu screens
     virtual void useMenuCursor() = 0;
     virtual void usePointerCursor() = 0;
     virtual void usePointerYellowCursor() = 0;
     virtual void useTargetCursor() = 0;
     virtual void useTargetRedCursor() = 0;
     virtual void usePickupCursor() = 0;
+
     virtual int getKeyModState() = 0;
+
+    //! Call this method to activate the text event
+    virtual void startReceiveText() = 0;
+    //! Call this method to deactivate the text event
+    virtual void stopReceiveText() = 0;
 
     //! Return a pointer to the Audio system instance
     Audio* getAudio() {return audio_.get();}

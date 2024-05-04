@@ -556,11 +556,15 @@ void TextField::handleCaptureGained() {
     memcpy(src, text_.getText().c_str(), size);
     caretPosition_ = utf8::distance(src, src + size);
 
+    g_System.startReceiveText();
+
     setHighlighted(true);
     redraw();
 }
 
 void TextField::handleCaptureLost() {
+    g_System.stopReceiveText();
+
     isInEdition_ = false;
     caretPosition_ = 0;
     setHighlighted(false);
@@ -705,8 +709,11 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
         memcpy(src, text_.getText().c_str(), size);
         caretPosition_ = utf8::distance(src, src + size);
         needRedraw = true;
-    } else if (text_.getFont()->isPrintable(key.unicode)) {
-        handleCharacter(key);
+    } else if (key.keyCode == kKeyCode_Text) {
+        //TODO(benblan) : implement the use of text
+        /*if (text_.getFont()->isPrintable(key.unicode)) {
+            handleCharacter(key);
+        }*/
     } else {
         return false;
     }

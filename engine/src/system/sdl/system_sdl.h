@@ -84,6 +84,12 @@ public:
         return keyModState_;
     }
 
+    //! Call this method to activate the text event
+    void startReceiveText() override;
+    //! Call this method to deactivate the text event
+    void stopReceiveText() override;
+
+
 protected:
     //! Creates a SDL window either for fullscreen or not
     SDL_Window * createWindow(bool fullscreen);

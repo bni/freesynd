@@ -33,6 +33,7 @@
  */
 enum FS_KeyCode {
     kKeyCode_Unknown = 0,
+    kKeyCode_Text = 99,
     KFC_ESCAPE = 1,
     KFC_BACKSPACE = 2,
     kKeyCode_Space = 3,
@@ -96,6 +97,7 @@ const int KMD_ALT = KMD_LALT | KMD_RALT;
 struct FS_Key {
     FS_KeyCode keyCode;
     uint16 unicode;            /**< Unicode for printable characters. */
+    char text[32];
 };
 
 #endif
