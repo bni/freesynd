@@ -26,9 +26,11 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include <map>
+#include "utf8.h"
+
 #include "fs-utils/common.h"
 #include "spritemanager.h"
-#include <map>
 
 /*!
  * Font range description for 8-bit character sets.
@@ -64,7 +66,7 @@ public:
     int textHeight(bool x2 = true);
 
     // returns true if given code point is printable with the font
-    bool isPrintable(uint16 unicode);
+    bool isPrintable(utf8::utfchar32_t codePoint);
 
 protected:
     static unsigned char decode(const unsigned char * &c, bool dos);

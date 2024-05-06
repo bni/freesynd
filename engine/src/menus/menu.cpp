@@ -306,15 +306,12 @@ Option * Menu::getOption(int optionId) {
 
 /*!
  * Adds an acceleration key to the given option so it can be activated by that key.
- * If id is not an existing option id, then nothing is done.
- * \param code The hot key
+ * \param code The hot key. Must be different from kKeyCode_Unknown and kKeyCode_Text
  * \param optId The option id
  */
 void  Menu::registerHotKey(FS_KeyCode code, int optId) {
-    Option *pOption = getOption(optId);
-    if (pOption) {
-        HotKey hc(code, pOption);
-        hotKeys_.push_back(hc);
+    if (code != kKeyCode_Unknown && code != kKeyCode_Text) {
+        hotKeys_[code] = optId;
     }
 }
 
@@ -353,15 +350,12 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
 
     if (!paused_) {
         // Then look for a mapped key to execute an action
-        for (std::list < HotKey >::iterator it = hotKeys_.begin();
-                it != hotKeys_.end(); it++) {
-                    if ((*it).key.keyCode == key.keyCode) {
-                    Option *opt = (*it).pOption;
-                    if (opt->isVisible() && opt->isWidgetEnabled()) {
-                        opt->executeAction(modKeys);
-                    }
-                    return;
-                }
+        if (auto search = hotKeys_.find(key.keyCode); search != hotKeys_.end()) {
+            Option *pOption = getOption(search->second);
+            if (pOption && pOption->isVisible() && pOption->isWidgetEnabled()) {
+                pOption->executeAction(modKeys);
+                return;
+            }
         }
     }
 

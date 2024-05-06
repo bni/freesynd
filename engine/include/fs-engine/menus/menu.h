@@ -178,15 +178,6 @@ protected:
     void getMessage(const std::string & id, std::string & msg);
 
 protected:
-    class HotKey {
-    public:
-        HotKey(FS_KeyCode code, Option *pOpt) {
-            key.keyCode = code;
-            pOption = pOpt;
-        }
-        FS_Key key;
-        Option *pOption;
-    };
 
     MenuManager *menu_manager_;
     /*! A unique id to identify this menu.*/
@@ -199,7 +190,7 @@ protected:
     /*! The list of all dynamic widgets (Option).*/
     std::list<std::unique_ptr<ActionWidget>> actions_;
     /*! An association between key and option for hotkeys.*/
-    std::list<HotKey> hotKeys_;
+    std::map<FS_KeyCode, int> hotKeys_;
     /*! A group of mutual exclusive ToggleAction.*/
     Group group_;
     /*! The id of the widget that currently has focus.*/

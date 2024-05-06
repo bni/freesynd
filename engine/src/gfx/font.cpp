@@ -248,8 +248,9 @@ int Font::textHeight(bool x2) {
 }
 
 // returns true if given code point is printable with the font
-bool Font::isPrintable(uint16 unicode) {
-    return unicode != 0;
+bool Font::isPrintable(utf8::utfchar32_t codePoint) {
+    //TODO : use FontRange
+    return codePoint != 0;
 }
 
 MenuFont::MenuFont() : Font() {

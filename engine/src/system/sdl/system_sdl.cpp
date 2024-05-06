@@ -135,6 +135,7 @@ bool SystemSDL::initialize(bool fullscreen) {
                                             SDL_PIXELFORMAT_ARGB8888,
                                             SDL_TEXTUREACCESS_STREAMING,
                                             Screen::kScreenWidth, Screen::kScreenHeight);
+    //pScreenTexture_ = SDL_CreateTextureFromSurface(pRenderer_, pScreenSurface_);
 
     if (pScreenTexture_ == nullptr) {
         FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, Screen texture could not be created! SDL Error : %s", SDL_GetError()))
@@ -219,11 +220,13 @@ void SystemSDL::updateScreen() {
             // TODO : try to use pScreenSurface directly
             pixels_[i] = c;
         }
+        //memcpy (pScreenSurface_->pixels, srcPixels, Screen::kScreenWidth * Screen::kScreenHeight);
 
         SDL_UnlockSurface(pScreenSurface_);
 
         // Copy the pixel to the texture
-        SDL_UpdateTexture(pScreenTexture_, NULL, pixels_, Screen::kScreenWidth * sizeof (Uint32));
+        //SDL_UpdateTexture(pScreenTexture_, NULL, pScreenSurface_->pixels, pScreenSurface_->pitch);
+        SDL_UpdateTexture(pScreenTexture_, NULL, pixels_, Screen::kScreenWidth * sizeof(Uint32));
 
         // Copy texture to the screen buffer
         SDL_RenderCopy(pRenderer_, pScreenTexture_, NULL, NULL);
@@ -268,23 +271,22 @@ void SystemSDL::fillKeyEvent(SDL_Keysym keysym, FS_Event &evtOut) {
         case SDLK_END: key.keyCode = KFC_END;break;
         case SDLK_PAGEUP: key.keyCode = KFC_PAGEUP;break;
         case SDLK_PAGEDOWN: key.keyCode = KFC_PAGEDOWN;break;
-        case SDLK_F1: key.keyCode = KFC_F1;break;
-        case SDLK_F2: key.keyCode = KFC_F2;break;
-        case SDLK_F3: key.keyCode = KFC_F3;break;
-        case SDLK_F4: key.keyCode = KFC_F4;break;
-        case SDLK_F5: key.keyCode = KFC_F5;break;
-        case SDLK_F6: key.keyCode = KFC_F6;break;
-        case SDLK_F7: key.keyCode = KFC_F7;break;
-        case SDLK_F8: key.keyCode = KFC_F8;break;
-        case SDLK_F9: key.keyCode = KFC_F9;break;
-        case SDLK_F10: key.keyCode = KFC_F10;break;
-        case SDLK_F11: key.keyCode = KFC_F11;break;
-        case SDLK_F12: key.keyCode = KFC_F12;break;
+        case SDLK_F1: case SDLK_F2: case SDLK_F3: case SDLK_F4:
+        case SDLK_F5: case SDLK_F6: case SDLK_F7: case SDLK_F8:
+        case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12:
+            key.keyCode = static_cast < FS_KeyCode > (KFC_F1 + (keysym.sym - SDLK_F1));
+            break;
         case SDLK_0:case SDLK_1:case SDLK_2:case SDLK_3:case SDLK_4:
             key.keyCode = static_cast < FS_KeyCode > (kKeyCode_0 + (keysym.sym - SDLK_0));
             break;
-        case SDLK_d:  key.keyCode = kKeyCode_D;break;
-        case SDLK_p:  key.keyCode = kKeyCode_P;break;
+        case SDLK_a: case SDLK_b: case SDLK_c: case SDLK_d: case SDLK_e:
+        case SDLK_f: case SDLK_g: case SDLK_h: case SDLK_i: case SDLK_j:
+        case SDLK_k: case SDLK_l: case SDLK_m: case SDLK_n: case SDLK_o:
+        case SDLK_p: case SDLK_q: case SDLK_r: case SDLK_s: case SDLK_t:
+        case SDLK_u: case SDLK_v: case SDLK_w: case SDLK_x: case SDLK_y:
+        case SDLK_z:
+            key.keyCode = static_cast < FS_KeyCode > (kKeyCode_A + (keysym.sym - SDLK_a));
+            break;
         default:
             // unused key
             break;

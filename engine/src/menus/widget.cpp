@@ -216,7 +216,7 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
         bool foundAmp = false;
         while (i<nbCdpt) {
             i++;
-            int cp = utf8::next(itSrc, src + size);
+            utf8::utfchar32_t cp = utf8::next(itSrc, src + size);
             if (cp == '&') {
                 if (!foundAmp) {
                     // found '&' : skip it
@@ -225,7 +225,11 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
                 }
             } else if (foundAmp && hotKeyCode_ == kKeyCode_Unknown) {
                 if (cp >= 'A' && cp <= 'z') {
-                    // TODO (benblan) : add code to find KeyCode from codepoint
+                    // Only take capital letter
+                    if (cp >= 'a') {
+                        cp -= 26;
+                    }
+                    hotKeyCode_ = static_cast < FS_KeyCode >(kKeyCode_A + (cp - 'A'));
                 }
             }
             // copy char
@@ -710,11 +714,9 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
         caretPosition_ = utf8::distance(src, src + size);
         needRedraw = true;
     } else if (key.keyCode == kKeyCode_Text) {
-        printf("TextField: received character with codepoint %i\n", key.codePoint);
-        //TODO(benblan) : implement the use of isPrintable
-        //if (text_.getFont()->isPrintable(key.unicode)) {
+        if (text_.getFont()->isPrintable(key.keyCode)) {
             handleCharacter(key);
-        //}
+        }
     } else {
         return false;
     }
