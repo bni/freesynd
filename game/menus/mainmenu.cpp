@@ -40,15 +40,15 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_
     addStatic(0, 40, g_Screen.gameScreenWidth(), "#MAIN_TITLE", FontManager::SIZE_4, false);
 
     int id = addOption(201, 130, 300, 25, "#MAIN_CONF", FontManager::SIZE_3, fs_game_menus::kMenuIdConf, true, false);
-    registerHotKey(KFC_F1, id);
+    registerHotKey(kKeyCode_F1, id);
     id = addOption(201, 164, 300, 25, "#MAIN_BEGIN", FontManager::SIZE_3, fs_game_menus::kMenuIdMap, true, false);
-    registerHotKey(KFC_F2, id);
+    registerHotKey(kKeyCode_F2, id);
     id = addOption(201, 198, 300, 25, "#MAIN_LOAD_SAVE", FontManager::SIZE_3, fs_game_menus::kMenuIdLdSave, true, false);
-    registerHotKey(KFC_F3, id);
+    registerHotKey(kKeyCode_F3, id);
     resetButId_ = addOption(201, 232, 300, 25, "#MAIN_RESET", FontManager::SIZE_3, fs_game_menus::kMenuIdMain, true, false);
-    registerHotKey(KFC_F4, resetButId_);
+    registerHotKey(kKeyCode_F4, resetButId_);
     quitButId_ = addOption(201, 266, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
-    registerHotKey(KFC_F5, quitButId_);
+    registerHotKey(kKeyCode_F5, quitButId_);
 }
 
 void MainMenu::handleShow()

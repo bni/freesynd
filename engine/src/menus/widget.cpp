@@ -224,12 +224,13 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
                     continue;
                 }
             } else if (foundAmp && hotKeyCode_ == kKeyCode_Unknown) {
-                if (cp >= 'A' && cp <= 'z') {
+                // if keyCode is a letter
+                if ((cp >= 0x0041 && cp <= 0x005A) || (cp >= 0x0061 && cp <= 0x007A)) {
                     // Only take capital letter
-                    if (cp >= 'a') {
-                        cp -= 26;
+                    if (cp >= 0x0061) {
+                        cp -= 32;
                     }
-                    hotKeyCode_ = static_cast < FS_KeyCode >(kKeyCode_A + (cp - 'A'));
+                    hotKeyCode_ = static_cast < FS_KeyCode >(kKeyCode_A + (cp - 0x0041));
                 }
             }
             // copy char
@@ -680,13 +681,13 @@ void TextField::handleCharacter(FS_Key key) {
 
 bool TextField::handleKey(FS_Key key, const int modKeys) {
     bool needRedraw = false;
-    if (key.keyCode == KFC_LEFT) {
+    if (key.keyCode == kKeyCode_Left) {
         // Move caret to the left until start of the text
         if (caretPosition_ > 0) {
             caretPosition_--;
             needRedraw = true;
         }
-    } else if (key.keyCode == KFC_RIGHT) {
+    } else if (key.keyCode == kKeyCode_Right) {
         char src[100];
         size_t size = text_.getText().size();
 
@@ -700,12 +701,12 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
         }
     } else if (key.keyCode == kKeyCode_Backspace) {
         handleBackSpace();
-    } else if (key.keyCode == KFC_DELETE) {
+    } else if (key.keyCode == kKeyCode_Delete) {
         handleDelete();
-    } else if (key.keyCode == KFC_HOME) {
+    } else if (key.keyCode == kKeyCode_Home) {
         caretPosition_ = 0;
         needRedraw = true;
-    } else if (key.keyCode == KFC_END) {
+    } else if (key.keyCode == kKeyCode_End) {
         char src[100];
         size_t size = text_.getText().size();
 

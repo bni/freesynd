@@ -983,32 +983,32 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     }
     else if (key.keyCode == kKeyCode_4) {
         selectAgent(3, ctrl);
-    } else if (key.keyCode == KFC_LEFT) { // Scroll the map to the left
+    } else if (key.keyCode == kKeyCode_Left) { // Scroll the map to the left
         scroll_x_ = -SCROLL_STEP;
-    } else if (key.keyCode == KFC_RIGHT) { // Scroll the map to the right
+    } else if (key.keyCode == kKeyCode_Right) { // Scroll the map to the right
         scroll_x_ = SCROLL_STEP;
-    } else if (key.keyCode == KFC_UP) { // Scroll the map to the top
+    } else if (key.keyCode == kKeyCode_Up) { // Scroll the map to the top
         scroll_y_ = -SCROLL_STEP;
-    } else if (key.keyCode == KFC_DOWN) { // Scroll the map to the bottom
+    } else if (key.keyCode == kKeyCode_Down) { // Scroll the map to the bottom
         scroll_y_ = SCROLL_STEP;
-    } else if (key.keyCode == KFC_F1) { // Music Control
+    } else if (key.keyCode == kKeyCode_F1) { // Music Control
         g_MusicMgr.toggleMusic();
-    } else if (key.keyCode == KFC_F2) { // Sound Control
+    } else if (key.keyCode == kKeyCode_F2) { // Sound Control
         g_SoundMgr.toggleSound();
     }
 
 #ifdef _DEBUG
-    else if (key.keyCode == KFC_F3) {
+    else if (key.keyCode == kKeyCode_F3) {
         mission_->endWithStatus(Mission::kMissionStatusCompleted);
         return true;
-    } else if (key.keyCode == KFC_F4) {
+    } else if (key.keyCode == kKeyCode_F4) {
         mission_->endWithStatus(Mission::kMissionStatusFailed);
         return true;
     }
 #endif
-    else if (key.keyCode >= KFC_F5 && key.keyCode <= KFC_F12) {
+    else if (key.keyCode >= kKeyCode_F5 && key.keyCode <= kKeyCode_F12) {
         // Those keys are direct access to inventory
-        uint8 weapon_idx = (uint8) key.keyCode - (uint8) KFC_F5;
+        uint8 weapon_idx = (uint8) key.keyCode - (uint8) kKeyCode_F5;
         handleWeaponSelection(weapon_idx, ctrl);
         return true;
     } else if ((key.keyCode == kKeyCode_D) && ctrl) { // selected agents are killed with 'd'

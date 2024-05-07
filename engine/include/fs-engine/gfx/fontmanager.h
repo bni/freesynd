@@ -39,10 +39,10 @@ class FontManager {
 public:
     /*! Size of font : 1 is the smaller.*/
     enum EFontSize {
-        SIZE_1 = 0,
-        SIZE_2 = 1,
-        SIZE_3 = 2,
-        SIZE_4 = 3
+        SIZE_1 = 0,  // smallest font
+        SIZE_2 = 1,  // Regular buttons and labels
+        SIZE_3 = 2,  // Big buttons in Main Menu
+        SIZE_4 = 3   // For Menu titles
     };
 
     FontManager();
@@ -73,7 +73,7 @@ public:
 
 protected:
     //! Create a menu font for the given size
-    MenuFont * createMenuFontForSize(SpriteManager *sprites, EFontSize size, int darkOffset, int lightOffset,
+    MenuFont * createMenuFontForSize(SpriteManager *sprites, int darkOffset, int lightOffset,
             char base, const std::string& valid_chars);
 
 protected:

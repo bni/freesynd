@@ -39,7 +39,7 @@ public:
     void handleLeave();
 
 protected:
-    bool handleUnknownKey(Key key, const int modKeys);
+    bool handleUnknownKey(FS_Key key, const int modKeys);
 
     void displayFont();
 

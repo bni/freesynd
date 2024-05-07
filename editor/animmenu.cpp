@@ -80,27 +80,27 @@ void AnimMenu::displayFont() {
 
 }
 
-bool AnimMenu::handleUnknownKey(Key key, const int modKeys) {
+bool AnimMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     bool change = false;
-    if (key.keyFunc == KFC_UP) {
+    if (key.keyCode == kKeyCode_Up) {
         if (animId_ < g_SpriteMgr.numAnims() - 1) {
             animId_++;
             frameId_ = 0;
             change = true;
         }
-    } else if (key.keyFunc == KFC_DOWN) {
+    } else if (key.keyCode == kKeyCode_Down) {
         if (animId_ > 0) {
             animId_--;
             frameId_ = 0;
             change = true;
         }
-    } else if (key.keyFunc == KFC_RIGHT) {
+    } else if (key.keyCode == kKeyCode_Right) {
         frameId_++;
         if (frameId_ > g_SpriteMgr.lastFrame(animId_)) {
             frameId_ = 0;
         }
         change = true;
-    } else if (key.keyFunc == KFC_LEFT) {
+    } else if (key.keyCode == kKeyCode_Left) {
         frameId_--;
         if (frameId_ < 0) {
             frameId_ = g_SpriteMgr.lastFrame(animId_);

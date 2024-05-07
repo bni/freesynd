@@ -261,20 +261,20 @@ void SystemSDL::fillKeyEvent(SDL_Keysym keysym, FS_Event &evtOut) {
         case SDLK_BACKSPACE: key.keyCode = kKeyCode_Backspace;break;
         case SDLK_SPACE: key.keyCode = kKeyCode_Space;break;
         case SDLK_RETURN: key.keyCode = kKeyCode_Return; break;
-        case SDLK_DELETE: key.keyCode = KFC_DELETE;break;
-        case SDLK_UP: key.keyCode = KFC_UP;break;
-        case SDLK_DOWN: key.keyCode = KFC_DOWN;break;
-        case SDLK_RIGHT: key.keyCode = KFC_RIGHT;break;
-        case SDLK_LEFT: key.keyCode = KFC_LEFT;break;
-        case SDLK_INSERT: key.keyCode = KFC_INSERT;break;
-        case SDLK_HOME: key.keyCode = KFC_HOME;break;
-        case SDLK_END: key.keyCode = KFC_END;break;
-        case SDLK_PAGEUP: key.keyCode = KFC_PAGEUP;break;
-        case SDLK_PAGEDOWN: key.keyCode = KFC_PAGEDOWN;break;
+        case SDLK_DELETE: key.keyCode = kKeyCode_Delete;break;
+        case SDLK_UP: key.keyCode = kKeyCode_Up;break;
+        case SDLK_DOWN: key.keyCode = kKeyCode_Down;break;
+        case SDLK_RIGHT: key.keyCode = kKeyCode_Right;break;
+        case SDLK_LEFT: key.keyCode = kKeyCode_Left;break;
+        case SDLK_INSERT: key.keyCode = kKeyCode_Insert;break;
+        case SDLK_HOME: key.keyCode = kKeyCode_Home;break;
+        case SDLK_END: key.keyCode = kKeyCode_End;break;
+        case SDLK_PAGEUP: key.keyCode = kKeyCode_PageUp;break;
+        case SDLK_PAGEDOWN: key.keyCode = kKeyCode_PageDown;break;
         case SDLK_F1: case SDLK_F2: case SDLK_F3: case SDLK_F4:
         case SDLK_F5: case SDLK_F6: case SDLK_F7: case SDLK_F8:
         case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12:
-            key.keyCode = static_cast < FS_KeyCode > (KFC_F1 + (keysym.sym - SDLK_F1));
+            key.keyCode = static_cast < FS_KeyCode > (kKeyCode_F1 + (keysym.sym - SDLK_F1));
             break;
         case SDLK_0:case SDLK_1:case SDLK_2:case SDLK_3:case SDLK_4:
             key.keyCode = static_cast < FS_KeyCode > (kKeyCode_0 + (keysym.sym - SDLK_0));

@@ -71,7 +71,7 @@ public:
 protected:
     static unsigned char decode(const unsigned char * &c, bool dos);
     static int decodeUTF8(const unsigned char * &c);
-    virtual Sprite *getSprite(unsigned char dos_char);
+    Sprite *getSprite(unsigned char dos_char);
 
     SpriteManager *sprites_;
     int offset_;
@@ -100,7 +100,7 @@ public:
 
 protected:
     //! returns the sprite which can be highlighted or not
-    virtual Sprite *getSprite(unsigned char dos_char, bool highlighted);
+    Sprite *getSprite(unsigned char dos_char, bool highlighted);
     //! draws a text at the given position
     void drawText(int x, int y, bool dos, const char *text, bool lighted, bool x2 = true);
 

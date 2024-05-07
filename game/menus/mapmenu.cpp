@@ -140,10 +140,10 @@ mapblk_data_(NULL), select_tick_count_(0) {
     txtTaxPctId_ = addStatic(350, 346, "@   30%", FontManager::SIZE_1, true);
     decrTaxButId_ = addImageOption(375, 346, Sprite::MSPR_TAX_DECR,
         Sprite::MSPR_TAX_DECR, false);
-    registerHotKey(KFC_DOWN, decrTaxButId_);
+    registerHotKey(kKeyCode_Down, decrTaxButId_);
     incrTaxButId_ = addImageOption(435, 346, Sprite::MSPR_TAX_INCR,
         Sprite::MSPR_TAX_INCR, false);
-    registerHotKey(KFC_UP, incrTaxButId_);
+    registerHotKey(kKeyCode_Up, incrTaxButId_);
 
     // 64 x 44 x 50
     // Load map block informations
@@ -412,7 +412,7 @@ void MapMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
 
 bool MapMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     bool consumed = false;
-    if (key.keyCode == KFC_LEFT) {
+    if (key.keyCode == kKeyCode_Left) {
         // navigate among available missions by decreasing index
         int start = g_Session.getSelectedBlockId();
         for (int i = 1; i < GameSession::NB_MISSION; i++) {
@@ -427,7 +427,7 @@ bool MapMenu::handleUnknownKey(FS_Key key, const int modKeys) {
                 break;
             }
         }
-    } else if (key.keyCode == KFC_RIGHT) {
+    } else if (key.keyCode == kKeyCode_Right) {
         // navigate among available missions by increasing index
         int start = g_Session.getSelectedBlockId();
         for (int i = 1; i < GameSession::NB_MISSION; i++) {
@@ -439,13 +439,13 @@ bool MapMenu::handleUnknownKey(FS_Key key, const int modKeys) {
                 break;
             }
         }
-    } else if (key.keyCode == KFC_PAGEUP) {
+    } else if (key.keyCode == kKeyCode_PageUp) {
         // Pressing PageUp increase tax of 10 percents
         Block blk = g_Session.getBlock(g_Session.getSelectedBlockId());
         if (blk.status == BLK_FINISHED) {
             consumed = g_Session.addToTaxRate(10);
         }
-    } else if ( key.keyCode == KFC_PAGEDOWN ) {
+    } else if ( key.keyCode == kKeyCode_PageDown ) {
         // Pressing PageDown decrease tax of 10 percents
         Block blk = g_Session.getBlock(g_Session.getSelectedBlockId());
         if (blk.status == BLK_FINISHED) {
