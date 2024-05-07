@@ -44,7 +44,7 @@ public:
 
 protected:
 
-    bool handleUnknownKey(FS_Key key, const int modKeys) override;
+    bool handleUnMappedKey(const FS_Key key) override;
 
     void createPanels();
     void showLogoPanel();

@@ -207,7 +207,7 @@ void ConfMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
     }
 }
 
-bool ConfMenu::handleUnknownKey(FS_Key key, const int modKeys) {
+bool ConfMenu::handleUnMappedKey(const FS_Key key) {
     if (currPanel_ != PNL_MAIN) {
         if (key.keyCode == kKeyCode_Escape) {
             showMainPanel();

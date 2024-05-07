@@ -54,7 +54,7 @@ protected:
      * @name Mouse/Key events handling
      */
     ///@{
-    bool handleUnknownKey(FS_Key key, const int modKeys) override;
+    bool handleUnMappedKey(const FS_Key key) override;
 
     void handleMouseMotion(int x, int y, int state, const int modKeys);
     bool handleMouseDown(int x, int y, int button, const int modKeys);

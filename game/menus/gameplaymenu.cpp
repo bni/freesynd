@@ -904,7 +904,7 @@ void GameplayMenu::handleMouseUp(int x, int y, int button, const int modKeys)
 
 }
 
-bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
+bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
     bool change = false; /* indicator whether menu should be redrawn */
     bool consumed = true;
 
@@ -933,10 +933,7 @@ bool GameplayMenu::handleUnknownKey(FS_Key key, const int modKeys) {
     if (paused_)
         return true;
 
-    bool ctrl = false;
-    if (modKeys & KMD_CTRL) {
-        ctrl = true;
-    }
+    bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
 
     // SPACE is pressed when the mission failed or succeeded to return
     // to menu

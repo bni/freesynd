@@ -80,7 +80,7 @@ void AnimMenu::displayFont() {
 
 }
 
-bool AnimMenu::handleUnknownKey(FS_Key key, const int modKeys) {
+bool AnimMenu::handleUnMappedKey(const FS_Key key) {
     bool change = false;
     if (key.keyCode == kKeyCode_Up) {
         if (animId_ < g_SpriteMgr.numAnims() - 1) {

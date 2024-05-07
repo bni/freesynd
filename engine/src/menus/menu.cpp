@@ -360,7 +360,7 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
     }
 
     // Finally pass the event to the menu instance
-    if (!handleUnknownKey(key, modKeys)) {
+    if (!handleUnMappedKey(key)) {
         // Menu has not consummed key event :
         // Pressing Escape changes the current menu to its parent(like a back)
         if (key.keyCode == kKeyCode_Escape) {

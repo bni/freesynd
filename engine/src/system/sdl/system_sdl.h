@@ -84,6 +84,10 @@ public:
         return keyModState_;
     }
 
+    bool isKeyModStatePressed(const int keyMod) override {
+        return (keyModState_ & keyMod) != 0;
+    }
+
     //! Call this method to activate the text event
     void startReceiveText() override;
     //! Call this method to deactivate the text event

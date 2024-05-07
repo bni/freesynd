@@ -48,7 +48,7 @@ public:
 
 protected:
     void handleRender(DirtyList &dirtyList);
-    bool handleUnknownKey(FS_Key key, const int modKeys) override;
+    bool handleUnMappedKey(const FS_Key key) override;
     bool handleMouseDown(int x, int y, int button, const int modKeys);
     //! Utility method to draw the mission selector
     void drawSelector();

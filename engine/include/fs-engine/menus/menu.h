@@ -164,7 +164,8 @@ protected:
     virtual bool handleMouseDown(int x, int y, int button, const int modKeys) { return false; }
     virtual void handleMouseUp(int x, int y, int button, const int modKeys) {}
     virtual void handleMouseMotion(int x, int y, int state, const int modKeys) {}
-    virtual bool handleUnknownKey(FS_Key key, const int modKeys) { return false;}
+    //! Handle key that where pressed but not assigned to any actions
+    virtual bool handleUnMappedKey([[maybe_unused]] const FS_Key key) { return false;}
 
     void needRendering();
 

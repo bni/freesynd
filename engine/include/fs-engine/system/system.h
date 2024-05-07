@@ -114,6 +114,8 @@ public:
 
     virtual int getKeyModState() = 0;
 
+    virtual bool isKeyModStatePressed(const int keyMod) = 0;
+
     //! Call this method to activate the text event
     virtual void startReceiveText() = 0;
     //! Call this method to deactivate the text event
