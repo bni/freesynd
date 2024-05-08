@@ -715,7 +715,7 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
         caretPosition_ = utf8::distance(src, src + size);
         needRedraw = true;
     } else if (key.keyCode == kKeyCode_Text) {
-        if (text_.getFont()->isPrintable(key.keyCode)) {
+        if (text_.getFont()->isPrintable(key.codePoint)) {
             handleCharacter(key);
         }
     } else {

@@ -1,5 +1,30 @@
-// The first 1600 unicode code-points mapped to cp437.
-const unsigned char cp437[] = {
+/************************************************************************
+ *                                                                      *
+ *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
+ *                                                                      *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
+ *                                                                      *
+ *    This program is free software;  you can redistribute it and / or  *
+ *  modify it  under the  terms of the  GNU General  Public License as  *
+ *  published by the Free Software Foundation; either version 2 of the  *
+ *  License, or (at your option) any later version.                     *
+ *                                                                      *
+ *    This program is  distributed in the hope that it will be useful,  *
+ *  but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of  *
+ *  MERCHANTABILITY  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  *
+ *  General Public License for more details.                            *
+ *                                                                      *
+ *    You can view the GNU  General Public License, online, at the GNU  *
+ *  project's  web  site;  see <http://www.gnu.org/licenses/gpl.html>.  *
+ *  The full text of the license is also included in the file COPYING.  *
+ *                                                                      *
+ ************************************************************************/
+
+
+/*!
+ * The first 1600 unicode code-points mapped to cp437.
+ */
+const cp437char_t unicodeToCp437[] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
     0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,

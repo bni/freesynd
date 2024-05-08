@@ -32,6 +32,9 @@
 #include "fs-utils/common.h"
 #include "spritemanager.h"
 
+//! This type is used for characters in Code Page 437
+typedef unsigned char cp437char_t;
+
 /*!
  * Font range description for 8-bit character sets.
  */

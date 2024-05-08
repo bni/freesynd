@@ -103,9 +103,9 @@ unsigned char Font::decode(const unsigned char * &c, bool dos)
     }
 
     int wc = decodeUTF8(c);
-    if (wc > (int)sizeof(cp437)) return 0xff; // out-of-range
+    if (wc > (int)sizeof(unicodeToCp437)) return 0xff; // out-of-range
     if (wc == 0) return 0;
-    unsigned char value = cp437[wc];
+    unsigned char value = unicodeToCp437[wc];
     if (value == 0) return 0xff;
     return value;
 }
@@ -247,10 +247,28 @@ int Font::textHeight(bool x2) {
     return getSprite('A')->height() * sc;
 }
 
-// returns true if given code point is printable with the font
+/*!
+ * Returns true if given code point is printable with this font.
+ * To be printable, the character must have an equivalent in the
+ * code page 437 character set and be in the character range for the font.
+ * \param codePoint utf8::utfchar32_t
+ * \return bool True means the character is printable
+ *
+ */
 bool Font::isPrintable(utf8::utfchar32_t codePoint) {
-    //TODO : use FontRange
-    return codePoint != 0;
+    if (codePoint >= 0x0061 && codePoint <= 0x007A) {
+        // If the key is a letter between 'a' and 'z'
+        // => capitalize it because MenuFont only displays capital letters
+        codePoint -= 32;
+    }
+    // We look for the corresponding character in cp437 table
+    if (codePoint > sizeof(unicodeToCp437)) {
+        return false; // out-of-range
+    }
+
+    cp437char_t charCp437 = unicodeToCp437[codePoint];
+
+    return range_.in_range(charCp437);
 }
 
 MenuFont::MenuFont() : Font() {
