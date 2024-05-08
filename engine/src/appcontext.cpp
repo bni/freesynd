@@ -56,17 +56,12 @@ bool AppContext::readConfiguration(const std::string& iniFolder, const std::stri
 }
 
 bool AppContext::readFreesyndIni(const std::string& iniFolder) {
-    std::string iniPath;
+    fs::path iniPath;
     ConfigFile freesyndIni;
-    bool iniExist = File::getIniFullPath(iniFolder, iniPath);
 
-    if (iniPath.size() == 0) {
-        // There was a problem when finding ini path
-        FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Error reading configuration file %s\n", iniFolder.c_str()));
-        return false;
-    }
+    File::getIniFullPath(iniFolder, iniPath);
 
-    if (!iniExist) {
+    if (!fs::exists(iniPath)) {
         FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot find configuration file %s\n", iniPath.c_str()));
         return false;
     } else {

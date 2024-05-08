@@ -43,7 +43,7 @@ class File {
 public:
     static void getDefaultSaveFolder(std::string& confFolderPath);
     //! Return the path to ini file base on iniFolder
-    static bool getIniFullPath(const std::string& iniFolder, std::string& iniFullPath);
+    static void getIniFullPath(const std::string& iniFolder, fs::path&  iniFullPath);
     //! Return the path for the user config file
     static bool getUserConfFullPath(fs::path& confFullPath);
     //! Return the path for the user folder
@@ -79,7 +79,7 @@ public:
 
 private:
     //! Return the default dir path for the freesynd.ini file
-    static std::string getDefaultIniFolder();
+    static void getDefaultIniFolder(fs::path& folderPath);
 
     static void addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files);
     //! Adds a trailing slash to the string

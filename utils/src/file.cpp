@@ -41,6 +41,14 @@
 #include <sys/types.h>
 #endif
 
+#ifdef __APPLE__
+// Carbon includes an AIFF header which conflicts with fliplayer.h
+// So we will redefine ChunkHeader temporarily to work around that.
+#define ChunkHeader CarbonChunkHeader
+#include <Carbon/Carbon.h>
+#undef ChunkHeader
+#endif
+
 #include "fs-utils/io/file.h"
 #include "fs-utils/crc/ccrc32.h"
 #include "fs-utils/crc/dernc.h"
@@ -66,7 +74,7 @@ static std::string exeFolder() {
 #endif
 
 #ifdef __APPLE__
-static bool getResourcePath(string& resourcePath) {
+static bool getResourcePath(fs::path& resourcePath) {
     // let's check to see if we're inside an application bundle first.
     CFBundleRef main = CFBundleGetMainBundle();
     CFStringRef appid = NULL;
@@ -93,63 +101,46 @@ static bool getResourcePath(string& resourcePath) {
     CFRelease(url);
 
     resourcePath.assign(buf);
-    resourcePath.push_back('/');
     free(buf);
     return true;
 }
 #endif
 
-std::string File::getDefaultIniFolder()
+void File::getDefaultIniFolder(fs::path& folderPath)
 {
-    std::string folder;
 #ifdef _WIN32
     // Under windows config file is in the same directory as freesynd.exe
-    folder.assign(exeFolder());
+    folderPath.assign(exeFolder());
     // Since we're defaulting to the exe's folder, no need to try to create a directory.
 #elif defined(__APPLE__)
     // Make a symlink for convenience for *nix people who own Macs.
-    folder.assign(getenv("HOME"));
-    folder.append("/.freesynd");
-    symlink("Library/Application Support/FreeSynd", folder.c_str());
+    folderPath.assign(getenv("HOME"));
+    folderPath /= ".freesynd";
+    // TODO : verify symlink
+    //symlink("Library/Application Support/FreeSynd", folder.c_str());
     // On OS X, applications tend to store config files in this sort of path.
-    folder.assign(getenv("HOME"));
-    folder.append("/Library/Application Support/FreeSynd");
-    mkdir(folder.c_str(), 0755);
+    //folder.assign(getenv("HOME"));
+    //folder.append("/Library/Application Support/FreeSynd");
+    //mkdir(folder.c_str(), 0755);
 #else
-    folder.assign(FS_ETC_DIR);
+    folderPath.assign(FS_ETC_DIR);
 
 #endif
-    // note that we don't care if the mkdir() calls above succeed or not.
-    // if they fail because they already exist, then it's no problem.
-    // if they fail for any other reason, then we won't be able to open
-    // or create freesynd.ini, and we'll surely detect that below.
-
-    return folder;
 }
 
 /*!
  * Set iniFullPath with the absolute path to the freesynd.ini file.
  * \param iniFolder If empty that means we use getDefaultIniFolder. Else use the value.
  * \param iniFullPath Result of the full path
- * \return True means file exists. False means file will be created
  */
-bool File::getIniFullPath(const std::string& iniFolder, std::string& iniFullPath) {
+void File::getIniFullPath(const std::string& iniFolder, fs::path& iniFullPath) {
     if (iniFolder.size() == 0) {
-        iniFullPath.assign(getDefaultIniFolder());
+        getDefaultIniFolder(iniFullPath);
     } else {
         iniFullPath.assign(iniFolder);
     }
 
-    addMissingSlash(iniFullPath);
-    iniFullPath.append("freesynd.ini");
-
-    // Test if file exists
-#ifdef _WIN32
-    return (_access(iniFullPath.c_str(), 0) == 0);
-#else
-    struct stat buf;
-    return (stat (iniFullPath.c_str(), &buf) == 0);
-#endif
+    iniFullPath /= "freesynd.ini";
 }
 
 bool File::getOrCreateUserConfFolder(const std::string& userConfFolder) {
@@ -165,24 +156,15 @@ bool File::getOrCreateUserConfFolder(const std::string& userConfFolder) {
     }
 
     // We need to use default path and create folder if it does not exist
-#if defined(__APPLE__)
-    if (getResourcePath(fsDataFullPath)) {
-        // this is an app bundle, so let's default the data dir
-        // to the one included in the app bundle's resources.
-        fsDataFullPath += "data/";
-    } else {
-        FSERR(Log::k_FLG_GFX, "File", "getDefaultFreesyndDataFolder", ("Unable to locate app bundle resources.\n"));
-        return false;
-    }
-#else
-// On windows & Linux we use the user's home folder.
+    // On all platforms, we use the user's home folder.
 #ifdef _WIN32
-    
+    // on Windows, home is defined using USERPROFILE env variable
     userConfFolderPath_ = getenv("USERPROFILE");
 #else
-    // Under unix it's in the user home directory
+    // Under unix (and Mac) it's in the user home directory
     userConfFolderPath_ = getenv("HOME");
 #endif
+
     userConfFolderPath_ /= ".freesynd";
 
     if (!fs::exists(userConfFolderPath_)) {
@@ -192,7 +174,6 @@ bool File::getOrCreateUserConfFolder(const std::string& userConfFolder) {
             return false;
         }
     }
-#endif
 
     return true;
 }
@@ -314,18 +295,18 @@ void File::setFreesyndDataFolder(const std::string& path) {
     if (path.size() != 0) {
         ourDataPath_ = path;
     } else {
+        // User did not set a path so use default one
 #ifdef _WIN32
     // On windows default installation of data is in the folder where the exe is.
     ourDataPath_ = exeFolder();
     ourDataPath_ /= "data";
 #elif defined(__APPLE__)
-    if (getResourcePath(fsDataFullPath)) {
+    if (getResourcePath(ourDataPath_)) {
         // this is an app bundle, so let's default the data dir
         // to the one included in the app bundle's resources.
-        fsDataFullPath += "data/";
+        ourDataPath_ /= "data/";
     } else {
         FSERR(Log::k_FLG_GFX, "File", "getDefaultFreesyndDataFolder", ("Unable to locate app bundle resources.\n"));
-        return false;
     }
 #else
     // Under unix it's in the data directory
