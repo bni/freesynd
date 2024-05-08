@@ -10,10 +10,18 @@ freesynd (0.8) UNRELEASED; urgency=low
   * Energy Shield is now fully usable
   * Debian package is now available
   * freesynd.ini is now only for global parameters and user.conf is for user config
-  * In freesynd.ini, freesynd_data_dir and data_dir are empty by default so 
-     find dirs with new rules based on current platform
+  * In freesynd.ini, freesynd_data_dir and data_dir are empty by default. Dirs are 
+     found using new rules based on current platform
   * Cmake 3.22 is required for building the app
+  * Lots of code reorg to be compliant with Modern Cmake and the use of libraries
+  * Add CMake build presets
   * C++ 20 is the standard language for the app
+  * Add new warning flags for compilation
+  * Migrate to SDL2.0.20
+  * Add new packaging with CPack (debian, zip, source zip)
+  * new -u param to set a custom user directory (for user.conf)
+  * Renamed editor exe file into fs_editor to be more specific
+  * Improve unicode management with SDL2
 
  -- Benoit Blancard <benblan@users.sourceforge.net>  Sun, 24 Mar 2024 00:37:31 +0100
 
