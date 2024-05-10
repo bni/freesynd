@@ -45,13 +45,24 @@ set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS YES)
 #
 
 # We'll generate those two source file formats
-set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_GENERATOR "ZIP")
 
 set(CPACK_SOURCE_IGNORE_FILES
         /build.*
         /\\\\.git/
         /\\\\.gitignore
         game/version.h)
+
+# Generator selection per platform
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(CPACK_GENERATOR ZIP)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(CPACK_GENERATOR DragNDrop)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  set(CPACK_GENERATOR DEB)
+else ()
+  set(CPACK_GENERATOR TGZ)
+endif ()
 
 # Sets CPack
 include(CPack)

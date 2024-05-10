@@ -61,13 +61,47 @@ source_group(Core REGULAR_EXPRESSION core/*)
 source_group(Model REGULAR_EXPRESSION model/*)
 source_group(IA REGULAR_EXPRESSION ia/*)
 
-add_executable (freesynd ${SOURCES} ${HEADERS})
+add_executable (freesynd MACOSX_BUNDLE ${SOURCES} ${HEADERS})
 
 target_link_libraries (freesynd PRIVATE freesynd_warnings Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
 
 # We only define an install target if we're doing a release build.
 if (APPLE)
-    install (TARGETS freesynd DESTINATION /Applications)
+    install (TARGETS freesynd BUNDLE DESTINATION .)
+
+	set(MACOS_ASSETS "${MACOS_ASSETS_ICON}")
+	target_sources(freesynd PUBLIC ${MACOS_ASSETS})
+
+	# I use this custom command to copy the data folder under the Resources directy
+	# I can't make it work using MACOSX_PACKAGE_LOCATION source property
+	add_custom_command(TARGET freesynd POST_BUILD
+  						COMMAND ${CMAKE_COMMAND} -E copy_directory
+						"${CMAKE_SOURCE_DIR}/data"
+						"$<TARGET_FILE_DIR:freesynd>/../Resources") 
+
+	# Remove files from what has been copied
+	add_custom_command(TARGET freesynd POST_BUILD
+						COMMAND ${CMAKE_COMMAND} -E rm
+					  "$<TARGET_FILE_DIR:freesynd>/../Resources/CMakeLists.txt"
+					  "$<TARGET_FILE_DIR:freesynd>/../Resources/Freesynd.ini")
+		
+	# Override certain properties to make the freesynd
+	# executable into an application bundle for OS X.
+	set_target_properties (freesynd PROPERTIES
+		OUTPUT_NAME "FreeSynd"
+	#	MACOSX_BUNDLE true
+		MACOSX_BUNDLE_BUNDLE_NAME "FreeSynd"
+		MACOSX_BUNDLE_ICON_FILE "sword.icns"
+		MACOSX_BUNDLE_GUI_IDENTIFIER "com.freesynd.FreeSynd"
+		MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+		MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+		MACOSX_BUNDLE_COPYRIGHT "© 2024 FreeSynd Team"
+		RESOURCE "${MACOS_ASSETS}"
+	)
+	#include (tools/osx.cmake)
+	#copy_resource_file (freesynd "Copying icon" ${CMAKE_SOURCE_DIR}/icon/sword.icns)
+	#copy_resource_folder (freesynd "Copying data" ${CMAKE_SOURCE_DIR}/data)
+	#include_libs (freesynd "Including non-standard OS X libraries")
 elseif (WIN32)
     install (TARGETS freesynd DESTINATION .)
 else ()
@@ -75,21 +109,4 @@ else ()
     install (TARGETS freesynd DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endif ()
 
-if (APPLE)
-	# Override certain properties to make the freesynd
-	# executable into an application bundle for OS X.
-	set_target_properties (freesynd PROPERTIES
-		OUTPUT_NAME "FreeSynd"
-		MACOSX_BUNDLE true
-		MACOSX_BUNDLE_BUNDLE_NAME "FreeSynd"
-		MACOSX_BUNDLE_ICON_FILE "sword.icns"
-		MACOSX_BUNDLE_GUI_IDENTIFIER "com.freesynd.FreeSynd"
-		MACOSX_BUNDLE_SHORT_VERSION_STRING "${FREESYND_VERSION}"
-		MACOSX_BUNDLE_COPYRIGHT "© 2011 FreeSynd Team"
-	)
-	include (tools/osx.cmake)
-	copy_resource_file (freesynd "Copying icon" ${CMAKE_SOURCE_DIR}/icon/sword.icns)
-	copy_resource_folder (freesynd "Copying data" ${CMAKE_SOURCE_DIR}/data)
-	include_libs (freesynd "Including non-standard OS X libraries")
-endif()
 

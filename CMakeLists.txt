@@ -82,13 +82,13 @@ else()
 endif()
 
 # Build the sources in these subdirectory.
+add_subdirectory (packaging)
 add_subdirectory (data)
 add_subdirectory (utils)
 add_subdirectory (engine)
 add_subdirectory (kernel)
 add_subdirectory (game)
 add_subdirectory (editor)
-add_subdirectory (packaging)
 
 #################################
 # For all packaging instructions
