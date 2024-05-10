@@ -104,14 +104,14 @@ bool SdlMixerMusic::loadMusic(uint8 * musicData, int size)
 {
     SDL_RWops *rw = SDL_RWFromMem(musicData, size);
     if (!rw) {
-        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed creating SDL_RW buffer from memory"));
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed creating SDL_RW buffer from memory\n"));
         return false;
     }
     // SDL_FALSE is for leaving the RWOps open as we free it later
     Mix_Music *newmusic = Mix_LoadMUS_RW(rw, SDL_FALSE);
 
     if (!newmusic) {
-        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed loading music from SDL_RW buffer"));
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed loading music from SDL_RW buffer\n"));
         SDL_FreeRW(rw);
         return false;
     }

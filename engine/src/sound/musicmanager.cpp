@@ -67,6 +67,7 @@ void MusicManager::initialize(bool disabled, Audio* audio)
     int size;
     uint8 *data;
 
+    LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music for intro"))
 #if USE_INTRO_OGG
     tracks_.push_back(audio->createMusic());
     tracks_.back()->loadMusicFile("music/intro.ogg");
@@ -83,6 +84,7 @@ void MusicManager::initialize(bool disabled, Audio* audio)
     data = File::loadOriginalFile("SYNGAME.XMI", size);
     tracks = xmidi.convertXMidi(data, size);
     for (unsigned int i = 0; i < tracks.size(); ++i) {
+        LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music for game : %i", i))
         if (i == 0) {
 #if USE_ASSASSINATE_OGG
             tracks_.push_back(audio->createMusic());

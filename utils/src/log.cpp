@@ -71,7 +71,7 @@ const char * Log::typeToStr(int type) {
     }
 }
 
-const int Log::maskFromString(std::string mask) {
+int Log::maskFromString(std::string mask) {
     // used to parse the mask
     std::stringstream ss(mask);
     // `flag` is used to store the token string

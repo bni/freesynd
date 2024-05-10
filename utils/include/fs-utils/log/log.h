@@ -95,7 +95,7 @@ class Log {
     //! Returns a readable representation of the given type.
     static const char * typeToStr(int type);
     //! Returns a log mask from parsing the input
-    static const int maskFromString(std::string mask);
+    static int maskFromString(std::string mask);
 
     /*! The current logging mask. By default , ALL is set.*/
     static int logMask_;
