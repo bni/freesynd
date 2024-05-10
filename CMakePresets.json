@@ -29,7 +29,8 @@
                 "strategy": "external"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "FREESYND_ARCH": "x86"
             }
         },
         {
@@ -43,7 +44,32 @@
             }
         },
         {
-            "name": "cb_makefile-x86-linux-debug",
+            "name": "x64-debug",
+            "displayName": "x64 Debug",
+            "description": "Sets debug build type and x86 arch",
+            "inherits": "x86-debug",
+            "hidden": true,
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "FREESYND_ARCH": "x64"
+            }
+        },
+        {
+            "name": "x64-release",
+            "displayName": "x64 Release",
+            "description": "Sets release build type",
+            "inherits": "x64-debug",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "cb_unix_makefile-x86-debug",
             "displayName": "Code::Blocks with Makefile with Debug configuration",
             "description": "Code::Blocks with Makefile with Debug configuration",
             "hidden": false,
@@ -51,7 +77,7 @@
             "inherits": "x86-debug"
         },
         {
-            "name": "cb_makefile-x86-linux-release",
+            "name": "cb_unix_makefile-x86-release",
             "displayName": "Code::Blocks with Makefile with Release configuration",
             "description": "Code::Blocks with Makefile with Release configuration",
             "hidden": false,
@@ -59,47 +85,69 @@
             "inherits": "x86-release"
         },
         {
-            "name": "makefile-x86-linux-debug",
-            "displayName": "Linux Makefile with Debug configuration",
-            "description": "Linux Makefile with Debug configuration",
+            "name": "ninja-linux-x86-debug",
+            "displayName": "ninja-linux-x86-debug",
+            "description": "Ninja with Debug configuration",
             "hidden": false,
-            "generator": "Unix Makefiles",
             "inherits": "x86-debug"
         },
         {
-            "name": "makefile-x86-linux-release",
-            "displayName": "Linux Makefile with Release configuration",
+            "name": "ninja-linux-x86-release",
+            "displayName": "ninja-linux-x86-release",
             "description": "Single configuration Release",
             "hidden": false,
-            "generator": "Unix Makefiles",
             "inherits": "x86-release",
             "installDir": "/usr/local"
         },
         {
-            "name": "msvc-15-x86-debug",
-            "displayName": "Visual Studio Build Tools 2017 Debug - x86_amd64",
-            "description": "Using compilers for Visual Studio 15 2017 (x86_x64 architecture)",
+            "name": "ninja-msvc-x86-debug",
+            "displayName": "Ninja x86_msvc-Debug",
+            "description": "Ninja with Microsoft C++ compiler - Debug",
             "hidden": false,
             "inherits": "x86-debug",
-            "generator": "Visual Studio 15 2017",
             "toolset": {
                 "value": "host=x86"
             },
-            "cacheVariables": {
+	        "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
         },
         {
-            "name": "msvc-15-x86-release",
-            "displayName": "Visual Studio Build Tools 2017 Release - x86_amd64",
-            "description": "Using compilers for Visual Studio 15 2017 (x86_x64 architecture)",
+            "name": "ninja-msvc-x86-release",
+            "displayName": "Ninja x86_msvc-Release",
+            "description": "Ninja with Microsoft C++ compiler - Release",
             "hidden": false,
             "inherits": "x86-release",
-            "generator": "Visual Studio 15 2017",
             "toolset": {
                 "value": "host=x86"
             },
-            "cacheVariables": {
+	        "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+	    {
+            "name": "ninja-msvc-x64-debug",
+            "displayName": "Ninja x64_msvc-Debug",
+            "description": "Ninja with Microsoft C++ compiler - Debug",
+            "hidden": false,
+            "inherits": "x64-debug",
+            "toolset": {
+                "value": "host=x64"
+            },
+	        "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
+            "name": "ninja-msvc-x64-release",
+            "displayName": "Ninja x64_msvc-Release",
+            "description": "Ninja with Microsoft C++ compiler - Release",
+            "hidden": false,
+            "inherits": "x64-release",
+            "toolset": {
+                "value": "host=x64"
+            },
+	        "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
         },
@@ -117,25 +165,25 @@
     ],
     "buildPresets": [
         {
-            "name": "build-msvc-15-x86-debug",
+            "name": "build-ninja-msvc-x86-debug",
             "displayName": "Build MSVC x86 Debug",
-            "configurePreset": "msvc-15-x86-debug"
+            "configurePreset": "ninja-msvc-x86-debug"
         },
         {
-            "name": "build-msvc-15-x86-release",
+            "name": "build-ninja-msvc-x86-release",
             "displayName": "Build MSVC x86 Release",
-            "configurePreset": "msvc-15-x86-release",
+            "configurePreset": "ninja-msvc-x86-release",
             "configuration": "Release"
         },
         {
-            "name": "build-makefile-x86-linux-debug",
-            "displayName": "Build Makefile x86 Debug",
-            "configurePreset": "makefile-x86-linux-debug"
+            "name": "build-ninja-msvc-x64-debug",
+            "displayName": "Build MSVC x64 Debug",
+            "configurePreset": "ninja-msvc-x64-debug"
         },
         {
-            "name": "build-makefile-x86-linux-release",
-            "displayName": "Build Makefile x86 Release",
-            "configurePreset": "makefile-x86-linux-release",
+            "name": "build-ninja-msvc-x64-release",
+            "displayName": "Build MSVC x64 Release",
+            "configurePreset": "ninja-msvc-x64-release",
             "configuration": "Release"
         },
         {

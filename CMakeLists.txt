@@ -18,9 +18,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_SOURCE_D
 if (WIN32)
 	# Search the bundled libs directory when using MSVC.
 	set (CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH}
-		${CMAKE_SOURCE_DIR}/extern/sdl2/lib/x86
-        ${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/x86
-        ${CMAKE_SOURCE_DIR}/extern/SDL2_image/lib/x86
+		${CMAKE_SOURCE_DIR}/extern/sdl2/lib/${FREESYND_ARCH}
+        ${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/${FREESYND_ARCH}
+        ${CMAKE_SOURCE_DIR}/extern/SDL2_image/lib/${FREESYND_ARCH}
         ${CMAKE_SOURCE_DIR}/extern/png/lib
 	)
 	set (CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH}
