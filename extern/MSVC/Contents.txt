@@ -1,5 +1,0 @@
-SDL-1.2.14
-SDL_image-1.2.10
-SDL_mixer-1.2.11
-libpng-1.4.1
-zlib-1.2.3

@@ -1,0 +1,6 @@
+SDL2-2.30.3
+SDL2_image-2.8.2
+SDL_mixer-2.8.0
+libpng-1.4.1
+zlib-1.2.3
+utfcpp-4.0.5
