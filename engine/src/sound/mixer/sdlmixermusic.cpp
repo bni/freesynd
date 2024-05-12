@@ -111,7 +111,7 @@ bool SdlMixerMusic::loadMusic(uint8 * musicData, int size)
     Mix_Music *newmusic = Mix_LoadMUS_RW(rw, SDL_FALSE);
 
     if (!newmusic) {
-        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed loading music from SDL_RW buffer\n"));
+        FSERR(Log::k_FLG_SND, "SdlMixerMusic", "loadMusic", ("Failed loading music from SDL_RW buffer : %s\n", Mix_GetError()));
         SDL_FreeRW(rw);
         return false;
     }

@@ -11,6 +11,14 @@ set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Debug' as none was specified.")
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+
+  # Set the possible values of build type for cmake-gui, ccmake
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
+endif ()
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/game/version.h)
@@ -94,10 +102,17 @@ add_subdirectory (utils)
 add_subdirectory (engine)
 add_subdirectory (kernel)
 add_subdirectory (game)
-add_subdirectory (editor)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # The editor is build only in Development mode
+    add_subdirectory (editor)
+endif()
 
 #################################
 # For all packaging instructions
+# Only in Release mode
 #################################
-include(Packing)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    include(Packing)
+endif()
 

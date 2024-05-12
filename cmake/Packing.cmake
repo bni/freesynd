@@ -1,7 +1,7 @@
 
 set(CPACK_PACKAGE_DESCRIPTION "This package will install the Freesynd application.")
 
-set(CPACK_PACKAGE_ICON "/icon/sword.png")
+#set(CPACK_PACKAGE_ICON "/icon/sword.png")
 
 set(CPACK_PACKAGE_CHECKSUM SHA256)
 

@@ -97,10 +97,10 @@ public:
  */
 class DefaultSound : public Sound {
 public:
-    void play(int loops = 0, int channel = 0) const {;}
-    void stop(int channel = 0) const {;}
-    bool setVolume(int volume) { return true; }
-    bool loadSound(uint8 *soundData, uint32 size) { return true; }
+    void play([[maybe_unused]] int loops = 0, [[maybe_unused]] int channel = 0) const {;}
+    void stop([[maybe_unused]] int channel = 0) const {;}
+    bool setVolume([[maybe_unused]] int volume) { return true; }
+    bool loadSound([[maybe_unused]] uint8 *soundData, [[maybe_unused]] uint32 size) { return true; }
 };
 
 #endif  // HAVE_SDL_MIXER

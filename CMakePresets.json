@@ -152,16 +152,24 @@
             }
         },
         {
-          "name": "vscode-mac",
-          "displayName": "Clang 15.0.0 arm64-apple-darwin23.1.0",
-          "description": "Visual Studio Code on Mac with CLang compiler",
+          "name": "ninja-clang-arm64-debug",
+          "displayName": "ninja-clang-arm64-debug",
+          "description": "Visual Studio Code on Mac with Clang compiler - Debug",
           "inherits": "base",
           "cacheVariables": {
-              "CMAKE_C_COMPILER": "/usr/bin/clang",
               "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
               "CMAKE_BUILD_TYPE": "Debug"
           }
-      }
+        },
+        {
+            "name": "ninja-clang-arm64-release",
+            "displayName": "ninja-clang-arm64-release",
+            "description": "Visual Studio Code on Mac with Clang compiler - Debug",
+            "inherits": "ninja-clang-arm64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
     ],
     "buildPresets": [
         {
@@ -189,7 +197,13 @@
         {
           "name": "build-ninja-x86-arm64-debug",
           "displayName": "Build Ninja arm64 Debug",
-          "configurePreset": "vscode-mac"
-      }
+          "configurePreset": "ninja-clang-arm64-debug"
+        },
+        {
+            "name": "build-ninja-x86-arm64-release",
+            "displayName": "Build Ninja arm64 Release",
+            "configurePreset": "ninja-clang-arm64-release",
+            "configuration": "Release"
+        }
     ]
 }

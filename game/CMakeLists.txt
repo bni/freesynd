@@ -61,6 +61,7 @@ source_group(Core REGULAR_EXPRESSION core/*)
 source_group(Model REGULAR_EXPRESSION model/*)
 source_group(IA REGULAR_EXPRESSION ia/*)
 
+# When building for Mac, it will build as a Bundle
 add_executable (freesynd MACOSX_BUNDLE ${SOURCES} ${HEADERS})
 
 target_link_libraries (freesynd PRIVATE freesynd_warnings Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
@@ -98,10 +99,7 @@ if (APPLE)
 		MACOSX_BUNDLE_COPYRIGHT "© 2024 FreeSynd Team"
 		RESOURCE "${MACOS_ASSETS}"
 	)
-	#include (tools/osx.cmake)
-	#copy_resource_file (freesynd "Copying icon" ${CMAKE_SOURCE_DIR}/icon/sword.icns)
-	#copy_resource_folder (freesynd "Copying data" ${CMAKE_SOURCE_DIR}/data)
-	#include_libs (freesynd "Including non-standard OS X libraries")
+	
 elseif (WIN32)
     install (TARGETS freesynd DESTINATION .)
 else ()
