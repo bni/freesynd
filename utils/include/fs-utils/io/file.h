@@ -32,6 +32,7 @@
 #include <filesystem>
 
 #include "fs-utils/common.h"
+#include "fs-utils/io/configfile.h"
 
 namespace fs = std::filesystem;
 
@@ -41,9 +42,7 @@ namespace fs = std::filesystem;
  */
 class File {
 public:
-    static void getDefaultSaveFolder(std::string& confFolderPath);
-    //! Return the path to ini file base on iniFolder
-    static void getIniFullPath(const std::string& iniFolder, fs::path&  iniFullPath);
+    static bool getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni);
     //! Return the path for the user config file
     static bool getUserConfFullPath(fs::path& confFullPath);
     //! Return the path for the user folder
@@ -55,6 +54,7 @@ public:
     static void setFreesyndDataFolder(const std::string& path);
     //! Sets the path where to save all files.*/
     static void upsertSaveDataFolder(const std::string& path);
+    static void getDefaultSaveFolder(std::string& confFolderPath);
 
     //*************************************
     // Original files apis
@@ -78,8 +78,8 @@ public:
     static uint8 *loadOriginalFileToMem(const std::string& filename, size_t &filesize);
 
 private:
-    //! Return the default dir path for the freesynd.ini file
-    static void getDefaultIniFolder(fs::path& folderPath);
+    //! Return the path to ini file base on iniFolder
+    static void getIniFullPath(const std::string& iniFolder, fs::path&  iniFullPath);
 
     static void addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files);
     //! Adds a trailing slash to the string

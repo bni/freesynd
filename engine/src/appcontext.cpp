@@ -56,23 +56,10 @@ bool AppContext::readConfiguration(const std::string& iniFolder, const std::stri
 }
 
 bool AppContext::readFreesyndIni(const std::string& iniFolder) {
-    fs::path iniPath;
     ConfigFile freesyndIni;
 
-    File::getIniFullPath(iniFolder, iniPath);
-
-    if (!fs::exists(iniPath)) {
-        FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot find configuration file %s\n", iniPath.c_str()));
+    if (!File::getFreesyndConf(iniFolder, freesyndIni)) {
         return false;
-    } else {
-        FSINFO(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Reading configuration from file %s.\n", iniPath.c_str()));
-        std::ifstream in( iniPath.c_str() );
-
-        if( !in ) {
-            return false;
-        }
-
-        in >> freesyndIni;
     }
 
     time_for_click_ = freesyndIni.read("time_for_click", 80);

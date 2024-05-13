@@ -110,35 +110,77 @@ static bool getResourcePath(fs::path& resourcePath) {
 }
 #endif
 
-void File::getDefaultIniFolder(fs::path& folderPath) {
-#ifdef _WIN32
-    // Under windows config file is in the same directory as freesynd.exe
-    folderPath.assign(exeFolder());
-    // Since we're defaulting to the exe's folder, no need to try to create a directory.
-#elif defined(__APPLE__)
-    // Make a symlink for convenience for *nix people who own Macs.
-    folderPath.assign(getenv("HOME"));
-    folderPath /= ".freesynd";
-    // TODO : verify symlink
-    //symlink("Library/Application Support/FreeSynd", folder.c_str());
-    // On OS X, applications tend to store config files in this sort of path.
-    //folder.assign(getenv("HOME"));
-    //folder.append("/Library/Application Support/FreeSynd");
-    //mkdir(folder.c_str(), 0755);
-#else
-    folderPath.assign(FS_ETC_DIR);
+/*! @brief 
+ * @param iniFolder 
+ * @param freesyndIni 
+ * @return 
+ */
+bool File::getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni) {
+#if defined(__APPLE__)
+    // On MacOS there is no freesynd.ini, we use Preferences utilities
+    CFStringRef oldDataDirKey = CFSTR("data_dir");
+    CFStringRef oldDataDir;
 
+    // Read the preference.
+    oldDataDir = (CFStringRef)CFPreferencesCopyAppValue(oldDataDirKey,
+                                 kCFPreferencesCurrentApplication);
+    if (oldDataDir) {
+        // All this code only to convert a CFStringRef to a std::string!
+        const CFIndex kCStringSize = 128;
+        char temporaryCString[kCStringSize];
+        bzero(temporaryCString,kCStringSize);
+        CFStringGetCString(oldDataDir, temporaryCString, kCStringSize, kCFStringEncodingUTF8);
+        std::string *oldDataDirAsStr = new std::string(temporaryCString);
+        freesyndIni.add("data_dir", *oldDataDirAsStr);
+        CFRelease(oldDataDir);
+        delete oldDataDirAsStr;
+    } else {
+        // Sets a default dir that will be seen as to be set
+        freesyndIni.add("data_dir", "To_Be_Set");
+    }
+    
+    // If emmty, we will read data in the Bundle
+    freesyndIni.add("freesynd_data_dir", "");
+
+#else
+    // On Windows or Linux, we use a freesynd.ini file
+    fs::path iniPath;
+
+    File::getIniFullPath(iniFolder, iniPath);
+
+    if (!fs::exists(iniPath)) {
+        FSERR(Log::k_FLG_IO, "File", "getFreesyndConf", ("Cannot find configuration file %s\n", iniPath.c_str()));
+        return false;
+    } else {
+        FSINFO(Log::k_FLG_IO, "File", "getFreesyndConf", ("Reading configuration from file %s.\n", iniPath.c_str()));
+        std::ifstream in( iniPath.c_str() );
+
+        if( !in ) {
+            return false;
+        }
+
+        in >> freesyndIni;
+    }
 #endif
+    return true;
 }
 
 /*!
  * Set iniFullPath with the absolute path to the freesynd.ini file.
- * \param iniFolder If empty that means we use getDefaultIniFolder. Else use the value.
+ * \param iniFolder If empty that means we use a default folder. Else use the value.
  * \param iniFullPath Result of the full path
  */
 void File::getIniFullPath(const std::string& iniFolder, fs::path& iniFullPath) {
     if (iniFolder.size() == 0) {
-        getDefaultIniFolder(iniFullPath);
+ #ifdef _WIN32
+    // Under windows config file is in the same directory as freesynd.exe
+    iniFullPath.assign(exeFolder());
+    // Since we're defaulting to the exe's folder, no need to try to create a directory.
+#else
+    // should only be on Linux
+    iniFullPath.assign(FS_ETC_DIR);
+#endif
+
     } else {
         iniFullPath.assign(iniFolder);
     }

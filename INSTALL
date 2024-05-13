@@ -23,7 +23,9 @@
 	3/ Run FS_ROOT/freesynd.exe.
 
 #### Mac
-    1/ Unzip the application bundle and drag it to your "Applications" folder.
+    1/ Download the dmg file and double click to install
+    2/ Install original game data files (see chapter "Original Game Data).
+    3/ Run the application
 		
 #### Linux
     1/ Install the freesynd_X.X_amd64.deb
@@ -92,7 +94,7 @@ TBC
 ## Configuring FreeSynd
 
 FreeSynd comes with 2 differents configuration files :
-- `freesynd.ini` this file lists common parameters for all users
+- `freesynd.ini` this file lists common parameters for all users (except on MacOS)
 - `user.conf` this file is per user.
 You can edit the files with any text editor to customize your installation.
 When you run FreeSynd for the first time, `freesynd.ini` is expected to exist.
@@ -101,15 +103,14 @@ But a default `user.conf` file will be created for you if it does not already ex
 The location of `freesynd.ini` is different on each platform.
   * Windows: the folder containing freesynd.exe
   * Linux: /usr/local/etc/freesynd/
-  * Mac: $HOME/Library/Application Support/FreeSynd/ (TDC)
+  * Mac: This file does not exist on Mac. Parameters are stored in the user default system.
+  To configure those parameters on Mac, type the following command :
+  `defaults write com.freesynd.FreeSynd <param> <value`
 
 The location of `user.conf` is different on each platform.
   * Windows: the folder containing freesynd.exe
   * Linux: $HOME/.freesynd/
-  * Mac: $HOME/Library/Application Support/FreeSynd/ (TDC)
-
-  (For Mac users who prefer the Linux/Unix way of doing things, a symlink will
-be created at $HOME/.freesynd for your convenience.)
+  * Mac: $HOME/.freesynd/
 
   The default location of both files can be overridden on the command line.
 Run freesynd --help to see usage information.
@@ -133,7 +134,7 @@ Saved games are located in a different place on each platform.
 
 - Windows: a "save" folder inside the folder containing freesynd.exe
 - Linux: $HOME/.freesynd/save/
-- Mac: $HOME/Library/Application Support/FreeSynd/save/
+- Mac: $HOME/.freesynd/save/
 
 You may note that this location is based on the user.conf file location.
 The saved games location can be changed using the `save_data_dir` parameter in the user.conf file.
