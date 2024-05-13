@@ -99,7 +99,7 @@ void SoundManager::loadSounds(SampleSet set)
 
 void SoundManager::loadSounds(const std::string &tabFile, const std::string &datFile, std::vector<std::unique_ptr<Sound>> &sounds)
 {
-    int tabSize, datSize;
+    size_t tabSize, datSize;
 
     uint8 *tabDataOri = File::loadOriginalFile(tabFile, tabSize);
     uint8 *soundDataOri = File::loadOriginalFile(datFile, datSize);

@@ -59,7 +59,7 @@ public:
     //*************************************
     // Original files apis
     //*************************************
-    static uint8 *loadOriginalFile(const std::string& filename, int &filesize);
+    static uint8 *loadOriginalFile(const std::string& filename, size_t &filesize);
     static FILE *openOriginalFile(const std::string& filename);
 
     //! Tests Syndicate original data for existence and correctness
@@ -75,7 +75,7 @@ public:
     static void getFullPathForSaveSlot(int slot, std::string &path);
     //! Returns the list of game saved names
     static void getGameSavedNames(std::vector<std::string> &files);
-    static uint8 *loadOriginalFileToMem(const std::string& filename, int &filesize);
+    static uint8 *loadOriginalFileToMem(const std::string& filename, size_t &filesize);
 
 private:
     //! Return the default dir path for the freesynd.ini file

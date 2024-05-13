@@ -94,7 +94,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
             sprintf(tmp, MISSION_PATTERN_GE, n);
             break;
     }
-    int size;
+    size_t size;
     uint8 *data = File::loadOriginalFile(tmp, size);
     if (data == NULL) {
         return NULL;
@@ -167,7 +167,7 @@ void MissionManager::destroyMission() {
  */
 bool MissionManager::load_level_data(int n, LevelData::LevelDataAll &level_data) {
     char tmp[100];
-    int size;
+    size_t size;
 
     sprintf(tmp, GAME_PATTERN, n);
     uint8 *data = File::loadOriginalFile(tmp, size);

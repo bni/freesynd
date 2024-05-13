@@ -185,7 +185,7 @@ Tile::EType TileManager::toTileType(uint8 data)
  */
 bool TileManager::loadTiles()
 {
-    int size;
+    size_t size;
     uint8 *type_data;
 
     // first reads types

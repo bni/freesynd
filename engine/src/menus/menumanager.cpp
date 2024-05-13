@@ -69,7 +69,7 @@ MenuManager::~MenuManager()
  */
 bool MenuManager::initialize(bool loadIntroFont) {
     bool res = false;
-    int size = 0, tabSize = 0;
+    size_t size = 0, tabSize = 0;
     uint8 *data, *tabData;
 
     LOG(Log::k_FLG_INFO, "MenuManager", "initialize", ("initializing menus..."))
@@ -181,7 +181,7 @@ void MenuManager::setPaletteForMission(int i_id) {
 
 void MenuManager::setPalette(const char *fname, bool sixbit) {
     LOG(Log::k_FLG_GFX, "MenuManager", "setPalette", ("Setting palette : %s", fname))
-    int size;
+    size_t size;
     uint8 *data = File::loadOriginalFile(fname, size);
 
     if (data) {
@@ -256,7 +256,7 @@ void MenuManager::showMenu(Menu *pMenu) {
         drop_events_ = true;
         FliPlayer fliPlayer(this);
         uint8 *data;
-        int size;
+        size_t size;
         data = File::loadOriginalFile(pMenu->getShowAnimName(), size);
         fliPlayer.loadFliData(data);
         fliPlayer.play();
@@ -297,7 +297,7 @@ void MenuManager::leaveMenu(Menu *pMenu) {
         drop_events_ = true;
         FliPlayer fliPlayer(this);
         uint8 *data;
-        int size;
+        size_t size;
         data = File::loadOriginalFile(pMenu->getLeaveAnimName(), size);
         fliPlayer.loadFliData(data);
         pGameSounds_->play(MENU_CHANGE);

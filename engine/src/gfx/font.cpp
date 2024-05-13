@@ -440,7 +440,7 @@ HFont::~HFont() {
 }
 
 void HFont::load() {
-    int size;
+    size_t size;
     uint8 *data = File::loadOriginalFile("hfnt01.dat", size);
     for (int i = 0; i < 128; i++) {
         if (data[i * 5] || data[i * 5 + 1]) {

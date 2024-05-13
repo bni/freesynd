@@ -76,9 +76,9 @@ protected:
     int height_;
     uint8 *pixels_;
     bool dirty_;
-    int size_logo_;
+    size_t size_logo_;
     uint8 *data_logo_, *data_logo_copy_;
-    int size_mini_logo_;
+    size_t size_mini_logo_;
     uint8 *data_mini_logo_, *data_mini_logo_copy_;
 
     Screen();

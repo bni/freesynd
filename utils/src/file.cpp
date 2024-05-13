@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <ctype.h>
+#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -74,6 +74,11 @@ static std::string exeFolder() {
 #endif
 
 #ifdef __APPLE__
+/*!
+ * Return the path to the resources storesd in the bundle.
+ * @param resourcePath The path to set
+ * @return True if everything is ok.
+ */ 
 static bool getResourcePath(fs::path& resourcePath) {
     // let's check to see if we're inside an application bundle first.
     CFBundleRef main = CFBundleGetMainBundle();
@@ -82,32 +87,30 @@ static bool getResourcePath(fs::path& resourcePath) {
     if (!appid) return false;
 
     // we're in an app bundle.
-    printf("OS X application bundle detected.\n");
     CFURLRef url = CFBundleCopyResourcesDirectoryURL(main);
     if (!url) {
         // this shouldn't happen.
-        printf("Unable to locate resources.\n");
-        exit(1);
+        FSERR(Log::k_FLG_GFX, "File", "getResourcePath", ("Unable to locate resources.\n"))
+        return false;
     }
     FSRef fs;
     if (!CFURLGetFSRef(url, &fs)) {
         // this shouldn't happen.
-        printf("Unable to translate URL.\n");
-        exit(1);
+        FSERR(Log::k_FLG_GFX, "File", "getResourcePath", ("Unable to translate URL.\n"))
+        return false;
     }
 
     char *buf = (char *)malloc(1024);
     FSRefMakePath(&fs, (UInt8 *)buf, 1024);
     CFRelease(url);
-
+    
     resourcePath.assign(buf);
     free(buf);
     return true;
 }
 #endif
 
-void File::getDefaultIniFolder(fs::path& folderPath)
-{
+void File::getDefaultIniFolder(fs::path& folderPath) {
 #ifdef _WIN32
     // Under windows config file is in the same directory as freesynd.exe
     folderPath.assign(exeFolder());
@@ -199,10 +202,18 @@ bool File::getUserConfFullPath(fs::path& confFullPath) {
 std::string File::getOriginalDataFullPath(const std::string& filename, bool uppercase) {
     std::string second_part = filename;
 
-    std::string::iterator it;
-    for (it = second_part.begin(); it != second_part.end(); it++) {
-        (*it) = uppercase ? toupper(*it) : tolower(*it);
+    if (uppercase) {
+        std::transform(second_part.begin(), second_part.end(), second_part.begin(), 
+                    [](unsigned char c){ 
+                        return (std::toupper(c)); }
+                  );
+    } else {
+        std::transform(second_part.begin(), second_part.end(), second_part.begin(), 
+                    [](unsigned char c){ 
+                        return (std::tolower(c)); }
+                  );
     }
+    
 
     return (dataPath_ / second_part).string();
 }
@@ -229,29 +240,36 @@ void File::getFullPathForSaveSlot(int slot, std::string &path) {
 /*!
  * \return NULL if file cannot be read.
  */
-uint8 *File::loadOriginalFileToMem(const std::string& filename, int &filesize) {
+uint8 *File::loadOriginalFileToMem(const std::string& filename, size_t &filesize) {
     // try lowercase, then uppercase.
     FILE *fp = fopen(getOriginalDataFullPath(filename, false).c_str(), "rb");
     if (!fp) fp = fopen(getOriginalDataFullPath(filename, true).c_str(), "rb");
 
     if (fp) {
         fseek(fp, 0, SEEK_END);
-        filesize = ftell(fp);
-        uint8 *mem = new uint8[filesize + 1];
-        mem[filesize] = '\0';
-        fseek(fp, 0, SEEK_SET);
-        size_t  n = fread(mem, 1, filesize, fp);
-        if (n == 0) {
-            FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("WARN: File '%s' (using path: '%s') is empty\n",
-               filename.c_str(), dataPath_.string().c_str()));
-         }
-        fclose(fp);
-        return mem;
+        long size = ftell(fp);
+        if (size >= 0) {
+            filesize = static_cast<size_t>(size);
+            uint8 *mem = new uint8[filesize + 1];
+            mem[filesize] = '\0';
+            fseek(fp, 0, SEEK_SET);
+            size_t  n = fread(mem, 1, filesize, fp);
+            if (n == 0) {
+                FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("WARN: File '%s' (using path: '%s') is empty\n",
+                filename.c_str(), dataPath_.string().c_str()));
+            }
+            fclose(fp);
+            return mem;
+        }
     }
 
     // If we're here, there's a problem
     FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("ERROR: Couldn't open file '%s' (using path: '%s')\n",
        filename.c_str(), dataPath_.string().c_str()));
+
+    if (fp) {
+        fclose(fp);
+    }
 
     filesize = 0;
     return NULL;
@@ -301,11 +319,7 @@ void File::setFreesyndDataFolder(const std::string& path) {
     ourDataPath_ = exeFolder();
     ourDataPath_ /= "data";
 #elif defined(__APPLE__)
-    if (getResourcePath(ourDataPath_)) {
-        // this is an app bundle, so let's default the data dir
-        // to the one included in the app bundle's resources.
-        ourDataPath_ /= "data/";
-    } else {
+    if (!getResourcePath(ourDataPath_)) {
         FSERR(Log::k_FLG_GFX, "File", "getDefaultFreesyndDataFolder", ("Unable to locate app bundle resources.\n"));
     }
 #else
@@ -328,7 +342,7 @@ void File::upsertSaveDataFolder(const std::string& path) {
     LOG(Log::k_FLG_IO, "File", "setSaveDataFolder", ("set save path to %s", path.c_str()));
 }
 
-uint8 *File::loadOriginalFile(const std::string& filename, int &filesize) {
+uint8 *File::loadOriginalFile(const std::string& filename, size_t &filesize) {
     uint8 *data = loadOriginalFileToMem(filename, filesize);
     if (data) {
         if (READ_BE_UINT32(data) == RNC_SIGNATURE) {    //File is RNC compressed
@@ -368,7 +382,7 @@ void File::addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::str
 
     if (filename.extension().compare(".fsg") == 0) {
         std::istringstream iss( filename.stem().string() );
-        int index;
+        size_t index;
         iss >> index;
         if (index < 10) {
             PortableFile infile;
@@ -430,7 +444,7 @@ bool File::testOriginalData() {
                 uint32 ui_crc32 = 0;
                 uint32 multiply = 1 << (4 * 7);
                 // String hex to uint32
-                for (char i = 0; i < 8; i++) {
+                for (size_t i = 0; i < 8; i++) {
                     char c = str_crc32[i];
                     if ( c >= '0' && c <= '9')
                         c -= '0';
@@ -439,7 +453,7 @@ bool File::testOriginalData() {
                     ui_crc32 += c * multiply;
                     multiply >>= 4;
                 }
-                int sz;
+                size_t sz;
                 uint8 *data = File::loadOriginalFileToMem(flname, sz);
                 if (!data) {
                     FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file not found \"%s\"\n", flname.c_str()));

@@ -59,7 +59,7 @@ protected:
 
 protected:
 
-    int mapblk_size_;
+    size_t mapblk_size_;
     /*! Contains the images of the differents blocks.*/
     uint8 *mapblk_data_;
     /*! A counter for the blinking line of the selector.*/

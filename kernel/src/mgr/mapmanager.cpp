@@ -59,7 +59,7 @@ bool MapManager::initialize()
 Map * MapManager::loadMap(uint16 i_mapNum)
 {
     char tmp[100];
-    int size;
+    size_t size;
 
     LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("loading map %i", i_mapNum));
     // First look in cache

@@ -64,7 +64,7 @@ void MusicManager::initialize(bool disabled, Audio* audio)
 
     XMidi xmidi;
     std::vector < XMidi::Midi > tracks;
-    int size;
+    size_t size;
     uint8 *data;
 
     LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music for intro"))

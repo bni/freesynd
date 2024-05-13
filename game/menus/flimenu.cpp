@@ -175,7 +175,7 @@ bool FliMenu::loadNextFli() {
     playingFli_ = false;
     // loads Fli
     if ( fliIndex_ < fliList_.size()) {
-        int size = 0;
+        size_t size = 0;
 
         if (pData_) {
             delete[] pData_;

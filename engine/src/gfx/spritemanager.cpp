@@ -102,7 +102,7 @@ GameSpriteManager::~GameSpriteManager()
 
 void GameSpriteManager::load()
 {
-    int tabSize, size;
+    size_t tabSize, size;
     uint8 *tabData, *data;
 #if 1
     tabData = File::loadOriginalFile("hspr-0.tab", tabSize);
