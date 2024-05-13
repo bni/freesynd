@@ -22,6 +22,7 @@ freesynd (0.8) UNRELEASED; urgency=low
   * new -u param to set a custom user directory (for user.conf)
   * Renamed editor exe file into fs_editor to be more specific
   * Improve unicode management with SDL2
+  * Changed the management of freesynd.ini on MAcOS to use the user default system
 
  -- Benoit Blancard <benblan@users.sourceforge.net>  Sun, 24 Mar 2024 00:37:31 +0100
 
