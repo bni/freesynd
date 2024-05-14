@@ -118,29 +118,46 @@ static bool getResourcePath(fs::path& resourcePath) {
 bool File::getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni) {
 #if defined(__APPLE__)
     // On MacOS there is no freesynd.ini, we use Preferences utilities
-    CFStringRef oldDataDirKey = CFSTR("data_dir");
-    CFStringRef oldDataDir;
+    CFStringRef key = CFSTR("data_dir");
+    CFStringRef value;
+    // For converting CFStringRef to std:string
+    const CFIndex kCStringSize = 128;
+    char temporaryCString[kCStringSize];
 
-    // Read the preference.
-    oldDataDir = (CFStringRef)CFPreferencesCopyAppValue(oldDataDirKey,
+    // Read the "data_dir" preference.
+    value = (CFStringRef)CFPreferencesCopyAppValue(key,
                                  kCFPreferencesCurrentApplication);
-    if (oldDataDir) {
+    if (value) {
         // All this code only to convert a CFStringRef to a std::string!
-        const CFIndex kCStringSize = 128;
-        char temporaryCString[kCStringSize];
         bzero(temporaryCString,kCStringSize);
-        CFStringGetCString(oldDataDir, temporaryCString, kCStringSize, kCFStringEncodingUTF8);
+        CFStringGetCString(value, temporaryCString, kCStringSize, kCFStringEncodingUTF8);
         std::string *oldDataDirAsStr = new std::string(temporaryCString);
         freesyndIni.add("data_dir", *oldDataDirAsStr);
-        CFRelease(oldDataDir);
+        CFRelease(value);
+        CFRelease(key);
         delete oldDataDirAsStr;
     } else {
         // Sets a default dir that will be seen as to be set
         freesyndIni.add("data_dir", "To_Be_Set");
     }
     
-    // If emmty, we will read data in the Bundle
-    freesyndIni.add("freesynd_data_dir", "");
+    // Read the freesynd_data_dir preference
+    key = CFSTR("freesynd_data_dir");
+    value = (CFStringRef)CFPreferencesCopyAppValue(key,
+                                 kCFPreferencesCurrentApplication);
+    if (value) {
+        // All this code only to convert a CFStringRef to a std::string!
+        bzero(temporaryCString,kCStringSize);
+        CFStringGetCString(value, temporaryCString, kCStringSize, kCFStringEncodingUTF8);
+        std::string *freesyndDataDirAsStr = new std::string(temporaryCString);
+        freesyndIni.add("freesynd_data_dir", *freesyndDataDirAsStr);
+        CFRelease(value);
+        CFRelease(key);
+        delete freesyndDataDirAsStr;
+    } else {
+        // Sets a default dir that will be seen as to be set
+        freesyndIni.add("freesynd_data_dir", "");
+    }
 
 #else
     // On Windows or Linux, we use a freesynd.ini file
