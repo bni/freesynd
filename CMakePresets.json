@@ -69,11 +69,11 @@
             }
         },
         {
-            "name": "cb_unix_makefile-x86-debug",
-            "displayName": "Code::Blocks with Makefile with Debug configuration",
-            "description": "Code::Blocks with Makefile with Debug configuration",
+            "name": "cb_ninja-x86-debug",
+            "displayName": "cb_ninja-x86-debug",
+            "description": "Code::Blocks with Ninja with Debug configuration",
             "hidden": false,
-            "generator": "CodeBlocks - Unix Makefiles",
+            "generator": "CodeBlocks - Ninja",
             "inherits": "x86-debug"
         },
         {
