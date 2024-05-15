@@ -12,7 +12,16 @@ elseif (WIN32)
     install (FILES "${CMAKE_CURRENT_SOURCE_DIR}/../COPYING" DESTINATION .)
     install (FILES "${CMAKE_CURRENT_SOURCE_DIR}/../INSTALL" DESTINATION .)
 
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../extern/MSVC/lib/" DESTINATION .
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../extern/png/lib/" DESTINATION .
+            FILES_MATCHING PATTERN "*.dll")
+
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../extern/sdl2/lib/${FREESYND_ARCH}/" DESTINATION .
+            FILES_MATCHING PATTERN "*.dll")
+
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../extern/SDL2_image/lib/${FREESYND_ARCH}/" DESTINATION .
+            FILES_MATCHING PATTERN "*.dll")
+
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../extern/SDL2_mixer/lib/${FREESYND_ARCH}/" DESTINATION .
             FILES_MATCHING PATTERN "*.dll")
 else ()
     # Linux

@@ -105,9 +105,6 @@
             "description": "Ninja with Microsoft C++ compiler - Debug",
             "hidden": false,
             "inherits": "x86-debug",
-            "toolset": {
-                "value": "host=x86"
-            },
 	        "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
@@ -118,9 +115,6 @@
             "description": "Ninja with Microsoft C++ compiler - Release",
             "hidden": false,
             "inherits": "x86-release",
-            "toolset": {
-                "value": "host=x86"
-            },
 	        "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
@@ -131,9 +125,6 @@
             "description": "Ninja with Microsoft C++ compiler - Debug",
             "hidden": false,
             "inherits": "x64-debug",
-            "toolset": {
-                "value": "host=x64"
-            },
 	        "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
@@ -144,9 +135,6 @@
             "description": "Ninja with Microsoft C++ compiler - Release",
             "hidden": false,
             "inherits": "x64-release",
-            "toolset": {
-                "value": "host=x64"
-            },
 	        "cacheVariables": {
                 "CMAKE_CXX_COMPILER": "cl.exe"
             }
