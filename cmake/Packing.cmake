@@ -31,6 +31,21 @@ set(CPACK_DEBIAN_PACKAGE_SECTION "games")
 
 set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 
+#
+# Debian specific variables
+#
+set(CPACK_DMG_BACKGROUND_IMAGE
+  "${CMAKE_CURRENT_SOURCE_DIR}/packaging/dmg/freesynd-DMGBackground.tiff")
+
+set(CPACK_DMG_DS_STORE_SETUP_SCRIPT
+  "${CMAKE_CURRENT_SOURCE_DIR}/packaging/dmg/AppDMGSetup.scpt")
+
+set(CPACK_DMG_SLA_USE_RESOURCE_FILE_LICENSE ON)
+set(CPACK_DMG_SLA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/packaging/dmg/")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/dmg/license.txt")
+set(CPACK_DMG_SLA_LANGUAGES English)
+set(CPACK_DMG_VOLUME_NAME "${CMAKE_PROJECT_NAME}")
+
 # that is if you want every group to have its own package,
 # although the same will happen if this is not set (so it defaults to ONE_PER_GROUP)
 # and CPACK_DEB_COMPONENT_INSTALL is set to YES
