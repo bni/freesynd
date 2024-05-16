@@ -421,7 +421,7 @@ bool MapMenu::handleUnMappedKey(const FS_Key key) {
                 index = GameSession::NB_MISSION + index;
             }
             Block blk = g_Session.getBlock(index);
-            if (blk.status == BLK_AVAIL) {
+            if (blk.status != BLK_UNAVAIL) {
                 g_Session.setSelectedBlockId(index);
                 consumed = true;
                 break;
@@ -433,7 +433,7 @@ bool MapMenu::handleUnMappedKey(const FS_Key key) {
         for (int i = 1; i < GameSession::NB_MISSION; i++) {
             int index = (start + i) % GameSession::NB_MISSION;
             Block blk = g_Session.getBlock(index);
-            if (blk.status == BLK_AVAIL) {
+            if (blk.status != BLK_UNAVAIL) {
                 g_Session.setSelectedBlockId(index);
                 consumed = true;
                 break;
