@@ -6,6 +6,7 @@
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2011  Joey Parrish  <joey.parrish@gmail.com>         *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -93,6 +94,11 @@ FontRange::FontRange(const std::string& valid_chars)
     }
 }
 
+Font::Font(SpriteManager *sprites, int offset, char base, const std::string& valid_chars) : range_(valid_chars) {
+    sprites_ = sprites;
+    offset_ = offset - base;
+}
+
 unsigned char Font::decode(const unsigned char * &c, bool dos)
 {
     if (dos) {
@@ -174,16 +180,6 @@ Sprite *Font::getSprite(unsigned char dos_char) {
         }
     }
     return sprites_->sprite(dos_char + offset_);
-}
-
-void Font::setSpriteManager(SpriteManager *sprites, int offset, char base, const FontRange& range) {
-    sprites_ = sprites;
-    offset_ = offset - base;
-    range_ = range;
-}
-
-void Font::setSpriteManager(SpriteManager *sprites, int offset, char base, const std::string& valid_chars) {
-    setSpriteManager(sprites, offset, base, FontRange(valid_chars));
 }
 
 void Font::drawText(int x, int y, const char *text, bool dos, bool x2) {
@@ -271,7 +267,9 @@ bool Font::isPrintable(utf8::utfchar32_t codePoint) {
     return range_.in_range(charCp437);
 }
 
-MenuFont::MenuFont() : Font() {
+MenuFont::MenuFont(SpriteManager *sprites, int darkOffset, int lightOffset, char base,
+            const std::string& valid_chars) : Font(sprites, darkOffset, base, valid_chars) {
+    lightOffset_ = lightOffset - base;
 }
 
 Sprite *MenuFont::getSprite(unsigned char dos_char, bool highlighted) {
@@ -286,14 +284,6 @@ Sprite *MenuFont::getSprite(unsigned char dos_char, bool highlighted) {
         }
     }
     return sprites_->sprite(dos_char + (highlighted ? lightOffset_ : offset_));
-}
-
-void MenuFont::setSpriteManager(SpriteManager *sprites, int darkOffset, int lightOffset, char base,
-            const std::string& valid_chars) {
-    sprites_ = sprites;
-    offset_ = darkOffset - base;
-    lightOffset_ = lightOffset - base;
-    range_ = FontRange(valid_chars);
 }
 
 void MenuFont::drawText(int x, int y, bool dos, const char *text, bool highlighted, bool x2) {
@@ -333,7 +323,8 @@ void MenuFont::drawText(int x, int y, bool dos, const char *text, bool highlight
     }
 }
 
-GameFont::GameFont() :Font() {}
+GameFont::GameFont(SpriteManager *sprites, int offset, char base,
+            const std::string& valid_chars) :Font(sprites, offset, base, valid_chars) {}
 
 /*!
  * Draw text at the given position. Text will have the specified color.

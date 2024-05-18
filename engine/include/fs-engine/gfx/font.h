@@ -6,6 +6,7 @@
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2011  Joey Parrish  <joey.parrish@gmail.com>         *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -56,19 +57,16 @@ private:
  */
 class Font {
 public:
-    Font() {}
+    Font(SpriteManager *sprites, int offset, char base,
+            const std::string& valid_chars);
     virtual ~Font() {}
 
-    void setSpriteManager(SpriteManager *sprites, int offset, char base,
-            const std::string& valid_chars);
-    void setSpriteManager(SpriteManager *sprites, int offset, char base,
-            const FontRange& range);
-    // If dos is true, the text is in cp437, otherwise it's utf-8.
+    //! If dos is true, the text is in cp437, otherwise it's utf-8.
     void drawText(int x, int y, const char *text, bool dos, bool x2 = true);
     int textWidth(const char *text, bool dos, bool x2 = true);
     int textHeight(bool x2 = true);
 
-    // returns true if given code point is printable with the font
+    //! returns true if given code point is printable with the font
     bool isPrintable(utf8::utfchar32_t codePoint);
 
 protected:
@@ -76,6 +74,7 @@ protected:
     static int decodeUTF8(const unsigned char * &c);
     Sprite *getSprite(unsigned char dos_char);
 
+protected:
     SpriteManager *sprites_;
     int offset_;
     FontRange range_;
@@ -87,9 +86,7 @@ protected:
  */
 class MenuFont : public Font {
 public:
-    MenuFont();
-
-    void setSpriteManager(SpriteManager *sprites, int darkOffset, int lightOffset, char base,
+    MenuFont(SpriteManager *sprites, int darkOffset, int lightOffset, char base,
             const std::string& valid_chars);
 
     //! draws a UTF-8 text at the given position
@@ -119,7 +116,8 @@ protected:
  */
 class GameFont : public Font {
 public:
-    GameFont();
+    GameFont(SpriteManager *sprites, int offset, char base,
+            const std::string& valid_chars);
 
     //! draw a UTF-8 text at the given position with the given color
     void drawText(int x, int y, const char *text, uint8 toColor);

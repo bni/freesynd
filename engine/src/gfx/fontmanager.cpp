@@ -61,12 +61,10 @@ bool FontManager::loadFonts(SpriteManager *pMenuSprites, SpriteManager *pIntroFo
     menuFonts_[SIZE_2] = createMenuFontForSize(pMenuSprites, 528, 391, 'A', "0x21-0x60,0x80-0xa8");
     menuFonts_[SIZE_1] = createMenuFontForSize(pMenuSprites, 254, 117, 'A', "0x21-0x60,0x80-0xa8");
 
-    pGameFont_ = new GameFont();
-    pGameFont_->setSpriteManager(pMenuSprites, 665, 'A', "0x21-0x5a,0x80-0x90,0x93-0x9a,0xa0-0xa8");
+    pGameFont_ = new GameFont(pMenuSprites, 665, 'A', "0x21-0x5a,0x80-0x90,0x93-0x9a,0xa0-0xa8");
 
     if (pIntroFontSprites_) {
-        pIntroFont_ = new Font();
-        pIntroFont_->setSpriteManager(pIntroFontSprites_, 1, '!', "0x21-0x60,0x80-0xa8");
+        pIntroFont_ = new Font(pIntroFontSprites_, 1, '!', "0x21-0x60,0x80-0xa8");
     }
 
     return true;
@@ -75,8 +73,7 @@ bool FontManager::loadFonts(SpriteManager *pMenuSprites, SpriteManager *pIntroFo
 MenuFont * FontManager::createMenuFontForSize(SpriteManager * sprites,
                            int darkOffset, int lightOffset, char base, const std::string& valid_chars)
 {
-    MenuFont * pFont = new MenuFont();
-    pFont->setSpriteManager(sprites, darkOffset, lightOffset, base, valid_chars);
+    MenuFont * pFont = new MenuFont(sprites, darkOffset, lightOffset, base, valid_chars);
 
     return pFont;
 }
