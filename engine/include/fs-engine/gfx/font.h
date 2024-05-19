@@ -33,9 +33,6 @@
 #include "fs-utils/common.h"
 #include "spritemanager.h"
 
-//! This type is used for characters in Code Page 437
-typedef unsigned char cp437char_t;
-
 /*!
  * Font range description for 8-bit character sets.
  */
@@ -62,25 +59,26 @@ public:
 
     //! Draw a utf-8 string with this font.
     void drawText(int x, int y, const std::string& text, bool x2);
-    //TODO : change to use string and remove dos
-    int textWidth(const char *text, bool dos, bool x2 = true);
+    //! Return the width in pixels of the rendered text
+    int textWidth(const std::string& text, bool x2 = true);
+    //! Return the height in pixels of the rendered text
     int textHeight(bool x2 = true);
 
     //! returns true if given code point is printable with the font
     bool isPrintable(utf8::utfchar32_t codePoint);
 
 protected:
-    // TODO on devrait pouvoir supprimer decode et decodeUTF8
-    static unsigned char decode(const unsigned char * &c, bool dos);
-    static int decodeUTF8(const unsigned char * &c);
-    // TODO garder uniquement getSpriteForCodepoint
-    Sprite *getSprite(cp437char_t cp437char);
+    //! Returns the sprite for the given unicode
     Sprite *getSpriteForCodepoint(utf8::utfchar32_t codePoint);
 
 protected:
     SpriteManager *sprites_;
     int offset_;
     FontRange range_;
+    //! The default width for this font
+    int defaultWidth_;
+    //! The default height for this font
+    int defaultHeight_;
 };
 
 /*!
@@ -94,20 +92,10 @@ public:
 
     //! draws a UTF-8 text at the given position
     void drawText(int x, int y, const std::string& text, bool lighted, bool x2 = true);
-    //! draws a Cp437 text at the given position
-    // TODO a supprimer
-    void drawTextCp437(int x, int y, const char *text, bool lighted, bool x2 = true) {
-        drawText(x, y, true, text, lighted, x2);
-    };
 
 protected:
     //! returns the sprite which can be highlighted or not
-    // TODO : a supprimer
-    Sprite *getSprite(unsigned char dos_char, bool highlighted);
     Sprite *getSpriteForCodepoint(utf8::utfchar32_t codePoint, bool highlighted);
-    //! draws a text at the given position
-    // TODO a supprimer
-    void drawText(int x, int y, bool dos, const char *text, bool lighted, bool x2 = true);
 
 protected:
     int lightOffset_;
@@ -125,36 +113,7 @@ public:
             const std::string& valid_chars);
 
     //! draw a UTF-8 text at the given position with the given color
-    void drawText(int x, int y, const std::string& text, uint8 toColor);
-};
-
-// TODO Voir si ces classes sont utilisées
-class HChar {
-public:
-    HChar();
-    ~HChar();
-
-    void set(int w, int h, uint8 *data);
-
-    int draw(int x, int y, uint8 color);
-
-protected:
-    int width_;
-    int height_;
-    bool *bits_;
-};
-
-class HFont {
-public:
-    HFont();
-    ~HFont();
-
-    void load();
-
-    void drawText(int x, int y, const char *str, uint8 color);
-
-protected:
-    std::map<char, HChar> characters;
+    void drawText(int x, int y, const std::string& text, uint8_t toColor);
 };
 
 #endif

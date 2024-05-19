@@ -57,6 +57,9 @@ typedef unsigned int uint32;
 typedef signed long long int64;
 typedef unsigned long long uint64;
 
+//! This type is used for characters in Code Page 437
+typedef unsigned char cp437char_t;
+
 inline int ceil8(int v) {
     if (v <= 0)
         return 0;

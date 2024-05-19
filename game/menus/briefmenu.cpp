@@ -189,13 +189,14 @@ void BriefMenu::redrawBriefing() {
 void BriefMenu::render_briefing_text() {
     for (int i = 0; i < kMaxLinePerPage; i++) {
         getMenuFont(FontManager::SIZE_2)->
-            drawTextCp437(24, 88 + i * 16, a_page_[i].c_str(), true);
+            //drawTextCp437(24, 88 + i * 16, a_page_[i].c_str(), true);
+            drawText(24, 88 + i * 16, a_page_[i], true);
     }
 }
 
 /*!
  * Reads a word (up to next separator : white space, new line or end of text)
- * and adds the word to the given line if it fits whithin the limit.
+ * and adds the word to the given line if it fits within the limit.
  * \return true if the line is complete
  */
 bool BriefMenu::read_next_word(std::string & brief, std::string & line)
@@ -212,12 +213,12 @@ bool BriefMenu::read_next_word(std::string & brief, std::string & line)
         }
     } while ((idx < brief.size()) && (last_char != ' ' && last_char != '\n'));
 
-    if (getMenuFont(FontManager::SIZE_2)->textWidth(new_line.c_str(), true) > 470) {
+    if (getMenuFont(FontManager::SIZE_2)->textWidth(new_line) > 470) {
         // space added to end of word will produce wrong width,
         // we remove it and check again
         if (last_char == ' ') {
             new_line.erase(new_line.size() - 1, 1);
-            if (getMenuFont(FontManager::SIZE_2)->textWidth(new_line.c_str(), true) > 470)
+            if (getMenuFont(FontManager::SIZE_2)->textWidth(new_line) > 470)
                 // new line is too big so we can add the line as it is
                 return true;
         } else

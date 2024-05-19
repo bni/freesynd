@@ -25,7 +25,9 @@
 
 #include <stdlib.h>
 #include <string>
+#include "utf8.h"
 
+#include "fs-engine/gfx/cp437.h"
 #include "fs-kernel/model/map.h"
 
 const int MissionBriefing::kMaxInfos = MAX_INFOS;
@@ -54,52 +56,57 @@ MissionBriefing::~MissionBriefing() {
  * The file is divided in three sections : infos, enhancement and briefing.
  * Each section is separated by the '|' character.
  * Each string in a section is separated with an EOL.
- * \param missData
+ * \param data The content of the briefing file
  * \param size
  */
-bool MissionBriefing::loadBriefing(uint8 * missData, int size) {
-    char *miss = reinterpret_cast<char *>(missData);
-    miss[size - 1] = 0;
+bool MissionBriefing::loadBriefing(uint8 * data, int size) {
+    char *cp437car = reinterpret_cast<char *>(data);
+    cp437car[size - 1] = 0;
 
     // reading infos
     i_nb_infos_ = 0;
-    while (*miss != '|') {
-        a_info_costs_[i_nb_infos_++] = atoi(miss);
-        miss = strchr(miss, '\n') + 1;
+    while (*cp437car != '|') {
+        a_info_costs_[i_nb_infos_++] = atoi(cp437car);
+        cp437car = strchr(cp437car, '\n') + 1;
     }
 
-    miss += 2;
+    cp437car += 2;
 
     // reading enhancements
     i_nb_enhts_ = 0;
-    while (*miss != '|') {
-        a_enhts_costs_[i_nb_enhts_++] = atoi(miss);
-        miss = strchr(miss, '\n') + 1;
+    while (*cp437car != '|') {
+        a_enhts_costs_[i_nb_enhts_++] = atoi(cp437car);
+        cp437car = strchr(cp437car, '\n') + 1;
     }
 
-    miss += 2;
+    cp437car += 2;
 
     // reading briefing text
-    if (miss) {
-        std::string tmp(miss);
+    if (cp437car) {
+        // The whole briefing text
+        std::string tmp(cp437car);
+        // position at the start of each briefing
+        size_t start = 0;
 
-        int start = 0;
         // We store the default information plus
-        // the additional informations for each level on info
+        // the additional information for each level on info
         for (int i = 0; i < i_nb_infos_+1; i++) {
+            std::string briefCp437;
             std::size_t idx = tmp.find_first_of('|', start);
             if (std::string::npos != idx) {
-                a_briefing_[i].assign(tmp.substr(start, idx - start));
+                briefCp437.assign(tmp.substr(start, idx - start));
                 // skipping "|\n" pair
                 start = idx + 2;
             } else {
-                a_briefing_[i].assign(tmp.substr(start));
+                briefCp437.assign(tmp.substr(start));
             }
+            /*
+            // TODO check if this removal of \n is necessary
             // sometimes text have additional single '\n''s, we will remove them
-            int16 first = -1;
-            size_t sz = a_briefing_[i].size();
-            std::string &str_ref = a_briefing_[i];
-            for (int16 cindx = 0; cindx < (int16)sz; cindx++) {
+            int16_t first = -1;
+            size_t sz = briefCp437.size();
+            std::string &str_ref = briefCp437;
+            for (int16_t cindx = 0; cindx < (int16_t)sz; cindx++) {
                 if (str_ref[cindx] == '\n') {
                     if (first == -1 || (first != -1 && first + 1 != cindx))
                         first = cindx;
@@ -112,6 +119,11 @@ bool MissionBriefing::loadBriefing(uint8 * missData, int size) {
                     }
                     first = -1;
                 }
+            }*/
+            // We transcode the string into a UTF-8 string
+            for (size_t cindx = 0; cindx < briefCp437.size(); cindx++) {
+                cp437char_t cp437char = briefCp437[cindx];
+                utf8::append(cp437ToUnicode[cp437char], a_briefing_[i]);
             }
         }
     }

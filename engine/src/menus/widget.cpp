@@ -100,7 +100,7 @@ void MenuText::updateText(const char *text) {
     }
     text_ = lbl;
 
-    int textWidth = pFont_->textWidth(text_.c_str(), false);
+    int textWidth = pFont_->textWidth(text_);
     if (textWidth > width_) {
         width_ = textWidth;
     }
@@ -442,7 +442,7 @@ const int TeamListBox::LINE_OFFSET = 20;
 TeamListBox::TeamListBox(Menu *peer, int x, int y, int width, int height, MenuFont *pFont, bool visible) :
         ListBox(peer, x, y, width, height, pFont, visible) {
     pTitle_ = new MenuText(peer, x, y, width, "#SELECT_CRYO_TITLE", pFont, true);
-    lUnderline_ = pFont_->textWidth(pTitle_->getText().c_str(), false);
+    lUnderline_ = pFont_->textWidth(pTitle_->getText());
     xUnderline_ = (x + x + width) / 2  - lUnderline_ / 2;
     yUnderline_ = y + pFont_->textHeight();
     yOrigin_ = yUnderline_ + 2;
@@ -660,13 +660,7 @@ void TextField::handleCharacter(FS_Key key) {
             i++;
         }
         // Add the new key
-        if (key.codePoint >= 0x0061 && key.codePoint <= 0x007A) {
-            // If the key is a letter between 'a' and 'z'
-            // => capitalize it because MenuFont only displays capital letters
-            itDst = utf8::append(key.codePoint - 32, itDst);
-        } else {
-            itDst = utf8::append(key.codePoint, itDst);
-        }
+        itDst = utf8::append(key.codePoint, itDst);
 
         while(i<nbCdpt) {
             int cp = utf8::next(itSrc, src + size);
@@ -738,7 +732,7 @@ void TextField::handleMouseDown(int x, int y, int button, const int modKeys) {
     size_t nbCdpt = utf8::distance(src, src + sizeByte);
 
     // Size in pixel of the text
-    int sizePxl = text_.getFont()->textWidth(src, false);
+    int sizePxl = text_.getFont()->textWidth(src);
 
     // computes caret position
     if (x > sizePxl + getX()) {
@@ -756,7 +750,7 @@ void TextField::handleMouseDown(int x, int y, int button, const int modKeys) {
             int cp = utf8::next(itSrc, src + sizeByte);
             itDst = utf8::append(cp, itDst);
 
-            if (x < getX() + text_.getFont()->textWidth(tmp, false)) {
+            if (x < getX() + text_.getFont()->textWidth(tmp)) {
                 caretPosition_ = i;
                 break;
             }
@@ -792,7 +786,7 @@ void TextField::drawCaret() {
         i++;
     }
 
-    int x = getX() + text_.getFont()->textWidth(tmp, false) + 1;
+    int x = getX() + text_.getFont()->textWidth(tmp) + 1;
 
     // width of caret is the same of the letter above
     int length = 10;
@@ -801,7 +795,7 @@ void TextField::drawCaret() {
         itDst = tmp;
         int cp = utf8::next(itSrc, src + size);
         itDst = utf8::append(cp, itDst);
-        length = text_.getFont()->textWidth(tmp, false);
+        length = text_.getFont()->textWidth(tmp);
     }
 
     // Draw caret

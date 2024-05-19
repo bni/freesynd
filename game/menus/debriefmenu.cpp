@@ -52,7 +52,7 @@ DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief
     y = 100;
     getMessage("DEBRIEF_SUBTITLE", str);
     addStatic(left_x, y, str.c_str(), FontManager::SIZE_2, true);
-    separatorSize_ = getMenuFont(FontManager::SIZE_2)->textWidth(str.c_str(), false);
+    separatorSize_ = getMenuFont(FontManager::SIZE_2)->textWidth(str);
 
     y = 118;
     addStatic(left_x, y, "#DEBRIEF_STATUS", FontManager::SIZE_2, true);
