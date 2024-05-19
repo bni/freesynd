@@ -169,7 +169,7 @@ void MenuText::setHighlighted(bool highlighted) {
  * already drawn on the background image.
  */
 void MenuText::draw() {
-    pFont_->drawText(anchorX_, anchorY_, text_.c_str(), highlighted_);
+    pFont_->drawText(anchorX_, anchorY_, text_, highlighted_);
 }
 
 bool ActionWidget::isMouseOver(int x, int y) {
@@ -391,7 +391,7 @@ void ListBox::draw() {
     int i=0;
     for (std::list < std::string >::iterator it = labels_.begin();
          it != labels_.end(); it++, i++) {
-             pFont_->drawText(getX(), getY() + i * 12, (*it).c_str(), focusedLine_ == i);
+             pFont_->drawText(getX(), getY() + i * 12, (*it), focusedLine_ == i);
     }
 }
 
@@ -476,9 +476,9 @@ void TeamListBox::draw() {
                         break;
                      }
                  }
-                 pFont_->drawText(getX() + LINE_OFFSET, yOrigin_ + i * 12, (*it).c_str(), focusedLine_ == i);
+                 pFont_->drawText(getX() + LINE_OFFSET, yOrigin_ + i * 12, (*it), focusedLine_ == i);
              } else {
-                 pFont_->drawText(getX() + LINE_OFFSET, yOrigin_ + i * 12, emptyLbl_.c_str(), focusedLine_ == i);
+                 pFont_->drawText(getX() + LINE_OFFSET, yOrigin_ + i * 12, emptyLbl_, focusedLine_ == i);
              }
     }
 }
@@ -543,7 +543,7 @@ TextField::~TextField() {
  */
 void TextField::draw() {
     if (!isInEdition_ && isDisplayEmpty_ && text_.getText().size() == 0) {
-        text_.getFont()->drawText(getX(), text_.getY(), emptyLbl_.c_str(), false);
+        text_.getFont()->drawText(getX(), text_.getY(), emptyLbl_, false);
     } else {
         text_.draw();
         if (isInEdition_) {

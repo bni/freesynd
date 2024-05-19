@@ -924,7 +924,7 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
 
             g_Screen.drawRect(txt_posx - 10, txt_posy - 5,
                 txt_width + 20, txt_height + 10);
-            gameFont()->drawText(txt_posx, txt_posy, str_paused.c_str(), 11);
+            gameFont()->drawText(txt_posx, txt_posy, str_paused, 11);
             stopShootingEvent();
         }
         return true;
@@ -1238,7 +1238,7 @@ void GameplayMenu::drawMissionHint(int elapsed) {
 
     int width = gameFont()->textWidth(str.c_str(), false, false);
     int x = 64 - width / 2;
-    gameFont()->drawText(x, 46 + 44 + 10 + 46 + 44 + 2 - 1, str.c_str(), txtColor);
+    gameFont()->drawText(x, 46 + 44 + 10 + 46 + 44 + 2 - 1, str, txtColor);
 }
 
 void GameplayMenu::drawWeaponSelectors() {

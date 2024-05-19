@@ -41,15 +41,14 @@ typedef unsigned char cp437char_t;
  */
 class FontRange {
 public:
-    FontRange();
     FontRange(const std::string& valid_chars);
 
-    inline bool in_range(unsigned char c) {
+    inline bool in_range(cp437char_t c) {
         return (char_present_[c / 32] & (1 << (c % 32))) != 0;
     }
 
 private:
-    unsigned int char_present_[8]; // 256 bits
+    uint32_t char_present_[8]; // 256 bits
 };
 
 /*!
@@ -61,8 +60,9 @@ public:
             const std::string& valid_chars);
     virtual ~Font() {}
 
-    //! If dos is true, the text is in cp437, otherwise it's utf-8.
-    void drawText(int x, int y, const char *text, bool dos, bool x2 = true);
+    //! Draw a utf-8 string with this font.
+    void drawText(int x, int y, const std::string& text, bool x2);
+    //TODO : change to use string and remove dos
     int textWidth(const char *text, bool dos, bool x2 = true);
     int textHeight(bool x2 = true);
 
@@ -70,9 +70,12 @@ public:
     bool isPrintable(utf8::utfchar32_t codePoint);
 
 protected:
+    // TODO on devrait pouvoir supprimer decode et decodeUTF8
     static unsigned char decode(const unsigned char * &c, bool dos);
     static int decodeUTF8(const unsigned char * &c);
-    Sprite *getSprite(unsigned char dos_char);
+    // TODO garder uniquement getSpriteForCodepoint
+    Sprite *getSprite(cp437char_t cp437char);
+    Sprite *getSpriteForCodepoint(utf8::utfchar32_t codePoint);
 
 protected:
     SpriteManager *sprites_;
@@ -90,18 +93,20 @@ public:
             const std::string& valid_chars);
 
     //! draws a UTF-8 text at the given position
-    void drawText(int x, int y, const char *text, bool lighted, bool x2 = true) {
-        drawText(x, y, false, text, lighted, x2);
-    };
+    void drawText(int x, int y, const std::string& text, bool lighted, bool x2 = true);
     //! draws a Cp437 text at the given position
+    // TODO a supprimer
     void drawTextCp437(int x, int y, const char *text, bool lighted, bool x2 = true) {
         drawText(x, y, true, text, lighted, x2);
     };
 
 protected:
     //! returns the sprite which can be highlighted or not
+    // TODO : a supprimer
     Sprite *getSprite(unsigned char dos_char, bool highlighted);
+    Sprite *getSpriteForCodepoint(utf8::utfchar32_t codePoint, bool highlighted);
     //! draws a text at the given position
+    // TODO a supprimer
     void drawText(int x, int y, bool dos, const char *text, bool lighted, bool x2 = true);
 
 protected:
@@ -120,9 +125,10 @@ public:
             const std::string& valid_chars);
 
     //! draw a UTF-8 text at the given position with the given color
-    void drawText(int x, int y, const char *text, uint8 toColor);
+    void drawText(int x, int y, const std::string& text, uint8 toColor);
 };
 
+// TODO Voir si ces classes sont utilisées
 class HChar {
 public:
     HChar();

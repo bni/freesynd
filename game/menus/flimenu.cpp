@@ -273,7 +273,7 @@ void FliMenu::handleTick(int elapsed)
 void FliMenu::handleRender(DirtyList &dirtyList)
 {
     if (currSubTitle_.size() != 0) {
-        menu_manager_->fonts().introFont()->drawText(10, 360, currSubTitle_.c_str(), false);;
+        menu_manager_->fonts().introFont()->drawText(10, 360, currSubTitle_, true);
     }
 }
 

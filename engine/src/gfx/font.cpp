@@ -32,11 +32,12 @@
 #include "fs-engine/gfx/cp437.h"
 #include "fs-utils/io/file.h"
 
-FontRange::FontRange()
-{
-    memset(char_present_, 0, sizeof(char_present_));
-}
 
+/*! \brief
+ *
+ * \param valid_chars const std::string&
+ *
+ */
 FontRange::FontRange(const std::string& valid_chars)
 {
     // turn description valid_chars into bitfield char_present_
@@ -168,10 +169,16 @@ int Font::decodeUTF8(const unsigned char * &c)
     }
 }
 
-Sprite *Font::getSprite(unsigned char dos_char) {
-    if (range_.in_range(dos_char) == false) {
+/*!
+ * Return the sprite font for the given character
+ * \param cp437char cp437char_t character in cp437 encoding
+ * \return Sprite* NULL if the character is not displayable
+ *
+ */
+Sprite *Font::getSprite(cp437char_t cp437char) {
+    if (!range_.in_range(cp437char)) {
         // use '?' as default character.
-        if (range_.in_range('?') == true) {
+        if (range_.in_range('?')) {
             return sprites_->sprite('?' + offset_);
         } else {
             // NULL causes the missing glyph to be skipped.
@@ -179,42 +186,88 @@ Sprite *Font::getSprite(unsigned char dos_char) {
             return NULL;
         }
     }
-    return sprites_->sprite(dos_char + offset_);
+    return sprites_->sprite(cp437char + offset_);
 }
 
-void Font::drawText(int x, int y, const char *text, bool dos, bool x2) {
-    int sc = x2 ? 2 : 1;
-    int ox = x;
-    const unsigned char *c = (const unsigned char *)text;
-    for (unsigned char cc = decode(c, dos); cc; cc = decode(c, dos)) {
-        if (cc == 0xff) {
-            // invalid utf8 code, skip it.
-            continue;
-        }
-        if (cc == ' ') {
-            x += getSprite('A')->width() * sc - sc;
-            continue;
-        }
-        if (cc == '\n') {
-            x = ox;
-            y += textHeight() - sc;
-            continue;
-        }
-        Sprite *s = getSprite(cc);
-        if (s) {
-            int y_offset = 0;
-            if (cc == ':')
-                y_offset = sc;
-            else if (cc == '.' || cc == ',')
-                y_offset = 4 * sc;
-            else if (cc == '-')
-                y_offset = 2 * sc;
+/**
+ * Return the sprite font for the given unicode codepoint
+ * \param codePoint utf8::utfchar32_t The codepoint
+ * \return Sprite* Null if no sprite was found
+ *
+ */
+Sprite * Font::getSpriteForCodepoint(utf8::utfchar32_t codePoint) {
+    // We look for the corresponding character in cp437 table
+    if (codePoint > sizeof(unicodeToCp437)) {
+        return nullptr; // out-of-range
+    }
 
-            s->draw(x, y + y_offset, 0, false, x2);
+    cp437char_t charCp437 = unicodeToCp437[codePoint];
 
-            x += s->width() * sc - sc;
+    if (!range_.in_range(charCp437)) {
+        // use '?' as default character.
+        if (range_.in_range('?')) {
+            return sprites_->sprite('?' + offset_);
+        } else {
+            // NULL causes the missing glyph to be skipped.
+            // no space will be consumed on-screen.
+            return NULL;
         }
     }
+    return sprites_->sprite(charCp437 + offset_);
+}
+
+/**
+ * Draw text with this font
+ * \param x int X Coordinate on screen
+ * \param y int Y Coordinate on screen
+ * \param text const std::string The text to display. Must be a UTF-8 encoded string
+ * \param x2 bool Option to multiply the size of the font by 2
+ * \return void
+ *
+ */
+void Font::drawText(int x, int y, const std::string& text, bool x2) {
+    int sc = x2 ? 2 : 1;
+    int ox = x;
+    Sprite *pDef = getSprite('A');
+
+    std::string newText(text);
+    std::string::iterator b = newText.begin();
+    std::string::iterator e = newText.end();
+    while ( b != e ) {
+        try {
+            auto codePoint = utf8::next(b,e);
+
+            if (codePoint == 0x0020) {
+                // If char is a space, only move the drawing origin to the left
+                x += pDef->width() * sc - sc;
+                continue;
+            }
+            if (codePoint == 0x000A) {
+                // If char is a line feed, only move the drawing origin to the next line
+                x = ox;
+                y += textHeight() - sc;
+                continue;
+            }
+
+            Sprite *sprite = getSpriteForCodepoint(codePoint);
+            if (sprite) {
+                int y_offset = 0;
+                if (codePoint == ':') {
+                    y_offset = sc;
+                } else if (codePoint == '.' || codePoint == ',') {
+                    y_offset = 4 * sc;
+                } else if (codePoint == '-') {
+                    y_offset = 2 * sc;
+                }
+
+                sprite->draw(x, y + y_offset, 0, false, x2);
+
+                x += sprite->width() * sc - sc;
+            }
+        } catch (const utf8::invalid_utf8& exc) {
+            continue;
+        }
+    } //end of while
 }
 
 int Font::textWidth(const char *text, bool dos, bool x2) {
@@ -286,6 +339,81 @@ Sprite *MenuFont::getSprite(unsigned char dos_char, bool highlighted) {
     return sprites_->sprite(dos_char + (highlighted ? lightOffset_ : offset_));
 }
 
+Sprite *MenuFont::getSpriteForCodepoint(utf8::utfchar32_t codePoint, bool highlighted) {
+    // We look for the corresponding character in cp437 table
+    if (codePoint > sizeof(unicodeToCp437)) {
+        return nullptr; // out-of-range
+    }
+
+    cp437char_t charCp437 = unicodeToCp437[codePoint];
+
+    if (!range_.in_range(charCp437)) {
+        // use '?' as default character.
+        if (range_.in_range('?')) {
+            return sprites_->sprite('?' + (highlighted ? lightOffset_ : offset_));
+        } else {
+            // NULL causes the missing glyph to be skipped.
+            // no space will be consumed on-screen.
+            return NULL;
+        }
+    }
+    return sprites_->sprite(charCp437 + (highlighted ? lightOffset_ : offset_));
+}
+
+/**
+ * Draw text with this font
+ * \param x int X Coordinate on screen
+ * \param y int Y Coordinate on screen
+ * \param text const std::string The text to display. Must be a UTF-8 encoded string
+ * \param highlighted bool True to display the highlighted font
+ * \param x2 bool Option to multiply the size of the font by 2
+ * \return void
+ */
+void MenuFont::drawText(int x, int y, const std::string& text, bool highlighted, bool x2) {
+    int sc = x2 ? 2 : 1;
+    int ox = x;
+    Sprite *pDef = getSprite('A', false);
+
+    std::string newText(text);
+    std::string::iterator b = newText.begin();
+    std::string::iterator e = newText.end();
+    while ( b != e ) {
+        try {
+            auto codePoint = utf8::next(b,e);
+
+            if (codePoint == 0x0020) {
+                // If char is a space, only move the drawing origin to the left
+                x += pDef->width() * sc - sc;
+                continue;
+            }
+            if (codePoint == 0x000A) {
+                // If char is a line feed, only move the drawing origin to the next line
+                x = ox;
+                y += textHeight() - sc;
+                continue;
+            }
+
+            Sprite *sprite = getSpriteForCodepoint(codePoint, highlighted);
+            if (sprite) {
+                int y_offset = 0;
+                if (codePoint == ':') {
+                    y_offset = sc;
+                } else if (codePoint == '.' || codePoint == ',' || codePoint == '-' || codePoint == '_')
+                    y_offset = pDef->height() *sc - sprite->height() * sc;
+                else if (codePoint == '/') {
+                    y_offset = (pDef->height() *sc)/2 - (sprite->height() * sc) / 2;
+                }
+
+                sprite->draw(x, y + y_offset, 0, false, x2);
+
+                x += sprite->width() * sc - sc;
+            }
+        } catch (const utf8::invalid_utf8& exc) {
+            continue;
+        }
+    } //end of while
+}
+
 void MenuFont::drawText(int x, int y, bool dos, const char *text, bool highlighted, bool x2) {
     int sc = x2 ? 2 : 1;
     int ox = x;
@@ -323,8 +451,15 @@ void MenuFont::drawText(int x, int y, bool dos, const char *text, bool highlight
     }
 }
 
+/*!
+ * Constructor for the class.
+ * \param sprites SpriteManager that holds the font sprites
+ * \param offset The first sprite in the sprite set for this font
+ * \param base
+ * \param validChars List of characters that are displayable in this font
+ */
 GameFont::GameFont(SpriteManager *sprites, int offset, char base,
-            const std::string& valid_chars) :Font(sprites, offset, base, valid_chars) {}
+            const std::string& validChars) :Font(sprites, offset, base, validChars) {}
 
 /*!
  * Draw text at the given position. Text will have the specified color.
@@ -333,56 +468,62 @@ GameFont::GameFont(SpriteManager *sprites, int offset, char base,
  * \param text The text to draw. It must be in UTF-8.
  * \param toColor The color used to draw the text.
  */
-void GameFont::drawText(int x, int y, const char *text, uint8 toColor) {
+void GameFont::drawText(int x, int y, const std::string& text, uint8 toColor) {
     int sc = 1;
     int ox = x;
     uint8 fromColor = 252;
-    const unsigned char *c = (const unsigned char *)text;
     Sprite *pDef = getSprite('A');
-    for (unsigned char cc = decode(c, false); cc; cc = decode(c, false)) {
-        if (cc == 0xff) {
-            // invalid utf8 code, skip it.
-            continue;
-        }
-        if (cc == ' ') {
-            // If char is a space, only move the drawing origin to the left
-            x += pDef->width() * sc - sc;
-            continue;
-        }
-        if (cc == '\n') {
-            // If char is a space, only move the drawing origin to the next line
-            x = ox;
-            y += textHeight() - sc;
-            continue;
-        }
-        // get the sprite for the caracter
-        Sprite *s = getSprite(cc);
-        if (s) {
-            int y_offset = 0;
-            // Add some offset correct for special caracters as ':' '.' ',' '-'
-            if (cc == ':')
-                y_offset = sc;
-            else if (cc == '.' || cc == ',' || cc == '-')
-                y_offset = pDef->height() *sc - getSprite(cc)->height() * sc;
-            else if (cc == '/') {
-                y_offset = (pDef->height() *sc)/2 - (getSprite('/')->height() * sc) / 2;
+
+    std::string newText(text);
+    std::string::iterator b = newText.begin();
+    std::string::iterator e = newText.end();
+    while ( b != e ) {
+        try {
+            auto codePoint = utf8::next(b,e);
+
+            if (codePoint == 0x0020) {
+                // If char is a space, only move the drawing origin to the left
+                x += pDef->width() * sc - sc;
+                continue;
+            }
+            if (codePoint == 0x000A) {
+                // If char is a line feed, only move the drawing origin to the next line
+                x = ox;
+                y += textHeight() - sc;
+                continue;
             }
 
-            uint8 *data = new uint8[s->width() * s->height()];
-            s->data(data);
+            // get the sprite for the character
+            Sprite *sprite = getSpriteForCodepoint(codePoint);
+            if (sprite) {
+                int y_offset = 0;
+                // Add some offset correct for special characters as ':' '.' ',' '-'
+                if (codePoint == ':') {
+                    y_offset = sc;
+                } else if (codePoint == '.' || codePoint == ',' || codePoint == '-') {
+                    y_offset = pDef->height() *sc - sprite->height() * sc;
+                } else if (codePoint == '/') {
+                    y_offset = (pDef->height() *sc)/2 - (sprite->height() * sc) / 2;
+                }
 
-            // Change original color to the specified color
-            for (int i = 0; i < s->width() * s->height(); i++)
-                data[i] = (data[i] == fromColor ? toColor : 255);
+                uint8_t *data = new uint8_t[sprite->width() * sprite->height()];
+                sprite->data(data);
 
-            // draw modified sprite
-            g_Screen.blit(x, y + y_offset, s->width(), s->height(), data);
+                // Change original color to the specified color
+                for (int i = 0; i < sprite->width() * sprite->height(); i++)
+                    data[i] = (data[i] == fromColor ? toColor : 255);
 
-            delete[] data;
+                // draw modified sprite
+                g_Screen.blit(x, y + y_offset, sprite->width(), sprite->height(), data);
 
-            x += s->width() * sc - sc;
+                delete[] data;
+
+                x += sprite->width() * sc - sc;
+            }
+        } catch (const utf8::invalid_utf8& exc) {
+            continue;
         }
-    }
+    } //end of while
 }
 
 HChar::HChar():width_(0), height_(0), bits_(0) {
