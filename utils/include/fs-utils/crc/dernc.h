@@ -31,18 +31,20 @@
 
 namespace rnc {
 
-    enum {
-        FILE_IS_NOT_RNC = -1,
-        HUF_DECODE_ERROR = -2,
-        FILE_SIZE_MISMATCH = -3,
-        PACKED_CRC_ERROR = -4,
-        UNPACKED_CRC_ERROR = -5
+    //! This enumeration contains the different return codes for RNC functions
+    enum RncRetCode {
+        kOk = 0,
+        kFileIsNotRNC = -1,
+        kHufDecodeError = -2,
+        kFileSizeMismatch = -3,
+        kPackedCrcError = -4,
+        kUnpackedCrcError = -5
     };
 
-    const char *const errorString(int error_code);
-    int unpackedLength(uint8 *packed_data);
+    const char *const errorString(RncRetCode returnCode);
+    RncRetCode unpackedLength(const uint8_t *packed_data, size_t &length);
     uint16 crc(uint8 *packed_data, int packed_length);
-    int unpack(uint8 *packed_data, uint8 *unpacked_data);
+    RncRetCode unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t &length);
 
 }
 

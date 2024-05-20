@@ -78,7 +78,7 @@ static std::string exeFolder() {
  * Return the path to the resources storesd in the bundle.
  * @param resourcePath The path to set
  * @return True if everything is ok.
- */ 
+ */
 static bool getResourcePath(fs::path& resourcePath) {
     // let's check to see if we're inside an application bundle first.
     CFBundleRef main = CFBundleGetMainBundle();
@@ -103,17 +103,17 @@ static bool getResourcePath(fs::path& resourcePath) {
     char *buf = (char *)malloc(1024);
     FSRefMakePath(&fs, (UInt8 *)buf, 1024);
     CFRelease(url);
-    
+
     resourcePath.assign(buf);
     free(buf);
     return true;
 }
 #endif
 
-/*! @brief 
- * @param iniFolder 
- * @param freesyndIni 
- * @return 
+/*! @brief
+ * @param iniFolder
+ * @param freesyndIni
+ * @return
  */
 bool File::getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni) {
 #if defined(__APPLE__)
@@ -140,7 +140,7 @@ bool File::getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni
         // Sets a default dir that will be seen as to be set
         freesyndIni.add("data_dir", "To_Be_Set");
     }
-    
+
     // Read the freesynd_data_dir preference
     key = CFSTR("freesynd_data_dir");
     value = (CFStringRef)CFPreferencesCopyAppValue(key,
@@ -262,17 +262,17 @@ std::string File::getOriginalDataFullPath(const std::string& filename, bool uppe
     std::string second_part = filename;
 
     if (uppercase) {
-        std::transform(second_part.begin(), second_part.end(), second_part.begin(), 
-                    [](unsigned char c){ 
+        std::transform(second_part.begin(), second_part.end(), second_part.begin(),
+                    [](unsigned char c){
                         return (std::toupper(c)); }
                   );
     } else {
-        std::transform(second_part.begin(), second_part.end(), second_part.begin(), 
-                    [](unsigned char c){ 
+        std::transform(second_part.begin(), second_part.end(), second_part.begin(),
+                    [](unsigned char c){
                         return (std::tolower(c)); }
                   );
     }
-    
+
 
     return (dataPath_ / second_part).string();
 }
@@ -365,8 +365,8 @@ void File::setOriginalDataFolder(const std::string& path) {
 
 
 /*!
- * @brief 
- * @param path 
+ * @brief
+ * @param path
  */
 void File::setFreesyndDataFolder(const std::string& path) {
     if (path.size() != 0) {
@@ -405,20 +405,29 @@ uint8 *File::loadOriginalFile(const std::string& filename, size_t &filesize) {
     uint8 *data = loadOriginalFileToMem(filename, filesize);
     if (data) {
         if (READ_BE_UINT32(data) == RNC_SIGNATURE) {    //File is RNC compressed
-            filesize = rnc::unpackedLength(data);
-            assert(filesize > 0);
-            uint8 *buffer = new uint8[filesize + 1];
+            rnc::RncRetCode result = rnc::unpackedLength(data, filesize );
+
+            if (result != 0) {
+                FSERR(Log::k_FLG_IO, "File", "loadFile", ("Error reading length for file %s : %s!", filename.c_str(), rnc::errorString(result)));
+                filesize = 0;
+            } else if (filesize == 0) {
+                FSERR(Log::k_FLG_IO, "File", "loadFile", ("Read length is zero for file : %s!", filename.c_str()));
+            }
+
+            uint8_t *buffer = new uint8[filesize + 1];
             buffer[filesize] = '\0';
-            int result = rnc::unpack(data, buffer);
+            size_t realSize = 0;
+
+            result = rnc::unpack(data, buffer, realSize);
             delete[] data;
 
             if (result < 0) {
-                FSERR(Log::k_FLG_IO, "File", "loadFile", ("Error loading file: %s!", rnc::errorString(result)));
+                FSERR(Log::k_FLG_IO, "File", "loadFile", ("Error loading file %s: %s!", filename.c_str(), rnc::errorString(result)));
                 filesize = 0;
                 delete[] buffer;
             }
 
-            if (result != filesize) {
+            if (realSize != filesize) {
                 FSERR(Log::k_FLG_IO, "File", "loadFile", ("Uncompressed size mismatch for file %s!\n", filename.c_str()));
                 filesize = 0;
                 delete[] buffer;

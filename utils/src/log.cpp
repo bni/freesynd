@@ -28,20 +28,20 @@
 #include <iostream>
 #include <sstream>
 
-const int Log::k_FLG_ALL  = 0xffffffff;
-const int Log::k_FLG_NONE = 0x00000000;
-const int Log::k_FLG_INFO = 0x00000001;
-const int Log::k_FLG_UI   = 0x00000002;
-const int Log::k_FLG_GFX  = 0x00000004;
-const int Log::k_FLG_MEM  = 0x00000008;
-const int Log::k_FLG_IO   = 0x00000010;
-const int Log::k_FLG_GAME = 0x00000020;
-const int Log::k_FLG_SND  = 0x00000040;
+const uint64_t Log::k_FLG_ALL  = 0xffffffff;
+const uint64_t Log::k_FLG_NONE = 0x00000000;
+const uint64_t Log::k_FLG_INFO = 0x00000001;
+const uint64_t Log::k_FLG_UI   = 0x00000002;
+const uint64_t Log::k_FLG_GFX  = 0x00000004;
+const uint64_t Log::k_FLG_MEM  = 0x00000008;
+const uint64_t Log::k_FLG_IO   = 0x00000010;
+const uint64_t Log::k_FLG_GAME = 0x00000020;
+const uint64_t Log::k_FLG_SND  = 0x00000040;
 
 // the log file
 FILE *Log::logfile_ = NULL;
 // Current mask
-int Log::logMask_ = Log::k_FLG_ALL;
+uint64_t Log::logMask_ = Log::k_FLG_ALL;
 
 /*!
  * Returns a string representing the given type of category.
@@ -50,7 +50,7 @@ int Log::logMask_ = Log::k_FLG_ALL;
  * \param type One if the k_FLG_XXX except k_FLG_NONE or k_FLG_ALL.
  * \return A human readable representation of the type.
  */
-const char * Log::typeToStr(int type) {
+const char * Log::typeToStr(uint64_t type) {
     switch (type) {
         case k_FLG_INFO :
             return "INFOS";
@@ -71,12 +71,12 @@ const char * Log::typeToStr(int type) {
     }
 }
 
-int Log::maskFromString(std::string mask) {
+uint64_t Log::maskFromString(std::string mask) {
     // used to parse the mask
     std::stringstream ss(mask);
     // `flag` is used to store the token string
     std::string flag;
-    int resMask = k_FLG_NONE;
+    uint64_t resMask = k_FLG_NONE;
 
     // Use while loop to check the getline() function condition.
     while (getline(ss, flag, ':')) {
@@ -144,7 +144,7 @@ bool Log::initialize(std::string mask, const char *filename) {
  * \param type One if the k_FLG_XXX except k_FLG_NONE or k_FLG_ALL.
  * \return true if logging can be done.
  */
-int Log::canLog(int type) {
+int Log::canLog(uint64_t type) {
     // Test if the logfile is opened first
     return logfile_ && (type & logMask_);
 };
@@ -176,7 +176,7 @@ void Log::logMessage(const char * format, ...) {
  * \param comp The component that issued the logging order.
  * \param method The method that issued the logging order.
  */
-void Log::logHeader(int type, const char * comp, const char * method, const char * level) {
+void Log::logHeader(uint64_t type, const char * comp, const char * method, const char * level) {
     if (logfile_) {
         fprintf(logfile_, "[%s] [%s] [%s] [%s]: ", level, typeToStr(type), comp, method);
         fflush(logfile_);

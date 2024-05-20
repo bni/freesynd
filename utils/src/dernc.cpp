@@ -195,7 +195,7 @@ namespace RNC_INTERNAL {
 
 }
 
-const char *const rnc::errorString(int error_code) {
+const char *const rnc::errorString(RncRetCode retCode) {
     using namespace RNC_INTERNAL;
 
     static const char *const errors[] = {
@@ -209,18 +209,20 @@ const char *const rnc::errorString(int error_code) {
     };
     static const int maxError = sizeof(errors) / sizeof(*errors) - 1;
 
-    error_code = -error_code;
+    int error_code = -retCode;
     return errors[error_code <
                   0 ? 0 : (error_code > maxError ? maxError : error_code)];
 }
 
-int rnc::unpackedLength(uint8 *packed_data) {
+rnc::RncRetCode rnc::unpackedLength(const uint8 *packed_data, size_t &length) {
     using namespace RNC_INTERNAL;
 
     if (READ_BE_UINT32(packed_data) != RNC_SIGNATURE)
-        return FILE_IS_NOT_RNC;
+        return kFileIsNotRNC;
 
-    return READ_BE_UINT32(packed_data + 4);
+    length = READ_BE_UINT32(packed_data + 4);
+
+    return kOk;
 }
 
 uint16 rnc::crc(uint8 *data, int data_length) {
@@ -237,27 +239,27 @@ uint16 rnc::crc(uint8 *data, int data_length) {
     return result;
 }
 
-int rnc::unpack(uint8 *packed_data, uint8 *unpacked_data) {
+rnc::RncRetCode rnc::unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t &outLength) {
     using namespace RNC_INTERNAL;
 
     if (READ_BE_UINT32(packed_data) != RNC_SIGNATURE)
-        return FILE_IS_NOT_RNC;
+        return kFileIsNotRNC;
 
-    int output_length = READ_BE_UINT32(packed_data + 4);
+    size_t output_length = READ_BE_UINT32(packed_data + 4);
     int input_length = READ_BE_UINT32(packed_data + 8);
 
-    uint16 unpacked_crc = READ_BE_UINT16(packed_data + 12);
-    uint16 packed_crc = READ_BE_UINT16(packed_data + 14);
+    uint16_t unpacked_crc = READ_BE_UINT16(packed_data + 12);
+    uint16_t packed_crc = READ_BE_UINT16(packed_data + 14);
 
-    uint8 *input = packed_data + 18;    // Skip the header
-    uint8 *output = unpacked_data;
+    uint8_t *input = packed_data + 18;    // Skip the header
+    uint8_t *output = unpacked_data;
 
-    uint8 *input_end = input + input_length;
-    uint8 *output_end = output + output_length;
+    uint8_t *input_end = input + input_length;
+    uint8_t *output_end = output + output_length;
 
     // Check the packed data's CRC
     if (crc(input, input_end - input) != packed_crc)
-        return PACKED_CRC_ERROR;
+        return kPackedCrcError;
 
     BitStream bit_stream;
 
@@ -279,7 +281,7 @@ int rnc::unpack(uint8 *packed_data, uint8 *unpacked_data) {
             length = readHuffmanData(raw_huff_tbl, bit_stream, input,
                 input_end);
             if (length == -1)
-                return HUF_DECODE_ERROR;
+                return kHufDecodeError;
 
             if (length) {
                 while (length--)
@@ -296,12 +298,12 @@ int rnc::unpack(uint8 *packed_data, uint8 *unpacked_data) {
             position = readHuffmanData(dist_huff_tbl, bit_stream, input,
                 input_end);
             if (position == -1)
-                return HUF_DECODE_ERROR;
+                return kHufDecodeError;
 
             length = readHuffmanData(len_huff_tbl, bit_stream, input,
                 input_end);
             if (length == -1)
-                return HUF_DECODE_ERROR;
+                return kHufDecodeError;
 
             position += 1;
             length += 2;
@@ -315,11 +317,13 @@ int rnc::unpack(uint8 *packed_data, uint8 *unpacked_data) {
 
     // Check to see if the unpacked data is the correct length
     if (output != output_end)
-        return FILE_SIZE_MISMATCH;
+        return kFileSizeMismatch;
 
     // Finally check our unpacked data's CRC
     if (crc(output_end - output_length, output_length) != unpacked_crc)
-        return UNPACKED_CRC_ERROR;
+        return kUnpackedCrcError;
 
-    return output_length;
+    outLength = output_length;
+
+    return kOk;
 }

@@ -57,32 +57,32 @@
 class Log {
  public:
     /*! This flag enables all types of logging.*/
-    static const int k_FLG_ALL;
+    static const uint64_t k_FLG_ALL;
     /*! This flag disables logging.*/
-    static const int k_FLG_NONE;
+    static const uint64_t k_FLG_NONE;
     /*! This flag enables logging of general info.*/
-    static const int k_FLG_INFO;
+    static const uint64_t k_FLG_INFO;
     /*! This flag enables logging relatives to the UI.*/
-    static const int k_FLG_UI;
+    static const uint64_t k_FLG_UI;
     /*! This flag enables logging relatives to the graphic component.*/
-    static const int k_FLG_GFX;
+    static const uint64_t k_FLG_GFX;
     /*! This flag enables logging relatives to memory.*/
-    static const int k_FLG_MEM;
+    static const uint64_t k_FLG_MEM;
     /*! This flag enables logging relatives input-output events.*/
-    static const int k_FLG_IO;
+    static const uint64_t k_FLG_IO;
     /*! This flag enables logging relatives to the game IA.*/
-    static const int k_FLG_GAME;
+    static const uint64_t k_FLG_GAME;
     /*! This flag enables logging relatives to the sound system.*/
-    static const int k_FLG_SND;
+    static const uint64_t k_FLG_SND;
 
     //! Log initialization.
     static bool initialize(std::string mask, const char *filename);
 
     //! Returns true if logging is enabled for the given type.
-    static int canLog(int type);
+    static int canLog(uint64_t type);
 
     //! Prints the message header
-    static void logHeader(int type, const char * comp, const char * method, const char * level);
+    static void logHeader(uint64_t type, const char * comp, const char * method, const char * level);
 
     //! Prints the log message
     static void logMessage(const char * format, ...);
@@ -93,12 +93,12 @@ class Log {
  private:
 
     //! Returns a readable representation of the given type.
-    static const char * typeToStr(int type);
+    static const char * typeToStr(uint64_t type);
     //! Returns a log mask from parsing the input
-    static int maskFromString(std::string mask);
+    static uint64_t maskFromString(std::string mask);
 
     /*! The current logging mask. By default , ALL is set.*/
-    static int logMask_;
+    static uint64_t logMask_;
 
     /*! A pointer to a log file.*/
     static FILE *logfile_;

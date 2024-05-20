@@ -173,7 +173,7 @@ bool AppContext::readLanguage(const int languageId) {
     std::string filename;
     int newLangId = languageId;
 
-    if (languageId == 0) {
+    if (languageId == 0) { // In this case, we use the OS locale to define the language
 #ifdef __APPLE__
         CFArrayRef languages = CFLocaleCopyPreferredLanguages();
         CFStringRef sName = (CFStringRef) CFArrayGetValueAtIndex(languages, 0);
@@ -186,7 +186,6 @@ bool AppContext::readLanguage(const int languageId) {
         }
         CFRelease(languages);
 #else
-        // In this case, we use the OS locale to define the language
         setlocale(LC_ALL, "");
         std::string ctypeStr(setlocale(LC_CTYPE, NULL));
         std::string lang = ctypeStr.substr(0, 2);
