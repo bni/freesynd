@@ -5,7 +5,8 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2013-2024                                            *
+ *                   Benoit Blancard <benblan@users.sourceforge.net>    *
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -24,6 +25,8 @@
  ************************************************************************/
 
 #include "fs-engine/appcontext.h"
+
+#include <locale>
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
@@ -157,8 +160,24 @@ bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesyste
 
 bool AppContext::readLanguage(const int languageId) {
     std::string filename;
+    int newLangId = languageId;
 
-    switch (languageId) {
+    if (languageId == 0) {
+        // In this case, we use the OS locale to define the language
+        setlocale(LC_ALL, "");
+        std::string ctypeStr(setlocale(LC_CTYPE, NULL));
+        std::string lang = ctypeStr.substr(0, 2);
+
+        if (lang.compare("fr") == 0) {
+            newLangId = 1;
+        } else if (lang.compare("it") == 0) {
+            newLangId = 2;
+        } else if (lang.compare("de") == 0) {
+            newLangId = 3;
+        }
+    }
+
+    switch (newLangId) {
         case 1:
             curr_language_ = AppContext::FRENCH;
             filename = "lang/french.lng";
@@ -171,7 +190,6 @@ bool AppContext::readLanguage(const int languageId) {
             curr_language_ = AppContext::GERMAN;
             filename = "lang/german.lng";
             break;
-        case 0: // 0 is english
         default:
             curr_language_ = AppContext::ENGLISH;
             filename = "lang/english.lng";
