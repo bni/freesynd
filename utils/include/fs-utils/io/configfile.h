@@ -4,17 +4,17 @@
 // Modified by Joey Parrish, June 2011 joey.parrish@gmail.com
 
 // Copyright (c) 2004 Richard J. Wagner
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
 // deal in the Software without restriction, including without limitation the
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,12 +25,12 @@
 
 // Typical usage
 // -------------
-// 
+//
 // Given a configuration file "settings.inp":
 //   atoms  = 25
 //   length = 8.0  # nanometers
 //   name = Reece Surcher
-// 
+//
 // Named values are read in various ways, with or without default values:
 //   ConfigFile config( "settings.inp" );
 //   int atoms = config.read<int>( "atoms" );
@@ -38,7 +38,7 @@
 //   string author, title;
 //   config.readInto( author, "name" );
 //   config.readInto( title, "title", string("Untitled") );
-// 
+//
 // See file example.cpp for more examples.
 
 #ifndef CONFIGFILE_H
@@ -61,8 +61,8 @@ protected:
     string mySentry;     // optional string to signal end of file
     std::map<string,string> myContents;  // extracted keys and values
     std::vector<string> myLines;
-    std::map<string,int> myLineNumbers;
-    
+    std::map<string,size_t> myLineNumbers;
+
     typedef std::map<string,string>::iterator mapi;
     typedef std::map<string,string>::const_iterator mapci;
 
@@ -73,34 +73,34 @@ public:
                 string comment = "#",
                 string sentry = "" );
     ConfigFile();
-    
+
     // Search for key and read value or optional default value
     template<class T> T read( const string& key ) const;  // call as read<T>
     template<class T> T read( const string& key, const T& value ) const;
     template<class T> bool readInto( T& var, const string& key ) const;
     template<class T>
     bool readInto( T& var, const string& key, const T& value ) const;
-    
+
     // Modify keys and values
     template<class T> void add( string key, const T& value );
     void remove( const string& key );
-    
+
     // Check whether key exists in configuration
     bool keyExists( const string& key ) const;
-    
+
     // Check or change configuration syntax
     string getDelimiter() const { return myDelimiter; }
     string getComment() const { return myComment; }
     string getSentry() const { return mySentry; }
     string setDelimiter( const string& s )
-        { string old = myDelimiter;  myDelimiter = s;  return old; }  
+        { string old = myDelimiter;  myDelimiter = s;  return old; }
     string setComment( const string& s )
         { string old = myComment;  myComment = s;  return old; }
-    
+
     // Write or read configuration
     friend std::ostream& operator<<( std::ostream& os, const ConfigFile& cf );
     friend std::istream& operator>>( std::istream& is, ConfigFile& cf );
-    
+
 protected:
     template<class T> static string T_as_string( const T& t );
     template<class T> static T string_as_T( const string& s );
@@ -172,8 +172,12 @@ inline bool ConfigFile::string_as_T<bool>( const string& s )
     // Interpret "true", "T", "yes", "y", "1", "-1", or anything else as true
     bool b = true;
     string sup = s;
-    for( string::iterator p = sup.begin(); p != sup.end(); ++p )
-        *p = toupper(*p);  // make string all caps
+
+    // Capitalize the string
+    std::transform(sup.begin(), sup.end(), sup.begin(),
+                   [](unsigned char c){ return std::toupper(c); }
+                  );
+
     if( sup==string("FALSE") || sup==string("F") ||
         sup==string("NO") || sup==string("N") ||
         sup==string("0") || sup==string("NONE") )
@@ -257,13 +261,13 @@ void ConfigFile::add( string key, const T& value )
 //   + First release
 //   + Template read() access only through non-member readConfigFile()
 //   + ConfigurationFileBool is only built-in helper class
-// 
+//
 // v2.0  3 May 2002
 //   + Shortened name from ConfigurationFile to ConfigFile
 //   + Implemented template member functions
 //   + Changed default comment separator from % to #
 //   + Enabled reading of multiple-line values
-// 
+//
 // v2.1  24 May 2004
 //   + Made template specializations inline to avoid compiler-dependent linkage
 //   + Allowed comments within multiple-line values

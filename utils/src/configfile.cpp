@@ -118,7 +118,7 @@ std::istream& operator>>( std::istream& is, ConfigFile& cf )
         {
             std::getline( is, line );
         }
-        int line_number = cf.myLines.size();
+        size_t line_number = cf.myLines.size();
         cf.myLines.push_back(line);
 
         // Ignore comments

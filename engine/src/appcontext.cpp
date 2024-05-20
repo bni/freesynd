@@ -158,6 +158,14 @@ bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesyste
     }
 }
 
+/*!
+ * Loads the right language file based on the given language id.
+ * If id is 0, then look in the CTYPE category of the system Locale,
+ * to find the language. By default, the language is English.
+ * \param languageId const int
+ * \return bool True if the language file has been correctly loaded.
+ *
+ */
 bool AppContext::readLanguage(const int languageId) {
     std::string filename;
     int newLangId = languageId;
