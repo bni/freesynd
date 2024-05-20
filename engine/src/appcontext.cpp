@@ -27,6 +27,9 @@
 #include "fs-engine/appcontext.h"
 
 #include <locale>
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
@@ -171,11 +174,23 @@ bool AppContext::readLanguage(const int languageId) {
     int newLangId = languageId;
 
     if (languageId == 0) {
+#ifdef __APPLE__
+        CFArrayRef languages = CFLocaleCopyPreferredLanguages();
+        CFStringRef sName = (CFStringRef) CFArrayGetValueAtIndex(languages, 0);
+        char buffer[100];
+        memset(buffer, 0, 100);
+        std::string lang;
+        if (CFStringGetCString(sName, buffer, 100, kCFStringEncodingUTF8)) {
+            std::string tmp(buffer);
+            lang = tmp.substr(0, 2);
+        }
+        CFRelease(languages);
+#else
         // In this case, we use the OS locale to define the language
         setlocale(LC_ALL, "");
         std::string ctypeStr(setlocale(LC_CTYPE, NULL));
         std::string lang = ctypeStr.substr(0, 2);
-
+#endif
         if (lang.compare("fr") == 0) {
             newLangId = 1;
         } else if (lang.compare("it") == 0) {
