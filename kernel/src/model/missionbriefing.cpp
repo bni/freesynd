@@ -100,30 +100,33 @@ bool MissionBriefing::loadBriefing(uint8 * data, int size) {
             } else {
                 briefCp437.assign(tmp.substr(start));
             }
-            /*
-            // TODO check if this removal of \n is necessary
-            // sometimes text have additional single '\n''s, we will remove them
-            int16_t first = -1;
-            size_t sz = briefCp437.size();
-            std::string &str_ref = briefCp437;
-            for (int16_t cindx = 0; cindx < (int16_t)sz; cindx++) {
-                if (str_ref[cindx] == '\n') {
-                    if (first == -1 || (first != -1 && first + 1 != cindx))
-                        first = cindx;
-                    else {
-                        first = -1;
-                    }
-                } else {
-                    if (first != -1 && first + 1 == cindx) {
-                        str_ref[first] = ' ';
-                    }
-                    first = -1;
-                }
-            }*/
+
+            if (i_nb_infos_ >= 1) {
+                // Add a blank line between info
+                utf8::append(0x000A, a_briefing_[i]);
+            }
             // We transcode the string into a UTF-8 string
+            // We also remove single line feeds and keep when there are 2 or more
+            int nbLF = 0;
             for (size_t cindx = 0; cindx < briefCp437.size(); cindx++) {
                 cp437char_t cp437char = briefCp437[cindx];
-                utf8::append(cp437ToUnicode[cp437char], a_briefing_[i]);
+                utf8::utfchar32_t u8char = cp437ToUnicode[cp437char];
+                if (u8char == 0x000A) { //current character is a line feed
+                    nbLF += 1;
+                } else { // another type of character
+                    if (nbLF > 1) {
+                        // There was 2 or more LF before this char, so add exactly 2
+                        utf8::append(0x000A, a_briefing_[i]);
+                        utf8::append(0x000A, a_briefing_[i]);
+                    } else if (nbLF == 1) {
+                        // There was only one, replace it with a space
+                        utf8::append(0x0020, a_briefing_[i]);
+                    }
+                    // Then append the letter
+                    utf8::append(u8char, a_briefing_[i]);
+                    nbLF = 0;
+                }
+
             }
         }
     }
