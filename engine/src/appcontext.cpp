@@ -187,13 +187,13 @@ bool AppContext::readLanguage(const int languageId) {
         CFRelease(languages);
 #else
         setlocale(LC_ALL, "");
-        std::string ctypeStr(setlocale(LC_CTYPE, NULL));
+        std::string lang(setlocale(LC_CTYPE, NULL));
 #endif
-        if (ctypeStr.starts_with("French") || ctypeStr.starts_with("fr")) {
+        if (lang.starts_with("French") || lang.starts_with("fr")) {
             newLangId = 1;
-        } else if (ctypeStr.starts_with("Italian") || ctypeStr.starts_with("it")) {
+        } else if (lang.starts_with("Italian") || lang.starts_with("it")) {
             newLangId = 2;
-        } else if (ctypeStr.starts_with("German") || ctypeStr.starts_with("de")) {
+        } else if (lang.starts_with("German") || lang.starts_with("de")) {
             newLangId = 3;
         }
     }
