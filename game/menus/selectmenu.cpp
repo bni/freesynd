@@ -254,7 +254,7 @@ void SelectMenu::drawAgent()
     }
 }
 
-void SelectMenu::handleTick(int elapsed)
+void SelectMenu::handleTick(uint32_t elapsed)
 {
     tick_count_ += elapsed;
     // Updates the moving agent selector

@@ -90,13 +90,13 @@ class DefaultMusic : public Music {
     /*!
      * \param loops = -1 means play forever
      */
-      void play(int loops = -1) const {;}
+      void play([[maybe_unused]] int loops = -1) const {;}
       //! Plays the music with a fade in.
     /*!
      * \param loops
      * \param ms
      */
-      void playFadeIn(int loops = -1, int ms = 200) const {;}
+      void playFadeIn([[maybe_unused]] int loops = -1, [[maybe_unused]] int ms = 200) const {;}
       //! Stops the music
     /*!
      *
@@ -106,18 +106,18 @@ class DefaultMusic : public Music {
     /*!
      * \param ms
      */
-      void stopFadeOut(int ms = 200) const {;}
+      void stopFadeOut([[maybe_unused]] int ms = 200) const {;}
       //! Loads the music from the given data.
     /*!
      * \param musicData
      * \param size
      */
-      bool loadMusic(uint8 *musicData, int size) { return true; }
+      bool loadMusic([[maybe_unused]] uint8 *musicData, [[maybe_unused]] int size) { return true; }
       //! Loads the music from the given file.
     /*!
      * \param fname
      */
-      bool loadMusicFile(const char *fname) { return true;}
+      bool loadMusicFile([[maybe_unused]] const char *fname) { return true;}
 };
 
 #endif  // HAVE_SDL_MIXER

@@ -41,7 +41,7 @@ public:
     MapMenu(MenuManager *m);
     ~MapMenu();
 
-    void handleTick(int elapsed);
+    void handleTick(uint32_t elapsed) override;
     void handleShow();
     void handleLeave();
     void handleAction(const int actionId, void *ctx, const int modKeys);

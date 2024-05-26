@@ -92,7 +92,7 @@ public:
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event &evtOut) = 0;
     virtual void delay(uint32 msec) = 0;
-    virtual uint32 getTicks() = 0;
+    virtual uint32_t getTicks() = 0;
 
     virtual bool setPalette6b3(const uint8 *pal, int cols = 256) = 0;
     virtual bool setPalette8b3(const uint8 *pal, int cols = 256) = 0;

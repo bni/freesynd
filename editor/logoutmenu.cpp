@@ -39,7 +39,7 @@ tick_count_(0)
     addStatic(0, 180, g_Screen.gameScreenWidth(), "#LGOUT_TITLE", FontManager::SIZE_4, true);
 }
 
-void LogoutMenu::handleTick(int elapsed)
+void LogoutMenu::handleTick(uint32_t elapsed)
 {
     tick_count_ += elapsed;
     if (tick_count_ > 2000)

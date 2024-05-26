@@ -43,7 +43,7 @@ LoadingMenu::LoadingMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLoading,
     addStatic(0, 180, g_Screen.gameScreenWidth(), "#LDGAME_TITLE", FontManager::SIZE_4, true);
 }
 
-void LoadingMenu::handleTick(int elapsed)
+void LoadingMenu::handleTick(uint32_t elapsed)
 {
     if (do_load_) {
         // Loads mission

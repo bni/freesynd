@@ -169,7 +169,7 @@ bool BaseApp::initialize(const CliParam& param) {
     return resInit;
 }
 
-bool BaseApp::doInitialize(const CliParam& param) {
+bool BaseApp::doInitialize([[maybe_unused]] const CliParam& param) {
    return true;
 }
 
@@ -218,10 +218,10 @@ void BaseApp::run(const CliParam& param) {
     menus_.gotoMenu(getStartMenuId(param));
 
     running_ = true;
-    int lasttick = system_->getTicks();
+    uint32_t lasttick = system_->getTicks();
     while (running_) {
-        int curtick = system_->getTicks();
-        int diff_ticks = curtick - lasttick;
+        uint32_t curtick = system_->getTicks();
+        uint32_t diff_ticks = curtick - lasttick;
         menus_.updtSinceMouseDown(diff_ticks);
 
         FS_Event fsEvt;
@@ -251,7 +251,7 @@ void BaseApp::waitForKeyPress() {
     }
 }
 
-void BaseApp::onQuitHandler(QuitEvent *evt) {
+void BaseApp::onQuitHandler([[maybe_unused]] QuitEvent *evt) {
     LOG(Log::k_FLG_INFO, "BaseApp", "onQuitHandler", ("Received Quit Evt : quitting"))
     running_ = false;
 }

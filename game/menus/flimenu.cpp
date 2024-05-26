@@ -212,7 +212,7 @@ void FliMenu::handleShow()
     }
 }
 
-void FliMenu::handleTick(int elapsed)
+void FliMenu::handleTick(uint32_t elapsed)
 {
     if (fliPlayer_.hasFrames()) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);

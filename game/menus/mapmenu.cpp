@@ -246,7 +246,7 @@ void MapMenu::handleBlockSelected() {
     /*addDirtyRect(192, 310, 260, 70);*/
 }
 
-void MapMenu::handleTick(int elapsed) {
+void MapMenu::handleTick(uint32_t elapsed) {
     // This a count to refresh the blinking line of the selector
     select_tick_count_ += elapsed;
     if (select_tick_count_ > 200) {

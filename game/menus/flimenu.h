@@ -64,7 +64,7 @@ public:
     FliMenu(MenuManager *m, int menuId);
     ~FliMenu();
 
-    void handleTick(int elapsed);
+    void handleTick(uint32_t elapsed) override;
     void handleShow();
 
     void handleLeave();

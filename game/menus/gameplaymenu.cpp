@@ -328,7 +328,7 @@ void GameplayMenu::handleShow() {
 int qanim = 1959, qframe = 0;
 #endif
 
-void GameplayMenu::handleTick(int elapsed)
+void GameplayMenu::handleTick(uint32_t elapsed)
 {
     if (paused_)
         return;

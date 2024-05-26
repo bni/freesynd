@@ -79,7 +79,7 @@ public:
     //! Dispatches event based on its type
     void handleEvent(const FS_Event& evt);
 
-    void handleTick(int elapsed) {
+    void handleTick(uint32_t elapsed) {
         if (current_)
             current_->handleTick(elapsed);
 
@@ -120,7 +120,7 @@ public:
     }
     bool simpleMouseDown();
     bool isMouseDragged() { return !(simpleMouseDown() && mouseup_was_ ); }
-    void updtSinceMouseDown(int32 elapsed) {
+    void updtSinceMouseDown(uint32_t elapsed) {
         if (!mouseup_was_)
             since_mouse_down_ += elapsed;
     }
@@ -162,7 +162,7 @@ protected:
     SoundManager *pGameSounds_;
 
     /*! Time since last mouse down event without mouseup*/
-    int32 since_mouse_down_;
+    uint32_t since_mouse_down_;
     //! Will not update since_mouse_down_ after this event
     bool mouseup_was_;
 };

@@ -38,7 +38,7 @@ public:
     ResearchMenu(MenuManager *m);
     ~ResearchMenu();
 
-    void handleTick(int elapsed);
+    void handleTick(uint32_t elapsed) override;
     void handleShow();
     void handleRender(DirtyList &dirtyList);
     void handleLeave();

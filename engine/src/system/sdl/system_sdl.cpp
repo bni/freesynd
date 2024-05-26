@@ -417,7 +417,7 @@ void SystemSDL::delay(uint32 msec) {
     SDL_Delay(msec);
 }
 
-uint32 SystemSDL::getTicks() {
+uint32_t SystemSDL::getTicks() {
     return SDL_GetTicks();
 }
 

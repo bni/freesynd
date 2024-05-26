@@ -35,7 +35,7 @@ class LoadingMenu : public Menu {
 public:
     LoadingMenu(MenuManager *m);
 
-    void handleTick(int elapsed);
+    void handleTick(uint32_t elapsed) override;
 
 protected:
     /*! This is a flag to load the mission only once.*/

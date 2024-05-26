@@ -35,7 +35,7 @@ class LogoutMenu : public Menu {
 public:
     LogoutMenu(MenuManager *m);
 
-    void handleTick(int elapsed);
+    void handleTick(uint32_t elapsed) override;
 
 protected:
     int tick_count_;

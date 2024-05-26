@@ -236,7 +236,7 @@ void ResearchMenu::drawSelectedModInfos(int x, int y)
     getMenuFont(FontManager::SIZE_1)->drawText(504, y + 28, pSelectedMod_->desc(), false);
 }
 
-void ResearchMenu::handleTick(int elapsed)
+void ResearchMenu::handleTick(uint32_t elapsed)
 {
     if (g_Session.updateTime(elapsed)) {
         updateClock();

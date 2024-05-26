@@ -77,7 +77,7 @@ BriefMenu::~BriefMenu() {
     a_page_ = NULL;
 }
 
-void BriefMenu::handleTick(int elapsed)
+void BriefMenu::handleTick(uint32_t elapsed)
 {
     if (g_Session.updateTime(elapsed)) {
         updateClock();

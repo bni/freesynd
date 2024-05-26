@@ -130,7 +130,7 @@ public:
     //! Handles mouse button released
     void mouseUpEvent(int x, int y, int button, const int modKeys);
 
-    virtual void handleTick(int elapsed) {}
+    virtual void handleTick(uint32_t elapsed) {}
 
     //! Callback function : Childs can reimplement
     /*!

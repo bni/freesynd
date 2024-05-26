@@ -63,7 +63,7 @@ public:
     bool pumpEvents(FS_Event &evtOut) override;
 
     void delay(uint32 msec) override;
-    uint32 getTicks() override;
+    uint32_t getTicks() override;
 
     bool setPalette6b3(const uint8 *pal, int cols = 256) override;
     bool setPalette8b3(const uint8 *pal, int cols = 256) override;

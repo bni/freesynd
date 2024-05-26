@@ -39,7 +39,7 @@ DefaultAudio::DefaultAudio() {}
 
 DefaultAudio::~DefaultAudio() {}
 
-bool DefaultAudio::init(EFrequency freq, EFormat fmt, EChannel chan, int chunksize) {
+bool DefaultAudio::init([[maybe_unused]] EFrequency freq, [[maybe_unused]] EFormat fmt, [[maybe_unused]] EChannel chan, [[maybe_unused]] int chunksize) {
 
     LOG(Log::k_FLG_SND, "Audio", "init", ("Initializing Dummy sound system..."));
 
@@ -56,7 +56,7 @@ bool DefaultAudio::quit(void) {
     return true;
 }
 
-void DefaultAudio::setMusicVolume(int volume)
+void DefaultAudio::setMusicVolume([[maybe_unused]] int volume)
 {
 }
 
@@ -70,7 +70,7 @@ int DefaultAudio::getMusicVolume() {
  * volume, then the maximum is set.
  * \param channel The channel on which the volume is set.
  */
-void DefaultAudio::setSoundVolume(int volume, int channel)
+void DefaultAudio::setSoundVolume([[maybe_unused]] int volume, [[maybe_unused]] int channel)
 {
 }
 
@@ -78,7 +78,7 @@ void DefaultAudio::setSoundVolume(int volume, int channel)
  * Returns the music volume.
  * \return -1 if the system has not been initialized.
  */
-int DefaultAudio::getSoundVolume(int channel) {
+int DefaultAudio::getSoundVolume([[maybe_unused]] int channel) {
     return 0;
 }
 
