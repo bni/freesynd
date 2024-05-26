@@ -45,9 +45,9 @@ public:
     GameplayMenu(MenuManager *m);
     //! Update the menu state
     void handleTick(uint32_t elapsed) override;
-    void handleShow();
-    void handleRender(DirtyList &dirtyList);
-    void handleLeave();
+    void handleShow() override;
+    void handleRender(DirtyList &dirtyList) override;
+    void handleLeave() override;
 
 protected:
     /**
@@ -56,15 +56,15 @@ protected:
     ///@{
     bool handleUnMappedKey(const FS_Key key) override;
 
-    void handleMouseMotion(int x, int y, int state, const int modKeys);
-    bool handleMouseDown(int x, int y, int button, const int modKeys);
-    void handleMouseUp(int x, int y, int button, const int modKeys);
+    void handleMouseMotion(int x, int y, int state) override;
+    bool handleMouseDown(int x, int y, int button) override;
+    void handleMouseUp(int x, int y, int button) override;
     //! Handles the user's click on weapon selector
-    void handleClickOnWeaponSelector(int x, int y, int button, const int modKeys);
+    void handleClickOnWeaponSelector(int x, int y, int button);
     //! sets IPA level for defined agent, selector
     void setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int percentage);
     //! Handles the user's click on the map
-    void handleClickOnMap(int x, int y, int button, const int modKeys);
+    void handleClickOnMap(int x, int y, int button);
     //! Handles the user's click on the minimap
     void handleClickOnMinimap(int x, int y);
     ///@}

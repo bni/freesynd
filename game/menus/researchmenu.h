@@ -42,7 +42,7 @@ public:
     void handleShow();
     void handleRender(DirtyList &dirtyList);
     void handleLeave();
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+    void handleAction(const int actionId, void *ctx) override;
 
 protected:
     void updateClock();

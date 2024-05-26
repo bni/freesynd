@@ -160,7 +160,7 @@ void ConfMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void ConfMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
+void ConfMenu::handleAction(const int actionId, void *ctx) {
     if (actionId == logoButId_) {
         showLogoPanel();
     } else if (actionId == userNameButId_) {

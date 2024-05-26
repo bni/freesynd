@@ -403,7 +403,7 @@ void GameplayMenu::handleTick(uint32_t elapsed)
     if (change) {
         needRendering();
         // force target to update
-        handleMouseMotion(last_motion_x_, last_motion_y_, 0, KMD_NONE);
+        handleMouseMotion(last_motion_x_, last_motion_y_, 0);
     }
 
     drawMissionHint(elapsed);
@@ -508,7 +508,7 @@ void GameplayMenu::handleLeave()
     ipa_chng_.ipa_chng = -1;
 }
 
-void GameplayMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
+void GameplayMenu::handleMouseMotion(int x, int y, int state)
 {
     last_motion_tick_ = tick_count_;
     last_motion_x_ = x;
@@ -675,16 +675,14 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
     }
 }
 
-bool GameplayMenu::handleMouseDown(int x, int y, int button, const int modKeys)
+bool GameplayMenu::handleMouseDown(int x, int y, int button)
 {
     if (paused_)
         return true;
 
     if (x < 129) {
-        bool ctrl = false;  // Is control button pressed
-        if (modKeys & KMD_CTRL) {
-            ctrl = true;
-        }
+        // Is control button pressed
+        bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
 
         // First check if player has clicked on agent selectors
         SelectorEvent selEvt;
@@ -712,13 +710,13 @@ bool GameplayMenu::handleMouseDown(int x, int y, int button, const int modKeys)
                  && y < 2 + 46 + 44 + 10 + 46 + 44 + 15 + 64)
         {
             // user clicked on the weapon selector
-            handleClickOnWeaponSelector(x, y, button, modKeys);
+            handleClickOnWeaponSelector(x, y, button);
         } else if ( y > kMiniMapScreenY && button == kMouseLeftButton) {
             handleClickOnMinimap(x, y);
         }
     } else {
         // User clicked on the map
-        handleClickOnMap(x, y, button, modKeys);
+        handleClickOnMap(x, y, button);
     }
 
     return true;
@@ -729,16 +727,14 @@ bool GameplayMenu::handleMouseDown(int x, int y, int button, const int modKeys)
  * \param x Mouse X coord
  * \param y Mouse Y coord
  * \param button Mouse button that was clicked
- * \param modKeys System keys states
  */
-void GameplayMenu::handleClickOnWeaponSelector(int x, int y, int button,
-    const int modKeys)
+void GameplayMenu::handleClickOnWeaponSelector(int x, int y, int button)
 {
     uint8 w_num = ((y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
             + x / 32;
     PedInstance *pLeader = selection_.leader();
     if (pLeader->isAlive()) {
-        bool is_ctrl = (modKeys & KMD_CTRL) != 0;
+        bool is_ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
         if (w_num < pLeader->numWeapons()) {
             if (button == kMouseLeftButton) {
                 // Button 1 : selection/deselection of weapon for all selection
@@ -782,11 +778,11 @@ void GameplayMenu::updateIPALevelMeters(int elapsed)
     }
 }
 
-void GameplayMenu::handleClickOnMap(int x, int y, int button, const int modKeys) {
+void GameplayMenu::handleClickOnMap(int x, int y, int button) {
     TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + x - 129,
                     displayOriginPt_.y + y);
 #ifdef _DEBUG
-    if ((modKeys & KMD_ALT) != 0) {
+    if (g_System.isKeyModStatePressed(KMD_ALT)) {
         printf("Tile x:%d, y:%d, z:%d, ox:%d, oy:%d\n",
             mapPt.tx, mapPt.ty, mapPt.tz, mapPt.ox, mapPt.oy);
 
@@ -801,7 +797,7 @@ void GameplayMenu::handleClickOnMap(int x, int y, int button, const int modKeys)
     }
 #endif //_DEBUG
 
-    bool ctrl = (modKeys & KMD_CTRL) != 0;
+    bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
     if (button == kMouseLeftButton) {
         if (target_) {
             switch (target_->nature()) {
@@ -894,7 +890,7 @@ void GameplayMenu::stopShootingEvent()
 }
 
 
-void GameplayMenu::handleMouseUp(int x, int y, int button, const int modKeys)
+void GameplayMenu::handleMouseUp(int x, int y, int button)
 {
     ipa_chng_.ipa_chng = -1;
 

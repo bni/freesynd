@@ -496,7 +496,7 @@ void SelectMenu::updateAcceptEnabled() {
     getOption(acceptButId_)->setWidgetEnabled(found);
 }
 
-void SelectMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
+void SelectMenu::handleMouseMotion(int x, int y, int state)
 {
     if (weapon_dragged_) {
         weapon_pos_.x = x;
@@ -505,7 +505,7 @@ void SelectMenu::handleMouseMotion(int x, int y, int state, const int modKeys)
     }
 }
 
-void SelectMenu::handleMouseUp(int x, int y, int button, const int modKeys)
+void SelectMenu::handleMouseUp(int x, int y, int button)
 {
     if (button == 3) {
         Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
@@ -546,7 +546,7 @@ void SelectMenu::handleMouseUp(int x, int y, int button, const int modKeys)
     }
 }
 
-bool SelectMenu::handleMouseDown(int x, int y, int button, const int modKeys)
+bool SelectMenu::handleMouseDown(int x, int y, int button)
 {
     if (x >= 20 && x <= 140) {
         if (y >= 84 && y <= 150) {
@@ -677,7 +677,7 @@ void SelectMenu::showItemList() {
     }
 }
 
-void SelectMenu::handleAction(const int actionId, void *ctx, const int modKeys)
+void SelectMenu::handleAction(const int actionId, void *ctx)
 {
     if (actionId == teamButId_) {
         tab_ = TAB_TEAM;

@@ -45,7 +45,7 @@ public:
     void handleShow();
     void handleRender(DirtyList &dirtyList);
     void handleLeave();
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+    void handleAction(const int actionId, void *ctx) override;
 
 protected:
     /*! Origin of the minimap on the screen.*/
@@ -61,7 +61,7 @@ protected:
     void redrawMiniMap();
     void redrawBriefing();
 
-    bool handleMouseDown(int x, int y, int button, const int modKeys);
+    bool handleMouseDown(int x, int y, int button) override;
     //! Return the zoom level from the enhancement level
     MinimapRenderer::EZoom toZoomLevel(uint8 enh_lvl);
 

@@ -44,15 +44,15 @@ public:
     ~SelectMenu();
 
     void handleTick(uint32_t elapsed) override;
-    void handleShow();
-    void handleRender(DirtyList &dirtyList);
-    void handleLeave();
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+    void handleShow() override;
+    void handleRender(DirtyList &dirtyList) override;
+    void handleLeave() override;
+    void handleAction(const int actionId, void *ctx) override;
 
 protected:
-    void handleMouseMotion(int x, int y, int state, const int modKeys);
-    void handleMouseUp(int x, int y, int button, const int modKeys);
-    bool handleMouseDown(int x, int y, int button, const int modKeys);
+    void handleMouseMotion(int x, int y, int state) override;
+    void handleMouseUp(int x, int y, int button) override;
+    bool handleMouseDown(int x, int y, int button) override;
     void handleClickOnAgentSelector(const int agent_no, int button);
 
     void updateClock();

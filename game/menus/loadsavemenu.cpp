@@ -96,7 +96,7 @@ void LoadSaveMenu::handleLeave() {
     editNameId_ = -1;
 }
 
-void LoadSaveMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
+void LoadSaveMenu::handleAction(const int actionId, void *ctx) {
     if (actionId == loadButId_) {
         if (editNameId_ != -1) {
             if (g_gameCtrl.loadGameFromFile(editNameId_)) {
@@ -114,7 +114,7 @@ void LoadSaveMenu::handleAction(const int actionId, void *ctx, const int modKeys
     }
 }
 
-bool LoadSaveMenu::handleMouseDown(int x, int y, int button, const int modKeys) {
+bool LoadSaveMenu::handleMouseDown(int x, int y, int button) {
     for (int i=0; i<10; i++) {
         if (pTextFields_[i]->isMouseOver(x, y)) {
             editNameId_ = i;

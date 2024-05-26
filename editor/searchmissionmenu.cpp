@@ -153,7 +153,7 @@ bool SearchMissionMenu::matchMissionWithVehicleType(Mission *pMission) {
     return true;
 }
 
-void SearchMissionMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
+void SearchMissionMenu::handleAction(const int actionId, void *ctx) {
     if (actionId == searchButId_) {
         // first clear result list
         g_editorCtrl.getMissionResultList().clear();

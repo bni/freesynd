@@ -68,7 +68,7 @@ public:
 
     void handleShow();
     void handleLeave();
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+    void handleAction(const int actionId, void *ctx) override;
 
 protected:
     void initPedTypeListAndWidget();

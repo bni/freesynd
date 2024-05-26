@@ -63,7 +63,7 @@ void MainMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void MainMenu::handleAction(const int actionId, void *ctx, const int modKeys)
+void MainMenu::handleAction(const int actionId, void *ctx)
 {
     if (actionId == resetButId_)
         g_gameCtrl.reset();

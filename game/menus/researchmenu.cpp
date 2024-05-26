@@ -341,7 +341,7 @@ void ResearchMenu::handleLeave() {
     getStatic(searchTitleLblId_)->setText("");
 }
 
-void ResearchMenu::handleAction(const int actionId, void *ctx, const int modKeys)
+void ResearchMenu::handleAction(const int actionId, void *ctx)
 {
     // Field list box : Equips or Mods
     if (actionId == pFieldEquipLBox_->getId() || actionId == pFieldModsLBox_->getId()) {

@@ -122,15 +122,15 @@ public:
     virtual void handleLeave() {}
 
     //! Handles key pressed
-    void keyEvent(FS_Key key, const int modKeys);
+    void keyEvent(FS_Key key);
     //! Handles mouse moved
-    void mouseMotionEvent(int x, int y, int state, const int modKeys);
+    void mouseMotionEvent(int x, int y, int state);
     //! Handles mouse button pressed
-    void mouseDownEvent(int x, int y, int button, const int modKeys);
+    void mouseDownEvent(int x, int y, int button);
     //! Handles mouse button released
-    void mouseUpEvent(int x, int y, int button, const int modKeys);
+    void mouseUpEvent(int x, int y, int button);
 
-    virtual void handleTick(uint32_t elapsed) {}
+    virtual void handleTick([[maybe_unused]] uint32_t elapsed) {}
 
     //! Callback function : Childs can reimplement
     /*!
@@ -139,7 +139,7 @@ public:
      * \param ctx A pointer to a context specific to the action
      * \param modKeys The state of all modifiers buttons
      */
-    virtual void handleAction(const int actionId, void *ctx, const int modKeys) {}
+    virtual void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) {}
 
     void selectToggleAction(int id) { group_.selectButton(id); }
 
@@ -155,15 +155,15 @@ protected:
     /*!
         * Called each time a menu is rendered.
         */
-    virtual void handleRender(DirtyList &dirtyList) {}
+    virtual void handleRender([[maybe_unused]] DirtyList &dirtyList) {}
 
     //! Handle mouse down event.
     /*!
         * \return true if the menu has processed the event, and it must not be processed anymore.
         */
-    virtual bool handleMouseDown(int x, int y, int button, const int modKeys) { return false; }
-    virtual void handleMouseUp(int x, int y, int button, const int modKeys) {}
-    virtual void handleMouseMotion(int x, int y, int state, const int modKeys) {}
+    virtual bool handleMouseDown(int x, int y, int button) { return false; }
+    virtual void handleMouseUp(int x, int y, int button) {}
+    virtual void handleMouseMotion(int x, int y, int state) {}
     //! Handle key that where pressed but not assigned to any actions
     virtual bool handleUnMappedKey([[maybe_unused]] const FS_Key key) { return false;}
 

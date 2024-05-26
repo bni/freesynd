@@ -280,7 +280,7 @@ void FliMenu::handleRender(DirtyList &dirtyList)
 /*!
  * Ends the animation.
  */
-bool FliMenu::handleMouseDown(int x, int y, int button, const int modKeys)
+bool FliMenu::handleMouseDown(int x, int y, int button)
 {
     if (fliIndex_ > 0) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);

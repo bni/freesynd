@@ -337,13 +337,13 @@ void Menu::captureInputBy(TextField *pTextfield) {
 /*!
  * Handles the key pressed event.
  * \param key The key that was pressed
- * \param modKeys State of all modifier keys
+
  */
-void Menu::keyEvent(FS_Key key, const int modKeys)
+void Menu::keyEvent(FS_Key key)
 {
     // first pass the event to the textfield that has the cursor
     if (pCaptureInput_ != NULL) {
-        if (pCaptureInput_->handleKey(key, modKeys)) {
+        if (pCaptureInput_->handleKey(key)) {
             return;
         }
     }
@@ -353,7 +353,7 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
         if (auto search = hotKeys_.find(key.keyCode); search != hotKeys_.end()) {
             Option *pOption = getOption(search->second);
             if (pOption && pOption->isVisible() && pOption->isWidgetEnabled()) {
-                pOption->executeAction(modKeys);
+                pOption->executeAction();
                 return;
             }
         }
@@ -375,11 +375,10 @@ void Menu::keyEvent(FS_Key key, const int modKeys)
  * \param x X screen coordinate
  * \param y Y screen coordinate
  * \param state If button is pressed during mouse motion.
- * \param modKeys State of all modifier keys
  */
-void Menu::mouseMotionEvent(int x, int y, int state, const int modKeys)
+void Menu::mouseMotionEvent(int x, int y, int state)
 {
-    handleMouseMotion(x, y, state, modKeys);
+    handleMouseMotion(x, y, state);
 
     // Check focus is lost for currently focused widget
     if (focusedWgId_ != -1) {
@@ -407,7 +406,7 @@ void Menu::mouseMotionEvent(int x, int y, int state, const int modKeys)
             }
 
             // Pass the event to the widget
-            action->handleMouseMotion(x, y, state, modKeys);
+            action->handleMouseMotion(x, y, state);
 
             return;
         }
@@ -419,12 +418,11 @@ void Menu::mouseMotionEvent(int x, int y, int state, const int modKeys)
  * \param x X screen coordinate
  * \param y Y screen coordinate
  * \param button What button was pressed
- * \param modKeys State of all modifier keys
  */
-void Menu::mouseDownEvent(int x, int y, int button, const int modKeys)
+void Menu::mouseDownEvent(int x, int y, int button)
 {
     // First pass the event to the menu
-    if (handleMouseDown(x, y, button, modKeys)) {
+    if (handleMouseDown(x, y, button)) {
         // Menu has processed the event, so don't pass it to widget
         return;
     }
@@ -438,7 +436,7 @@ void Menu::mouseDownEvent(int x, int y, int button, const int modKeys)
         }
 
         if (action->isMouseOver(x, y)) {
-            action->handleMouseDown(x, y, button, modKeys);
+            action->handleMouseDown(x, y, button);
             return;
         }
     }
@@ -449,11 +447,10 @@ void Menu::mouseDownEvent(int x, int y, int button, const int modKeys)
  * \param x X screen coordinate
  * \param y Y screen coordinate
  * \param button What button was released
- * \param modKeys State of all modifier keys
  */
-void Menu::mouseUpEvent(int x, int y, int button, const int modKeys)
+void Menu::mouseUpEvent(int x, int y, int button)
 {
-    handleMouseUp(x, y, button, modKeys);
+    handleMouseUp(x, y, button);
 }
 
 MenuFont * Menu::getMenuFont(FontManager::EFontSize size) {

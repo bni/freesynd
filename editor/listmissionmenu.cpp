@@ -82,7 +82,7 @@ void ListMissionMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void ListMissionMenu::handleAction(const int actionId, void *ctx, const int modKeys)
+void ListMissionMenu::handleAction(const int actionId, void *ctx)
 {
 
 }

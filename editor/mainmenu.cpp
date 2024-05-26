@@ -57,7 +57,7 @@ void MainMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void MainMenu::handleAction(const int actionId, void *ctx, const int modKeys)
+void MainMenu::handleAction(const int actionId, void *ctx)
 {
     if (actionId == quitButId_)
         menu_manager_->gotoMenu(Menu::kMenuIdLogout);

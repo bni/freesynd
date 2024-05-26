@@ -38,9 +38,9 @@ public:
     void handleShow();
     void handleLeave();
 
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+    void handleAction(const int actionId, void *ctx) override;
 
-    bool handleMouseDown(int x, int y, int button, const int modKeys);
+    bool handleMouseDown(int x, int y, int button) override;
 
 protected:
     static const int X_ORIGIN;

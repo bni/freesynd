@@ -364,7 +364,7 @@ void MapMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-bool MapMenu::handleMouseDown(int x, int y, int button, const int modKeys) {
+bool MapMenu::handleMouseDown(int x, int y, int button) {
     // Checks among the missions which one has been clicked on
     for (int i = 0; i < 50; i++) {
         if (x > g_BlocksDisplay[i].pos.x && x < g_BlocksDisplay[i].pos.x + 64 &&
@@ -388,16 +388,16 @@ bool MapMenu::handleMouseDown(int x, int y, int button, const int modKeys) {
     return false;
 }
 
-void MapMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
+void MapMenu::handleAction(const int actionId, void *ctx) {
     bool refresh = false;
     if ( actionId == incrTaxButId_ ) {
-        if (modKeys & KMD_CTRL) {
+        if (g_System.isKeyModStatePressed(KMD_CTRL)) {
             refresh = g_Session.addToTaxRate(10);
         } else {
             refresh = g_Session.addToTaxRate(1);
         }
     } else if ( actionId == decrTaxButId_ ) {
-        if (modKeys & KMD_CTRL) {
+        if (g_System.isKeyModStatePressed(KMD_CTRL)) {
             refresh = g_Session.addToTaxRate(-10);
         } else {
             refresh = g_Session.addToTaxRate(-1);

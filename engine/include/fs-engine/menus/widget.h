@@ -203,9 +203,9 @@ public:
     bool isMouseOver(int x, int y);
 
     //! Callback method to respond to mouse motion event
-    virtual void handleMouseMotion(int x, int y, int state, const int modKeys) {}
+    virtual void handleMouseMotion(int x, int y, int state) {}
     //! Callback method to respond to mouse down event
-    virtual void handleMouseDown(int x, int y, int button, const int modKeys) {}
+    virtual void handleMouseDown(int x, int y, int button) {}
 
     //! Callback method called when the mouse is over the widget
     virtual void handleFocusGained() {}
@@ -239,13 +239,13 @@ public:
     //! Draw the widget on screen
     void draw();
 
-    void handleMouseDown(int x, int y, int button, const int modKeys);
+    void handleMouseDown(int x, int y, int button) override;
 
     void handleFocusGained();
     void handleFocusLost();
 
     //! Runs the action for this widget
-    virtual void executeAction(const int modKeys);
+    virtual void executeAction();
 
 protected:
 
@@ -302,7 +302,7 @@ public:
     ToggleAction(Menu *peer, int x, int y, int width, int height,
                     const char *text, MenuFont *pFont, bool selected, Group *pGroup);
 
-    void executeAction(const int modKeys);
+    void executeAction() override;
 
     void handleFocusLost();
 
@@ -335,9 +335,9 @@ public:
     void draw();
 
     //! Callback method to respond to mouse motion event
-    void handleMouseMotion(int x, int y, int state, const int modKeys);
+    void handleMouseMotion(int x, int y, int state) override;
     //! Callback method to respond to mouse down event
-    void handleMouseDown(int x, int y, int button, const int modKeys);
+    void handleMouseDown(int x, int y, int button) override;
     void handleFocusLost();
 
     void setModel(SequenceModel *pModel);
@@ -370,7 +370,7 @@ public:
     void draw();
 
     //! Callback method to respond to mouse motion event
-    void handleMouseMotion(int x, int y, int state, const int modKeys);
+    void handleMouseMotion(int x, int y, int state) override;
 
     void setSquadLine(int squadSlot, unsigned int line);
 
@@ -415,12 +415,12 @@ public:
     //! Draw the widget on screen
     void draw();
 
-    void handleMouseDown(int x, int y, int button, const int modKeys);
+    void handleMouseDown(int x, int y, int button) override;
 
     void handleCaptureGained();
     void handleCaptureLost();
 
-    bool handleKey(FS_Key key, const int modKeys);
+    bool handleKey(FS_Key key);
 
 protected:
     void drawCaret();

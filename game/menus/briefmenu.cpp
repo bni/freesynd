@@ -314,7 +314,7 @@ void BriefMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void BriefMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
+void BriefMenu::handleAction(const int actionId, void *ctx) {
     if (actionId == infosButId_) {
         // Buy some informations
         if (g_Session.getSelectedBlock().infoLevel < p_briefing_->nb_infos()) {
@@ -374,7 +374,7 @@ void BriefMenu::handleAction(const int actionId, void *ctx, const int modKeys) {
  * in the corresponding direction.
  * \return True if the user clicked on the minimap so event is consumed
  */
-bool BriefMenu::handleMouseDown(int x, int y, int button, const int modKeys) {
+bool BriefMenu::handleMouseDown(int x, int y, int button) {
     if (button == 1 && x >= kMiniMapScreenX
         && x < (kMiniMapScreenX + kMiniMapWidth)
         && y >= kMiniMapScreenY && y < (kMiniMapScreenY + kMiniMapHeight)) {

@@ -42,14 +42,14 @@ public:
     ~MapMenu();
 
     void handleTick(uint32_t elapsed) override;
-    void handleShow();
-    void handleLeave();
-    void handleAction(const int actionId, void *ctx, const int modKeys);
+    void handleShow() override;
+    void handleLeave() override;
+    void handleAction(const int actionId, void *ctx) override;
 
 protected:
-    void handleRender(DirtyList &dirtyList);
+    void handleRender(DirtyList &dirtyList) override;
     bool handleUnMappedKey(const FS_Key key) override;
-    bool handleMouseDown(int x, int y, int button, const int modKeys);
+    bool handleMouseDown(int x, int y, int button) override;
     //! Utility method to draw the mission selector
     void drawSelector();
     //! Utility method to update mission informations

@@ -278,9 +278,9 @@ void Option::draw() {
  * Calls Menu::handleAction() then redirect to
  * another menu if the field "to" has been set.
  */
-void Option::executeAction(const int modKeys) {
+void Option::executeAction() {
     if (getPeer() && this->isVisible()) {
-        getPeer()->handleAction(getId(), NULL, modKeys);
+        getPeer()->handleAction(getId(), NULL);
     }
 
     if (to_ != -1) {
@@ -298,8 +298,8 @@ void Option::handleFocusLost() {
     redraw();
 }
 
-void Option::handleMouseDown(int x, int y, int button, const int modKeys) {
-    executeAction(modKeys);
+void Option::handleMouseDown(int x, int y, int button) {
+    executeAction();
 }
 
 Group::~Group() {
@@ -336,10 +336,10 @@ void ToggleAction::setSelected(bool isSelected) {
     redraw();
 }
 
-void ToggleAction::executeAction(const int modKeys) {
+void ToggleAction::executeAction() {
     // Deselect all other buttons of the group and select current
     group_->selectButton(getId());
-    Option::executeAction(modKeys);
+    Option::executeAction();
 }
 
 void ToggleAction::handleFocusLost() {
@@ -395,7 +395,7 @@ void ListBox::draw() {
     }
 }
 
-void ListBox::handleMouseMotion(int x, int y, int state, const int modKeys) {
+void ListBox::handleMouseMotion(int x, int y, int state) {
 
     if (pModel_) {
         // Gets the line pointed by the mouse
@@ -421,12 +421,12 @@ void ListBox::handleMouseMotion(int x, int y, int state, const int modKeys) {
     }
 }
 
-void ListBox::handleMouseDown(int x, int y, int button, const int modKeys) {
+void ListBox::handleMouseDown(int x, int y, int button) {
     if (focusedLine_ != -1 && pModel_) {
         if (getPeer()) {
             // call the peer handleAction method giving the index of pressed line.
             std::pair<int, void *> tuple = std::make_pair(focusedLine_, pModel_->getElement(focusedLine_));
-            getPeer()->handleAction(getId(), &tuple, modKeys);
+            getPeer()->handleAction(getId(), &tuple);
 
         }
     }
@@ -483,7 +483,7 @@ void TeamListBox::draw() {
     }
 }
 
-void TeamListBox::handleMouseMotion(int x, int y, int state, const int modKeys) {
+void TeamListBox::handleMouseMotion(int x, int y, int state) {
 
     if (pModel_) {
         // Gets the line pointed by the mouse
@@ -673,7 +673,7 @@ void TextField::handleCharacter(FS_Key key) {
     }
 }
 
-bool TextField::handleKey(FS_Key key, const int modKeys) {
+bool TextField::handleKey(FS_Key key) {
     bool needRedraw = false;
     if (key.keyCode == kKeyCode_Left) {
         // Move caret to the left until start of the text
@@ -721,7 +721,7 @@ bool TextField::handleKey(FS_Key key, const int modKeys) {
     return true;
 }
 
-void TextField::handleMouseDown(int x, int y, int button, const int modKeys) {
+void TextField::handleMouseDown(int x, int y, int button) {
     getPeer()->captureInputBy(this);
 
     char src[100];
