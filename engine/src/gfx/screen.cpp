@@ -29,11 +29,11 @@
 #include "fs-utils/common.h"
 #include "fs-utils/io/file.h"
 
-const int Screen::kScreenWidth = 640;
-const int Screen::kScreenHeight = 400;
-const int Screen::kScreenPanelWidth = 129;
+const uint16_t Screen::kScreenWidth = 640;
+const uint16_t Screen::kScreenHeight = 400;
+const uint16_t Screen::kScreenPanelWidth = 129;
 
-Screen::Screen(int width, int height)
+Screen::Screen(uint16_t width, uint16_t height)
 :width_(width)
 , height_(height)
 , pixels_(NULL)

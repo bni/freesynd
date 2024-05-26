@@ -376,7 +376,7 @@ void Menu::keyEvent(FS_Key key)
  * \param y Y screen coordinate
  * \param state If button is pressed during mouse motion.
  */
-void Menu::mouseMotionEvent(Point2D point, int state)
+void Menu::mouseMotionEvent(Point2D point, uint32_t state)
 {
     handleMouseMotion(point, state);
 

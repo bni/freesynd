@@ -298,7 +298,7 @@ void Option::handleFocusLost() {
     redraw();
 }
 
-void Option::handleMouseDown(Point2D point, int button) {
+void Option::handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {
     executeAction();
 }
 
@@ -395,7 +395,7 @@ void ListBox::draw() {
     }
 }
 
-void ListBox::handleMouseMotion(Point2D point, int state) {
+void ListBox::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state) {
 
     if (pModel_) {
         // Gets the line pointed by the mouse
@@ -421,7 +421,7 @@ void ListBox::handleMouseMotion(Point2D point, int state) {
     }
 }
 
-void ListBox::handleMouseDown(Point2D point, int button) {
+void ListBox::handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {
     if (focusedLine_ != -1 && pModel_) {
         if (getPeer()) {
             // call the peer handleAction method giving the index of pressed line.
@@ -483,7 +483,7 @@ void TeamListBox::draw() {
     }
 }
 
-void TeamListBox::handleMouseMotion(Point2D point, int state) {
+void TeamListBox::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state) {
 
     if (pModel_) {
         // Gets the line pointed by the mouse
@@ -721,7 +721,7 @@ bool TextField::handleKey(FS_Key key) {
     return true;
 }
 
-void TextField::handleMouseDown(Point2D point, int button) {
+void TextField::handleMouseDown(Point2D point, [[maybe_unused]] int button) {
     getPeer()->captureInputBy(this);
 
     char src[100];

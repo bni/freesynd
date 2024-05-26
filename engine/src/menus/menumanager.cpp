@@ -274,7 +274,7 @@ void MenuManager::showMenu(Menu *pMenu) {
     // that could be highlighted because the mouse
     // is upon it
     Point2D point;
-    int state = g_System.getMousePos(&(point.x), &(point.y));
+    uint32_t state = g_System.getMousePos(point);
     pMenu->mouseMotionEvent(point, state);
 
     // Adds a dirty rect to force menu rendering

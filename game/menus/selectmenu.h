@@ -50,7 +50,7 @@ public:
     void handleAction(const int actionId, void *ctx) override;
 
 protected:
-    void handleMouseMotion(Point2D point, int state) override;
+    void handleMouseMotion(Point2D point, uint32_t state) override;
     void handleMouseUp(Point2D point, int button) override;
     bool handleMouseDown(Point2D point, int button) override;
     void handleClickOnAgentSelector(const int agent_no, int button);

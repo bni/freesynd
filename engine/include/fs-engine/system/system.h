@@ -99,7 +99,7 @@ public:
     virtual void setColor(uint8 index, uint8 r, uint8 g, uint8 b) = 0;
 
     //! Returns the mouse pointer coordinates
-    virtual uint32 getMousePos(int *x, int *y) = 0;
+    virtual uint32_t getMousePos(Point2D &point) = 0;
     //! Hides the mouse cursor.
     virtual void hideCursor() = 0;
     //! Shows the mouse cursor.

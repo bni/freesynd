@@ -66,7 +66,7 @@ public:
     //! Sets the test files flag to false in the config file
     void deactivateTestFlag();
 
-    int32 getTimeForClick() { return time_for_click_; }
+    uint32_t getTimeForClick() { return time_for_click_; }
 
     FS_Lang currLanguage(void) {return curr_language_; }
     std::string getMessage(const std::string & id);
@@ -86,7 +86,7 @@ private:
     /*! Time range between mouse up and down that is treated as click,
      * if it will be longer it will be treated as dragging
     */
-    int32 time_for_click_;
+    uint32_t time_for_click_;
     /*! True means data files will be verified.*/
     bool test_files_;
     /*! Language file. */

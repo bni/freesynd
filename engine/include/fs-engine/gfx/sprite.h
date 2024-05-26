@@ -35,13 +35,13 @@ const int TABENTRY_SIZE = 6;
  */
 class Sprite {
 
-    int width_;
-    int height_;
+    uint32_t width_;
+    uint32_t height_;
     /*!
      * sprite width_, but adjusted to be divisible by 8 without remainder
      * (boundary of 8)
      */
-    int stride_;
+    uint32_t stride_;
     uint8 *sprite_data_;
 
 public:
@@ -91,8 +91,8 @@ public:
             bool rle = false);
     void draw(int x, int y, int z, bool flipped = false, bool x2 = false);
 
-    int width() const { return width_; }
-    int height() const { return height_; }
+    uint32_t width() const { return width_; }
+    uint32_t height() const { return height_; }
 
     void data(uint8 *spr_data) const;
 };

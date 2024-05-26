@@ -56,7 +56,7 @@ protected:
     ///@{
     bool handleUnMappedKey(const FS_Key key) override;
 
-    void handleMouseMotion(Point2D point, int state) override;
+    void handleMouseMotion(Point2D point, uint32_t state) override;
     bool handleMouseDown(Point2D point, int button) override;
     void handleMouseUp(Point2D point, int button) override;
     //! Handles the user's click on weapon selector

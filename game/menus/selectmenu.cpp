@@ -496,7 +496,7 @@ void SelectMenu::updateAcceptEnabled() {
     getOption(acceptButId_)->setWidgetEnabled(found);
 }
 
-void SelectMenu::handleMouseMotion(Point2D point, int state)
+void SelectMenu::handleMouseMotion(Point2D point, uint32_t state)
 {
     if (weapon_dragged_) {
         weapon_pos_.x = point.x;

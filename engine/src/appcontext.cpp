@@ -68,7 +68,7 @@ bool AppContext::readFreesyndIni(const std::string& iniFolder) {
         return false;
     }
 
-    time_for_click_ = freesyndIni.read("time_for_click", 80);
+    time_for_click_ = freesyndIni.read("time_for_click", 80u);
 
     std::string freesynDataDir;
     if (freesyndIni.readInto(freesynDataDir, "freesynd_data_dir")) {

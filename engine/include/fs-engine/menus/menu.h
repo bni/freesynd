@@ -124,7 +124,7 @@ public:
     //! Handles key pressed
     void keyEvent(FS_Key key);
     //! Handles mouse moved
-    void mouseMotionEvent(Point2D point, int state);
+    void mouseMotionEvent(Point2D point, uint32_t state);
     //! Handles mouse button pressed
     void mouseDownEvent(Point2D point, int button);
     //! Handles mouse button released
@@ -163,7 +163,7 @@ protected:
         */
     virtual bool handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) { return false; }
     virtual void handleMouseUp([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {}
-    virtual void handleMouseMotion([[maybe_unused]] Point2D point, int state) {}
+    virtual void handleMouseMotion([[maybe_unused]] Point2D point, [[maybe_unused]] uint32_t state) {}
     //! Handle key that where pressed but not assigned to any actions
     virtual bool handleUnMappedKey([[maybe_unused]] const FS_Key key) { return false;}
 

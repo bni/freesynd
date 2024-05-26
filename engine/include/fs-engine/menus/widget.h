@@ -203,7 +203,7 @@ public:
     bool isMouseOver(Point2D point);
 
     //! Callback method to respond to mouse motion event
-    virtual void handleMouseMotion([[maybe_unused]] Point2D point, [[maybe_unused]] int state) {}
+    virtual void handleMouseMotion([[maybe_unused]] Point2D point, [[maybe_unused]] uint32_t state) {}
     //! Callback method to respond to mouse down event
     virtual void handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {}
 
@@ -335,7 +335,7 @@ public:
     void draw();
 
     //! Callback method to respond to mouse motion event
-    void handleMouseMotion(Point2D point, int state) override;
+    void handleMouseMotion(Point2D point, uint32_t state) override;
     //! Callback method to respond to mouse down event
     void handleMouseDown(Point2D point, int button) override;
     void handleFocusLost();
@@ -370,7 +370,7 @@ public:
     void draw();
 
     //! Callback method to respond to mouse motion event
-    void handleMouseMotion(Point2D point, int state) override;
+    void handleMouseMotion(Point2D point, uint32_t state) override;
 
     void setSquadLine(int squadSlot, unsigned int line);
 

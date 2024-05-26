@@ -434,7 +434,7 @@ void FliPlayer::copyCurrentFrameToScreen() {
                      0, false);
 }
 
-bool FliPlayer::play(bool intro, Font *pIntroFont) {
+bool FliPlayer::play(bool intro) {
     if (!fli_data_)
         return false;
 

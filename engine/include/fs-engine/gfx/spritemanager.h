@@ -43,7 +43,7 @@ public:
     bool loaded() { return sprite_count_ != 0; }
     int spriteCount() { return sprite_count_; }
 
-    bool loadSprites(uint8 * tabData, int tabSize, uint8 *spriteData,
+    bool loadSprites(uint8 * tabData, size_t tabSize, uint8 *spriteData,
             bool rle = false);
     Sprite *sprite(int spriteNum);
     bool drawSpriteXYZ(int spriteNum, int x, int y, int z, bool flipped = false,

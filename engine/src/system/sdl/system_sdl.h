@@ -70,7 +70,7 @@ public:
     void setColor(uint8 index, uint8 r, uint8 g, uint8 b) override;
 
     //! Returns the mouse pointer coordinates
-    uint32 getMousePos(int *x, int *y) override;
+    uint32_t getMousePos(Point2D &point) override;
 
     void hideCursor() override;
     void showCursor() override;

@@ -169,7 +169,7 @@ bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, uint32 offset,
     uint8 *currentPixel;
 
     if (rle) {
-        for (int i = 0; i < height_; ++i) {
+        for (uint32_t i = 0; i < height_; ++i) {
             int spriteWidth = width_;
             currentPixel = sprite_data_ + i * stride_;
 
@@ -239,7 +239,7 @@ void Sprite::draw(int x, int y, int z, bool flipped, bool x2)
 
 void Sprite::data(uint8 * spr_data) const
 {
-    for (int j = 0; j < height_; j++) {
+    for (uint32_t j = 0; j < height_; j++) {
         memcpy(spr_data + j * width_, sprite_data_ + j * stride_, width_);
     }
 }

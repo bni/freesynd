@@ -48,7 +48,7 @@ void SpriteManager::clear()
     sprite_count_ = 0;
 }
 
-bool SpriteManager::loadSprites(uint8 * tabData, int tabSize,
+bool SpriteManager::loadSprites(uint8 * tabData, size_t tabSize,
                                 uint8 * spriteData, bool rle)
 {
     assert(tabData);

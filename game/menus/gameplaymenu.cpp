@@ -508,7 +508,7 @@ void GameplayMenu::handleLeave()
     ipa_chng_.ipa_chng = -1;
 }
 
-void GameplayMenu::handleMouseMotion(Point2D point, int state)
+void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
 {
     last_motion_tick_ = tick_count_;
     last_motion_x_ = point.x;

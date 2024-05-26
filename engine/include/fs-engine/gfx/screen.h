@@ -34,13 +34,13 @@
 class Screen : public Singleton<Screen> {
 public:
     /*! Width of the screen in pixels.*/
-    static const int kScreenWidth;
+    static const uint16_t kScreenWidth;
     /*! Height of the screen in pixels.*/
-    static const int kScreenHeight;
+    static const uint16_t kScreenHeight;
     /*! Width of the left control panel*/
-    static const int kScreenPanelWidth;
+    static const uint16_t kScreenPanelWidth;
 
-    explicit Screen(int width, int height);
+    explicit Screen(uint16_t width, uint16_t height);
     ~Screen();
 
     void clear(uint8 color = 0);
