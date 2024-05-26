@@ -61,7 +61,7 @@ protected:
     void redrawMiniMap();
     void redrawBriefing();
 
-    bool handleMouseDown(int x, int y, int button) override;
+    bool handleMouseDown(Point2D point, int button) override;
     //! Return the zoom level from the enhancement level
     MinimapRenderer::EZoom toZoomLevel(uint8 enh_lvl);
 

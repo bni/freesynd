@@ -273,9 +273,9 @@ void MenuManager::showMenu(Menu *pMenu) {
     // then plot the mouse to draw the button
     // that could be highlighted because the mouse
     // is upon it
-    int x,y;
-    int state = g_System.getMousePos(&x, &y);
-    pMenu->mouseMotionEvent(x, y, state);
+    Point2D point;
+    int state = g_System.getMousePos(&(point.x), &(point.y));
+    pMenu->mouseMotionEvent(point, state);
 
     // Adds a dirty rect to force menu rendering
     addRect(0, 0, g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight());
@@ -353,7 +353,7 @@ void MenuManager::handleEvent(const FS_Event& evt) {
         break;
     case EVT_MSE_MOTION:
         if (current_ && !drop_events_)
-            current_->mouseMotionEvent(evt.motion.x, evt.motion.y, evt.motion.state);
+            current_->mouseMotionEvent({evt.motion.x, evt.motion.y}, evt.motion.state);
         break;
     case EVT_MSE_DOWN:
         since_mouse_down_ = 0;
@@ -366,13 +366,13 @@ void MenuManager::handleEvent(const FS_Event& evt) {
 #endif
 
         if (current_ && !drop_events_) {
-            current_->mouseDownEvent(evt.button.x, evt.button.y, evt.button.button);
+            current_->mouseDownEvent({evt.button.x, evt.button.y}, evt.button.button);
         }
         break;
     case EVT_MSE_UP:
         mouseup_was_ = true;
         if (current_ && !drop_events_) {
-            current_->mouseUpEvent(evt.button.x, evt.button.y, evt.button.button);
+            current_->mouseUpEvent({evt.button.x, evt.button.y}, evt.button.button);
         }
         break;
     case EVT_KEY_DOWN:

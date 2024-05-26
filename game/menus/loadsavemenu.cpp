@@ -114,9 +114,9 @@ void LoadSaveMenu::handleAction(const int actionId, void *ctx) {
     }
 }
 
-bool LoadSaveMenu::handleMouseDown(int x, int y, int button) {
+bool LoadSaveMenu::handleMouseDown(Point2D point, int button) {
     for (int i=0; i<10; i++) {
-        if (pTextFields_[i]->isMouseOver(x, y)) {
+        if (pTextFields_[i]->isMouseOver(point)) {
             editNameId_ = i;
             break;
         }

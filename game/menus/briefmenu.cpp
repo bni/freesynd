@@ -374,19 +374,19 @@ void BriefMenu::handleAction(const int actionId, void *ctx) {
  * in the corresponding direction.
  * \return True if the user clicked on the minimap so event is consumed
  */
-bool BriefMenu::handleMouseDown(int x, int y, int button) {
-    if (button == 1 && x >= kMiniMapScreenX
-        && x < (kMiniMapScreenX + kMiniMapWidth)
-        && y >= kMiniMapScreenY && y < (kMiniMapScreenY + kMiniMapHeight)) {
-        if (x >= kMiniMapScreenX && x < 544) {
+bool BriefMenu::handleMouseDown(Point2D point, int button) {
+    if (button == 1 && point.x >= kMiniMapScreenX
+        && point.x < (kMiniMapScreenX + kMiniMapWidth)
+        && point.y >= kMiniMapScreenY && point.y < (kMiniMapScreenY + kMiniMapHeight)) {
+        if (point.x >= kMiniMapScreenX && point.x < 544) {
             mm_renderer_.scrollLeft();
-        } else if (x >= 584 && x < 624) {
+        } else if (point.x >= 584 && point.x < 624) {
              mm_renderer_.scrollRight();
         }
 
-        if (y >= kMiniMapScreenY && y < 260) {
+        if (point.y >= kMiniMapScreenY && point.y < 260) {
              mm_renderer_.scrollUp();
-        } else if (y >= 300 && y < 340) {
+        } else if (point.y >= 300 && point.y < 340) {
              mm_renderer_.scrollDown();
         }
         // Redraw map

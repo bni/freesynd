@@ -72,7 +72,7 @@ public:
 protected:
     void handleRender(DirtyList &dirtyList);
 
-    bool handleMouseDown(int x, int y, int button) override;
+    bool handleMouseDown(Point2D point, int button) override;
 
     bool handleUnMappedKey(const FS_Key key) override;
 

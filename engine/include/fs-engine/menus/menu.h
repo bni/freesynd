@@ -124,11 +124,11 @@ public:
     //! Handles key pressed
     void keyEvent(FS_Key key);
     //! Handles mouse moved
-    void mouseMotionEvent(int x, int y, int state);
+    void mouseMotionEvent(Point2D point, int state);
     //! Handles mouse button pressed
-    void mouseDownEvent(int x, int y, int button);
+    void mouseDownEvent(Point2D point, int button);
     //! Handles mouse button released
-    void mouseUpEvent(int x, int y, int button);
+    void mouseUpEvent(Point2D point, int button);
 
     virtual void handleTick([[maybe_unused]] uint32_t elapsed) {}
 
@@ -161,9 +161,9 @@ protected:
     /*!
         * \return true if the menu has processed the event, and it must not be processed anymore.
         */
-    virtual bool handleMouseDown(int x, int y, int button) { return false; }
-    virtual void handleMouseUp(int x, int y, int button) {}
-    virtual void handleMouseMotion(int x, int y, int state) {}
+    virtual bool handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) { return false; }
+    virtual void handleMouseUp([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {}
+    virtual void handleMouseMotion([[maybe_unused]] Point2D point, int state) {}
     //! Handle key that where pressed but not assigned to any actions
     virtual bool handleUnMappedKey([[maybe_unused]] const FS_Key key) { return false;}
 

@@ -403,7 +403,7 @@ void GameplayMenu::handleTick(uint32_t elapsed)
     if (change) {
         needRendering();
         // force target to update
-        handleMouseMotion(last_motion_x_, last_motion_y_, 0);
+        handleMouseMotion({last_motion_x_, last_motion_y_}, 0);
     }
 
     drawMissionHint(elapsed);
@@ -508,17 +508,17 @@ void GameplayMenu::handleLeave()
     ipa_chng_.ipa_chng = -1;
 }
 
-void GameplayMenu::handleMouseMotion(int x, int y, int state)
+void GameplayMenu::handleMouseMotion(Point2D point, int state)
 {
     last_motion_tick_ = tick_count_;
-    last_motion_x_ = x;
-    last_motion_y_ = y;
+    last_motion_x_ = point.x;
+    last_motion_y_ = point.y;
     // locking mouse motion on ipa change until mouseup is recieved
     if (ipa_chng_.ipa_chng != -1 && menu_manager_->isMouseDragged()) {
         PedInstance *p = mission_->ped(ipa_chng_.agent_used);
         if (p->isAlive()) {
             int percent = agt_sel_renderer_.getPercentageAnyX(
-                ipa_chng_.agent_used, x);
+                ipa_chng_.agent_used, point.x);
 
             // if agent is in selected group we will update all groups IPA
             if (selection_.isAgentSelected(ipa_chng_.agent_used)) {
@@ -552,7 +552,7 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state)
     bool inrange = false;
     target_ = NULL;
 
-    if (x > 128) {
+    if (point.x > 128) {
 #ifdef _DEBUG
         // During debug our agents are included in possible targets
         for (size_t i = 0; mission_ && i < mission_->numPeds(); ++i) {
@@ -567,8 +567,8 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state)
                 int py = scPt.y - (1 + p->tileZ()) * TILE_HEIGHT/3
                     - (p->offZ() * TILE_HEIGHT/3) / 128;
 
-                if (x - 129 + displayOriginPt_.x >= px && y + displayOriginPt_.y >= py &&
-                    x - 129 + displayOriginPt_.x < px + 21 && y + displayOriginPt_.y < py + 34)
+                if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
+                    point.x - 129 + displayOriginPt_.x < px + 21 && point.y + displayOriginPt_.y < py + 34)
                 {
                     // mouse pointer is on the object, so it's the new target
                     target_ = p;
@@ -587,8 +587,8 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state)
                 int px = scPt.x - 20;
                 int py = scPt.y - 10 - v->tileZ() * TILE_HEIGHT/3;
 
-                if (x - 129 + displayOriginPt_.x >= px && y + displayOriginPt_.y >= py &&
-                    x - 129 + displayOriginPt_.x < px + 40 && y + displayOriginPt_.y < py + 32)
+                if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
+                    point.x - 129 + displayOriginPt_.x < px + 40 && point.y + displayOriginPt_.y < py + 32)
                 {
                     target_ = v;
                     inrange = selection_.isTargetInRange(mission_, target_);
@@ -607,8 +607,8 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state)
                 int py = scPt.y + 4 - w->tileZ() * TILE_HEIGHT/3
                     - (w->offZ() * TILE_HEIGHT/3) / 128;
 
-                if (x - 129 + displayOriginPt_.x >= px && y + displayOriginPt_.y >= py &&
-                    x - 129 + displayOriginPt_.x < px + 20 && y + displayOriginPt_.y < py + 15)
+                if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
+                    point.x - 129 + displayOriginPt_.x < px + 20 && point.y + displayOriginPt_.y < py + 15)
                 {
                     target_ = w;
                     break;
@@ -649,20 +649,20 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state)
         } else if (target_->nature() == MapObject::kNatureWeapon) {
             g_System.usePickupCursor();
         }
-    } else if (x > 128) {
+    } else if (point.x > 128) {
             g_System.usePointerCursor();
     } else {
             g_System.usePointerYellowCursor();
     }
 
-    if (x < 129 && isPlayerShooting_) {
+    if (point.x < 129 && isPlayerShooting_) {
         stopShootingEvent();
     }
 
     if (isPlayerShooting_) {
         // update direction for each shooting player
         WorldPoint aimedAtLocW;
-        if (getAimedAt(x, y, &aimedAtLocW)) {
+        if (getAimedAt(point.x, point.y, &aimedAtLocW)) {
             for (SquadSelection::Iterator it = selection_.begin(); it != selection_.end(); ++it) {
                 PedInstance *pAgent = *it;
                 if (pAgent->isUsingWeapon()) {
@@ -675,18 +675,18 @@ void GameplayMenu::handleMouseMotion(int x, int y, int state)
     }
 }
 
-bool GameplayMenu::handleMouseDown(int x, int y, int button)
+bool GameplayMenu::handleMouseDown(Point2D point, int button)
 {
     if (paused_)
         return true;
 
-    if (x < 129) {
+    if (point.x < 129) {
         // Is control button pressed
         bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
 
         // First check if player has clicked on agent selectors
         SelectorEvent selEvt;
-        if (agt_sel_renderer_.hasClickedOnAgentSelector(x, y, selEvt)) {
+        if (agt_sel_renderer_.hasClickedOnAgentSelector(point.x, point.y, selEvt)) {
             switch (selEvt.eventType) {
             case SelectorEvent::kSelectAgent:
                 // Handle agent selection. Click on an agent changes selection
@@ -702,21 +702,21 @@ bool GameplayMenu::handleMouseDown(int x, int y, int button)
             case SelectorEvent::kNone:
                 break;
             }
-        } else if (y >= 42 + 48 && y < 42 + 48 + 10) {
+        } else if (point.y >= 42 + 48 && point.y < 42 + 48 + 10) {
             // User clicked on the select all button
             selectAllAgents();
         }
-        else if (y >= 2 + 46 + 44 + 10 + 46 + 44 + 15
-                 && y < 2 + 46 + 44 + 10 + 46 + 44 + 15 + 64)
+        else if (point.y >= 2 + 46 + 44 + 10 + 46 + 44 + 15
+                 && point.y < 2 + 46 + 44 + 10 + 46 + 44 + 15 + 64)
         {
             // user clicked on the weapon selector
-            handleClickOnWeaponSelector(x, y, button);
-        } else if ( y > kMiniMapScreenY && button == kMouseLeftButton) {
-            handleClickOnMinimap(x, y);
+            handleClickOnWeaponSelector(point, button);
+        } else if ( point.y > kMiniMapScreenY && button == kMouseLeftButton) {
+            handleClickOnMinimap(point);
         }
     } else {
         // User clicked on the map
-        handleClickOnMap(x, y, button);
+        handleClickOnMap(point, button);
     }
 
     return true;
@@ -724,14 +724,13 @@ bool GameplayMenu::handleMouseDown(int x, int y, int button)
 
 /*!
  * The user has clicked on the weapon selector.
- * \param x Mouse X coord
- * \param y Mouse Y coord
+ * \param point Mouse coord
  * \param button Mouse button that was clicked
  */
-void GameplayMenu::handleClickOnWeaponSelector(int x, int y, int button)
+void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button)
 {
-    uint8 w_num = ((y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
-            + x / 32;
+    uint8 w_num = ((point.y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
+            + point.x / 32;
     PedInstance *pLeader = selection_.leader();
     if (pLeader->isAlive()) {
         bool is_ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
@@ -778,9 +777,9 @@ void GameplayMenu::updateIPALevelMeters(int elapsed)
     }
 }
 
-void GameplayMenu::handleClickOnMap(int x, int y, int button) {
-    TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + x - 129,
-                    displayOriginPt_.y + y);
+void GameplayMenu::handleClickOnMap(Point2D point, int button) {
+    TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + point.x - 129,
+                    displayOriginPt_.y + point.y);
 #ifdef _DEBUG
     if (g_System.isKeyModStatePressed(KMD_ALT)) {
         printf("Tile x:%d, y:%d, z:%d, ox:%d, oy:%d\n",
@@ -818,7 +817,7 @@ void GameplayMenu::handleClickOnMap(int x, int y, int button) {
         }
     } else if (button == kMouseRightButton) {
         WorldPoint aimedAtLocW;
-        if (getAimedAt(x, y, &aimedAtLocW)) {
+        if (getAimedAt(point.x, point.y, &aimedAtLocW)) {
             isPlayerShooting_ = true;
             selection_.shootAt(aimedAtLocW);
         }
@@ -828,12 +827,11 @@ void GameplayMenu::handleClickOnMap(int x, int y, int button) {
 /*!
  * User has clicked on the minimap. All selected agent go to destination.
  * Clicking on the minimap does not allow to shoot or to use objects.
- * \param x minimap coordinate
- * \param y minimap coordinate
+ * \param point minimap coordinate
  */
-void GameplayMenu::handleClickOnMinimap(int x, int y) {
+void GameplayMenu::handleClickOnMinimap(Point2D point) {
     // convert minimap coordinate in map coordinate
-    TilePoint pt = mm_renderer_.minimapToMapPoint(x - kMiniMapScreenX, y - kMiniMapScreenY);
+    TilePoint pt = mm_renderer_.minimapToMapPoint(point.x - kMiniMapScreenX, point.y - kMiniMapScreenY);
     // As minimap is flat, we can't see the height. So take the Z coordinate
     // of the leader as a reference
     pt.tz = selection_.leader()->tileZ();
@@ -890,7 +888,7 @@ void GameplayMenu::stopShootingEvent()
 }
 
 
-void GameplayMenu::handleMouseUp(int x, int y, int button)
+void GameplayMenu::handleMouseUp(Point2D point, int button)
 {
     ipa_chng_.ipa_chng = -1;
 

@@ -496,16 +496,16 @@ void SelectMenu::updateAcceptEnabled() {
     getOption(acceptButId_)->setWidgetEnabled(found);
 }
 
-void SelectMenu::handleMouseMotion(int x, int y, int state)
+void SelectMenu::handleMouseMotion(Point2D point, int state)
 {
     if (weapon_dragged_) {
-        weapon_pos_.x = x;
-        weapon_pos_.y = y;
+        weapon_pos_.x = point.x;
+        weapon_pos_.y = point.y;
         needRendering();
     }
 }
 
-void SelectMenu::handleMouseUp(int x, int y, int button)
+void SelectMenu::handleMouseUp(Point2D point, int button)
 {
     if (button == 3) {
         Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
@@ -513,16 +513,16 @@ void SelectMenu::handleMouseUp(int x, int y, int button)
             weapon_dragged_ = NULL;
         if (weapon_dragged_) {
             int target = -1;
-            if (x >= 20 && x <= 140) {
-                if (y >= 84 && y <= 150) {
-                    if (x >= 82) {
+            if (point.x >= 20 && point.x <= 140) {
+                if (point.y >= 84 && point.y <= 150) {
+                    if (point.x >= 82) {
                         target = 1;
                     } else {
                         target = 0;
                     }
                 }
-                if (y >= 162 && y <= 228) {
-                    if (x >= 82) {
+                if (point.y >= 162 && point.y <= 228) {
+                    if (point.x >= 82) {
                         target = 3;
                     } else {
                         target = 2;
@@ -546,22 +546,22 @@ void SelectMenu::handleMouseUp(int x, int y, int button)
     }
 }
 
-bool SelectMenu::handleMouseDown(int x, int y, int button)
+bool SelectMenu::handleMouseDown(Point2D point, int button)
 {
-    if (x >= 20 && x <= 140) {
-        if (y >= 84 && y <= 150) {
-            if (x >= 82) {
+    if (point.x >= 20 && point.x <= 140) {
+        if (point.y >= 84 && point.y <= 150) {
+            if (point.x >= 82) {
                 handleClickOnAgentSelector(AgentManager::kSlot2, button);
             } else {
                 handleClickOnAgentSelector(AgentManager::kSlot1, button);
             }
         }
-        if (y > 150 && y < 162) {
+        if (point.y > 150 && point.y < 162) {
             sel_all_ = !sel_all_;
             needRendering();
         }
-        if (y >= 162 && y <= 228) {
-            if (x >= 82) {
+        if (point.y >= 162 && point.y <= 228) {
+            if (point.x >= 82) {
                 handleClickOnAgentSelector(AgentManager::kSlot4, button);
             } else {
                 handleClickOnAgentSelector(AgentManager::kSlot3, button);
@@ -572,10 +572,10 @@ bool SelectMenu::handleMouseDown(int x, int y, int button)
     // Checks if the user clicked on item in the current agent inventory
     Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
     if (selected) {
-        if (x >= 366 && x < 366 + 4 * 32
-            && y >= 308 && y < 308 + 2 * 32)
+        if (point.x >= 366 && point.x < 366 + 4 * 32
+            && point.y >= 308 && point.y < 308 + 2 * 32)
         {
-            int newId = (x - 366) / 32 + ((y - 308) / 32) * 4;
+            int newId = (point.x - 366) / 32 + ((point.y - 308) / 32) * 4;
             if (newId < selected->numWeapons())
             {
                 // The user has actually selected a weapon from the inventory :
@@ -589,8 +589,8 @@ bool SelectMenu::handleMouseDown(int x, int y, int button)
                 WeaponInstance *wi = selected->weapon(newId - 1);
                 if (button == 3) {
                     weapon_dragged_ = wi;
-                    weapon_pos_.x = x;
-                    weapon_pos_.y = y;
+                    weapon_pos_.x = point.x;
+                    weapon_pos_.y = point.y;
                 }
 
                 if (newId != selectedWInstId_) { // Do something only if a different weapon is selected

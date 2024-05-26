@@ -40,7 +40,7 @@ public:
 
     void handleAction(const int actionId, void *ctx) override;
 
-    bool handleMouseDown(int x, int y, int button) override;
+    bool handleMouseDown(Point2D point, int button) override;
 
 protected:
     static const int X_ORIGIN;

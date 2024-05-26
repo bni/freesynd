@@ -56,17 +56,17 @@ protected:
     ///@{
     bool handleUnMappedKey(const FS_Key key) override;
 
-    void handleMouseMotion(int x, int y, int state) override;
-    bool handleMouseDown(int x, int y, int button) override;
-    void handleMouseUp(int x, int y, int button) override;
+    void handleMouseMotion(Point2D point, int state) override;
+    bool handleMouseDown(Point2D point, int button) override;
+    void handleMouseUp(Point2D point, int button) override;
     //! Handles the user's click on weapon selector
-    void handleClickOnWeaponSelector(int x, int y, int button);
+    void handleClickOnWeaponSelector(Point2D point, int button);
     //! sets IPA level for defined agent, selector
     void setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int percentage);
     //! Handles the user's click on the map
-    void handleClickOnMap(int x, int y, int button);
+    void handleClickOnMap(Point2D point, int button);
     //! Handles the user's click on the minimap
-    void handleClickOnMinimap(int x, int y);
+    void handleClickOnMinimap(Point2D point);
     ///@}
 
     /**

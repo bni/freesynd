@@ -364,14 +364,14 @@ void MapMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-bool MapMenu::handleMouseDown(int x, int y, int button) {
+bool MapMenu::handleMouseDown(Point2D point, int button) {
     // Checks among the missions which one has been clicked on
     for (int i = 0; i < 50; i++) {
-        if (x > g_BlocksDisplay[i].pos.x && x < g_BlocksDisplay[i].pos.x + 64 &&
-            y > g_BlocksDisplay[i].pos.y && y < g_BlocksDisplay[i].pos.y + 44) {
+        if (point.x > g_BlocksDisplay[i].pos.x && point.x < g_BlocksDisplay[i].pos.x + 64 &&
+            point.y > g_BlocksDisplay[i].pos.y && point.y < g_BlocksDisplay[i].pos.y + 44) {
             if (mapblk_data_
-                [i * 64 * 44 + (y - g_BlocksDisplay[i].pos.y) / 2 * 64 +
-                 (x - g_BlocksDisplay[i].pos.x) / 2] != 0) {
+                [i * 64 * 44 + (point.y - g_BlocksDisplay[i].pos.y) / 2 * 64 +
+                 (point.x - g_BlocksDisplay[i].pos.x) / 2] != 0) {
                      // Do something only if the selected block is new
                      // ie the user did not click on the same mission
                      if (g_Session.getSelectedBlockId() != i) {

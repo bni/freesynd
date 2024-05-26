@@ -200,12 +200,12 @@ public:
     bool isWidgetEnabled() { return enabled_; }
 
     //! Tells whether the pointer is over the widget or not
-    bool isMouseOver(int x, int y);
+    bool isMouseOver(Point2D point);
 
     //! Callback method to respond to mouse motion event
-    virtual void handleMouseMotion(int x, int y, int state) {}
+    virtual void handleMouseMotion([[maybe_unused]] Point2D point, [[maybe_unused]] int state) {}
     //! Callback method to respond to mouse down event
-    virtual void handleMouseDown(int x, int y, int button) {}
+    virtual void handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {}
 
     //! Callback method called when the mouse is over the widget
     virtual void handleFocusGained() {}
@@ -239,7 +239,7 @@ public:
     //! Draw the widget on screen
     void draw();
 
-    void handleMouseDown(int x, int y, int button) override;
+    void handleMouseDown(Point2D point, int button) override;
 
     void handleFocusGained();
     void handleFocusLost();
@@ -335,9 +335,9 @@ public:
     void draw();
 
     //! Callback method to respond to mouse motion event
-    void handleMouseMotion(int x, int y, int state) override;
+    void handleMouseMotion(Point2D point, int state) override;
     //! Callback method to respond to mouse down event
-    void handleMouseDown(int x, int y, int button) override;
+    void handleMouseDown(Point2D point, int button) override;
     void handleFocusLost();
 
     void setModel(SequenceModel *pModel);
@@ -370,7 +370,7 @@ public:
     void draw();
 
     //! Callback method to respond to mouse motion event
-    void handleMouseMotion(int x, int y, int state) override;
+    void handleMouseMotion(Point2D point, int state) override;
 
     void setSquadLine(int squadSlot, unsigned int line);
 
@@ -415,7 +415,7 @@ public:
     //! Draw the widget on screen
     void draw();
 
-    void handleMouseDown(int x, int y, int button) override;
+    void handleMouseDown(Point2D point, int button) override;
 
     void handleCaptureGained();
     void handleCaptureLost();

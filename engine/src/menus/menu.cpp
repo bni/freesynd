@@ -376,15 +376,15 @@ void Menu::keyEvent(FS_Key key)
  * \param y Y screen coordinate
  * \param state If button is pressed during mouse motion.
  */
-void Menu::mouseMotionEvent(int x, int y, int state)
+void Menu::mouseMotionEvent(Point2D point, int state)
 {
-    handleMouseMotion(x, y, state);
+    handleMouseMotion(point, state);
 
     // Check focus is lost for currently focused widget
     if (focusedWgId_ != -1) {
         ActionWidget *pAction = getActionWidget(focusedWgId_);
 
-        if (!pAction->isMouseOver(x, y) || !pAction->isVisible()) {
+        if (!pAction->isMouseOver(point) || !pAction->isVisible()) {
             pAction->handleFocusLost();
             focusedWgId_ = -1;
         }
@@ -398,7 +398,7 @@ void Menu::mouseMotionEvent(int x, int y, int state)
         }
 
         // Mouse is over a widget
-        if (action->isMouseOver(x, y)) {
+        if (action->isMouseOver(point)) {
             if (action->getId() != focusedWgId_) {
                 // Widget has now the focus : handle the event
                 action->handleFocusGained();
@@ -406,7 +406,7 @@ void Menu::mouseMotionEvent(int x, int y, int state)
             }
 
             // Pass the event to the widget
-            action->handleMouseMotion(x, y, state);
+            action->handleMouseMotion(point, state);
 
             return;
         }
@@ -419,10 +419,10 @@ void Menu::mouseMotionEvent(int x, int y, int state)
  * \param y Y screen coordinate
  * \param button What button was pressed
  */
-void Menu::mouseDownEvent(int x, int y, int button)
+void Menu::mouseDownEvent(Point2D point, int button)
 {
     // First pass the event to the menu
-    if (handleMouseDown(x, y, button)) {
+    if (handleMouseDown(point, button)) {
         // Menu has processed the event, so don't pass it to widget
         return;
     }
@@ -435,8 +435,8 @@ void Menu::mouseDownEvent(int x, int y, int button)
             continue;
         }
 
-        if (action->isMouseOver(x, y)) {
-            action->handleMouseDown(x, y, button);
+        if (action->isMouseOver(point)) {
+            action->handleMouseDown(point, button);
             return;
         }
     }
@@ -448,9 +448,9 @@ void Menu::mouseDownEvent(int x, int y, int button)
  * \param y Y screen coordinate
  * \param button What button was released
  */
-void Menu::mouseUpEvent(int x, int y, int button)
+void Menu::mouseUpEvent(Point2D point, int button)
 {
-    handleMouseUp(x, y, button);
+    handleMouseUp(point, button);
 }
 
 MenuFont * Menu::getMenuFont(FontManager::EFontSize size) {

@@ -172,12 +172,12 @@ void MenuText::draw() {
     pFont_->drawText(anchorX_, anchorY_, text_, highlighted_);
 }
 
-bool ActionWidget::isMouseOver(int x, int y) {
+bool ActionWidget::isMouseOver(Point2D point) {
 
-    return (x > x_  &&
-            x < x_ + width_ &&
-            y >= y_ &&
-            y < y_ + height_);
+    return (point.x > x_  &&
+            point.x < x_ + width_ &&
+            point.y >= y_ &&
+            point.y < y_ + height_);
 }
 
 void ActionWidget::setWidgetEnabled(bool enabled) {
@@ -298,7 +298,7 @@ void Option::handleFocusLost() {
     redraw();
 }
 
-void Option::handleMouseDown(int x, int y, int button) {
+void Option::handleMouseDown(Point2D point, int button) {
     executeAction();
 }
 
@@ -395,11 +395,11 @@ void ListBox::draw() {
     }
 }
 
-void ListBox::handleMouseMotion(int x, int y, int state) {
+void ListBox::handleMouseMotion(Point2D point, int state) {
 
     if (pModel_) {
         // Gets the line pointed by the mouse
-        unsigned int i = (y - getY()) / 12;
+        unsigned int i = (point.y - getY()) / 12;
         if (i < pModel_->size()) {
             if (pModel_->getElement(i)) {
                 // If line contains something, highlight it
@@ -421,7 +421,7 @@ void ListBox::handleMouseMotion(int x, int y, int state) {
     }
 }
 
-void ListBox::handleMouseDown(int x, int y, int button) {
+void ListBox::handleMouseDown(Point2D point, int button) {
     if (focusedLine_ != -1 && pModel_) {
         if (getPeer()) {
             // call the peer handleAction method giving the index of pressed line.
@@ -483,11 +483,11 @@ void TeamListBox::draw() {
     }
 }
 
-void TeamListBox::handleMouseMotion(int x, int y, int state) {
+void TeamListBox::handleMouseMotion(Point2D point, int state) {
 
     if (pModel_) {
         // Gets the line pointed by the mouse
-        int i = (y - yOrigin_) / 12;
+        int i = (point.y - yOrigin_) / 12;
         if (i >= 0 && i < (int) pModel_->size()) {
             if (pModel_->getElement(i)) {
                 // If line contains something, highlight it
@@ -721,7 +721,7 @@ bool TextField::handleKey(FS_Key key) {
     return true;
 }
 
-void TextField::handleMouseDown(int x, int y, int button) {
+void TextField::handleMouseDown(Point2D point, int button) {
     getPeer()->captureInputBy(this);
 
     char src[100];
@@ -735,7 +735,7 @@ void TextField::handleMouseDown(int x, int y, int button) {
     int sizePxl = text_.getFont()->textWidth(src);
 
     // computes caret position
-    if (x > sizePxl + getX()) {
+    if (point.x > sizePxl + getX()) {
         // Clicked after the text so caret is at the end
         caretPosition_ = nbCdpt;
     } else {
@@ -750,7 +750,7 @@ void TextField::handleMouseDown(int x, int y, int button) {
             int cp = utf8::next(itSrc, src + sizeByte);
             itDst = utf8::append(cp, itDst);
 
-            if (x < getX() + text_.getFont()->textWidth(tmp)) {
+            if (point.x < getX() + text_.getFont()->textWidth(tmp)) {
                 caretPosition_ = i;
                 break;
             }

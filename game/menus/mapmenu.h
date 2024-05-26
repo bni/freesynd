@@ -49,7 +49,7 @@ public:
 protected:
     void handleRender(DirtyList &dirtyList) override;
     bool handleUnMappedKey(const FS_Key key) override;
-    bool handleMouseDown(int x, int y, int button) override;
+    bool handleMouseDown(Point2D point, int button) override;
     //! Utility method to draw the mission selector
     void drawSelector();
     //! Utility method to update mission informations
