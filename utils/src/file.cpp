@@ -404,7 +404,7 @@ void File::upsertSaveDataFolder(const std::string& path) {
 uint8 *File::loadOriginalFile(const std::string& filename, size_t &filesize) {
     uint8 *data = loadOriginalFileToMem(filename, filesize);
     if (data) {
-        if (READ_BE_UINT32(data) == RNC_SIGNATURE) {    //File is RNC compressed
+        if (rnc::isRncCompressed(data)) {    //File is RNC compressed
             rnc::RncRetCode result = rnc::unpackedLength(data, filesize );
 
             if (result != 0) {
@@ -509,8 +509,8 @@ bool File::testOriginalData() {
                     continue;
                 std::string flname = line.substr(0, pos);
                 std::string str_crc32 = line.substr(pos+1);
-                uint32 ui_crc32 = 0;
-                uint32 multiply = 1 << (4 * 7);
+                uint32_t ui_crc32 = 0;
+                uint32_t multiply = 1 << (4 * 7);
                 // String hex to uint32
                 for (size_t i = 0; i < 8; i++) {
                     char c = str_crc32[i];

@@ -27,8 +27,6 @@
 
 #include "fs-utils/common.h"
 
-#define RNC_SIGNATURE   0x524E4301      // "RNC\001"
-
 namespace rnc {
 
     //! This enumeration contains the different return codes for RNC functions
@@ -41,9 +39,15 @@ namespace rnc {
         kUnpackedCrcError = -5
     };
 
-    const char *const errorString(RncRetCode returnCode);
+    //! Return true if the file is compressed with RNC format
+    bool isRncCompressed(const uint8_t *data);
+    //! Return a string description of the return code
+    const char * errorString(RncRetCode returnCode);
+    //! Read the length from the RNC header
     RncRetCode unpackedLength(const uint8_t *packed_data, size_t &length);
-    uint16 crc(uint8 *packed_data, int packed_length);
+    //! Error control
+    uint16 crc(uint8_t *packed_data, size_t packed_length);
+    //! Decompress the data
     RncRetCode unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t &length);
 
 }

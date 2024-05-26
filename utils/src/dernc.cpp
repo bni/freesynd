@@ -25,6 +25,9 @@
 #include "fs-utils/crc/dernc.h"
 
 namespace RNC_INTERNAL {
+    //! "RNC\001"
+    const uint32_t kRncSignature = 0x524E4301;
+
     struct BitStream {
         uint32 bit_buffer;      // Holds between 16 and 32 bits
         int bit_count;          // How many bits does bitbuf hold?
@@ -39,13 +42,13 @@ namespace RNC_INTERNAL {
         } table[32];
     };
 
-    static uint16 crc_table[256];
+    static uint16_t crc_table[256];
     static bool is_crc_setup = false;
 
     void setupCRCTable() {
-        uint16 temp;
+        uint16_t temp;
 
-        for (int i = 0; i < 256; ++i) {
+        for (uint16_t i = 0; i < 256; ++i) {
             temp = i;
 
             for (int j = 0; j < 8; ++j)
@@ -66,7 +69,7 @@ namespace RNC_INTERNAL {
         if (bit_stream.bit_count < 16) {
             packed_data += 2;
             bit_stream.bit_buffer |=
-                (READ_LE_UINT16(packed_data) << bit_stream.bit_count);
+                (((uint32_t) READ_LE_UINT16(packed_data)) << bit_stream.bit_count);
             bit_stream.bit_count += 16;
         }
     }
@@ -101,13 +104,13 @@ namespace RNC_INTERNAL {
 
     void readHuffmanTable(HuffmanTable &huffman_table,
             BitStream &bit_stream, uint8 *&packed_data) {
-        int count = bitRead(bit_stream, 0x1f, 5, packed_data);
+        uint32_t count = bitRead(bit_stream, 0x1f, 5, packed_data);
         if (!count)
             return;
 
         int leaf_max = 1;
         int leaf_length[32];
-        for (int i = 0; i < count; ++i) {
+        for (uint32_t i = 0; i < count; ++i) {
             leaf_length[i] = bitRead(bit_stream, 0x0f, 4, packed_data);
             if (leaf_max < leaf_length[i])
                 leaf_max = leaf_length[i];
@@ -138,7 +141,7 @@ namespace RNC_INTERNAL {
         uint32 mask;
 
         for (i = 0; i < huffman_table.node_count; ++i) {
-            mask = (1 << huffman_table.table[i].code_length) - 1;
+            mask = (1u << huffman_table.table[i].code_length) - 1;
             if (bitPeek(bit_stream, mask) == huffman_table.table[i].code)
                 break;
         }
@@ -176,17 +179,17 @@ namespace RNC_INTERNAL {
     void bitReadFix(BitStream &bit_stream, uint8 *&packed_data) {
         bit_stream.bit_count -= 16;
         // Remove the top 16 bits
-        bit_stream.bit_buffer &= (1 << bit_stream.bit_count) - 1;
+        bit_stream.bit_buffer &= (1u << bit_stream.bit_count) - 1;
         // Replace with the data at the current input position
         bit_stream.bit_buffer |=
-            (READ_LE_UINT16(packed_data) << bit_stream.bit_count);
+            (((uint32_t) READ_LE_UINT16(packed_data)) << bit_stream.bit_count);
         bit_stream.bit_count += 16;
     }
 
     void bitReadFix8(BitStream &bit_stream, uint8 *&packed_data) {
         bit_stream.bit_count -= 16;
         // Remove the top 16 bits
-        bit_stream.bit_buffer &= (1 << bit_stream.bit_count) - 1;
+        bit_stream.bit_buffer &= (1u << bit_stream.bit_count) - 1;
         // Replace with the data at the current input position
         bit_stream.bit_buffer |=
             ((uint32)(*packed_data) << bit_stream.bit_count);
@@ -195,10 +198,21 @@ namespace RNC_INTERNAL {
 
 }
 
-const char *const rnc::errorString(RncRetCode retCode) {
+
+
+/*!
+ *
+ * \param data const uint8_t*
+ * \return bool
+ */
+bool rnc::isRncCompressed(const uint8_t *data) {
+    return READ_BE_UINT32(data) == RNC_INTERNAL::kRncSignature;
+}
+
+const char * rnc::errorString(RncRetCode retCode) {
     using namespace RNC_INTERNAL;
 
-    static const char *const errors[] = {
+    static const char * errors[] = {
         "No error",
         "File is not RNC-1 format",
         "Huffman decode error",
@@ -217,7 +231,7 @@ const char *const rnc::errorString(RncRetCode retCode) {
 rnc::RncRetCode rnc::unpackedLength(const uint8 *packed_data, size_t &length) {
     using namespace RNC_INTERNAL;
 
-    if (READ_BE_UINT32(packed_data) != RNC_SIGNATURE)
+    if (!isRncCompressed(packed_data))
         return kFileIsNotRNC;
 
     length = READ_BE_UINT32(packed_data + 4);
@@ -225,12 +239,12 @@ rnc::RncRetCode rnc::unpackedLength(const uint8 *packed_data, size_t &length) {
     return kOk;
 }
 
-uint16 rnc::crc(uint8 *data, int data_length) {
+uint16_t rnc::crc(uint8_t*data, size_t data_length) {
     using namespace RNC_INTERNAL;
     if (!is_crc_setup)
         setupCRCTable();
 
-    uint16 result = 0;
+    uint16_t result = 0;
     do {
         result ^= *data++;
         result = (result >> 8) ^ crc_table[result & 0xff];
@@ -239,14 +253,22 @@ uint16 rnc::crc(uint8 *data, int data_length) {
     return result;
 }
 
+/*!
+ *  https://github.com/CorsixTH/CorsixTH/wiki/RNC
+ * \param packed_data uint8_t*
+ * \param unpacked_data uint8_t*
+ * \param outLength size_t&
+ * \return rnc::RncRetCode
+ *
+ */
 rnc::RncRetCode rnc::unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t &outLength) {
     using namespace RNC_INTERNAL;
 
-    if (READ_BE_UINT32(packed_data) != RNC_SIGNATURE)
+    if (!isRncCompressed(packed_data))
         return kFileIsNotRNC;
 
     size_t output_length = READ_BE_UINT32(packed_data + 4);
-    int input_length = READ_BE_UINT32(packed_data + 8);
+    size_t input_length = READ_BE_UINT32(packed_data + 8);
 
     uint16_t unpacked_crc = READ_BE_UINT16(packed_data + 12);
     uint16_t packed_crc = READ_BE_UINT16(packed_data + 14);
