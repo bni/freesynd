@@ -100,7 +100,7 @@ void SdlMixerMusic::stopFadeOut(int ms) const
  * \param size The size of the data.
  * \return true if the music was loaded.
  */
-bool SdlMixerMusic::loadMusic(uint8 * musicData, int size)
+bool SdlMixerMusic::loadMusic(uint8 * musicData, size_t size)
 {
     SDL_RWops *rw = SDL_RWFromMem(musicData, size);
     if (!rw) {

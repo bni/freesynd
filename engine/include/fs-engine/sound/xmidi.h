@@ -6,6 +6,7 @@
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -34,12 +35,12 @@
 class XMidi {
   public:
     struct Midi {
-      uint8* data_;
-      int size_;
+      uint8_t* data_;
+      size_t size_;
     };
 
     // Reads an .xmi file and returns a vector with individual MIDI tracks
-    std::vector<Midi> convertXMidi(uint8 *buf, int size);
+    std::vector<Midi> convertXMidi(uint8_t *buf, size_t size);
 
 protected:
     // The code below and corresponding original implementation was taken
@@ -88,21 +89,18 @@ protected:
       uint16        *timbre_sizes;
     };
 
-    /*
-     * Loads an XMidi file.
-     * Returns NULL if failed
-     */
-    XMidiFile *loadXMidi(uint8* buf, int size);
+    //! Loads an XMidi file.
+    XMidiFile *loadXMidi(uint8_t* buf, size_t size);
 
-    /* Frees an XMidi returned by XMidi_Load */
+    //! Frees an XMidi returned by XMidi_Load
     void freeXMidi(XMidiFile *xmidi);
 
-    /*
+    /*!
      * Creates a buffer that contains a MIDI File.
      * Buffer size is returned.
      * If size is 0, an error was encountered
      */
-    int retrieveMidi(const XMidiFile *xmidi, uint32 track, uint8 **buffer);
+    uint32_t retrieveMidi(const XMidiFile *xmidi, uint32_t track, uint8_t **buffer);
 
 private:
     static midi_event *allocateEvent(int time);
@@ -119,7 +117,7 @@ private:
     static int extractEvents(XMidiFile *xmidi, const unsigned char *stream,
             const uint32 size);
     int readFile (XMidiFile *xmidi, const unsigned char *stream,
-            uint32 streamsize);
+            size_t streamsize);
     uint32 convertListToMTrk (unsigned char *buf, const midi_event *mlist);
 
     static bool handleChunkFORM(XMidiFile* xmidi, const unsigned char* stream,

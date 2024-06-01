@@ -39,7 +39,7 @@ class SdlMixerMusic : public Music {
     void playFadeIn(int loops = -1, int ms = 200) const;
     void stop() const;
     void stopFadeOut(int ms = 200) const;
-    bool loadMusic(uint8 *musicData, int size);
+    bool loadMusic(uint8 *musicData, size_t size);
     bool loadMusicFile(const char *fname);
 
   protected:

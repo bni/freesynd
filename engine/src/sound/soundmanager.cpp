@@ -110,7 +110,7 @@ void SoundManager::loadSounds(const std::string &tabFile, const std::string &dat
     tabData += tabentry_startoffset_;
     uint32 offset = 0;
 
-    for (int i = 0; i < tabSize - tabentry_offset_;
+    for (int i = 0; i < int(tabSize) - tabentry_offset_;
         i += tabentry_offset_)
     {
         uint32 soundsize = READ_LE_UINT32(tabData);
@@ -157,7 +157,7 @@ bool SoundManager::canUseAudio() {
  * \return void
  *
  */
-void SoundManager::play(InGameSample sample, int channel, int loops) {
+void SoundManager::play(InGameSample sample, [[maybe_unused]] int channel, int loops) {
     if (canUseAudio()) {
         Sound *pSound = soundFromInGame(sample);
 
@@ -176,7 +176,7 @@ void SoundManager::play(InGameSample sample, int channel, int loops) {
  * \return void
  *
  */
-void SoundManager::playIntro(IntroSample sample, int channel, int loops) {
+void SoundManager::playIntro(IntroSample sample, [[maybe_unused]] int channel, int loops) {
     if (canUseAudio()) {
         Sound *pSound = soundFromIntro(sample);
 

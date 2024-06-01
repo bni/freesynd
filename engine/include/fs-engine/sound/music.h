@@ -71,7 +71,7 @@ class Music {
      * \param musicData
      * \param size
      */
-    virtual bool loadMusic(uint8 *musicData, int size) = 0;
+    virtual bool loadMusic(uint8 *musicData, size_t size) = 0;
       //! Loads the music from the given file.
     /*!
      * \param fname
@@ -112,7 +112,7 @@ class DefaultMusic : public Music {
      * \param musicData
      * \param size
      */
-      bool loadMusic([[maybe_unused]] uint8 *musicData, [[maybe_unused]] int size) { return true; }
+      bool loadMusic([[maybe_unused]] uint8 *musicData, [[maybe_unused]] size_t size) { return true; }
       //! Loads the music from the given file.
     /*!
      * \param fname

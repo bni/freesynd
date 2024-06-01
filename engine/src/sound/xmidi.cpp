@@ -7,6 +7,7 @@
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
  *   Copyright (C) 2007  Mike Nordell ("proper" IFF parsing)            *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -64,23 +65,28 @@ static void getIFFchunkHeader(IFFchunk& chunk, const unsigned char* stream)
 }
 
 
-std::vector<XMidi::Midi> XMidi::convertXMidi(uint8* buf, int size)
+std::vector<XMidi::Midi> XMidi::convertXMidi(uint8_t* buf, size_t size)
 {
     std::vector<Midi> midi;
     XMidiFile* xmi = loadXMidi(buf, size);
-    if (xmi)
-    {
-    midi.resize(xmi->tracks);
-    for(unsigned int i = 0; i < xmi->tracks; ++i)
-    {
-        midi[i].size_ = retrieveMidi(xmi, i, &(midi[i].data_));
-    }
-    delete xmi;
+    if (xmi) {
+        midi.resize(xmi->tracks);
+        for(unsigned int i = 0; i < xmi->tracks; ++i) {
+            midi[i].size_ = retrieveMidi(xmi, i, &(midi[i].data_));
+        }
+        delete xmi;
     }
     return midi;
 }
 
-XMidi::XMidiFile* XMidi::loadXMidi(uint8* buf, int size)
+/*!
+ * Loads an XMidi file.
+ * \param buf uint8_t*
+ * \param size uint32_t
+ * \return XMidi::XMidiFile* Returns NULL if failed
+ *
+ */
+XMidi::XMidiFile* XMidi::loadXMidi(uint8_t* buf, size_t size)
 {
     XMidiFile* xmidi = new XMidiFile;
 
@@ -92,7 +98,7 @@ XMidi::XMidiFile* XMidi::loadXMidi(uint8* buf, int size)
     return xmidi;
 }
 
-int XMidi::retrieveMidi(const XMidiFile *xmidi, uint32 track, uint8 **buffer)
+uint32_t XMidi::retrieveMidi(const XMidiFile *xmidi, uint32_t track, uint8_t **buffer)
 {
     if (!xmidi->events)
     {
@@ -106,7 +112,7 @@ int XMidi::retrieveMidi(const XMidiFile *xmidi, uint32 track, uint8 **buffer)
     return 0;
     }
 
-    int len = 14 + convertListToMTrk (NULL, xmidi->events[track]);
+    uint32_t len = 14 + convertListToMTrk (NULL, xmidi->events[track]);
 
     if (len == 14)
     {
@@ -242,7 +248,7 @@ int XMidi::getVLQ2 (const unsigned char *stream, uint32 *quant)
 //
 int XMidi::putVLQ(unsigned char *stream, uint32 value)
 {
-    int buffer;
+    uint32 buffer;
     int i = 1;
     buffer = value & 0x7F;
     while (value >>= 7)
@@ -462,7 +468,7 @@ int XMidi::extractEvents(XMidiFile *xmidi, const unsigned char *stream, const ui
     return 1;
 }
 
-int XMidi::readFile (XMidiFile *xmidi, const unsigned char *stream, const uint32 streamsize)
+int XMidi::readFile (XMidiFile *xmidi, const unsigned char *stream, const size_t streamsize)
 {
     // Partial format specifications at
     // http://rewiki.regengedanken.de/wiki/.IFF
