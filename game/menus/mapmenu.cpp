@@ -287,7 +287,7 @@ void MapMenu::drawSelector() {
     uint8 selId = g_Session.getSelectedBlockId();
     int logo_x = g_BlocksDisplay[selId].logo_pos.x;
     int logo_y = g_BlocksDisplay[selId].logo_pos.y;
-    g_Screen.drawLogo(logo_x, logo_y, g_Session.getLogo(),
+    g_LogoMgr.drawLogo(logo_x, logo_y, g_Session.getLogo(),
         g_Session.getLogoColour(), true);
 
     // Draw box enclosing logo

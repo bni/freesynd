@@ -381,7 +381,7 @@ void SelectMenu::handleShow() {
 }
 
 void SelectMenu::handleRender(DirtyList &dirtyList) {
-    g_Screen.drawLogo(18, 14, g_Session.getLogo(), g_Session.getLogoColour());
+    g_LogoMgr.drawLogo(18, 14, g_Session.getLogo(), g_Session.getLogoColour());
 
     // write team member icons and health
     Agent *t1 = g_gameCtrl.agents().squadMember(AgentManager::kSlot1);

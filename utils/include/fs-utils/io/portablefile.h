@@ -68,6 +68,7 @@ public:
 
     uint64 read64();
     uint32 read32();
+    int32_t reads32();
     uint16 read16();
     uint8 read8();
     bool read8b();

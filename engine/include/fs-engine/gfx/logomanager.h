@@ -5,6 +5,7 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -22,63 +23,48 @@
  *                                                                      *
  ************************************************************************/
 
-#ifndef SCREEN_H
-#define SCREEN_H
+#ifndef ENGINE_LOGOMANAGER_H
+#define ENGINE_LOGOMANAGER_H
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
 
 /*!
- * Screen class.
+ * This class manages the logo sprites and proposes a method to display a logo.
+ * Logos are uploaded from original game files.
  */
-class Screen : public Singleton<Screen> {
+class LogoManager : public Singleton<LogoManager>{
 public:
-    /*! Width of the screen in pixels.*/
-    static const int kScreenWidth;
-    /*! Height of the screen in pixels.*/
-    static const int kScreenHeight;
-    /*! Width of the left control panel*/
-    static const int kScreenPanelWidth;
+    /*! Max number of colors for logos.*/
+    static const int kMaxColour;
+    /*! Width for a normal logo*/
+    static const int kLogoBigWidth;
+    /*! Width for a small logo*/
+    static const int kLogoSmallWidth;
 
+    explicit LogoManager();
+    ~LogoManager();
 
-    explicit Screen(int width, int height);
-    ~Screen();
+    //! Return the color value at the given index
+    uint8_t getColorAtIndex(int colourIdx);
+    //! Returns the number of available logos
+    int numLogos();
+    //! Draws a logo at given position with the given color
+    void drawLogo(int x, int y, int logo, int colourIdx, bool mini = false);
 
-    void clear(uint8 color = 0);
-
-    const uint8 *pixels() const { return pixels_; }
-    bool dirty() { return dirty_; }
-    void clearDirty() { dirty_ = false; }
-
-    void blit(int x, int y, int width, int height, const uint8 *pixeldata,
-            bool flipped = false, int stride = 0);
-    void blitRect(int x, int y, int width, int height,
-                  const uint8 * pixeldata, bool flipped = false, int stride = 0);
-    void scale2x(int x, int y, int width, int height, const uint8 *pixeldata,
-            int stride = 0, bool transp = true);
-
-    void drawVLine(int x, int y, int length, uint8 color);
-    void drawHLine(int x, int y, int length, uint8 color);
-
-    void drawLine(int x1, int y1, int x2, int y2, uint8 color, int skip = 0,
-            int off = 0);
-
-    void setPixel(int x, int y, uint8 color);
-    void drawRect(int x, int y, int width, int height, uint8 color = 0);
-
-    int gameScreenHeight();
-    int gameScreenWidth();
-    int gameScreenLeftMargin();
-
-protected:
-    int width_;
-    int height_;
-    uint8 *pixels_;
-    bool dirty_;
-
-    Screen();
+private:
+    //! Number of logos in the game
+    int numberLogo_;
+    //! This contains the pixels data for all logos and are loaded from a file
+    uint8 *data_all_logos_;
+    //! This contains the data for one logo that will be drawn on screen
+    uint8_t *data_logo_;
+    //! This contains the pixels data for all mini logos and are loaded from a file
+    uint8 *data_all_mini_logos_;
+    //! This contains the data for one mini logo that will be drawn on screen
+    uint8_t *data_mini_logo_;
 };
 
-#define g_Screen    Screen::singleton()
+#define g_LogoMgr    LogoManager::singleton()
 
-#endif
+#endif //ENGINE_LOGOMANAGER_H

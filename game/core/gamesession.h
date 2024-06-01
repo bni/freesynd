@@ -136,9 +136,7 @@ public:
     /*!
      * Sets the colour of the user's logo.
      */
-    void setLogoColour(int colour) {
-        logo_colour_ = colour;
-    }
+    void setLogoColour(int colour);
 
     /*!
      * Returns the user's company name.
@@ -224,9 +222,6 @@ public:
     //! Returns the block's color depending on who owns it
     uint8 get_owner_color(Block & blk);
 
-    //! Change the player color for the enemy syndicate color.
-    void exchange_color_wt_syndicate(uint8 player_color);
-
     //! Update state when finishing a mission
     void mark_selected_block_completed();
 
@@ -269,6 +264,7 @@ private:
 
 private:
     int logo_;
+    //! the ID of the color for the logo
     int logo_colour_;
     int money_;
     std::string company_name_;

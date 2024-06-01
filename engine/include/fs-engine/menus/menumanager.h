@@ -36,6 +36,7 @@
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/gfx/dirtylist.h"
 #include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/logomanager.h"
 #include "fs-engine/sound/soundmanager.h"
 
 class MenuManager;
@@ -160,6 +161,7 @@ protected:
     /*! Font manager.*/
     FontManager fonts_;
     SoundManager *pGameSounds_;
+    LogoManager logoManager_;
 
     /*! Time since last mouse down event without mouseup*/
     uint32_t since_mouse_down_;

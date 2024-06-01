@@ -38,10 +38,6 @@
 #include "fs-engine/system/system.h"
 
 #define NAME_MAX_SIZE 16
-#define MAX_COLOUR 8
-
-int g_Colours[MAX_COLOUR] = { 6, 7, 14, 3, 11, 12, 13, 15 };
-
 
 ConfMenu::ConfMenu(MenuManager *m) :
 Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain, "mconfup.dat", "mconfout.dat") {
@@ -121,11 +117,11 @@ void ConfMenu::createPanels() {
 
 void ConfMenu::handleRender(DirtyList &dirtyList) {
     // Draw the current logo
-    g_Screen.drawLogo(28, 22, toAcceptLogo_, g_Colours[toAcceptColourId_]);
+    g_LogoMgr.drawLogo(28, 22, toAcceptLogo_, toAcceptColourId_);
 
     if (currPanel_ == PNL_LOGO) {
         // Draw the selected logo
-        g_Screen.drawLogo(336, 55, tempLogo_, g_Colours[tempColourId_]);
+        g_LogoMgr.drawLogo(336, 55, tempLogo_, tempColourId_);
     } else if (currPanel_ == PNL_CMPNM || currPanel_ == PNL_USRNM) {
         // draw a frame around the textfield
         g_Screen.scale2x(300, 77, 136, 13, tfFrameData_);
@@ -142,11 +138,7 @@ void ConfMenu::handleShow() {
     menu_manager_->saveBackground();
 
     toAcceptLogo_ = g_Session.getLogo();
-
-    for (unsigned int i = 0; i < sizeof(g_Colours) / sizeof(int); i++) {
-        if (g_Colours[i] == g_Session.getLogoColour())
-            toAcceptColourId_ = i;
-    }
+    toAcceptColourId_ = g_Session.getLogoColour();
 
     getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName());
     getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName());
@@ -170,20 +162,20 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
     } else if (actionId == leftColButId_) {
         tempColourId_--;
         if (tempColourId_ < 0) {
-            tempColourId_ = MAX_COLOUR - 1;
+            tempColourId_ = g_LogoMgr.kMaxColour - 1;
         }
         redrawPanel();
     } else if (actionId == rightColButId_) {
-        tempColourId_ = (tempColourId_ + 1) % MAX_COLOUR;
+        tempColourId_ = (tempColourId_ + 1) % g_LogoMgr.kMaxColour;
         redrawPanel();
     } else if (actionId == leftLogoButId_) {
         tempLogo_--;
         if (tempLogo_ < 0 ) {
-            tempLogo_ = g_Screen.numLogos() - 1;
+            tempLogo_ = g_LogoMgr.numLogos() - 1;
         }
         redrawPanel();
     } else if (actionId == rightLogoButId_) {
-        tempLogo_ = (tempLogo_ + 1) % g_Screen.numLogos();
+        tempLogo_ = (tempLogo_ + 1) % g_LogoMgr.numLogos();
         redrawPanel();
     } else if (actionId == okButId_) {
         if (currPanel_ == PNL_LOGO) {
@@ -203,7 +195,7 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
         g_gameCtrl.change_user_infos(getStatic(toAcceptCmpNameTxtId_)->getText().c_str(),
             getStatic(toAcceptUsrNameTxtId_)->getText().c_str(),
             toAcceptLogo_,
-            g_Colours[toAcceptColourId_]);
+            toAcceptColourId_);
     }
 }
 

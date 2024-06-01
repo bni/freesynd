@@ -21,12 +21,12 @@
  *                                                                      *
  ************************************************************************/
 
+ #include "gamesession.h"
+
 #include <stdlib.h>
 #include <stdio.h>
-#include "gamesession.h"
 
-// List of logo colours
-extern int g_Colours[8];
+#include "fs-engine/gfx/logomanager.h"
 
 Block g_Blocks[50] = {
     // name, defpop, population, mis_id, tax, addtotax, popStatus, daysToNextStatus, daysStatusElapsed, status, nextMission, color, infos, enhanced
@@ -97,17 +97,17 @@ GameSession::~GameSession() {}
 
 bool GameSession::reset() {
     // Init default colors for enemy syndicates
-    g_syndicate_color_id[0] = 7;
-    g_syndicate_color_id[1] = 14;
+    g_syndicate_color_id[0] = 1;
+    g_syndicate_color_id[1] = 2;
     g_syndicate_color_id[2] = 3;
-    g_syndicate_color_id[3] = 11;
-    g_syndicate_color_id[4] = 12;
-    g_syndicate_color_id[5] = 13;
-    g_syndicate_color_id[6] = 15;
+    g_syndicate_color_id[3] = 4;
+    g_syndicate_color_id[4] = 5;
+    g_syndicate_color_id[5] = 6;
+    g_syndicate_color_id[6] = 7;
 
     // Init default value for player
     logo_ = 0;
-    logo_colour_ = 6;
+    logo_colour_ = 0;
     company_name_.clear();
     username_.clear();
     money_ = 30000;
@@ -170,24 +170,24 @@ uint8 GameSession::get_owner_color(Block & blk) {
     switch (blk.status) {
     case BLK_FINISHED:
     case BLK_REBEL:
-        return getLogoColour();
+        return g_LogoMgr.getColorAtIndex(getLogoColour());
     default:
-        return g_syndicate_color_id[blk.syndicate_owner];
+        return g_LogoMgr.getColorAtIndex(g_syndicate_color_id[blk.syndicate_owner]);
     }
 }
 
-/*!
- * The player has changed color. It's already an enemy syndicate color
- * so invert colors.
- */
-void GameSession::exchange_color_wt_syndicate(uint8 new_color) {
+void GameSession::setLogoColour(int newColour) {
+    // we must check in the map if the new player color
+    // has not already been assigned to an enemy syndicate
+    // => if true, invert colors.
     for (int i=0; i<7; i++) {
-        if (g_syndicate_color_id[i] == new_color) {
-            g_syndicate_color_id[i] = getLogoColour();
+        if (g_syndicate_color_id[i] == newColour) {
+            g_syndicate_color_id[i] = logo_colour_;
             break;
         }
     }
-    setLogoColour(new_color);
+    // change user color
+    logo_colour_ = newColour;
 }
 
 /*!
@@ -535,21 +535,32 @@ bool GameSession::loadFromFile(PortableFile &infile, const FormatVersion& v) {
     username_ = infile.read_string((v == 0x0100) ? 17 : 16, true);
 
     // Read logo id
-    logo_ = infile.read32();
+    logo_ = infile.reads32();
     // Read logo colour
-    logo_colour_ = infile.read32();
+    if (v.majorVersion() == 1 && v.minorVersion() < 3) {
+        int32_t color = infile.reads32();
+        for (int i = 0; i < g_LogoMgr.kMaxColour; i++) {
+            if (g_LogoMgr.getColorAtIndex(i) == color) {
+                logo_colour_ = i;
+                break;
+            }
+        }
+    } else {
+        logo_colour_ = infile.reads32();
+    }
+
     // Read money
-    money_ = infile.read32();
+    money_ = infile.reads32();
     // Read time
-    time_year_ = infile.read32();
-    time_day_ = infile.read32();
-    time_hour_ = infile.read32();
+    time_year_ = infile.reads32();
+    time_day_ = infile.reads32();
+    time_hour_ = infile.reads32();
 
     // Missions
     for (int i=0; i<GameSession::NB_MISSION; i++) {
-        g_Blocks[i].population = infile.read32();
-        g_Blocks[i].tax = infile.read32();
-        int ival = infile.read32();
+        g_Blocks[i].population = infile.reads32();
+        g_Blocks[i].tax = infile.reads32();
+        int ival = infile.reads32();
         switch (ival) {
             case 0: g_Blocks[i].popStatus = STAT_REBEL;break;
             case 1: g_Blocks[i].popStatus = STAT_DISCONTENT;break;
@@ -560,11 +571,11 @@ bool GameSession::loadFromFile(PortableFile &infile, const FormatVersion& v) {
             default: g_Blocks[i].popStatus = STAT_VERY_HAPPY;break;
         }
 
-        g_Blocks[i].daysToNextStatus = infile.read32();
-        g_Blocks[i].daysStatusElapsed = infile.read32();
+        g_Blocks[i].daysToNextStatus = infile.reads32();
+        g_Blocks[i].daysStatusElapsed = infile.reads32();
 
         // Read status
-        ival = infile.read32();
+        ival = infile.reads32();
         switch (ival) {
             case 0: g_Blocks[i].status = BLK_UNAVAIL;break;
             case 1: g_Blocks[i].status = BLK_AVAIL;break;
@@ -580,7 +591,7 @@ bool GameSession::loadFromFile(PortableFile &infile, const FormatVersion& v) {
             if (g_Blocks[i].status != BLK_FINISHED && g_Blocks[i].status != BLK_REBEL) {
                 // The block is not owned by the player
                 // so assigned it to the syndicate with the read color
-                for (int s_idx=0; s_idx<7; s_idx++) {
+                for (uint8_t s_idx=0; s_idx<7; s_idx++) {
                     if (value == g_syndicate_color_id[s_idx]) {
                         g_Blocks[i].syndicate_owner = s_idx;
                     }

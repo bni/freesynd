@@ -75,13 +75,7 @@ void GameController::change_user_infos(const char *company_name, const char *pla
     g_Session.setCompanyName(company_name);
     g_Session.setUserName(player_name);
     g_Session.setLogo(new_logo);
-
-    if (g_Session.getLogoColour() != new_color) {
-        // we must check in the map if the new player color
-        // has not already been assigned to an enemy syndicate
-        // => if true, invert colors.
-        g_Session.exchange_color_wt_syndicate(new_color);
-    }
+    g_Session.setLogoColour(new_color);
 }
 
 void GameController::handle_mission_end(Mission *p_mission) {
@@ -263,7 +257,7 @@ bool GameController::saveGameToFile(int fileSlot, std::string name) {
     if (outfile) {
         // write file format version
         outfile.write8(1); // major
-        outfile.write8(2); // minor
+        outfile.write8(3); // minor
 
         // Slot name is 31 characters long, nul-padded
         outfile.write_string(name, 31);
@@ -309,7 +303,7 @@ bool GameController::loadGameFromFile(int fileSlot) {
         FormatVersion v(vMaj, vMin);
 
         // validate that this is a supported version.
-        if (v.gt(1,2)) {
+        if (v.gt(1,3)) {
             FSERR(Log::k_FLG_IO, "GameController", "loadGameFromFile", ("Cannot load file, unsupported version %d.%d", vMaj, vMin))
             return false;
         }

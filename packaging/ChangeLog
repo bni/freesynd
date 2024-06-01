@@ -1,6 +1,8 @@
 freesynd (0.9) unstable; urgency=low
   [ Enhancements ]
   * Application uses UTF-8 completely for internal string manipulation (#33)
+  * Save files format is now in version 1.3 as logo color is stored as
+    a color index and not as the color itself
 
  -- Benoit Blancard <benblan@users.sourceforge.net>  <date-to-complete>
 

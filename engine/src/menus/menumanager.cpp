@@ -39,7 +39,7 @@
 
 MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds):
     dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
-    menuSprites_(), fonts_()
+    menuSprites_(), fonts_(), logoManager_()
 {
     pFactory_ = pFactory;
     pGameSounds_ = pGameSounds;

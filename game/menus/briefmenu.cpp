@@ -283,7 +283,7 @@ void BriefMenu::update_briefing_text()
 
 void BriefMenu::handleRender(DirtyList &dirtyList) {
 
-    g_Screen.drawLogo(18, 14, g_Session.getLogo(), g_Session.getLogoColour());
+    g_LogoMgr.drawLogo(18, 14, g_Session.getLogo(), g_Session.getLogoColour());
 
     // write briefing
 #ifdef EXECUTION_SPEED_TIME

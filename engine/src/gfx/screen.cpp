@@ -29,17 +29,15 @@
 #include "fs-utils/common.h"
 #include "fs-utils/io/file.h"
 
-const uint16_t Screen::kScreenWidth = 640;
-const uint16_t Screen::kScreenHeight = 400;
-const uint16_t Screen::kScreenPanelWidth = 129;
+const int Screen::kScreenWidth = 640;
+const int Screen::kScreenHeight = 400;
+const int Screen::kScreenPanelWidth = 129;
 
-Screen::Screen(uint16_t width, uint16_t height)
+Screen::Screen(int width, int height)
 :width_(width)
 , height_(height)
 , pixels_(NULL)
 , dirty_(false)
-, data_logo_(NULL), data_logo_copy_(NULL)
-, data_mini_logo_(NULL), data_mini_logo_copy_(NULL)
 {
     assert(width_ > 0);
     assert(height_ > 0);
@@ -50,14 +48,6 @@ Screen::Screen(uint16_t width, uint16_t height)
 Screen::~Screen()
 {
     delete[] pixels_;
-    if (data_logo_)
-        delete[] data_logo_;
-    if (data_logo_copy_)
-        delete[] data_logo_copy_;
-    if (data_mini_logo_)
-        delete[] data_mini_logo_;
-    if (data_mini_logo_copy_)
-        delete[] data_mini_logo_copy_;
 }
 
 void Screen::clear(uint8 color)
@@ -252,40 +242,6 @@ void Screen::drawHLine(int x, int y, int length, uint8 color)
     uint8 *pixel_ptr = pixels_ + y * width_ + x;
     while (length--)
         *pixel_ptr++ = color;
-
-    dirty_ = true;
-}
-
-int Screen::numLogos()
-{
-    return size_logo_ / (32 * 32);
-}
-
-void Screen::drawLogo(int x, int y, int logo, int colour, bool mini)
-{
-    if (data_logo_ == NULL) {
-        data_logo_ = File::loadOriginalFile("mlogos.dat", size_logo_);
-        data_logo_copy_ = new uint8[size_logo_];
-    }
-    if (data_mini_logo_ == NULL) {
-        data_mini_logo_ = File::loadOriginalFile("mminlogo.dat", size_mini_logo_);
-        data_mini_logo_copy_ = new uint8[size_mini_logo_];
-    }
-
-    for (int i = 0; i < size_logo_; i++)
-        if (data_logo_[i] == 0xFE)
-            data_logo_copy_[i] = colour;
-        else
-            data_logo_copy_[i] = data_logo_[i];
-    for (int i = 0; i < size_mini_logo_; i++)
-        if (data_mini_logo_[i] == 0xFE)
-            data_mini_logo_copy_[i] = colour;
-        else
-            data_mini_logo_copy_[i] = data_mini_logo_[i];
-    if (mini)
-        scale2x(x, y, 16, 16, data_mini_logo_copy_ + logo * 16 * 16, 16);
-    else
-        scale2x(x, y, 32, 32, data_logo_copy_ + logo * 32 * 32, 32);
 
     dirty_ = true;
 }

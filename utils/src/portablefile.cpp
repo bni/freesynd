@@ -22,6 +22,8 @@
 
 #include "fs-utils/io/portablefile.h"
 
+#include <limits>
+
 // runtime endianness test
 static const uint32 endianness_one = 1;
 static const unsigned char * const endianness_test_ptr = (unsigned char *)&endianness_one;
@@ -218,6 +220,17 @@ uint32 PortableFile::read32()
         value = swap32(value);
     }
     return value;
+}
+
+int32_t PortableFile::reads32() {
+    uint32_t value = read32();
+
+    if (value <= (unsigned int)std::numeric_limits<int>::max())
+        return (int32_t) value;
+    else if (value >= (unsigned int)std::numeric_limits<int>::min())
+        return -(int32_t)~value - 1;
+    else
+        return std::numeric_limits<int>::min();
 }
 
 uint16 PortableFile::read16()
