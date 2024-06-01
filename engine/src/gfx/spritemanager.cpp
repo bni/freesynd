@@ -54,13 +54,12 @@ bool SpriteManager::loadSprites(uint8 * tabData, size_t tabSize,
     assert(tabData);
     assert(spriteData);
 
-    sprite_count_ = tabSize / TABENTRY_SIZE;
+    sprite_count_ = int(tabSize) / TABENTRY_SIZE;
     sprites_ = new Sprite[sprite_count_];
     assert(sprites_);
 
     for (int i = 0; i < sprite_count_; ++i) {
         if (!sprites_[i].loadSprite(tabData, spriteData, i, rle)) {
-            printf("Failed to load sprite: %d\n", i);
             FSERR(Log::k_FLG_IO, "SpriteManager", "loadSprites", ("Failed to load sprite: %d\n", i))
         }
     }
@@ -82,7 +81,7 @@ bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
                                   bool flipped, bool x2)
 {
     if (spriteNum >= sprite_count_) {
-        FSERR(Log::k_FLG_IO, "SpriteManager", "drawSpriteXYZ", ("spriteNum %d is out of bound!\n", spriteNum))
+        FSERR(Log::k_FLG_IO, "SpriteManager", "drawSpriteXYZ", ("spriteNum %d is out of bound!", spriteNum))
         return false;
     }
 
@@ -125,19 +124,19 @@ void GameSpriteManager::load()
             char flipped;
             if (*line == '#')
                 continue;
-            sscanf(line, "%i %i %i %c %i", &e.sprite_, &e.off_x_, &e.off_y_,
+            sscanf(line, "%i %i %i %c %lu", &e.sprite_, &e.off_x_, &e.off_y_,
                    &flipped, &e.next_element_);
             e.flipped_ = (flipped == 'f');
             elements_.push_back(e);
         }
         for (unsigned int i = 0; i < elements_.size(); i++)
-            assert(elements_[i].next_element_ < (int)elements_.size());
+            assert(elements_[i].next_element_ < elements_.size());
         fclose(fp);
     } else {
         // try original data file
         data = File::loadOriginalFile("HELE-0.ANI", size);
         assert(size % 10 == 0);
-        for (int i = 0; i < size / 10; i++) {
+        for (unsigned int i = 0; i < size / 10; i++) {
             GameSpriteFrameElement e;
             e.sprite_ = data[i * 10] | (data[i * 10 + 1] << 8);
             assert(e.sprite_ % 6 == 0);
@@ -176,22 +175,22 @@ void GameSpriteManager::load()
             GameSpriteFrame f;
             if (*line == '#')
                 continue;
-            sscanf(line, "%i %i %i %i %i", &f.first_element_, &f.width_,
+            sscanf(line, "%lu %i %i %i %lu", &f.first_element_, &f.width_,
                     &f.height_, &f.flags_, &f.next_frame_);
-            assert(f.first_element_ < (int) elements_.size());
+            assert(f.first_element_ < elements_.size());
             frames_.push_back(f);
         }
         for (unsigned int i = 0; i < frames_.size(); i++)
-            assert(frames_[i].next_frame_ < (int)frames_.size());
+            assert(frames_[i].next_frame_ < frames_.size());
         fclose(fp);
     } else {
         // try original data file
         data = File::loadOriginalFile("HFRA-0.ANI", size);
         assert(size % 8 == 0);
-        for (int i = 0; i < size / 8; i++) {
+        for (unsigned int i = 0; i < size / 8; i++) {
             GameSpriteFrame f;
             f.first_element_ = data[i * 8] | (data[i * 8 + 1] << 8);
-            assert(f.first_element_ < (int) elements_.size());
+            assert(f.first_element_ < elements_.size());
             f.width_ = data[i * 8 + 2];
             f.height_ = data[i * 8 + 3];
             f.flags_ = data[i * 8 + 4] | (data[i * 8 + 5] << 8);
@@ -208,11 +207,11 @@ void GameSpriteManager::load()
     if (fp) {
         char line[1024];
         while (fgets(line, 1024, fp)) {
-            int index;
+            size_t index;
             if (*line == '#')
                 continue;
-            sscanf(line, "%i", &index);
-            assert(index < (int) frames_.size());
+            sscanf(line, "%lu", &index);
+            assert(index < frames_.size());
             index_.push_back(index);
         }
         fclose(fp);
@@ -220,9 +219,9 @@ void GameSpriteManager::load()
         // try original data file
         data = File::loadOriginalFile("HSTA-0.ANI", size);
         assert(size % 2 == 0);
-        for (int i = 0; i < size / 2; i++) {
+        for (unsigned int i = 0; i < size / 2; i++) {
             index_.push_back(data[i * 2] | (data[i * 2 + 1] << 8));
-            assert(index_[i] < (int) frames_.size());
+            assert(index_[i] < frames_.size());
         }
         delete[] data;
     }
@@ -230,9 +229,9 @@ void GameSpriteManager::load()
     LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("index contains %i animations", (int)index_.size()))
 }
 
-bool GameSpriteManager::drawFrame(int animNum, int frameNum, const Point2D &screenPos)
+bool GameSpriteManager::drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos)
 {
-    assert(animNum < (int) index_.size());
+    assert(animNum < index_.size());
 
     GameSpriteFrame *f = &frames_[index_[animNum]];
     if (f == NULL)
@@ -255,9 +254,9 @@ bool GameSpriteManager::drawFrame(int animNum, int frameNum, const Point2D &scre
     return f->next_frame_ == index_[animNum];
 }
 
-bool GameSpriteManager::lastFrame(int animNum, int frameNum)
+bool GameSpriteManager::lastFrame(unsigned int animNum, int frameNum)
 {
-    assert(animNum < (int) index_.size());
+    assert(animNum < index_.size());
 
     GameSpriteFrame *f = &frames_[index_[animNum]];
     while (frameNum) {
@@ -268,10 +267,10 @@ bool GameSpriteManager::lastFrame(int animNum, int frameNum)
     return f->next_frame_ == index_[animNum];
 }
 
-int GameSpriteManager::lastFrame(int animNum)
+int GameSpriteManager::lastFrame(unsigned int animNum)
 {
     int frameNum = 0;
-    assert(animNum < (int) index_.size());
+    assert(animNum < index_.size());
 
     GameSpriteFrame *f = &frames_[index_[animNum]];
     while (f->next_frame_ != index_[animNum]) {
@@ -281,7 +280,7 @@ int GameSpriteManager::lastFrame(int animNum)
     return frameNum;
 }
 
-int GameSpriteManager::getFrameFromFrameIndx(int frameIndx)
+int GameSpriteManager::getFrameFromFrameIndx(unsigned int frameIndx)
 {
     int frameNum = 0;
 
@@ -300,9 +299,9 @@ int GameSpriteManager::getFrameFromFrameIndx(int frameIndx)
     }
 }
 
-int GameSpriteManager::getFrameNum(int animNum)
+int GameSpriteManager::getFrameNum(unsigned int animNum)
 {
-    assert(animNum < (int) index_.size());
+    assert(animNum < index_.size());
     int frameNum = 1;
 
     GameSpriteFrame *f = &frames_[index_[animNum]];

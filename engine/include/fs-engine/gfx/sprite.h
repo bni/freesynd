@@ -23,8 +23,8 @@
  *                                                                      *
  ************************************************************************/
 
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef ENGINE_SPRITE_H
+#define ENGINE_SPRITE_H
 
 #include "fs-utils/common.h"
 
@@ -35,14 +35,14 @@ const int TABENTRY_SIZE = 6;
  */
 class Sprite {
 
-    uint32_t width_;
-    uint32_t height_;
+    int width_;
+    int height_;
     /*!
      * sprite width_, but adjusted to be divisible by 8 without remainder
      * (boundary of 8)
      */
-    uint32_t stride_;
-    uint8 *sprite_data_;
+    int stride_;
+    uint8_t *sprite_data_;
 
 public:
     /*! Id of sprite agent selector 1 in the menu sprite list.*/
@@ -87,12 +87,12 @@ public:
     virtual ~Sprite();
 
     void loadSpriteFromPNG(const char *filename);
-    bool loadSprite(uint8 *tabData, uint8 *spriteData, uint32 offset,
+    bool loadSprite(uint8 *tabData, uint8 *spriteData, int offset,
             bool rle = false);
     void draw(int x, int y, int z, bool flipped = false, bool x2 = false);
 
-    uint32_t width() const { return width_; }
-    uint32_t height() const { return height_; }
+    int width() const { return width_; }
+    int height() const { return height_; }
 
     void data(uint8 *spr_data) const;
 };

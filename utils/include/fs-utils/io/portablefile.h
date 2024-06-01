@@ -77,7 +77,7 @@ public:
     double read_double();
 
     std::string read_string(); // stops on and consumes a nul
-    std::string read_string(size_t length, bool strip_nul); // reads length bytes exactly
+    std::string read_string(int length, bool strip_nul); // reads length bytes exactly
 
 private:
     std::fstream f_;

@@ -181,16 +181,16 @@ void PortableFile::write_double(double value)
 void PortableFile::write_string(const std::string& value, size_t length)
 {
     if (length > value.size()) {
-        f_.write(value.c_str(), value.size());
+        f_.write(value.c_str(), (long int) value.size());
         write_zeros(length - value.size());
     } else {
-        f_.write(value.c_str(), length);
+        f_.write(value.c_str(), (long int) length);
     }
 }
 
 void PortableFile::write_variable_string(const std::string& value, bool nul_terminate)
 {
-    f_.write(value.c_str(), value.size());
+    f_.write(value.c_str(), (long int) value.size());
     if (nul_terminate) f_.put(0);
 }
 
@@ -280,7 +280,7 @@ std::string PortableFile::read_string()
     char buf[256];
     while (f_.good()) {
         f_.get(buf, 256, '\0');
-        int n = (int)f_.gcount();
+        size_t n = (size_t) f_.gcount();
         value.append(buf, n);
         if (f_.peek() == '\0') {
             break;
@@ -290,7 +290,7 @@ std::string PortableFile::read_string()
 }
 
 // reads length bytes exactly
-std::string PortableFile::read_string(size_t length, bool strip_nul)
+std::string PortableFile::read_string(int length, bool strip_nul)
 {
     std::string value;
     char buf[256];

@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <png.h>
 
+#include "fs-utils/log/log.h"
 #include "fs-engine/gfx/screen.h"
 
 void unpackBlocks1(const uint8 * data, uint8 * pixels)
@@ -94,20 +95,20 @@ void Sprite::loadSpriteFromPNG(const char *filename)
     png_byte header[8];
     size_t shead = fread(header, 1, 8, fp);
     if (shead == 0 || png_sig_cmp(header, 0, 8) != 0) {
-        fprintf(stderr, "%s is not a png.\n", filename);
+        FSERR(Log::k_FLG_IO, "Sprite", "loadSpriteFromPNG", ("Error loading sprite : %s is not a png.", filename))
         fclose(fp);
         return;
     }
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     if (!png_ptr) {
-        fprintf(stderr, "error creating png read struct for %s.\n", filename);
+        FSERR(Log::k_FLG_IO, "Sprite", "loadSpriteFromPNG", ("Error creating png read struct for %s.", filename))
         fclose(fp);
         return;
     }
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr) {
         png_destroy_read_struct(&png_ptr, 0, 0);
-        fprintf(stderr, "error creating png info struct for %s.\n", filename);
+        FSERR(Log::k_FLG_IO, "Sprite", "loadSpriteFromPNG", ("Error creating png info struct for %s.", filename))
         fclose(fp);
         return;
     }
@@ -124,7 +125,7 @@ void Sprite::loadSpriteFromPNG(const char *filename)
                     &compression_type, &filter_method);
 
     if (depth != 8) {
-        fprintf(stderr, "expected 8 bit depth from %s.\n", filename);
+        FSERR(Log::k_FLG_IO, "Sprite", "loadSpriteFromPNG", ("Error loading sprite : expected 8 bit depth from %s.", filename))
     } else {
         if (sprite_data_)
             delete[] sprite_data_;
@@ -133,7 +134,7 @@ void Sprite::loadSpriteFromPNG(const char *filename)
         width_ = w;
         height_ = h;
         stride_ = w;
-        for (unsigned int i = 0; i < h; i++)
+        for (int i = 0; i < height_; i++)
             memcpy(sprite_data_ + i * stride_, row_pointers[i], w);
     }
 
@@ -142,11 +143,16 @@ void Sprite::loadSpriteFromPNG(const char *filename)
     fclose(fp);
 }
 
-bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, uint32 offset,
+bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, int offset,
                         bool rle)
 {
-    assert(tabData);
-    assert(spriteData);
+    if (tabData == nullptr || spriteData == nullptr) {
+        FSERR(Log::k_FLG_IO, "Sprite", "loadSprite", ("Error loading sprite : sprite data is null."))
+        return false;
+    } else if (offset < 0) {
+        FSERR(Log::k_FLG_IO, "Sprite", "loadSprite", ("Error loading sprite : offset is negative %d.", offset))
+        return false;
+    }
 
     uint8 *tabEntry = tabData + offset * TABENTRY_SIZE;
 
@@ -164,12 +170,12 @@ bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, uint32 offset,
     uint8 *spriteBlocks = spriteData + spriteOffset;
 
     sprite_data_ = new uint8[stride_ * height_];
-    memset(sprite_data_, 255, stride_ * height_);
+    memset(sprite_data_, 255, size_t(stride_ * height_));
 
     uint8 *currentPixel;
 
     if (rle) {
-        for (uint32_t i = 0; i < height_; ++i) {
+        for (int i = 0; i < height_; ++i) {
             int spriteWidth = width_;
             currentPixel = sprite_data_ + i * stride_;
 
@@ -200,7 +206,7 @@ bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, uint32 offset,
                         runLength =
                             sprite_data_ + height_ * stride_ -
                             currentPixel;
-                    memset(currentPixel, 255, runLength);
+                    memset(currentPixel, 255, size_t(runLength));
                     currentPixel += runLength;
 
                 } else if (runLength == 0) {
@@ -239,7 +245,7 @@ void Sprite::draw(int x, int y, int z, bool flipped, bool x2)
 
 void Sprite::data(uint8 * spr_data) const
 {
-    for (uint32_t j = 0; j < height_; j++) {
-        memcpy(spr_data + j * width_, sprite_data_ + j * stride_, width_);
+    for (int j = 0; j < height_; j++) {
+        memcpy(spr_data + j * width_, sprite_data_ + j * stride_, (size_t) width_);
     }
 }

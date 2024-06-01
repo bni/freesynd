@@ -61,10 +61,10 @@ class GameSpriteFrame {
 public:
     GameSpriteFrame() : first_element_(0), width_(0), height_(0), flags_(0),
             next_frame_(0) {}
-    int first_element_;
+    size_t first_element_;
     int width_, height_;
     int flags_;
-    int next_frame_;
+    size_t next_frame_;
 };
 
 /*!
@@ -77,7 +77,7 @@ public:
     int sprite_;
     int off_x_, off_y_;
     bool flipped_;
-    int next_element_;
+    size_t next_element_;
 };
 
 /*!
@@ -92,14 +92,14 @@ public:
 
     int numAnims() { return (int) index_.size(); }
 
-    bool drawFrame(int animNum, int frameNum, const Point2D &screenPos);
-    bool lastFrame(int animNum, int frameNum);
-    int lastFrame(int animNum);
-    int getFrameFromFrameIndx(int frameIndx);
-    int getFrameNum(int animNum);
+    bool drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos);
+    bool lastFrame(unsigned int animNum, int frameNum);
+    int lastFrame(unsigned int animNum);
+    int getFrameFromFrameIndx(unsigned int frameIndx);
+    int getFrameNum(unsigned int animNum);
 
 protected:
-    std::vector<int> index_;
+    std::vector<size_t> index_;
     std::vector<GameSpriteFrame> frames_;
     std::vector<GameSpriteFrameElement> elements_;
 };

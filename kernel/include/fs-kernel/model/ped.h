@@ -77,22 +77,22 @@ public:
         walk_fire_anims_[weapon] = anim;
     }
 
-    void setDieAgentAnim(int anim) { die_agent_anim_ = anim; }
-    void setDeadAgentAnim(int anim) { dead_agent_anim_ = anim; }
-    void setDieAnim(int anim) { die_anim_ = anim; }
-    void setDeadAnim(int anim) { dead_anim_ = anim; }
-    void setHitAnim(int anim) { hit_anim_ = anim; }
-    void setPickupAnim(int anim) { pickup_anim_ = anim; }
+    void setDieAgentAnim(uint32_t anim) { die_agent_anim_ = anim; }
+    void setDeadAgentAnim(uint32_t anim) { dead_agent_anim_ = anim; }
+    void setDieAnim(uint32_t anim) { die_anim_ = anim; }
+    void setDeadAnim(uint32_t anim) { dead_anim_ = anim; }
+    void setHitAnim(uint32_t anim) { hit_anim_ = anim; }
+    void setPickupAnim(uint32_t anim) { pickup_anim_ = anim; }
 
-    void setVaporizeAnim(int anim) { vaporize_anim_ = anim; }
-    void setSinkAnim(int anim) { sink_anim_ = anim; }
-    void setStandBurnAnim(int anim) { stand_burn_anim_ = anim; }
-    void setWalkBurnAnim(int anim) { walk_burn_anim_ = anim; }
-    void setDieBurnAnim(int anim) { die_burn_anim_ = anim; }
-    void setSmokeBurnAnim(int anim) { smoke_burn_anim_ = anim; }
-    void setDeadBurnAnim(int anim) { dead_burn_anim_ = anim; }
+    void setVaporizeAnim(uint32_t anim) { vaporize_anim_ = anim; }
+    void setSinkAnim(uint32_t anim) { sink_anim_ = anim; }
+    void setStandBurnAnim(uint32_t anim) { stand_burn_anim_ = anim; }
+    void setWalkBurnAnim(uint32_t anim) { walk_burn_anim_ = anim; }
+    void setDieBurnAnim(uint32_t anim) { die_burn_anim_ = anim; }
+    void setSmokeBurnAnim(uint32_t anim) { smoke_burn_anim_ = anim; }
+    void setDeadBurnAnim(uint32_t anim) { dead_burn_anim_ = anim; }
 
-    void setPersuadeAnim(int anim) { persuade_anim_ = anim; }
+    void setPersuadeAnim(uint32_t anim) { persuade_anim_ = anim; }
 
     bool drawStandFrame(const Point2D &screenPos, int dir, int frame,
             Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
@@ -136,24 +136,24 @@ protected:
     int walk_anims_[NUM_ANIMS];
     int stand_fire_anims_[NUM_ANIMS];
     int walk_fire_anims_[NUM_ANIMS];
-    int die_agent_anim_;
-    int dead_agent_anim_;
-    int die_anim_;
-    int dead_anim_;
+    unsigned int die_agent_anim_;
+    unsigned int dead_agent_anim_;
+    unsigned int die_anim_;
+    unsigned int dead_anim_;
     // has 4 directions
-    int hit_anim_;
-    int pickup_anim_;
+    unsigned int hit_anim_;
+    unsigned int pickup_anim_;
 
     // has 4 directions
-    int vaporize_anim_;
-    int sink_anim_;
-    int stand_burn_anim_;
-    int walk_burn_anim_;
-    int die_burn_anim_;
-    int smoke_burn_anim_;
-    int dead_burn_anim_;
+    unsigned int vaporize_anim_;
+    unsigned int sink_anim_;
+    unsigned int stand_burn_anim_;
+    unsigned int walk_burn_anim_;
+    unsigned int die_burn_anim_;
+    unsigned int smoke_burn_anim_;
+    unsigned int dead_burn_anim_;
 
-    int persuade_anim_;
+    unsigned int persuade_anim_;
 };
 
 /*!
