@@ -34,20 +34,22 @@ const int Screen::kScreenHeight = 400;
 const int Screen::kScreenPanelWidth = 129;
 
 Screen::Screen(int width, int height)
-:width_(width)
-, height_(height)
-, pixels_(NULL)
-, dirty_(false)
-{
+        : width_(width), height_(height), pixels_(NULL), dirty_(false) {
     assert(width_ > 0);
     assert(height_ > 0);
 
     pixels_ = new uint8[width_ * height_];
+    background_ = new uint8[kScreenWidth * kScreenHeight];
 }
 
 Screen::~Screen()
 {
     delete[] pixels_;
+
+    if (background_) {
+        delete[] background_;
+        background_ = NULL;
+    }
 }
 
 void Screen::clear(uint8 color)
@@ -348,4 +350,23 @@ int Screen::gameScreenLeftMargin()
 {
     return 129;
 }
+
+/*!
+ * Copy all current screen pixels to a back buffer.
+ */
+void Screen::saveBackground() {
+    memcpy(background_, pixels_, kScreenWidth * kScreenHeight);
+}
+
+/*!
+ * Blit a portion of the background to the current screen.
+ * \param x Origin of the blit rect.
+ * \param y Origin of the blit rect.
+ * \param width Width of the blit rect.
+ * \param height Height of the blit rect.
+ */
+void Screen::blitFromBackground(int x, int y, int width, int height) {
+    blitRect(x, y, width, height, background_, false, kScreenWidth);
+}
+
 

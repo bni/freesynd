@@ -77,7 +77,7 @@ void LogoManager::drawLogo(int x, int y, int logo, int colour, bool mini)
     size_t fileSize;
     if (data_all_logos_ == NULL) {
         data_all_logos_ = File::loadOriginalFile("mlogos.dat", fileSize);
-        numberLogo_ = fileSize / (kLogoBigWidth * kLogoBigWidth);
+        numberLogo_ = int(fileSize) / (kLogoBigWidth * kLogoBigWidth);
         data_logo_ = new uint8[kLogoBigWidth * kLogoBigWidth];
     }
     if (data_all_mini_logos_ == NULL) {

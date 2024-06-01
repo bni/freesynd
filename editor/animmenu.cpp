@@ -32,9 +32,9 @@
 
 #include "editormenuid.h"
 
-AnimMenu::AnimMenu(MenuManager * m):
-    Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
-{
+AnimMenu::AnimMenu(MenuManager * m)
+        : Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain,
+               "mscrenup.dat", "", true) {
     isCachable_ = false;
     animId_ = 416;
     frameId_ = 0;
@@ -60,8 +60,6 @@ void AnimMenu::handleShow()
     g_System.showCursor();
 
     menu_manager_->setDefaultPalette();
-
-    menu_manager_->saveBackground();
 }
 
 void AnimMenu::handleRender(DirtyList &dirtyList)

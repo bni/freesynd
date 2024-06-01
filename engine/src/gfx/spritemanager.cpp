@@ -48,6 +48,54 @@ void SpriteManager::clear()
     sprite_count_ = 0;
 }
 
+/**
+ * Loads data from the couple tab/dat files
+ * \param tabFile const std::string& name of tabfile
+ * \param datFile const std::string& name of data file
+ * \param rle bool
+ * \return bool Return true if loading is ok
+ *
+ */
+bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &datFile, bool rle) {
+    size_t size = 0, tabSize = 0;
+    uint8 *data, *tabData;
+
+    // First load tab file
+    LOG(Log::k_FLG_GFX, "SpriteManager", "loadSprites", ("Loading sprites from files %s", tabFile.c_str()))
+    tabData = File::loadOriginalFile(tabFile, tabSize);
+    if (!tabData) {
+        FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed reading file %s", tabFile.c_str()));
+        return false;
+    }
+    data = File::loadOriginalFile(datFile, size);
+    if (!data) {
+        FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed reading file %s", datFile.c_str()));
+        delete[] tabData;
+        return false;
+    }
+
+    bool res = loadSprites(tabData, tabSize, data, rle);
+    delete[] tabData;
+    delete[] data;
+
+    if (res) {
+        LOG(Log::k_FLG_GFX, "SpriteManager", "loadSprites", ("%d sprites loaded", tabSize / 6))
+    } else {
+        FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed loading menu sprites"));
+    }
+
+    return res;
+}
+
+/**
+ * Loads data from memory
+ * \param tabData
+ * \param tabSize
+ * \param spriteData
+ * \param rle
+ * \return
+ *
+ */
 bool SpriteManager::loadSprites(uint8 * tabData, size_t tabSize,
                                 uint8 * spriteData, bool rle)
 {
@@ -99,22 +147,20 @@ GameSpriteManager::~GameSpriteManager()
 {
 }
 
-void GameSpriteManager::load()
+/**
+ * Loads game sprites.
+ * \return bool return true if everything is ok.
+ *
+ */
+bool GameSpriteManager::load()
 {
-    size_t tabSize, size;
-    uint8 *tabData, *data;
-#if 1
-    tabData = File::loadOriginalFile("hspr-0.tab", tabSize);
-    data = File::loadOriginalFile("hspr-0.dat", size);
-    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("Loaded %d sprites from hspr-0.dat", tabSize / 6));
-#else
-    tabData = File::loadOriginalFile("hspr-0-d.tab", tabSize);
-    data = File::loadOriginalFile("hspr-0-d.dat", size);
-    printf("Loading %d sprites from hspr-0-d.dat\n", tabSize / 6);
-#endif
-    loadSprites(tabData, tabSize, data);
-    delete[] tabData;
-    delete[] data;
+    size_t size;
+    uint8 *data;
+
+    LOG(Log::k_FLG_GFX, "GameSpriteManager", "load", ("Loading game sprites ..."))
+    if (!loadSprites("hspr-0.tab", "hspr-0.dat", false)) {
+        return false;
+    }
 
     FILE *fp = File::openOriginalFile("HELE-0.TXT");
     if (fp) {
@@ -227,6 +273,8 @@ void GameSpriteManager::load()
     }
 
     LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("index contains %i animations", (int)index_.size()))
+
+    return true;
 }
 
 bool GameSpriteManager::drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos)

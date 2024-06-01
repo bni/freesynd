@@ -42,8 +42,9 @@ const int BriefMenu::kMaxLinePerPage = 14;
 #define EXECUTION_SPEED_TIME
 #endif
 BriefMenu::BriefMenu(MenuManager * m)
-    : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap, "mbrief.dat", "mbrieout.dat"),
-        start_line_(0), p_briefing_(NULL), mm_renderer_() {
+        : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap,
+               "mbrief.dat", "mbrieout.dat", true),
+          start_line_(0), p_briefing_(NULL), mm_renderer_() {
     addStatic(85, 35, 545, "#BRIEF_TITLE", FontManager::SIZE_4, false);
     txtTimeId_ = addStatic(500, 9, "", FontManager::SIZE_2, true);       // Time
 
@@ -120,8 +121,6 @@ MinimapRenderer::EZoom BriefMenu::toZoomLevel(uint8 enh_lvl) {
 }
 
 void BriefMenu::handleShow() {
-
-    menu_manager_->saveBackground();
 
     // grab mission info
     int cur_miss = g_Session.getSelectedBlock().mis_id;

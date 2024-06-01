@@ -66,6 +66,11 @@ public:
     void setPixel(int x, int y, uint8 color);
     void drawRect(int x, int y, int width, int height, uint8 color = 0);
 
+    //! Take a snapshot of the screen.
+    void saveBackground();
+    //! Blit a portion of the background to the current screen
+    void blitFromBackground(int x, int y, int width, int height);
+
     int gameScreenHeight();
     int gameScreenWidth();
     int gameScreenLeftMargin();
@@ -75,6 +80,8 @@ protected:
     int height_;
     uint8 *pixels_;
     bool dirty_;
+    /** This array stores a copy of the back buffer to reset the screen.*/
+    uint8 *background_;
 
     Screen();
 };

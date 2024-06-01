@@ -110,8 +110,9 @@ struct BlockDisplay {
  * \param m The menu manager.
  */
 MapMenu::MapMenu(MenuManager * m)
-    :  Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain, "mmap.dat", "mmapout.dat"),
-mapblk_data_(NULL), select_tick_count_(0) {
+        : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain,
+               "mmap.dat", "mmapout.dat", true),
+          mapblk_data_(NULL), select_tick_count_(0) {
     //
     briefButId_ = addOption(17, 347, 128, 25, "#MAP_BRIEF_BUT",
         FontManager::SIZE_2, fs_game_menus::kMenuIdBrief);
@@ -324,8 +325,6 @@ void MapMenu::drawSelector() {
 }
 
 void MapMenu::handleShow() {
-    // save a background without country colour
-    menu_manager_->saveBackground();
 
     // Show the mouse
     g_System.showCursor();

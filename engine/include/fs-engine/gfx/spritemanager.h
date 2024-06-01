@@ -37,18 +37,31 @@ class SpriteManager {
 public:
     SpriteManager();
     virtual ~SpriteManager();
-
+    //! clear all loaded sprites
     void clear();
 
+    //! Loads sprites from the given files
+    bool loadSprites(const std::string &tabFile, const std::string &datFile, bool rle);
+    //! Returns true if this manager has loaded files
     bool loaded() { return sprite_count_ != 0; }
+    //! Returns the number of loaded sprites
     int spriteCount() { return sprite_count_; }
 
-    bool loadSprites(uint8 * tabData, size_t tabSize, uint8 *spriteData,
-            bool rle = false);
+    //! Return the sprite at given index
     Sprite *sprite(int spriteNum);
     bool drawSpriteXYZ(int spriteNum, int x, int y, int z, bool flipped = false,
             bool x2 = false);
 
+protected:
+    /*!
+     * Load sprites from the given files
+     * \param
+     * \param
+     * \return
+     *
+     */
+    bool loadSprites(uint8 * tabData, size_t tabSize, uint8 *spriteData,
+            bool rle = false);
 protected:
     Sprite *sprites_;
     int sprite_count_;
@@ -88,7 +101,8 @@ public:
     GameSpriteManager();
     virtual ~GameSpriteManager();
 
-    void load();
+    //! Loads the sprites from original files
+    bool load();
 
     int numAnims() { return (int) index_.size(); }
 

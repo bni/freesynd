@@ -34,8 +34,9 @@
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
-ResearchMenu::ResearchMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect, "mresrch.dat", "mresout.dat")
-{
+ResearchMenu::ResearchMenu(MenuManager * m):
+        Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect,
+             "mresrch.dat", "mresout.dat", true) {
     tab_ = TAB_EQUIPS;
     pSelectedWeapon_ = NULL;
     pSelectedMod_ = NULL;
@@ -211,7 +212,7 @@ void ResearchMenu::drawSelectedWeaponInfos(int x, int y) {
     if (pSelectedWeapon_->ammo() >= 0) {
         sprintf(tmp, "AMMO   :%d", pSelectedWeapon_->ammo());
         getMenuFont(FontManager::SIZE_1)->drawText(x, y, tmp, false);
-        y += 12;
+y += 12;
     }
 
     if (pSelectedWeapon_->range() >= 0) {
@@ -259,8 +260,6 @@ void ResearchMenu::updateClock() {
 }
 
 void ResearchMenu::handleShow() {
-
-    menu_manager_->saveBackground();
 
     // Show the mouse
     g_System.showCursor();

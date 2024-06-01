@@ -38,10 +38,9 @@
 #include "fs-engine/system/system.h"
 #include "fs-kernel/model/mod.h"
 
-SelectMenu::SelectMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, "mselect.dat",
-    "mselout.dat"),
-cur_agent_(0), tick_count_(0), rnd_(0), sel_all_(false)
-{
+SelectMenu::SelectMenu(MenuManager * m):
+        Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, "mselect.dat", "mselout.dat", true),
+        cur_agent_(0), tick_count_(0), rnd_(0), sel_all_(false) {
     tab_ = TAB_EQUIPS;
     pSelectedWeap_ = NULL;
     selectedWInstId_ = 0;
@@ -201,12 +200,12 @@ void SelectMenu::drawAgent()
         menuSprites().drawSpriteXYZ(brain, brainx, 114, 0, false, true);
     }
     // restore lines over agent
-    menu_manager_->blitFromBackground(254, 124, 30, 2);
-    menu_manager_->blitFromBackground(264, 132, 30, 2);
-    menu_manager_->blitFromBackground(266, 174, 36, 2);
-    menu_manager_->blitFromBackground(252, 210, 56, 2);
-    menu_manager_->blitFromBackground(302, 232, 10, 2);
-    menu_manager_->blitFromBackground(264, 256, 30, 2);
+    g_Screen.blitFromBackground(254, 124, 30, 2);
+    g_Screen.blitFromBackground(264, 132, 30, 2);
+    g_Screen.blitFromBackground(266, 174, 36, 2);
+    g_Screen.blitFromBackground(252, 210, 56, 2);
+    g_Screen.blitFromBackground(302, 232, 10, 2);
+    g_Screen.blitFromBackground(264, 256, 30, 2);
 
     // draw inventory
     screenPoint pos[8];
@@ -355,8 +354,6 @@ void SelectMenu::drawSelectedModInfos(int x, int y)
 }
 
 void SelectMenu::handleShow() {
-
-    menu_manager_->saveBackground();
 
     // Show the mouse
     g_System.showCursor();

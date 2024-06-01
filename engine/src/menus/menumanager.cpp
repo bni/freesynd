@@ -37,17 +37,13 @@
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/soundmanager.h"
 
-MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds):
-    dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
-    menuSprites_(), fonts_(), logoManager_()
-{
+MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
+        : dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
+          menuSprites_(), fonts_(), logoManager_() {
     pFactory_ = pFactory;
-    pGameSounds_ = pGameSounds;
     pFactory_->setMenuManager(this);
+    pGameSounds_ = pGameSounds;
     drop_events_ = false;
-    background_ = new uint8[g_Screen.gameScreenWidth() * g_Screen.gameScreenHeight()];
-    memset(background_, 0, g_Screen.gameScreenHeight() * g_Screen.gameScreenWidth());
-    needBackground_ = false;
 
     current_ = NULL;
     nextMenuId_ = -1;
@@ -68,33 +64,11 @@ MenuManager::~MenuManager()
  * \param loadIntroFont If true loads the intro sprites and font
  */
 bool MenuManager::initialize(bool loadIntroFont) {
-    bool res = false;
-    size_t size = 0, tabSize = 0;
-    uint8 *data, *tabData;
-
     LOG(Log::k_FLG_INFO, "MenuManager", "initialize", ("initializing menus..."))
 
     // Loads menu sprites
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading menu sprites ..."))
-    tabData = File::loadOriginalFile("mspr-0.tab", tabSize);
-    if (!tabData) {
-        FSERR(Log::k_FLG_UI, "MenuManager", "initialize", ("Failed reading file %s", "mspr-0.tab"));
-        return false;
-    }
-    data = File::loadOriginalFile("mspr-0.dat", size);
-    if (!data) {
-        FSERR(Log::k_FLG_UI, "MenuManager", "initialize", ("Failed reading file %s", "mspr-0.dat"));
-        delete[] tabData;
-        return false;
-    }
-
-    res = menuSprites_.loadSprites(tabData, tabSize, data, true);
-    delete[] tabData;
-    delete[] data;
-    if (res) {
-        LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("%d sprites loaded", tabSize / 6))
-    } else {
-        FSERR(Log::k_FLG_UI, "MenuManager", "initialize", ("Failed loading menu sprites"));
+    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", true)) {
         return false;
     }
 
@@ -102,35 +76,15 @@ bool MenuManager::initialize(bool loadIntroFont) {
     if (loadIntroFont) {
         LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading intro sprites ..."))
 
-        tabData = File::loadOriginalFile("mfnt-0.tab", tabSize);
-        if (!tabData) {
-            FSERR(Log::k_FLG_UI, "MenuManager", "initialize", ("Failed reading file %s", "mfnt-0.tab"));
-            return false;
-        }
-        data = File::loadOriginalFile("mfnt-0.dat", size);
-        if (!data) {
-            FSERR(Log::k_FLG_UI, "MenuManager", "initialize", ("Failed reading file %s", "mfnt-0.dat"));
-            delete[] tabData;
-            return false;
-        }
-
         pIntroFontSprites_ = new SpriteManager();
-        res = pIntroFontSprites_->loadSprites(tabData, tabSize, data, true);
-        delete[] tabData;
-        delete[] data;
-        if (res) {
-            LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("%d sprites loaded", tabSize / 6))
-        } else {
-            FSERR(Log::k_FLG_UI, "MenuManager", "initialize", ("Failed loading intro sprites"));
+        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", true)) {
             return false;
         }
     }
 
     // Loads fonts
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
-    res = fonts_.loadFonts(&menuSprites_, pIntroFontSprites_);
-
-    return res;
+    return fonts_.loadFonts(&menuSprites_, pIntroFontSprites_);
 }
 
 /*!
@@ -138,11 +92,6 @@ bool MenuManager::initialize(bool loadIntroFont) {
  */
 void MenuManager::destroy() {
     LOG(Log::k_FLG_MEM, "MenuManager", "~MenuManager", ("Destruction..."))
-
-    if (background_) {
-        delete[] background_;
-        background_ = NULL;
-    }
 
     if (pIntroFontSprites_) {
         delete pIntroFontSprites_;
@@ -264,9 +213,11 @@ void MenuManager::showMenu(Menu *pMenu) {
 
     }
 
-    // reset background
-    needBackground_ = false;
-    memset(background_, 0, g_Screen.gameScreenHeight() * g_Screen.gameScreenWidth());
+    // Make a snapshot of background is menu needs it
+    if (pMenu->doNeedBackground()) {
+        g_Screen.saveBackground();
+    }
+
     dirtyList_.flush();
     pMenu->handleShow();
 
@@ -308,35 +259,15 @@ void MenuManager::leaveMenu(Menu *pMenu) {
 }
 
 /*!
- * Copy all current screen pixels to a back buffer.
- */
-void MenuManager::saveBackground() {
-    needBackground_ = true;
-    memcpy(background_, g_Screen.pixels(),
-        g_Screen.gameScreenWidth() * g_Screen.gameScreenHeight());
-}
-
-/*!
- * Blit a portion of the background to the current screen.
- * \param x Origin of the blit rect.
- * \param y Origin of the blit rect.
- * \param width Width of the blit rect.
- * \param height Height of the blit rect.
- */
-void MenuManager::blitFromBackground(int x, int y, int width, int height) {
-    g_Screen.blitRect(x, y, width, height, background_, false, g_Screen.gameScreenWidth());
-}
-
-/*!
  * Renders the current menu if there is one
  * and if it needs to be refreshed.
  */
 void MenuManager::renderMenu() {
     if (current_ && !dirtyList_.isEmpty()) {
-        if (needBackground_) {
+        if (current_->doNeedBackground()) {
             for (int i=0; i < dirtyList_.getSize(); i++) {
                 DirtyRect *rect = dirtyList_.getRectAt(i);
-                g_Screen.blitRect(rect->x, rect->y, rect->width, rect->height, background_, false, g_Screen.gameScreenWidth());
+                g_Screen.blitFromBackground(rect->x, rect->y, rect->width, rect->height);
             }
         }
         current_->render(dirtyList_);

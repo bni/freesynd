@@ -92,10 +92,6 @@ public:
     // Change the menu
     void gotoMenu(int menuId);
 
-    //! Take a snapshot of the screen.
-    void saveBackground();
-    //! Blit a portion of the background to the current screen
-    void blitFromBackground(int x, int y, int width, int height);
     /*!
      * Adds a new dirty rectangle
      */
@@ -147,10 +143,6 @@ protected:
     int nextMenuId_;
     /** This flag prevents the input events from being processed.*/
     bool drop_events_;
-    /** This array stores a copy of the back buffer to reset the screen.*/
-    uint8 *background_;
-    /*! This flag tells whether current menu needs a background or not.*/
-    bool needBackground_;
     /*! Dirty rects list. */
     DirtyList   dirtyList_;
 

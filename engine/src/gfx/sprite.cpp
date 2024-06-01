@@ -130,10 +130,10 @@ void Sprite::loadSpriteFromPNG(const char *filename)
         if (sprite_data_)
             delete[] sprite_data_;
 
-        sprite_data_ = new uint8[w * h];
-        width_ = w;
-        height_ = h;
-        stride_ = w;
+        sprite_data_ = new uint8_t[w * h];
+        width_ = int(w);
+        height_ = int(h);
+        stride_ = int(w);
         for (int i = 0; i < height_; i++)
             memcpy(sprite_data_ + i * stride_, row_pointers[i], w);
     }

@@ -51,11 +51,18 @@ public:
     /*! Id of the mouse right button.*/
     static const int kMouseRightButton;
 
-    /*!
-        * Menu constructor.
-        */
+    /**
+     * Menu constructor.
+     * \param menuManager
+     * \param id
+     * \param parentId
+     * \param showAnim
+     * \param leaveAnim
+     * \param needsBackground True means a snapshot of the background is made before showing the menu
+     *
+     */
     Menu(MenuManager *menuManager, int id, int parentId,
-        const char *showAnim = "", const char *leaveAnim = "");
+        const char *showAnim = "", const char *leaveAnim = "", bool needsBackground = false);
     virtual ~Menu();
 
     int getId() { return id_; }
@@ -120,6 +127,9 @@ public:
      * been defined) and the menu closed.
      */
     virtual void handleLeave() {}
+
+    //! Return whether this menu needs a background snapshot
+    bool doNeedBackground() { return needBackground_; }
 
     //! Handles key pressed
     void keyEvent(FS_Key key);
@@ -202,6 +212,14 @@ protected:
     bool isCachable_;
     /*! Used only in gameplay menu, pauses game*/
     bool paused_;
+
+private:
+    /*!
+     * This flag tells whether this menu needs to save a snapshot of the background
+     * for recover from some animation problems. False by default.
+     * Snapshot will be taken once when the menu is shown.
+     */
+    bool needBackground_;
 };
 
 #endif

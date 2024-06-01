@@ -40,7 +40,8 @@
 #define NAME_MAX_SIZE 16
 
 ConfMenu::ConfMenu(MenuManager *m) :
-Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain, "mconfup.dat", "mconfout.dat") {
+        Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain,
+             "mconfup.dat", "mconfout.dat", true) {
     isCachable_ = false;
     toAcceptLogo_ = 0;
     toAcceptColourId_ = 0;
@@ -135,7 +136,6 @@ void ConfMenu::handleRender(DirtyList &dirtyList) {
 }
 
 void ConfMenu::handleShow() {
-    menu_manager_->saveBackground();
 
     toAcceptLogo_ = g_Session.getLogo();
     toAcceptColourId_ = g_Session.getLogoColour();

@@ -40,9 +40,9 @@ const int LoadSaveMenu::X_ORIGIN = 165;
 const int LoadSaveMenu::Y_ORIGIN = 100;
 const size_t LoadSaveMenu::NAME_MAX_SIZE = 31;
 
-LoadSaveMenu::LoadSaveMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLdSave, fs_game_menus::kMenuIdMain, "mlosa.dat",
-     "mlosaout.dat")
-{
+LoadSaveMenu::LoadSaveMenu(MenuManager * m):
+        Menu(m, fs_game_menus::kMenuIdLdSave, fs_game_menus::kMenuIdMain, "mlosa.dat",
+             "mlosaout.dat", true) {
     isCachable_ = false;
     // Title
     addStatic(0, 40, g_Screen.gameScreenWidth(), "#LS_TITLE", FontManager::SIZE_4, false);
@@ -84,7 +84,6 @@ void LoadSaveMenu::handleShow()
         pTextFields_[i]->setText(files[i].c_str());
     }
 
-    menu_manager_->saveBackground();
     g_System.showCursor();
 }
 

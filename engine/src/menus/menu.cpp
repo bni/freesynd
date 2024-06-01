@@ -39,10 +39,10 @@ const int Menu::kMenuIdLogout = 6;
 const int Menu::kMouseLeftButton = 1;
 const int Menu::kMouseRightButton = 3;
 
-Menu::Menu(MenuManager * menuManager, int id, int parentId,
-    const char *showAnim, const char *leaveAnim) :
-    showAnim_(showAnim), leaveAnim_(leaveAnim)
-{
+Menu::Menu(MenuManager * menuManager, int id, int parentId, const char *showAnim,
+           const char *leaveAnim, bool needsBackground)
+        : showAnim_(showAnim), leaveAnim_(leaveAnim),
+          needBackground_(needsBackground) {
     id_ = id;
     parentId_ = parentId;
     menu_manager_ = menuManager;
