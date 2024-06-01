@@ -74,11 +74,11 @@ public:
         kNbTypes  = 0x11,
     };
 
-    Tile(uint8 id_set, uint8 *tile_Data, bool not_alpha, EType type_set);
+    Tile(int id_set, uint8_t *tile_Data, bool not_alpha, EType type_set);
     ~Tile();
 
     //! Returns the tile id
-    uint8 id() { return i_id_; }
+    int id() { return i_id_; }
     //! Returns the tile type
     EType type() { return e_type_; }
     //! Convenience method to tell whether this tile is a road type or not
@@ -102,9 +102,9 @@ public:
 
 protected:
     /*! Each tile has a unique id.*/
-    uint8 i_id_;
+    int i_id_;
     /*! The pixels that compose the tile.*/
-    uint8 *a_pixels_;
+    uint8_t *a_pixels_;
     /*! A quick flag to tell that all pixel are transparent.*/
     bool not_alpha_;
     /*! The tile type. */

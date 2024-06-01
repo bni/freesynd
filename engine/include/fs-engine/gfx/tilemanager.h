@@ -5,6 +5,7 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -46,9 +47,9 @@ public:
 
 protected:
     //! Load a given tile
-    Tile * loadTile(uint8 *tileData, uint8 id, Tile::EType type);
+    Tile * loadTile(uint8_t * tileData, int id, Tile::EType type);
     //! Returns the good enum for the given data
-    Tile::EType toTileType(uint8 data);
+    Tile::EType toTileType(uint8_t data);
 
 protected:
     //! All the tiles in the game

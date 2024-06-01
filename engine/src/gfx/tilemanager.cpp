@@ -5,6 +5,7 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -33,7 +34,7 @@
 /*!
  *
  */
-void unpackBlocks4(const uint8 * data, uint8 * pixels)
+void unpackBlocks4(const uint8_t * data, uint8_t * pixels)
 {
     for (int j = 0; j < 4; ++j) {
         for (int i = 0; i < 8; ++i) {
@@ -41,13 +42,13 @@ void unpackBlocks4(const uint8 * data, uint8 * pixels)
                 pixels[j * 8 + i] = 255;        // transparent
             } else {
                 pixels[j * 8 + i] =
-                    static_cast < uint8 >
+                    static_cast < uint8_t >
                     ((bitValue(data[4 + j], 7 - i) << 0) & 0xff)
-                    | static_cast < uint8 >
+                    | static_cast < uint8_t >
                     ((bitValue(data[8 + j], 7 - i) << 1) & 0xff)
-                    | static_cast < uint8 >
+                    | static_cast < uint8_t >
                     ((bitValue(data[12 + j], 7 - i) << 2) & 0xff)
-                    | static_cast < uint8 >
+                    | static_cast < uint8_t >
                     ((bitValue(data[16 + j], 7 - i) << 3) & 0xff);
             }
         }
@@ -57,8 +58,8 @@ void unpackBlocks4(const uint8 * data, uint8 * pixels)
 /*!
  *
  */
-void loadSubTile(const uint8 * data, uint32 offset, uint32 index,
-                 uint32 stride, uint8 * pixels)
+void loadSubTile(const uint8_t * data, int offset, int index,
+                 int stride, uint8_t * pixels)
 {
     if (offset < TILE_HEADER_LENGTH)
         return;
@@ -101,16 +102,16 @@ TileManager::~TileManager()
  * \param type The tile type
  * \return The loaded tile.
  */
-Tile * TileManager::loadTile(uint8 * tileData, uint8 id, Tile::EType type)
+Tile * TileManager::loadTile(uint8_t * tileData, int id, Tile::EType type)
 {
-    uint32 offset = id * TILE_INDEX_SIZE;
-    uint8 a_tile_data[TILE_WIDTH * TILE_HEIGHT];
+    int offset = id * TILE_INDEX_SIZE;
+    uint8_t a_tile_data[TILE_WIDTH * TILE_HEIGHT];
     memset(a_tile_data, 255, TILE_WIDTH * TILE_HEIGHT);
 
     for (int i = 0; i < SUBTILES_PERtile__X; ++i) {
         for (int j = 0; j < SUBTILES_PERtile__Y; ++j) {
-            uint32 subTileOffset =
-                READ_LE_UINT32(tileData + offset +
+            int subTileOffset =
+                READ_LE_INT32(tileData + offset +
                                (i * SUBTILES_PERtile__Y + j) * 4);
             loadSubTile(tileData, subTileOffset,
                         (SUBTILES_PERtile__Y - 1 -

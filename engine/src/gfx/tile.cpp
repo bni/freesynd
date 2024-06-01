@@ -31,11 +31,11 @@
 #include "fs-engine/gfx/screen.h"
 
 
-Tile::Tile(uint8 id_set, uint8 *tile_Data, bool not_alpha, EType type_set)
+Tile::Tile(int id_set, uint8_t *tile_Data, bool not_alpha, EType type_set)
 {
     i_id_ = id_set;
     e_type_ = type_set;
-    a_pixels_ = new uint8[TILE_WIDTH * TILE_HEIGHT];
+    a_pixels_ = new uint8_t[TILE_WIDTH * TILE_HEIGHT];
     memcpy(a_pixels_, tile_Data, TILE_WIDTH * TILE_HEIGHT);
     not_alpha_ = not_alpha;
 }
