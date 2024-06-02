@@ -113,8 +113,8 @@ void ConfMenu::createPanels() {
     getStatic(logoStaticId_)->setVisible(false);
 
     // Change names textfields
-    pUserNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession.kNameMaxSize);
-    pCompNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession.kNameMaxSize);
+    pUserNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession::kNameMaxSize);
+    pCompNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession::kNameMaxSize);
 }
 
 void ConfMenu::handleRender(DirtyList &dirtyList) {

@@ -153,7 +153,7 @@ bool GameSession::reset() {
     return researchMan_.reset();
 }
 
-Block & GameSession::getBlock(uint8 index) {
+Block & GameSession::getBlock(int index) {
     return g_Blocks[index];
 }
 

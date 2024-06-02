@@ -49,7 +49,7 @@ enum Status_Blk {
     BLK_REBEL = 3
 };
 
-typedef struct Block_ {
+struct Block {
     const char *name;
     /*! Default population number.*/
     int defPopulation;
@@ -87,7 +87,7 @@ typedef struct Block_ {
     unsigned char infoLevel;
     /*! Details level for briefing. */
     unsigned char enhanceLevel;
-} Block;
+};
 
 class Mission;
 class Agent;
@@ -103,7 +103,7 @@ public:
     /*! Total number of missions. */
     static const int NB_MISSION;
     //! Maximum length for user's and company's name
-    const int kTextfieldMaxSize;
+    static const int kNameMaxSize;
 
     GameSession(WeaponManager *pWeaponManager, ModManager *pModManager);
     ~GameSession();
@@ -205,7 +205,7 @@ public:
     void getTimeAsStr(char *dest);
 
     //! Returns the Block at the given index.
-    Block & getBlock(uint8 index);
+    Block & getBlock(int index);
 
     /*!
      * Returns the index of the current selected region on map menu.

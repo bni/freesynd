@@ -69,7 +69,7 @@ App::~App() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool App::doInitialize(const CliParam& param) {
+bool App::doInitialize([[maybe_unused]] const CliParam& param) {
 
     LOG(Log::k_FLG_INFO, "App", "initialize", ("loading game tileset..."))
     if (!maps().initialize()) {
