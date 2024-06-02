@@ -86,6 +86,7 @@ int g_syndicate_color_id[7];
 
 const int GameSession::HOUR_DELAY = 4000;
 const int GameSession::NB_MISSION = 50;
+const int GameSession::kNameMaxSize = 16;
 
 GameSession::GameSession(WeaponManager *pWeaponManager, ModManager *pModManager) : researchMan_(pWeaponManager, pModManager) {
     enable_all_mis_ = false;
@@ -495,9 +496,9 @@ int GameSession::updateCountries() {
 //! Save instance to file
 bool GameSession::saveToFile(PortableFile &file) {
     // Company name
-    file.write_string(company_name_, 16);
+    file.write_string(company_name_, kNameMaxSize);
     // User name
-    file.write_string(username_, 16);
+    file.write_string(username_, kNameMaxSize);
     // Logo
     file.write32(logo_);
     // Logo colour
@@ -530,15 +531,16 @@ bool GameSession::saveToFile(PortableFile &file) {
 //! Load instance from file
 bool GameSession::loadFromFile(PortableFile &infile, const FormatVersion& v) {
     // Read company name
-    company_name_ = infile.read_string((v == 0x0100) ? 17 : 16, true);
+    company_name_ = infile.read_string((v == 0x0100) ? 17 : kNameMaxSize, true);
     // Read user name
-    username_ = infile.read_string((v == 0x0100) ? 17 : 16, true);
+    username_ = infile.read_string((v == 0x0100) ? 17 : kNameMaxSize, true);
 
     // Read logo id
     logo_ = infile.reads32();
-    // Read logo colour
+    // Read logo colour : before 1.3, we stored directly the color value
     if (v.majorVersion() == 1 && v.minorVersion() < 3) {
         int32_t color = infile.reads32();
+        // So find the index of the color now
         for (int i = 0; i < g_LogoMgr.kMaxColour; i++) {
             if (g_LogoMgr.getColorAtIndex(i) == color) {
                 logo_colour_ = i;

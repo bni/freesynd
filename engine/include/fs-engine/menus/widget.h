@@ -2,7 +2,8 @@
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
  *                                                                      *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2010-2024
+ *                       Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -151,9 +152,9 @@ public:
 
     void setLocation(int x, int y);
 
-    void setText(const char * text);
+    void setText(const char * text, bool resolve = true);
     void setTextFormated(const char * format, ...);
-    std::string getText() { return text_; }
+    std::string& getText() { return text_; }
 
     void setHighlighted(bool highlighted);
     bool isHighlighted() { return highlighted_; }
@@ -165,7 +166,7 @@ protected:
     /*!
      * Utility method to update text and compute associated data.
      */
-    void updateText(const char *text);
+    void updateText(const char *text, bool resolve);
 
 protected:
     /*! The text to be displayed.*/
@@ -402,7 +403,7 @@ public:
 
     //! Constructs a new textfield.
     TextField(Menu *peer, int x, int y, int width, int height, MenuFont *pFont,
-            int maxSize, bool displayEmpty, bool visible);
+            size_t maxSize, bool displayEmpty, bool visible);
 
     ~TextField();
 

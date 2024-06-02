@@ -27,6 +27,7 @@
 
 #include "utf8.h"
 
+#include "fs-utils/log/log.h"
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/gfx/screen.h"
@@ -70,7 +71,7 @@ MenuText::MenuText(Menu *peer, int x, int y, const char *text, MenuFont *pFont,
         // Height is fixed by font size
         height_ = pFont->textHeight();
 
-        updateText(text);
+        updateText(text, true);
 }
 
 MenuText::MenuText(Menu *peer, int x, int y, int width, const char *text, MenuFont *pFont,
@@ -86,13 +87,20 @@ MenuText::MenuText(Menu *peer, int x, int y, int width, const char *text, MenuFo
     // Height is fixed by font size
     height_ = pFont->textHeight();
 
-    updateText(text);
+    updateText(text, true);
 }
 
-void MenuText::updateText(const char *text) {
+/**
+ *
+ * \param text const char*
+ * \param resolve bool True to look in the language file
+ * \return void
+ *
+ */
+void MenuText::updateText(const char *text, bool resolve) {
     std::string lbl(text);
     // Find if string starts with '#' caracter
-    if (lbl.find_first_of('#') == 0) {
+    if (resolve && lbl.find_first_of('#') == 0) {
         // Erase the # caracter
         lbl.erase(0, 1);
         // and looks for the message in the langage file
@@ -112,12 +120,13 @@ void MenuText::updateText(const char *text) {
 
 /*!
  * Modify the MenuText text.
- * If the given text starts with a '#', the remaining
+ * If the given text starts with a '#' and if resolve param is true, the remaining
  * text identifies a key in the language file.
  * \param text to set
+ * \param resolve
  */
-void MenuText::setText(const char *text) {
-    updateText(text);
+void MenuText::setText(const char *text, bool resolve) {
+    updateText(text, resolve);
     redraw();
 }
 
@@ -146,7 +155,7 @@ void MenuText::setTextFormated(const char * format, ...) {
     vsprintf(tmp, lbl.c_str(), list);
     va_end(list);
 
-    setText(tmp);
+    setText(tmp, false);
 }
 
 void MenuText::setLocation(int x, int y) {
@@ -188,36 +197,27 @@ void ActionWidget::setWidgetEnabled(bool enabled) {
 }
 
 Option::Option(Menu *peer, int x, int y, int width, int height, const char *text,
-    MenuFont *pFont, int to, bool visible, bool centered, int darkWidgetId,
-    int lightWidgetId) : ActionWidget(peer, x, y, width, height, visible),
-    text_(peer, x, y, width - 4, text, pFont, false, true, centered)
-{
-        to_ = to;
-        darkWidget_ = NULL;
-        lightWidget_ = NULL;
-        hotKeyCode_ = kKeyCode_Unknown;
+               MenuFont *pFont, int to, bool visible, bool centered, int darkWidgetId,
+               int lightWidgetId)
+        : ActionWidget(peer, x, y, width, height, visible),
+          text_(peer, x, y, width - 4, text, pFont, false, true, centered) {
+    to_ = to;
+    darkWidget_ = NULL;
+    lightWidget_ = NULL;
+    hotKeyCode_ = kKeyCode_Unknown;
 
-        // If button label contains a '&' caracter, then the next
-        // caracter is the acceleration key for that button
-        // only 'a-zA-Z' characters are available
-        char src[100];
-        size_t size = text_.getText().size();
+    // If button label contains a '&' character, then the next
+    // character is the acceleration key for that button
+    // only 'a-zA-Z' characters are available
+    std::string newText;
+    std::string::iterator b = text_.getText().begin();
+    std::string::iterator e = text_.getText().end();
 
-        memset(src, 0, 100);
-        memcpy(src, text_.getText().c_str(), size);
-        size_t nbCdpt = utf8::distance(src, src + size);
-
-        char tmp[100];
-        char *itSrc = src;
-        char *itDst = tmp;
-        memset(tmp, 0, 100);
-
-        size_t i = 0;
-        bool foundAmp = false;
-        while (i<nbCdpt) {
-            i++;
-            utf8::utfchar32_t cp = utf8::next(itSrc, src + size);
-            if (cp == '&') {
+    bool foundAmp = false;
+    while ( b != e ) {
+        try {
+            auto codePoint = utf8::next(b,e);
+            if (codePoint == 0x0026) {
                 if (!foundAmp) {
                     // found '&' : skip it
                     foundAmp = true;
@@ -225,33 +225,37 @@ Option::Option(Menu *peer, int x, int y, int width, int height, const char *text
                 }
             } else if (foundAmp && hotKeyCode_ == kKeyCode_Unknown) {
                 // if keyCode is a letter
-                if ((cp >= 0x0041 && cp <= 0x005A) || (cp >= 0x0061 && cp <= 0x007A)) {
+                if ((codePoint >= 0x0041 && codePoint <= 0x005A) || (codePoint >= 0x0061 && codePoint <= 0x007A)) {
                     // Only take capital letter
-                    if (cp >= 0x0061) {
-                        cp -= 32;
+                    if (codePoint >= 0x0061) {
+                        codePoint -= 32;
                     }
-                    hotKeyCode_ = static_cast < FS_KeyCode >(kKeyCode_A + (cp - 0x0041));
+                    hotKeyCode_ = static_cast < FS_KeyCode >(kKeyCode_A + (codePoint - 0x0041));
                 }
             }
             // copy char
-            itDst = utf8::append(cp, itDst);
+            utf8::append(codePoint, newText);
+        } catch (const utf8::invalid_utf8& exc) {
+            LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+            continue;
         }
-        text_.setText(tmp);
+    }
+    text_.setText(newText.c_str());
 
-        //////////////////////////
+    //////////////////////////
 
 
 
-        // Position the button text in the middle of height
-        // add 1 pixel to height to compensate lost of division
-        text_.setLocation(text_.getX(), y_ + (height_ / 2) - (text_.getHeight() / 2) + 1);
+    // Position the button text in the middle of height
+    // add 1 pixel to height to compensate lost of division
+    text_.setLocation(text_.getX(), y_ + (height_ / 2) - (text_.getHeight() / 2) + 1);
 
-        if (darkWidgetId != 0) {
-            darkWidget_ = peer->menuSprites().sprite(darkWidgetId);
-            lightWidget_ = peer->menuSprites().sprite(lightWidgetId);
-            // there's a small pad between heading widget ant text
-            text_.setLocation(text_.getX() + darkWidget_->width() * 2 + 8, text_.getY());
-        }
+    if (darkWidgetId != 0) {
+        darkWidget_ = peer->menuSprites().sprite(darkWidgetId);
+        lightWidget_ = peer->menuSprites().sprite(lightWidgetId);
+        // there's a small pad between heading widget ant text
+        text_.setLocation(text_.getX() + darkWidget_->width() * 2 + 8, text_.getY());
+    }
 }
 
 Option::~Option() {
@@ -519,9 +523,11 @@ void TeamListBox::setSquadLine(int squadSlot, unsigned int line) {
 // By default there's no empty label
 std::string TextField::emptyLbl_ = "";
 
-TextField::TextField(Menu *peer, int x, int y, int width, int height, MenuFont *pFont,
-            int maxSize, bool displayEmpty, bool visible)
-            : ActionWidget(peer, x, y, width, height, visible), text_(peer, x, y, width, "", pFont, false, visible, false) {
+TextField::TextField(Menu *peer, int x, int y, int width, int height,
+                     MenuFont *pFont, size_t maxSize, bool displayEmpty,
+                     bool visible)
+        : ActionWidget(peer, x, y, width, height, visible),
+          text_(peer, x, y, width, "", pFont, false, visible, false) {
 
     // Position the button text in the middle of height
     // add 1 pixel to height to compensate lost of division
@@ -555,11 +561,7 @@ void TextField::draw() {
 void TextField::handleCaptureGained() {
     isInEdition_ = true;
     // by default set the caret at the end of the text
-    char src[100];
-    size_t size = text_.getText().size();
-    memset(src, 0, 100);
-    memcpy(src, text_.getText().c_str(), size);
-    caretPosition_ = utf8::distance(src, src + size);
+    caretPosition_ = utf8::distance(text_.getText().begin(), text_.getText().end());
 
     g_System.startReceiveText();
 
@@ -582,28 +584,26 @@ void TextField::handleCaptureLost() {
 void TextField::handleBackSpace() {
     // Erase character only if caret is not on the first character
     if (caretPosition_ > 0) {
-        char src[100];
-        size_t size = text_.getText().size();
-        memset(src, 0, 100);
-        memcpy(src, text_.getText().c_str(), size);
+        std::string newText;
+        std::string::iterator b = text_.getText().begin();
+        std::string::iterator e = text_.getText().end();
 
-        char tmp[100];
-        char *itSrc = src;
-        char *itDst = tmp;
-        memset(tmp, 0, 100);
+        size_t currentPos = 0;
+        while ( b != e ) {
+            try {
+                auto codePoint = utf8::next(b,e);
 
-        size_t nbCdpt = utf8::distance(src, src + size);
+                if (currentPos != caretPosition_ - 1) {
+                    utf8::append(codePoint, newText);
+                }
+                currentPos++;
 
-        size_t i = 0;
-        while (i<nbCdpt) {
-            int cp = utf8::next(itSrc, src + size);
-            if (i != caretPosition_ - 1) {
-                itDst = utf8::append(cp, itDst);
+            } catch (const utf8::invalid_utf8& exc) {
+                LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+                continue;
             }
-            i++;
         }
-
-        setText(tmp);
+        setText(newText.c_str());
         caretPosition_--;
     }
 }
@@ -612,63 +612,69 @@ void TextField::handleBackSpace() {
  * Erase one character after caret.
  */
 void TextField::handleDelete() {
-    char src[100];
-    size_t size = text_.getText().size();
+    std::string newText;
+    std::string::iterator b = text_.getText().begin();
+    std::string::iterator e = text_.getText().end();
 
-    memset(src, 0, 100);
-    memcpy(src, text_.getText().c_str(), size);
-    size_t nbCdpt = utf8::distance(src, src + size);
+    size_t currentPos = 0;
+    while ( b != e ) {
+        try {
+            auto codePoint = utf8::next(b,e);
 
-    // Erase one character only if caret is not at the end
-    if (caretPosition_ < nbCdpt) {
-        char tmp[100];
-        char *itSrc = src;
-        char *itDst = tmp;
-        memset(tmp, 0, 100);
-
-        size_t i = 0;
-        while (i<nbCdpt) {
-            int cp = utf8::next(itSrc, src + size);
-            if (i != caretPosition_) {
-                itDst = utf8::append(cp, itDst);
+            if (currentPos != caretPosition_) {
+                utf8::append(codePoint, newText);
             }
-            i++;
-        }
+            currentPos++;
 
-        setText(tmp);
+        } catch (const utf8::invalid_utf8& exc) {
+            LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+            continue;
+        }
     }
+    setText(newText.c_str());
 }
 
 // Insert new character at caret position
 void TextField::handleCharacter(FS_Key key) {
     // Key can be displayed -> insert it at the caret position
-    char src[100];
-    size_t size = text_.getText().size();
-    memset(src, 0, 100);
-    memcpy(src, text_.getText().c_str(), size);
-    char *itSrc = src;
-    size_t nbCdpt = utf8::distance(src, src + size);
-    if (nbCdpt < maxSize_) {
-        char tmp[100];
-        char *itDst = tmp;
-        memset(tmp, 0, 100);
+    std::string newText;
+    std::string::iterator b = text_.getText().begin();
+    std::string::iterator e = text_.getText().end();
 
-        size_t i = 0;
-        while(i<caretPosition_) {
-            int cp = utf8::next(itSrc, src + size);
-            itDst = utf8::append(cp, itDst);
-            i++;
+    size_t currentPos = 0;
+    // Add all characters before the caret
+    while ( b != e ) {
+        try {
+            if (currentPos == caretPosition_) {
+                break;
+            }
+
+            auto codePoint = utf8::next(b,e);
+            utf8::append(codePoint, newText);
+            currentPos++;
+
+        } catch (const utf8::invalid_utf8& exc) {
+            LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+            continue;
         }
-        // Add the new key
-        itDst = utf8::append(key.codePoint, itDst);
+    }
+    // Add the new character
+    utf8::append(key.codePoint, newText);
+    currentPos++;
 
-        while(i<nbCdpt) {
-            int cp = utf8::next(itSrc, src + size);
-            itDst = utf8::append(cp, itDst);
-            i++;
+    while ( b != e ) {
+        try {
+            auto codePoint = utf8::next(b,e);
+            utf8::append(codePoint, newText);
+            currentPos++;
+        } catch (const utf8::invalid_utf8& exc) {
+            LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+            continue;
         }
-        setText(tmp);
+    }
 
+    if (currentPos <= maxSize_) {
+        setText(newText.c_str());
         caretPosition_++;
     }
 }
@@ -682,12 +688,7 @@ bool TextField::handleKey(FS_Key key) {
             needRedraw = true;
         }
     } else if (key.keyCode == kKeyCode_Right) {
-        char src[100];
-        size_t size = text_.getText().size();
-
-        memset(src, 0, 100);
-        memcpy(src, text_.getText().c_str(), size);
-        size_t dist = utf8::distance(src, src + size);
+        auto dist = utf8::distance(text_.getText().begin(), text_.getText().end());
         // Move caret to the right until the end of the text
         if (caretPosition_ < dist) {
             caretPosition_++;
@@ -701,12 +702,7 @@ bool TextField::handleKey(FS_Key key) {
         caretPosition_ = 0;
         needRedraw = true;
     } else if (key.keyCode == kKeyCode_End) {
-        char src[100];
-        size_t size = text_.getText().size();
-
-        memset(src, 0, 100);
-        memcpy(src, text_.getText().c_str(), size);
-        caretPosition_ = utf8::distance(src, src + size);
+        caretPosition_ = utf8::distance(text_.getText().begin(), text_.getText().end());
         needRedraw = true;
     } else if (key.keyCode == kKeyCode_Text) {
         if (text_.getFont()->isPrintable(key.codePoint)) {
@@ -724,15 +720,10 @@ bool TextField::handleKey(FS_Key key) {
 void TextField::handleMouseDown(Point2D point, [[maybe_unused]] int button) {
     getPeer()->captureInputBy(this);
 
-    char src[100];
-    size_t sizeByte = text_.getText().size();
-
-    memset(src, 0, 100);
-    memcpy(src, text_.getText().c_str(), sizeByte);
-    size_t nbCdpt = utf8::distance(src, src + sizeByte);
+    size_t nbCdpt = utf8::distance(text_.getText().begin(), text_.getText().end());
 
     // Size in pixel of the text
-    int sizePxl = text_.getFont()->textWidth(src);
+    int sizePxl = text_.getFont()->textWidth(text_.getText());
 
     // computes caret position
     if (point.x > sizePxl + getX()) {
@@ -740,21 +731,25 @@ void TextField::handleMouseDown(Point2D point, [[maybe_unused]] int button) {
         caretPosition_ = nbCdpt;
     } else {
         // Clicked in the text so computes what exact letter
-        char tmp[100];
-        char *itSrc = src;
-        char *itDst = tmp;
-        memset(tmp, 0, 100);
+        std::string tmpText;
+        std::string::iterator b = text_.getText().begin();
+        std::string::iterator e = text_.getText().end();
 
-        size_t i = 0;
-        while (i<nbCdpt) {
-            int cp = utf8::next(itSrc, src + sizeByte);
-            itDst = utf8::append(cp, itDst);
+        size_t currentPos = 0;
+        while ( b != e ) {
+            try {
+                auto codePoint = utf8::next(b,e);
+                utf8::append(codePoint, tmpText);
 
-            if (point.x < getX() + text_.getFont()->textWidth(tmp)) {
-                caretPosition_ = i;
-                break;
+                if (point.x < getX() + text_.getFont()->textWidth(tmpText)) {
+                    caretPosition_ = currentPos;
+                    break;
+                }
+                currentPos++;
+            } catch (const utf8::invalid_utf8& exc) {
+                LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+                continue;
             }
-            i++;
         }
     }
 
@@ -762,42 +757,47 @@ void TextField::handleMouseDown(Point2D point, [[maybe_unused]] int button) {
 }
 
 void TextField::setText(const char* text) {
-    text_.setText(text);
+    // don't allow resolve in case user has enter "#" in the text
+    text_.setText(text, false);
     redraw();
 }
 
 void TextField::drawCaret() {
-    char src[100];
-    size_t size = text_.getText().size();
-    memset(src, 0, 100);
-    memcpy(src, text_.getText().c_str(), size);
+    int caretLength = 10; // 10 pixels by default
+    std::string tmpText;
+    std::string::iterator b = text_.getText().begin();
+    std::string::iterator e = text_.getText().end();
 
-    char tmp[100];
-    char *itSrc = src;
-    char *itDst = tmp;
-    memset(tmp, 0, 100);
+    size_t currentPos = 0;
+    // Get all characters before the caret
+    while ( b != e ) {
+        try {
+            if (currentPos == caretPosition_) {
+                break;
+            }
 
-    size_t nbCdpt = utf8::distance(src, src + size);
+            auto codePoint = utf8::next(b,e);
+            utf8::append(codePoint, tmpText);
+            currentPos++;
 
-    size_t i = 0;
-    while (i<caretPosition_) {
-        int cp = utf8::next(itSrc, src + size);
-        itDst = utf8::append(cp, itDst);
-        i++;
+        } catch (const utf8::invalid_utf8& exc) {
+            LOG(Log::k_FLG_IO, "Option", "Option", ("Invalid utf8 character in %s", text_.getText().c_str()));
+            continue;
+        }
     }
 
-    int x = getX() + text_.getFont()->textWidth(tmp) + 1;
+    // Find the width in pixel of all the text before the caret
+    // this will give the starting point of the caret
+    int x = getX() + text_.getFont()->textWidth(tmpText) + 1;
+    tmpText.erase();
 
     // width of caret is the same of the letter above
-    int length = 10;
-    if (caretPosition_ < nbCdpt) {
-        memset(tmp, 0, 100);
-        itDst = tmp;
-        int cp = utf8::next(itSrc, src + size);
-        itDst = utf8::append(cp, itDst);
-        length = text_.getFont()->textWidth(tmp);
+    if (b != e) {
+        auto codePoint = utf8::next(b,e);
+        utf8::append(codePoint, tmpText);
+        caretLength = text_.getFont()->textWidth(tmpText);
     }
 
     // Draw caret
-    g_Screen.drawRect(x, yCaret_, length, 2, 252);
+    g_Screen.drawRect(x, yCaret_, caretLength, 2, 252);
 }

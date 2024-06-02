@@ -6,9 +6,10 @@
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
- *   Copyright (C) 2010  Benoit Blancard <benblan@users.sourceforge.net>*
  *   Copyright (C) 2011  Bohdan Stelmakh <chamel@users.sourceforge.net> *
  *   Copyright (C) 2011  Joey Parrish <joey.parrish@gmail.com>          *
+ *   Copyright (C) 2010-2024
+ *                       Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -26,10 +27,11 @@
  *                                                                      *
  ************************************************************************/
 
+#include "confmenu.h"
+
 #include <stdio.h>
 #include <assert.h>
 
-#include "confmenu.h"
 #include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 #include "core/gamecontroller.h"
@@ -37,7 +39,6 @@
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
-#define NAME_MAX_SIZE 16
 
 ConfMenu::ConfMenu(MenuManager *m) :
         Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain,
@@ -112,8 +113,8 @@ void ConfMenu::createPanels() {
     getStatic(logoStaticId_)->setVisible(false);
 
     // Change names textfields
-    pUserNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, NAME_MAX_SIZE);
-    pCompNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, NAME_MAX_SIZE);
+    pUserNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession.kNameMaxSize);
+    pCompNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession.kNameMaxSize);
 }
 
 void ConfMenu::handleRender(DirtyList &dirtyList) {
@@ -140,8 +141,8 @@ void ConfMenu::handleShow() {
     toAcceptLogo_ = g_Session.getLogo();
     toAcceptColourId_ = g_Session.getLogoColour();
 
-    getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName());
-    getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName());
+    getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName(), false);
+    getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName(), false);
 
     g_System.showCursor();
 }
@@ -182,9 +183,9 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
             toAcceptColourId_ = tempColourId_;
             toAcceptLogo_ = tempLogo_;
         } else if (currPanel_ == PNL_USRNM) {
-            getStatic(toAcceptUsrNameTxtId_)->setText(pUserNameTF_->getText().c_str());
+            getStatic(toAcceptUsrNameTxtId_)->setText(pUserNameTF_->getText().c_str(), false);
         } else {
-            getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str());
+            getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
         }
         redrawLogo();
         showMainPanel();
@@ -209,9 +210,9 @@ bool ConfMenu::handleUnMappedKey(const FS_Key key) {
                 toAcceptColourId_ = tempColourId_;
                 toAcceptLogo_ = tempLogo_;
             } else if (currPanel_ == PNL_USRNM) {
-                getStatic(toAcceptUsrNameTxtId_)->setText(pUserNameTF_->getText().c_str());
+                getStatic(toAcceptUsrNameTxtId_)->setText(pUserNameTF_->getText().c_str(), false);
             } else {
-                getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str());
+                getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
             }
             redrawLogo();
             showMainPanel();

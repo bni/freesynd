@@ -102,6 +102,8 @@ public:
     static const int HOUR_DELAY;
     /*! Total number of missions. */
     static const int NB_MISSION;
+    //! Maximum length for user's and company's name
+    const int kTextfieldMaxSize;
 
     GameSession(WeaponManager *pWeaponManager, ModManager *pModManager);
     ~GameSession();
