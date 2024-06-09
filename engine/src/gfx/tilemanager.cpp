@@ -61,27 +61,34 @@ void unpackBlocks4(const uint8_t * data, uint8_t * pixels)
 void loadSubTile(const uint8_t * data, int offset, int index,
                  int stride, uint8_t * pixels)
 {
-    if (offset < TILE_HEADER_LENGTH)
+    if (offset < TileManager::kTileHeaderLength)
         return;
 
     data += offset;
 
-    for (int i = 0; i < SUBTILE_HEIGHT; ++i) {
+    for (int i = 0; i < Tile::kSubileHeight; ++i) {
         unpackBlocks4(data,
-                      pixels + index + (SUBTILE_HEIGHT - 1 - i) * stride);
-        data += SUBTILE_ROW_LENGTH;
+                      pixels + index + (Tile::kSubileHeight - 1 - i) * stride);
+        data += TileManager::kSubtileRowLength;
     }
 }
 
 const int TileManager::kNumOfTiles = 256;
+const int TileManager::kSubtilePerWidth = 2;
+const int TileManager::kSubtilePerHeight = 3;
+const int TileManager::kSubtilePerTile = 6;
+const int TileManager::kTileIndexSize = 6 * 4;  // total of subtiles per tile * number of bytes for a subtile
+const int TileManager::kTileHeaderLength = 256 * kTileIndexSize; // There a 256 tiles
+const int TileManager::kBlocksPerSubtileRow = 32 / 8;
+const int TileManager::kSubtileRowLength = (4 + 1) * kBlocksPerSubtileRow;
 
 /*!
  * Default constructor.
  */
 TileManager::TileManager()
 {
-    a_tiles_ = new Tile*[kNumOfTiles];
-    memset(a_tiles_, 0, sizeof(Tile*) * kNumOfTiles);
+    tiles_ = new Tile*[kNumOfTiles];
+    memset(tiles_, 0, sizeof(Tile*) * kNumOfTiles);
 }
 
 /*!
@@ -90,9 +97,9 @@ TileManager::TileManager()
 TileManager::~TileManager()
 {
     for (uint32 i = 0; i < (uint32)kNumOfTiles; i++) {
-        delete a_tiles_[i];
+        delete tiles_[i];
     }
-    delete [] a_tiles_;
+    delete [] tiles_;
 }
 
 /*!
@@ -102,37 +109,36 @@ TileManager::~TileManager()
  * \param type The tile type
  * \return The loaded tile.
  */
-Tile * TileManager::loadTile(uint8_t * tileData, int id, Tile::EType type)
+Tile * TileManager::loadTile(const uint8_t * tilesData, int id, Tile::EType type)
 {
-    int offset = id * TILE_INDEX_SIZE;
-    uint8_t a_tile_data[TILE_WIDTH * TILE_HEIGHT];
-    memset(a_tile_data, 255, TILE_WIDTH * TILE_HEIGHT);
+    int offset = id * kTileIndexSize;
+    uint8_t tilePixels[Tile::kTileWidth * Tile::kTileHeight];
+    memset(tilePixels, 255, Tile::kTileWidth * Tile::kTileHeight);
 
-    for (int i = 0; i < SUBTILES_PERtile__X; ++i) {
-        for (int j = 0; j < SUBTILES_PERtile__Y; ++j) {
+    for (int i = 0; i < kSubtilePerWidth; ++i) {
+        for (int j = 0; j < kSubtilePerHeight; ++j) {
             int subTileOffset =
-                READ_LE_INT32(tileData + offset +
-                               (i * SUBTILES_PERtile__Y + j) * 4);
-            loadSubTile(tileData, subTileOffset,
-                        (SUBTILES_PERtile__Y - 1 -
-                         j) * SUBTILE_HEIGHT * TILE_WIDTH +
-                        i * SUBTILE_WIDTH, TILE_WIDTH, a_tile_data);
+                READ_LE_INT32(tilesData + offset +
+                               (i * kSubtilePerHeight + j) * 4);
+            loadSubTile(tilesData, subTileOffset,
+                        (kSubtilePerHeight - 1 - j) * Tile::kSubileHeight * Tile::kTileWidth + i * Tile::kSubtileWidth,
+                        Tile::kTileWidth, tilePixels);
         }
     }
 
     // If at least one pixel is not transparent
     // not_alpha will be true and so tile will be drawn
-    bool not_alpha = false;
-    for (int h = 0; h < TILE_HEIGHT; h++) {
-        for (int w = 0; w < TILE_WIDTH; w++)
-            if (a_tile_data[h * TILE_HEIGHT + w] != 255) {
-                not_alpha = true;
+    bool notAlpha = false;
+    for (int h = 0; h < Tile::kTileHeight; h++) {
+        for (int w = 0; w < Tile::kTileWidth; w++)
+            if (tilePixels[h * Tile::kTileHeight + w] != 255) {
+                notAlpha = true;
                 break;
             }
     }
 
-    Tile *p_tile = new Tile(id, a_tile_data, not_alpha, type);
-    return p_tile;
+    Tile *tile = new Tile(id, tilePixels, notAlpha, type);
+    return tile;
 }
 
 /*!
@@ -207,7 +213,7 @@ bool TileManager::loadTiles()
 
     // Loads all tiles
     for (int i = 0; i < kNumOfTiles; ++i) {
-        a_tiles_[i] = loadTile(tileData, i, toTileType(type_data[i]));
+        tiles_[i] = loadTile(tileData, i, toTileType(type_data[i]));
     }
 
     delete[] type_data;
@@ -230,5 +236,5 @@ Tile * TileManager::getTile(uint8 tileNum) {
     }
 #endif
 
-    return a_tiles_[tileNum];
+    return tiles_[tileNum];
 }

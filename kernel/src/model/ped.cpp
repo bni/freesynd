@@ -668,14 +668,14 @@ bool getOnScreen(int scrollX, int scrollY, Point2D &scPt, const Point2D &tScPt) 
 void PedInstance::showPath(int scrollX, int scrollY) {
     Point2D pedScPt;
     pMap_->tileToScreenPoint(pos_, &pedScPt);
-    pedScPt.y = pedScPt.y - pos_.tz * TILE_HEIGHT/3 + TILE_HEIGHT/3;
+    pedScPt.y = pedScPt.y - pos_.tz * Tile::kTileHeight/3 + Tile::kTileHeight/3;
 
     for (std::list<TilePoint>::iterator it = dest_path_.begin();
             it != dest_path_.end(); ++it) {
         TilePoint & d = *it;
         Point2D pathSp;
         pMap_->tileToScreenPoint(d, &pathSp);
-        pathSp.y = pathSp.y - d.tz * TILE_HEIGHT/3 + TILE_HEIGHT/3;
+        pathSp.y = pathSp.y - d.tz * Tile::kTileHeight/3 + Tile::kTileHeight/3;
 
         int ox = pathSp.x;
         int oy = pathSp.y;

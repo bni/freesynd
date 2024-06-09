@@ -102,9 +102,9 @@ void MapObject::setOffZ(int n)
 Point2D MapObject::addOffs(const Point2D &screenPos)
 {
     Point2D posWithOffs;
-    posWithOffs.x = (((pos_.ox - pos_.oy) * (TILE_WIDTH / 2)) / 256) + screenPos.x;
-    posWithOffs.y = (((pos_.ox + pos_.oy) * (TILE_HEIGHT / 3)) / 256) + screenPos.y;
-    posWithOffs.y -= (pos_.oz * (TILE_HEIGHT / 3)) / 128;
+    posWithOffs.x = (((pos_.ox - pos_.oy) * (Tile::kTileWidth / 2)) / 256) + screenPos.x;
+    posWithOffs.y = (((pos_.ox + pos_.oy) * (Tile::kTileHeight / 3)) / 256) + screenPos.y;
+    posWithOffs.y -= (pos_.oz * (Tile::kTileHeight / 3)) / 128;
 
     return posWithOffs;
 }

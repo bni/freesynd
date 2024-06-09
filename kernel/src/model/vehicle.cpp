@@ -74,7 +74,7 @@ void VehicleAnimation::set_base_anims(int anims) {
 void Vehicle::draw(const Point2D &screenPos)
 {
     Point2D posWithOffs = screenPos;
-    posWithOffs.y += TILE_HEIGHT / 3;
+    posWithOffs.y += Tile::kTileHeight / 3;
     posWithOffs = addOffs(posWithOffs);
 
     // ensure on map

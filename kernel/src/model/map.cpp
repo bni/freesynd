@@ -79,8 +79,8 @@ bool Map::loadMap(uint8 * mapData)
         }
     }
 
-    map_width_ = (max_x_ + max_y_) * (TILE_WIDTH / 2);
-    map_height_ = (max_x_ + max_y_ + max_z_) * TILE_HEIGHT / 3;
+    map_width_ = (max_x_ + max_y_) * (Tile::kTileWidth / 2);
+    map_height_ = (max_x_ + max_y_ + max_z_) * Tile::kTileHeight / 3;
     LOG(Log::k_FLG_GFX, "Map", "loadMap",
         ("Map size in pixels: width = %d, height = %d.", map_width_, map_height_));
 
@@ -155,10 +155,10 @@ void Map::tileToScreenPoint(int x, int y, int z, int pX, int pY, Point2D *pScp)
     float fx = x + pX / scalexPx;
     float fy = y + pY / scalexPy;
 
-    pScp->x = (int) ((max_x_ * TILE_WIDTH / 2) + (fx - fy) * TILE_WIDTH / 2
-                  + TILE_WIDTH / 2);
+    pScp->x = (int) ((max_x_ * Tile::kTileWidth / 2) + (fx - fy) * Tile::kTileWidth / 2
+                  + Tile::kTileWidth / 2);
 
-    pScp->y = (int) ((max_z_ + 1) * TILE_HEIGHT / 3 + (fx + fy) * TILE_HEIGHT / 3);
+    pScp->y = (int) ((max_z_ + 1) * Tile::kTileHeight / 3 + (fx + fy) * Tile::kTileHeight / 3);
 }
 
 void Map::tileToScreenPoint(const TilePoint &tPt, Point2D *pScp) {
@@ -176,13 +176,13 @@ TilePoint Map::screenToTilePoint(int x, int y)
 {
     TilePoint mtp;
 
-    x -= (max_x_ + 1) * (TILE_WIDTH / 2);
-    // x now equals fx * TILE_WIDTH / 2 - fy * TILE_WIDTH / 2
-    // which equals TILE_WIDTH/2 * (fx - fy)
-    y -= (max_z_ + 1) * (TILE_HEIGHT / 3);
-    // y now equals (fx + fy) * TILE_HEIGHT / 3
-    float dx = (float) x / (TILE_WIDTH / 2);
-    float dy = (float) y / (TILE_HEIGHT / 3);
+    x -= (max_x_ + 1) * (Tile::kTileWidth / 2);
+    // x now equals fx * Tile::kTileWidth / 2 - fy * Tile::kTileWidth / 2
+    // which equals Tile::kTileWidth/2 * (fx - fy)
+    y -= (max_z_ + 1) * (Tile::kTileHeight / 3);
+    // y now equals (fx + fy) * Tile::kTileHeight / 3
+    float dx = (float) x / (Tile::kTileWidth / 2);
+    float dy = (float) y / (Tile::kTileHeight / 3);
 
     // dx equals fx - fy
     // dy equals fx + fy

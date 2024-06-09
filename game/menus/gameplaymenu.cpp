@@ -555,8 +555,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(p->position(), &scPt);
                 int px = scPt.x - 10;
-                int py = scPt.y - (1 + p->tileZ()) * TILE_HEIGHT/3
-                    - (p->offZ() * TILE_HEIGHT/3) / 128;
+                int py = scPt.y - (1 + p->tileZ()) * Tile::kTileHeight/3
+                    - (p->offZ() * Tile::kTileHeight/3) / 128;
 
                 if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
                     point.x - 129 + displayOriginPt_.x < px + 21 && point.y + displayOriginPt_.y < py + 34)
@@ -576,7 +576,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(v->position(), &scPt);
                 int px = scPt.x - 20;
-                int py = scPt.y - 10 - v->tileZ() * TILE_HEIGHT/3;
+                int py = scPt.y - 10 - v->tileZ() * Tile::kTileHeight/3;
 
                 if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
                     point.x - 129 + displayOriginPt_.x < px + 40 && point.y + displayOriginPt_.y < py + 32)
@@ -595,8 +595,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(w->position(), &scPt);
                 int px = scPt.x - 10;
-                int py = scPt.y + 4 - w->tileZ() * TILE_HEIGHT/3
-                    - (w->offZ() * TILE_HEIGHT/3) / 128;
+                int py = scPt.y + 4 - w->tileZ() * Tile::kTileHeight/3
+                    - (w->offZ() * Tile::kTileHeight/3) / 128;
 
                 if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
                     point.x - 129 + displayOriginPt_.x < px + 20 && point.y + displayOriginPt_.y < py + 15)
@@ -615,8 +615,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(w->position(), &scPt);
                 int px = scPt.x - 10;
-                int py = scPt.y + 4 - s->tileZ() * TILE_HEIGHT/3
-                    - (s->offZ() * TILE_HEIGHT/3) / 128;
+                int py = scPt.y + 4 - s->tileZ() * Tile::kTileHeight/3
+                    - (s->offZ() * Tile::kTileHeight/3) / 128;
 
                 if (x - 129 + displayOriginPt_.x >= px && y + displayOriginPt_.y >= py &&
                     x - 129 + displayOriginPt_.x < px + 20 && y + displayOriginPt_.y < py + 15)

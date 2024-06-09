@@ -36,6 +36,23 @@ class TileManager {
 public:
     /*! The total number of tiles.*/
     static const int kNumOfTiles;
+    //! The number of subtiles horizontally for a tile
+    static const int kSubtilePerWidth;
+    //! The number of subtiles vertically for a tile
+    static const int kSubtilePerHeight;
+    //! The total number of subtiles for a tile
+    static const int kSubtilePerTile;
+    /*!
+     * The size in bytes of the indexes of subtiles for tile in the header file.
+     * There are 6 subtiles of 4 bytes for each tile.
+     */
+    static const int kTileIndexSize;
+    //! The length in bytes of the header : there are 256 tiles.
+    static const int kTileHeaderLength;
+    //! SUBTILE_WIDTH / PIXELS_PER_BLOCK
+    static const int kBlocksPerSubtileRow;
+    //! (COLOR_BYTES_PER_BLOCK + ALPHA_BYTES_PER_BLOCK) * BLOCKS_PER_SUBTILE_ROW
+    static const int kSubtileRowLength;
 
     TileManager();
     ~TileManager();
@@ -47,13 +64,13 @@ public:
 
 protected:
     //! Load a given tile
-    Tile * loadTile(uint8_t * tileData, int id, Tile::EType type);
+    Tile * loadTile(const uint8_t * tileData, int id, Tile::EType type);
     //! Returns the good enum for the given data
     Tile::EType toTileType(uint8_t data);
 
 protected:
     //! All the tiles in the game
-    Tile **a_tiles_;
+    Tile **tiles_;
 };
 
 #endif

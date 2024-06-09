@@ -7,7 +7,8 @@
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2006  Tarjei Knapstad <tarjei.knapstad@gmail.com>    *
  *   Copyright (C) 2010  Bohdan Stelmakh <chamel@users.sourceforge.net> *
- *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2013-2024                                            *
+ *                       Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -52,8 +53,8 @@ void MapRenderer::render(const Point2D &viewport) {
     //  - Some advert panels lack a corner
     TilePoint mtp = pMap_->screenToTilePoint(viewport.x, viewport.y);
     int sw = mtp.tx;
-    int chk = Screen::kScreenWidth / (TILE_WIDTH / 2) + 2
-        + Screen::kScreenHeight / (TILE_HEIGHT / 3) + pMap_->maxZ() * 2;
+    int chk = Screen::kScreenWidth / (Tile::kTileWidth / 2) + 2
+        + Screen::kScreenHeight / (Tile::kTileHeight / 3) + pMap_->maxZ() * 2;
     int sh = mtp.ty - 8;
 
     int shm = sh + chk;
@@ -84,12 +85,12 @@ void MapRenderer::render(const Point2D &viewport) {
                     --tile_y;
                     continue;
                 }
-                int screen_w = (pMap_->maxX() + (tile_x - tile_y)) * (TILE_WIDTH / 2);
-                int coord_h = ((pMap_->maxZ() + tile_x + tile_y) - (tile_z - 1)) * (TILE_HEIGHT / 3);
-                if (screen_w >= viewport.x - TILE_WIDTH * 2
-                    && screen_w + TILE_WIDTH * 2 < cmw
-                    && coord_h >= viewport.y - TILE_HEIGHT * 2
-                    && coord_h + TILE_HEIGHT * 2 < cmh) {
+                int screen_w = (pMap_->maxX() + (tile_x - tile_y)) * (Tile::kTileWidth / 2);
+                int coord_h = ((pMap_->maxZ() + tile_x + tile_y) - (tile_z - 1)) * (Tile::kTileHeight / 3);
+                if (screen_w >= viewport.x - Tile::kTileWidth * 2
+                    && screen_w + Tile::kTileWidth * 2 < cmw
+                    && coord_h >= viewport.y - Tile::kTileHeight * 2
+                    && coord_h + Tile::kTileHeight * 2 < cmh) {
 #if 0
                     if (z > 2)
                         continue;
@@ -103,7 +104,7 @@ void MapRenderer::render(const Point2D &viewport) {
                                 dx = -(screen_w - viewport.x);
                             if (coord_h - viewport.y < 0)
                                 dy = -(coord_h - viewport.y);
-                            if (dx < TILE_WIDTH && dy < TILE_HEIGHT) {
+                            if (dx < Tile::kTileWidth && dy < Tile::kTileHeight) {
                                 p_tile->drawToScreen(screen_w - cmx, coord_h - viewport.y);
                             }
                         }
@@ -112,8 +113,8 @@ void MapRenderer::render(const Point2D &viewport) {
                     // draw everything that's on the tile
                     if (tile_z - 1 >= 0) {
                         TilePoint currentTile(tile_x, tile_y, tile_z - 1);
-                        Point2D screenPos = {screen_w - cmx + TILE_WIDTH / 2,
-                            coord_h - viewport.y + TILE_HEIGHT / 3 * 2};
+                        Point2D screenPos = {screen_w - cmx + Tile::kTileWidth / 2,
+                            coord_h - viewport.y + Tile::kTileHeight / 3 * 2};
 
                         drawObjectsOnTile(currentTile, screenPos);
                     }
@@ -208,7 +209,7 @@ bool MapRenderer::isObjectInsideDrawingArea(MapObject *pObject, const Point2D &v
     // Limits are larger than screen size in order to have a smooth display
     // of appearance/disappearance of objects on screen. Otherwise they popup when
     // entering the display screen.
-    return  objectViewport.x > (viewport.x - TILE_WIDTH / 2) && objectViewport.y > viewport.y &&
+    return  objectViewport.x > (viewport.x - Tile::kTileWidth / 2) && objectViewport.y > viewport.y &&
             objectViewport.x <= (viewport.x + Screen::kScreenWidth - Screen::kScreenPanelWidth + 10) &&
             objectViewport.y <= (viewport.y + Screen::kScreenHeight + pObject->position().tz * 48);
 }

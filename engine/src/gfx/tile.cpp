@@ -5,6 +5,7 @@
  *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -30,42 +31,46 @@
 
 #include "fs-engine/gfx/screen.h"
 
+const int Tile::kTileWidth = 64;
+const int Tile::kTileHeight = 48;
+const int Tile::kSubtileWidth = 32;
+const int Tile::kSubileHeight = 16;
 
-Tile::Tile(int id_set, uint8_t *tile_Data, bool not_alpha, EType type_set)
+Tile::Tile(int id, uint8_t *tileData, bool notAlpha, EType type)
 {
-    i_id_ = id_set;
-    e_type_ = type_set;
-    a_pixels_ = new uint8_t[TILE_WIDTH * TILE_HEIGHT];
-    memcpy(a_pixels_, tile_Data, TILE_WIDTH * TILE_HEIGHT);
-    not_alpha_ = not_alpha;
+    id_ = id;
+    type_ = type;
+    pixels_ = new uint8_t[kTileWidth * kTileHeight];
+    memcpy(pixels_, tileData, kTileWidth * kTileHeight);
+    notAlpha_ = notAlpha;
 }
 
 Tile::~Tile()
 {
-    delete[] a_pixels_;
+    delete[] pixels_;
 }
 
 bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y)
 {
-    if (x + TILE_WIDTH < 0 || y + TILE_HEIGHT < 0
+    if (x + kTileWidth < 0 || y + kTileHeight < 0
         || x >= swidth || y >= sheight)
     {
         return false;
     }
 
     int xlow = x < 0 ? 0 : x;
-    int clipped_w = TILE_WIDTH - (xlow - x);
+    int clipped_w = kTileWidth - (xlow - x);
     int xhigh = xlow + clipped_w >= swidth ? swidth : xlow + clipped_w;
     int ylow = y < 0 ? 0 : y;
-    int clipped_h = TILE_HEIGHT - (ylow - y);
+    int clipped_h = kTileHeight - (ylow - y);
     int yhigh = ylow + clipped_h >= sheight ? sheight : ylow + clipped_h;
 
-    uint8 *ptr_a_pixels = a_pixels_ + ((TILE_HEIGHT - 1) - (ylow - y)) * TILE_WIDTH;
+    uint8 *ptr_a_pixels = pixels_ + ((kTileHeight - 1) - (ylow - y)) * kTileWidth;
     uint8 *ptr_screen = screen + ylow * swidth + xlow;
     for (int j = ylow; j < yhigh; ++j)
     {
         uint8 *cp_ptr_a_pixels = ptr_a_pixels;
-        ptr_a_pixels -= TILE_WIDTH;
+        ptr_a_pixels -= kTileWidth;
         uint8 *cp_ptr_screen = ptr_screen;
         ptr_screen += swidth;
         for (int i = xlow; i < xhigh; ++i) {
@@ -88,7 +93,7 @@ uint8 Tile::getWalkData() {
     // and eliminate unnecessary data
     // 0x10 - non-surface/non-walkable, always above train stop
     // 0x11, 0x12 - train entering surface
-    switch (i_id_) {
+    switch (id_) {
     case 0x80 :
         return 0x11;
     case 0x81 :
@@ -99,6 +104,6 @@ uint8 Tile::getWalkData() {
         return 0x00;
     default:
         // else return the type of the tile
-        return e_type_;
+        return type_;
     }
 }
