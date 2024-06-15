@@ -36,6 +36,7 @@
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
+#include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/shot.h"
 #include "fs-kernel/model/objectivedesc.h"
 #include "fs-kernel/model/vehicle.h"

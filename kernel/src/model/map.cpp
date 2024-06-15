@@ -6,6 +6,7 @@
  *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
  *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
  *   Copyright (C) 2010  Bohdan Stelmakh <chamel@users.sourceforge.net> *
+ *   Copyright (C) 2024  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -28,15 +29,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include <cassert>
 
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/gfx/tilemanager.h"
 
-Map::Map(TileManager * tileManager, uint16 anId) : tile_manager_(tileManager)
+Map::Map(TileManager * tileManager, uint16 anId) : tileManager_(tileManager)
 {
     id_ = anId;
     a_tiles_ = NULL;
+    assert(tileManager != nullptr);
 }
 
 Map::~Map()
@@ -66,7 +69,7 @@ bool Map::loadMap(uint8 * mapData)
 
             for (int z = 0; z < max_z_; z++) {
                 uint8 tileNum = *(mapData + 12 + lookup[idx] + z);
-                a_tiles_[idx * z_real + z] = tile_manager_->getTile(tileNum);
+                a_tiles_[idx * z_real + z] = tileManager_->getTile(tileNum);
 
             }
         }
@@ -75,7 +78,7 @@ bool Map::loadMap(uint8 * mapData)
     max_z_++;
     for (int h = 0, z = max_z_ - 1; h < max_y_; h++) {
         for (int w = 0; w < max_x_; w++) {
-            a_tiles_[(h * max_x_ + w) * max_z_ + z] = tile_manager_->getTile(0);
+            a_tiles_[(h * max_x_ + w) * max_z_ + z] = tileManager_->getTile(0);
         }
     }
 
@@ -220,11 +223,11 @@ int Map::maxZAt(int x, int y)
 Tile * Map::getTileAt(int x, int y, int z)
 {
     if (x < 0 || x >= max_x_ || y < 0 || y >= max_y_) {
-        return tile_manager_->getTile(z < 2 ? 6 : 0);
+        return tileManager_->getTile(z < 2 ? 6 : 0);
     }
 
     if (z < 0 || z >= max_z_) {
-        return tile_manager_->getTile(0);
+        return tileManager_->getTile(0);
     }
 
     return a_tiles_[(y * max_x_ + x) * max_z_ + z];
@@ -247,7 +250,7 @@ void Map::patchMap(int x, int y, int z, uint8 tileNum)
     assert((x >= 0 && x < max_x_)
         && (y >= 0 && y < max_y_)
         && (z >= 0 && z < max_z_));
-    a_tiles_[(y * max_x_ + x) * max_z_ + z] = tile_manager_->getTile(tileNum);
+    a_tiles_[(y * max_x_ + x) * max_z_ + z] = tileManager_->getTile(tileNum);
 }
 
 

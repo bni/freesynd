@@ -29,12 +29,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include "fs-engine/gfx/screen.h"
-
 const int Tile::kTileWidth = 64;
 const int Tile::kTileHeight = 48;
-const int Tile::kSubtileWidth = 32;
-const int Tile::kSubileHeight = 16;
+const int Tile::kSubTileWidth = 32;
+const int Tile::kSubTileHeight = 16;
 
 Tile::Tile(int id, uint8_t *tileData, bool notAlpha, EType type)
 {
@@ -50,7 +48,7 @@ Tile::~Tile()
     delete[] pixels_;
 }
 
-bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y)
+bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y) const
 {
     if (x + kTileWidth < 0 || y + kTileHeight < 0
         || x >= swidth || y >= sheight)
@@ -83,11 +81,12 @@ bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y)
     return true;
 }
 
-bool Tile::drawToScreen(int x, int y)
-{
-    return drawTo((uint8*) g_Screen.pixels(), g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight(), x, y);
-}
 
+/*! \brief
+ *
+ * \return uint8
+ *
+ */
 uint8 Tile::getWalkData() {
     // little patch to enable full surface description
     // and eliminate unnecessary data

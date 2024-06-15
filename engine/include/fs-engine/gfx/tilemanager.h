@@ -36,12 +36,12 @@ class TileManager {
 public:
     /*! The total number of tiles.*/
     static const int kNumOfTiles;
-    //! The number of subtiles horizontally for a tile
-    static const int kSubtilePerWidth;
-    //! The number of subtiles vertically for a tile
-    static const int kSubtilePerHeight;
-    //! The total number of subtiles for a tile
-    static const int kSubtilePerTile;
+    //! The number of sub-tiles horizontally for a tile
+    static const int kSubTilePerWidth;
+    //! The number of sub-tiles vertically for a tile
+    static const int kSubTilePerHeight;
+    //! The total number of sub-tiles for a tile
+    static const int kSubTilePerTile;
     /*!
      * The size in bytes of the indexes of subtiles for tile in the header file.
      * There are 6 subtiles of 4 bytes for each tile.
@@ -50,9 +50,9 @@ public:
     //! The length in bytes of the header : there are 256 tiles.
     static const int kTileHeaderLength;
     //! SUBTILE_WIDTH / PIXELS_PER_BLOCK
-    static const int kBlocksPerSubtileRow;
+    static const int kBlocksPerSubTileRow;
     //! (COLOR_BYTES_PER_BLOCK + ALPHA_BYTES_PER_BLOCK) * BLOCKS_PER_SUBTILE_ROW
-    static const int kSubtileRowLength;
+    static const int kSubTileRowLength;
 
     TileManager();
     ~TileManager();
@@ -61,10 +61,14 @@ public:
 
     //! Returns tile with the given index
     Tile * getTile(uint8 index);
+    //! Draws the tile to the screen
+    bool drawTile(const Tile *tile, int x, int y);
 
 protected:
     //! Load a given tile
-    Tile * loadTile(const uint8_t * tileData, int id, Tile::EType type);
+    void loadTile(int id, const uint8_t * tileData, Tile::EType type);
+    //! Load a given sub-tile
+    void loadSubTile(const uint8_t * data, int offset, int index, int stride, uint8_t * pixels);
     //! Returns the good enum for the given data
     Tile::EType toTileType(uint8_t data);
 

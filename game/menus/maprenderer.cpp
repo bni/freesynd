@@ -29,7 +29,7 @@
 #include "menus/maprenderer.h"
 
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/gfx/tile.h"
+#include "fs-engine/gfx/tilemanager.h"
 #include "fs-engine/system/system.h"
 #include "fs-kernel/model/mission.h"
 #include "fs-kernel/model/vehicle.h"
@@ -97,15 +97,15 @@ void MapRenderer::render(const Point2D &viewport) {
 #endif
                     // draw a tile
                     if (tile_z < pMap_->maxZ()) {
-                        Tile *p_tile = pMap_->getTileAt(tile_x, tile_y, tile_z);
-                        if (p_tile->notTransparent()) {
+                        Tile *pTile = pMap_->getTileAt(tile_x, tile_y, tile_z);
+                        if (pTile->notTransparent()) {
                             int dx = 0, dy = 0;
                             if (screen_w - viewport.x < 0)
                                 dx = -(screen_w - viewport.x);
                             if (coord_h - viewport.y < 0)
                                 dy = -(coord_h - viewport.y);
                             if (dx < Tile::kTileWidth && dy < Tile::kTileHeight) {
-                                p_tile->drawToScreen(screen_w - cmx, coord_h - viewport.y);
+                                pMap_->getTileManager()->drawTile(pTile, screen_w - cmx, coord_h - viewport.y);
                             }
                         }
                     }

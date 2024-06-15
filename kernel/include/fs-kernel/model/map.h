@@ -26,9 +26,11 @@
 #define MAP_H
 
 #include "fs-utils/common.h"
-#include "fs-engine/gfx/tilemanager.h"
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/mapobject.h"
+
+class TileManager;
+class Tile;
 
 /*!
  * Map class.
@@ -60,8 +62,9 @@ public:
     int maxX() { return max_x_; }
     int maxY() { return max_y_; }
     int maxZ() { return max_z_; }
-
     int maxZAt(int x, int y);
+
+    TileManager * getTileManager() { return tileManager_; }
     Tile * getTileAt(int x, int y, int z);
     int tileAt(int x, int y, int z);
     void patchMap(int x, int y, int z, uint8 tileNum);
@@ -74,7 +77,7 @@ protected:
     uint16 id_;
     int max_x_, max_y_, max_z_;
     Tile **a_tiles_;
-    TileManager *tile_manager_;
+    TileManager *tileManager_;
     int map_width_, map_height_;
 };
 

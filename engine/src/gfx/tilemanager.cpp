@@ -30,6 +30,7 @@
 
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
+#include "fs-engine/gfx/screen.h"
 
 /*!
  *
@@ -55,32 +56,14 @@ void unpackBlocks4(const uint8_t * data, uint8_t * pixels)
     }
 }
 
-/*!
- *
- */
-void loadSubTile(const uint8_t * data, int offset, int index,
-                 int stride, uint8_t * pixels)
-{
-    if (offset < TileManager::kTileHeaderLength)
-        return;
-
-    data += offset;
-
-    for (int i = 0; i < Tile::kSubileHeight; ++i) {
-        unpackBlocks4(data,
-                      pixels + index + (Tile::kSubileHeight - 1 - i) * stride);
-        data += TileManager::kSubtileRowLength;
-    }
-}
-
 const int TileManager::kNumOfTiles = 256;
-const int TileManager::kSubtilePerWidth = 2;
-const int TileManager::kSubtilePerHeight = 3;
-const int TileManager::kSubtilePerTile = 6;
+const int TileManager::kSubTilePerWidth = 2;
+const int TileManager::kSubTilePerHeight = 3;
+const int TileManager::kSubTilePerTile = 6;
 const int TileManager::kTileIndexSize = 6 * 4;  // total of subtiles per tile * number of bytes for a subtile
 const int TileManager::kTileHeaderLength = 256 * kTileIndexSize; // There a 256 tiles
-const int TileManager::kBlocksPerSubtileRow = 32 / 8;
-const int TileManager::kSubtileRowLength = (4 + 1) * kBlocksPerSubtileRow;
+const int TileManager::kBlocksPerSubTileRow = 32 / 8;
+const int TileManager::kSubTileRowLength = (4 + 1) * kBlocksPerSubTileRow;
 
 /*!
  * Default constructor.
@@ -104,24 +87,23 @@ TileManager::~TileManager()
 
 /*!
  * Loads a tile from the tile data.
- * \param tileData Data containing all tiles
  * \param id Id of the tile to load
+ * \param tilesData Data containing all tiles
  * \param type The tile type
- * \return The loaded tile.
  */
-Tile * TileManager::loadTile(const uint8_t * tilesData, int id, Tile::EType type)
+void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
 {
     int offset = id * kTileIndexSize;
     uint8_t tilePixels[Tile::kTileWidth * Tile::kTileHeight];
     memset(tilePixels, 255, Tile::kTileWidth * Tile::kTileHeight);
 
-    for (int i = 0; i < kSubtilePerWidth; ++i) {
-        for (int j = 0; j < kSubtilePerHeight; ++j) {
+    for (int i = 0; i < kSubTilePerWidth; ++i) {
+        for (int j = 0; j < kSubTilePerHeight; ++j) {
             int subTileOffset =
                 READ_LE_INT32(tilesData + offset +
-                               (i * kSubtilePerHeight + j) * 4);
+                               (i * kSubTilePerHeight + j) * 4);
             loadSubTile(tilesData, subTileOffset,
-                        (kSubtilePerHeight - 1 - j) * Tile::kSubileHeight * Tile::kTileWidth + i * Tile::kSubtileWidth,
+                        (kSubTilePerHeight - 1 - j) * Tile::kSubTileHeight * Tile::kTileWidth + i * Tile::kSubTileWidth,
                         Tile::kTileWidth, tilePixels);
         }
     }
@@ -137,8 +119,30 @@ Tile * TileManager::loadTile(const uint8_t * tilesData, int id, Tile::EType type
             }
     }
 
-    Tile *tile = new Tile(id, tilePixels, notAlpha, type);
-    return tile;
+    tiles_[id] = new Tile(id, tilePixels, notAlpha, type);
+}
+
+
+/*!
+ *
+ * \param
+ * \param
+ * \return
+ *
+ */
+void TileManager::loadSubTile(const uint8_t * data, int subTileOffset, int index,
+                 int stride, uint8_t * pixels)
+{
+    if (subTileOffset < TileManager::kTileHeaderLength)
+        return;
+
+    data += subTileOffset;
+
+    for (int i = 0; i < Tile::kSubTileHeight; ++i) {
+        unpackBlocks4(data,
+                      pixels + index + (Tile::kSubTileHeight - 1 - i) * stride);
+        data += TileManager::kSubTileRowLength;
+    }
 }
 
 /*!
@@ -193,31 +197,30 @@ Tile::EType TileManager::toTileType(uint8 data)
 bool TileManager::loadTiles()
 {
     size_t size;
-    uint8 *type_data;
+    uint8 *typesData;
 
-    // first reads types
-    //#define TILE_TYPES "col01.dat"
-    type_data = File::loadOriginalFile("col01.dat", size);
-    if (!type_data) {
+    // first reads tile types
+    typesData = File::loadOriginalFile("col01.dat", size);
+    if (!typesData) {
         return false;
     }
 
     // then reads tiles
-    uint8 *tileData = File::loadOriginalFile("hblk01.dat", size);
+    uint8 *tilesData = File::loadOriginalFile("hblk01.dat", size);
 
-    if (!tileData) {
+    if (!tilesData) {
         FSERR(Log::k_FLG_IO, "TileManager", "loadTiles", ("Failed to load tiles data\n"));
-        delete[] type_data;
+        delete[] typesData;
         return false;
     }
 
     // Loads all tiles
     for (int i = 0; i < kNumOfTiles; ++i) {
-        tiles_[i] = loadTile(tileData, i, toTileType(type_data[i]));
+        loadTile(i, tilesData, toTileType(typesData[i]));
     }
 
-    delete[] type_data;
-    delete[] tileData;
+    delete[] typesData;
+    delete[] tilesData;
     return true;
 }
 
@@ -227,14 +230,17 @@ bool TileManager::loadTiles()
  * \return The tile or null if no tile is found for the index.
  */
 Tile * TileManager::getTile(uint8 tileNum) {
-    //make sure the tile is loaded
-    // TODO : tileNum always < kNumOfTiles! uint16 tileNum?
-#if 0
-    if (tileNum >= kNumOfTiles) {
-        FSERR(Log::k_FLG_GFX, "TileManager", "getTile", ("tile %d not loaded!", tileNum));
-        return NULL;
-    }
-#endif
-
     return tiles_[tileNum];
+}
+
+/*! \brief
+ *
+ * \param tile const Tile*
+ * \param x int
+ * \param y int
+ * \return bool
+ *
+ */
+bool TileManager::drawTile(const Tile *tile, int x, int y) {
+    return tile->drawTo((uint8*) g_Screen.pixels(), g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight(), x, y);
 }

@@ -38,9 +38,9 @@ public:
     //! Height of a tile
     static const int kTileHeight;
     //! Width of a component of a tile
-    static const int kSubtileWidth;
+    static const int kSubTileWidth;
     //! Height of a component of a tile
-    static const int kSubileHeight;
+    static const int kSubTileHeight;
 
     /*!
      * A tile type.
@@ -86,9 +86,9 @@ public:
     uint8 getWalkData();
 
     //! Draws the tile to the given surface
-    bool drawTo(uint8 *screen, int swidth, int sheight, int x, int y);
+    bool drawTo(uint8 *screen, int swidth, int sheight, int x, int y) const;
     //! Draws the tile to the screen
-    bool drawToScreen(int x, int y);
+//    bool drawToScreen(int x, int y) const;
 
     inline bool notTransparent() { return notAlpha_; }
 

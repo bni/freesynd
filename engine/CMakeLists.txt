@@ -14,6 +14,7 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/spritemanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/tile.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/tilemanager.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/fstexture.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/audio.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/music.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/musicmanager.h"
@@ -89,8 +90,10 @@ if (USE_SYSTEM_SDL)
 
     add_library(fs_engine_sdl STATIC
                   "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.cpp"
+                  "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/fstexture_sdl.cpp"
 
                   "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/system_sdl.h"
+                  "${Freesynd_SOURCE_DIR}/engine/src/system/sdl/fstexture_sdl.h"
                 )
     add_library(Freesynd::Engine::Sdl ALIAS fs_engine_sdl)
 
