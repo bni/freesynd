@@ -42,6 +42,7 @@ public:
     static const int kSubTilePerHeight;
     //! The total number of sub-tiles for a tile
     static const int kSubTilePerTile;
+    static const int kTilesPerWidth;
     /*!
      * The size in bytes of the indexes of subtiles for tile in the header file.
      * There are 6 subtiles of 4 bytes for each tile.
@@ -69,12 +70,16 @@ protected:
     void loadTile(int id, const uint8_t * tileData, Tile::EType type);
     //! Load a given sub-tile
     void loadSubTile(const uint8_t * data, int offset, int index, int stride, uint8_t * pixels);
+    //!
+    void copyTilePixelsToSurface(int id, const uint8_t tilePixels);
     //! Returns the good enum for the given data
     Tile::EType toTileType(uint8_t data);
 
 protected:
     //! All the tiles in the game
     Tile **tiles_;
+    //!
+    uint8_t *tilesPixels_;
 };
 
 #endif

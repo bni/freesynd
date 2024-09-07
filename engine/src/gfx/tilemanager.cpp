@@ -57,6 +57,7 @@ void unpackBlocks4(const uint8_t * data, uint8_t * pixels)
 }
 
 const int TileManager::kNumOfTiles = 256;
+const int TileManager::kTilesPerWidth = 16;
 const int TileManager::kSubTilePerWidth = 2;
 const int TileManager::kSubTilePerHeight = 3;
 const int TileManager::kSubTilePerTile = 6;
@@ -72,6 +73,7 @@ TileManager::TileManager()
 {
     tiles_ = new Tile*[kNumOfTiles];
     memset(tiles_, 0, sizeof(Tile*) * kNumOfTiles);
+    tilesPixels_ = new uint8_t[kNumOfTiles * Tile::kTileHeight * Tile::kTileWidth];
 }
 
 /*!
@@ -83,6 +85,8 @@ TileManager::~TileManager()
         delete tiles_[i];
     }
     delete [] tiles_;
+
+    delete [] tilesPixels_;
 }
 
 /*!
@@ -122,7 +126,6 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
     tiles_[id] = new Tile(id, tilePixels, notAlpha, type);
 }
 
-
 /*!
  *
  * \param
@@ -144,6 +147,54 @@ void TileManager::loadSubTile(const uint8_t * data, int subTileOffset, int index
         data += TileManager::kSubTileRowLength;
     }
 }
+
+void TileManager::copyTilePixelsToSurface(int id, const uint8_t tilePixels) {
+    if (id < 0 || id >= kNumOfTiles) {
+        return;
+    }
+
+    Point2D dest(id % kTilesPerWidth * Tile::kTileWidth,
+                 id / kTilesPerWidth * Tile::kTileHeight);
+
+    for (int j = 0; j < Tile::kTileHeight; ++j) { // On parcourt les lignes d'une tile
+        uint8 *cp_ptr_a_pixels = ptr_a_pixels;    // Sauve les pixels
+        ptr_a_pixels -= kTileWidth;               // On recule de la largeur d'une tuile
+        uint8 *cp_ptr_screen = ptr_screen;        // On copie ce qu'il y avait sur le screen
+        ptr_screen += swidth;                     // On avance le pointeur de la taille de la largeur clipse
+        for (int i = 0; i < Tile::kTileWidth; ++i) {      // Pour chaque pixel de la ligne
+            int offset = dest.y * Tile::kTileHeight * kTilesPerWidth + i;
+            uint8 c = *cp_ptr_a_pixels++;         // on prend la couleur du pixel de la tile
+            if (c != 255)                         // S'il est pas transparent on le copie
+                *cp_ptr_screen = c;
+            ++cp_ptr_screen;                      // On avance le pointeur
+        }
+    }
+/*
+    int xlow = x < 0 ? 0 : x;
+    int clipped_w = kTileWidth - (xlow - x);
+    int xhigh = xlow + clipped_w >= swidth ? swidth : xlow + clipped_w;
+    int ylow = y < 0 ? 0 : y;
+    int clipped_h = kTileHeight - (ylow - y);
+    int yhigh = ylow + clipped_h >= sheight ? sheight : ylow + clipped_h;
+
+    uint8 *ptr_a_pixels = pixels_ + ((kTileHeight - 1) - (ylow - y)) * kTileWidth;
+    uint8 *ptr_screen = screen + ylow * swidth + xlow;
+    for (int j = ylow; j < yhigh; ++j)
+    {
+        uint8 *cp_ptr_a_pixels = ptr_a_pixels;
+        ptr_a_pixels -= kTileWidth;
+        uint8 *cp_ptr_screen = ptr_screen;
+        ptr_screen += swidth;
+        for (int i = xlow; i < xhigh; ++i) {
+            uint8 c = *cp_ptr_a_pixels++;
+            if (c != 255)
+                *cp_ptr_screen = c;
+            ++cp_ptr_screen;
+        }
+    }
+    return true;*/
+}
+
 
 /*!
  * Returns a constant from the enumeration EType for the
