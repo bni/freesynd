@@ -23,6 +23,7 @@
 #ifndef FREESYND_UTILS_LOG_H_
 #define FREESYND_UTILS_LOG_H_
 
+#include <cstdint>
 #include <stdio.h>
 #include <string>
 
