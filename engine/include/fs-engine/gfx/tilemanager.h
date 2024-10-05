@@ -71,7 +71,7 @@ protected:
     //! Load a given sub-tile
     void loadSubTile(const uint8_t * data, int offset, int index, int stride, uint8_t * pixels);
     //!
-    void copyTilePixelsToSurface(int id, const uint8_t tilePixels);
+    void copyTilePixelsToSurface(int id, const uint8_t *tilePixels);
     //! Returns the good enum for the given data
     Tile::EType toTileType(uint8_t data);
 

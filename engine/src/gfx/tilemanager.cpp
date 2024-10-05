@@ -112,6 +112,8 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
         }
     }
 
+    copyTilePixelsToSurface(id, tilePixels);
+
     // If at least one pixel is not transparent
     // not_alpha will be true and so tile will be drawn
     bool notAlpha = false;
@@ -123,7 +125,7 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
             }
     }
 
-    tiles_[id] = new Tile(id, tilePixels, notAlpha, type);
+    tiles_[id] = new Tile(id, notAlpha, type);
 }
 
 /*!
@@ -148,51 +150,14 @@ void TileManager::loadSubTile(const uint8_t * data, int subTileOffset, int index
     }
 }
 
-void TileManager::copyTilePixelsToSurface(int id, const uint8_t tilePixels) {
+void TileManager::copyTilePixelsToSurface(int id, const uint8_t *tilePixels) {
     if (id < 0 || id >= kNumOfTiles) {
         return;
     }
 
-    Point2D dest(id % kTilesPerWidth * Tile::kTileWidth,
-                 id / kTilesPerWidth * Tile::kTileHeight);
-
-    for (int j = 0; j < Tile::kTileHeight; ++j) { // On parcourt les lignes d'une tile
-        uint8 *cp_ptr_a_pixels = ptr_a_pixels;    // Sauve les pixels
-        ptr_a_pixels -= kTileWidth;               // On recule de la largeur d'une tuile
-        uint8 *cp_ptr_screen = ptr_screen;        // On copie ce qu'il y avait sur le screen
-        ptr_screen += swidth;                     // On avance le pointeur de la taille de la largeur clipse
-        for (int i = 0; i < Tile::kTileWidth; ++i) {      // Pour chaque pixel de la ligne
-            int offset = dest.y * Tile::kTileHeight * kTilesPerWidth + i;
-            uint8 c = *cp_ptr_a_pixels++;         // on prend la couleur du pixel de la tile
-            if (c != 255)                         // S'il est pas transparent on le copie
-                *cp_ptr_screen = c;
-            ++cp_ptr_screen;                      // On avance le pointeur
-        }
-    }
-/*
-    int xlow = x < 0 ? 0 : x;
-    int clipped_w = kTileWidth - (xlow - x);
-    int xhigh = xlow + clipped_w >= swidth ? swidth : xlow + clipped_w;
-    int ylow = y < 0 ? 0 : y;
-    int clipped_h = kTileHeight - (ylow - y);
-    int yhigh = ylow + clipped_h >= sheight ? sheight : ylow + clipped_h;
-
-    uint8 *ptr_a_pixels = pixels_ + ((kTileHeight - 1) - (ylow - y)) * kTileWidth;
-    uint8 *ptr_screen = screen + ylow * swidth + xlow;
-    for (int j = ylow; j < yhigh; ++j)
-    {
-        uint8 *cp_ptr_a_pixels = ptr_a_pixels;
-        ptr_a_pixels -= kTileWidth;
-        uint8 *cp_ptr_screen = ptr_screen;
-        ptr_screen += swidth;
-        for (int i = xlow; i < xhigh; ++i) {
-            uint8 c = *cp_ptr_a_pixels++;
-            if (c != 255)
-                *cp_ptr_screen = c;
-            ++cp_ptr_screen;
-        }
-    }
-    return true;*/
+    // Temporary implementation -> only copy to a big
+    int tileOffset = id * Tile::kTileHeight * Tile::kTileWidth;
+    memcpy(tilesPixels_ + tileOffset, tilePixels, Tile::kTileHeight * Tile::kTileWidth);
 }
 
 
@@ -293,5 +258,36 @@ Tile * TileManager::getTile(uint8 tileNum) {
  *
  */
 bool TileManager::drawTile(const Tile *tile, int x, int y) {
-    return tile->drawTo((uint8*) g_Screen.pixels(), g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight(), x, y);
+    //return tile->drawTo((uint8*) g_Screen.pixels(), g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight(), x, y);
+
+    if (x + Tile::kTileWidth < 0 || y + Tile::kTileHeight < 0
+        || x >= g_Screen.gameScreenWidth() || y >= g_Screen.gameScreenHeight())
+    {
+        return false;
+    }
+
+    uint8 *pixels = tilesPixels_ + (tile->id() * Tile::kTileHeight * Tile::kTileWidth);
+    int xlow = x < 0 ? 0 : x;
+    int clipped_w = Tile::kTileWidth - (xlow - x);
+    int xhigh = xlow + clipped_w >= g_Screen.gameScreenWidth() ? g_Screen.gameScreenWidth() : xlow + clipped_w;
+    int ylow = y < 0 ? 0 : y;
+    int clipped_h = Tile::kTileHeight - (ylow - y);
+    int yhigh = ylow + clipped_h >= g_Screen.gameScreenHeight() ? g_Screen.gameScreenHeight() : ylow + clipped_h;
+
+    uint8 *ptr_a_pixels = pixels + ((Tile::kTileHeight - 1) - (ylow - y)) * Tile::kTileWidth;
+    uint8 *ptr_screen = ((uint8*) g_Screen.pixels()) + ylow * g_Screen.gameScreenWidth() + xlow;
+    for (int j = ylow; j < yhigh; ++j)
+    {
+        uint8 *cp_ptr_a_pixels = ptr_a_pixels;
+        ptr_a_pixels -= Tile::kTileWidth;
+        uint8 *cp_ptr_screen = ptr_screen;
+        ptr_screen += g_Screen.gameScreenWidth();
+        for (int i = xlow; i < xhigh; ++i) {
+            uint8 c = *cp_ptr_a_pixels++;
+            if (c != 255)
+                *cp_ptr_screen = c;
+            ++cp_ptr_screen;
+        }
+    }
+    return true;
 }

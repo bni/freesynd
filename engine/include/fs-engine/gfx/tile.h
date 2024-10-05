@@ -66,11 +66,11 @@ public:
         kNbTypes  = 0x11,
     };
 
-    Tile(int id, uint8_t *tileData, bool notAlpha, EType type);
-    ~Tile();
+    Tile(int id, bool notAlpha, EType type);
+    ~Tile() {}
 
     //! Returns the tile id
-    int id() { return id_; }
+    int id() const { return id_; }
     //! Returns the tile type
     EType type() { return type_; }
     //! Convenience method to tell whether this tile is a road type or not
@@ -85,18 +85,12 @@ public:
 
     uint8 getWalkData();
 
-    //! Draws the tile to the given surface
-    bool drawTo(uint8 *screen, int swidth, int sheight, int x, int y) const;
-    //! Draws the tile to the screen
-//    bool drawToScreen(int x, int y) const;
-
+    //! Return true if there is at least one pixel to draw because it's not transparent
     inline bool notTransparent() { return notAlpha_; }
 
 protected:
     /*! Each tile has a unique id.*/
     int id_;
-    /*! The pixels that compose the tile.*/
-    uint8_t *pixels_;
     /*! A quick flag to tell that all pixel are transparent.*/
     bool notAlpha_;
     /*! The tile type. */

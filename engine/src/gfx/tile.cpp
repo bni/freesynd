@@ -34,21 +34,19 @@ const int Tile::kTileHeight = 48;
 const int Tile::kSubTileWidth = 32;
 const int Tile::kSubTileHeight = 16;
 
-Tile::Tile(int id, uint8_t *tileData, bool notAlpha, EType type)
+/*! @brief 
+ * @param id 
+ * @param notAlpha 
+ * @param type 
+*/
+Tile::Tile(int id, bool notAlpha, EType type)
 {
     id_ = id;
     type_ = type;
-    pixels_ = new uint8_t[kTileWidth * kTileHeight];
-    memcpy(pixels_, tileData, kTileWidth * kTileHeight);
     notAlpha_ = notAlpha;
 }
 
-Tile::~Tile()
-{
-    delete[] pixels_;
-}
-
-bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y) const
+/*bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y) const
 {
     if (x + kTileWidth < 0 || y + kTileHeight < 0
         || x >= swidth || y >= sheight)
@@ -79,7 +77,7 @@ bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y) const
         }
     }
     return true;
-}
+}*/
 
 
 /*! \brief
