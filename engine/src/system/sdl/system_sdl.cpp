@@ -479,6 +479,34 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
     SDL_SetPaletteColors(pScreenSurface_->format->palette, &color, index, 1);
 }
 
+void SystemSDL::drawVLine(int x, int y, int length, uint8 color) {
+    drawLine(x, y, x, y + length, color);
+    // TODO : use the color parameter
+    SDL_SetRenderDrawColor( pRenderer_, 0xFF, 0x00, 0x00, 0xFF );
+    SDL_RenderDrawLine( pRenderer_, x, y, x, y + length );
+}
+
+void SystemSDL::drawHLine(int x, int y, int length, uint8 color) {
+    drawLine(x, y, x + length, y, color);
+    // TODO : use the color parameter
+    SDL_SetRenderDrawColor( pRenderer_, 0xFF, 0x00, 0x00, 0xFF );
+    SDL_RenderDrawLine( pRenderer_, x, y, x + length, y );
+}
+
+void SystemSDL::drawLine(int x1, int y1, int x2, int y2, uint8 color, int skip,
+            int off) {
+    // TODO : use the color, skip and off parameters
+    SDL_SetRenderDrawColor( pRenderer_, 0xFF, 0x00, 0x00, 0xFF );
+    SDL_RenderDrawLine( pRenderer_, x1, y1, x2, y2 );
+}
+
+void SystemSDL::drawRect(int x, int y, int width, int height, uint8 color) {
+    SDL_Rect outlineRect = { x, y, width, height};
+    // TODO : use the color parameter
+    SDL_SetRenderDrawColor( pRenderer_, 0xFF, 0x00, 0x00, 0xFF );        
+    SDL_RenderDrawRect( pRenderer_, &outlineRect );
+}
+
 /*!
  * This method uses the SDL_Image library to load a file called
  * cursors/cursors.png under the root path.

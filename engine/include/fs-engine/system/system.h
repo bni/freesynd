@@ -98,6 +98,24 @@ public:
     virtual bool setPalette8b3(const uint8 *pal, int cols = 256) = 0;
     virtual void setColor(uint8 index, uint8 r, uint8 g, uint8 b) = 0;
 
+    /**
+     * Draw a vertical line with the given color
+     */
+    virtual void drawVLine(int x, int y, int length, uint8 color) = 0;
+    /**
+     * Draw a horizontal line with the given color
+     */
+    virtual void drawHLine(int x, int y, int length, uint8 color) = 0;
+    /**
+     * Draw a line with the given color
+     */
+    virtual void drawLine(int x1, int y1, int x2, int y2, uint8 color, int skip = 0,
+            int off = 0) = 0;
+    /**
+     * Draw a rectangle with the given color
+     */
+    virtual void drawRect(int x, int y, int width, int height, uint8 color) = 0;
+
     //! Returns the mouse pointer coordinates
     virtual uint32_t getMousePos(Point2D &point) = 0;
     //! Hides the mouse cursor.

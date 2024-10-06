@@ -69,6 +69,12 @@ public:
     bool setPalette8b3(const uint8 *pal, int cols = 256) override;
     void setColor(uint8 index, uint8 r, uint8 g, uint8 b) override;
 
+    void drawVLine(int x, int y, int length, uint8 color) override;
+    void drawHLine(int x, int y, int length, uint8 color) override;
+    void drawLine(int x1, int y1, int x2, int y2, uint8 color, int skip = 0,
+            int off = 0) override;
+    void drawRect(int x, int y, int width, int height, uint8 color) override;
+
     //! Returns the mouse pointer coordinates
     uint32_t getMousePos(Point2D &point) override;
 
