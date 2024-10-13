@@ -32,12 +32,35 @@
  */
 class FSTextureSDL : public FSTexture {
 public:
-    FSTextureSDL();
+    FSTextureSDL(SDL_Renderer *pRenderer);
     ~FSTextureSDL();
 
+    void render(Point2D src, Point2D dst, int width, int height) override;
 
+    bool importTilesetInSurface(const uint8_t *tilesPixels, int width, int height) override;
 
+    bool setPalette6b3(const uint8_t * pal, int cols) override;
+    bool setPalette8b3(const uint8_t * pal, int cols) override;
 
+    bool loadTextureFromSurface();
+
+private:
+    //! Deallocates surface
+    void freeSurface();
+
+    //! Deallocates texture
+    void freeTexture();
+
+private:
+    //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
+    SDL_Renderer *pRenderer_;
+    //! This surface is loaded from original file and used for storing palette
+    SDL_Surface *pSurface_;
+    //! The actual hardware texture. It can be loaded multiple time
+    SDL_Texture* pTexture_;
+    //Image dimensions
+    int width_;
+    int height_;
 };
 
 #endif

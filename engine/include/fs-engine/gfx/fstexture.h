@@ -23,18 +23,25 @@
 #ifndef ENGINE_FSTEXTURE_H
 #define ENGINE_FSTEXTURE_H
 
-#include <SDL.h>
+#include "fs-utils/common.h"
 
-
-/*! \brief 
+/*! \brief An abstract representing a texture used to render on screen using material acceleration.
  *
  */
 class FSTexture {
 public:
 
-
-
-
+    virtual ~FSTexture() {}
+    //! Import tileset for drawing maps
+    virtual bool importTilesetInSurface(const uint8_t *tilesPixels, int width, int height) = 0;
+    //! Set a new palette in the surface
+    virtual bool setPalette6b3(const uint8_t * pal, int cols) = 0;
+    //! Set a new palette in the surface
+    virtual bool setPalette8b3(const uint8_t * pal, int cols) = 0;
+    //! Create a texture from an already loaded surface. Delete preexisting texture
+    virtual bool loadTextureFromSurface() = 0;
+    //! Renders a rectangle from the current texture to the current renderer
+    virtual void render(Point2D src, Point2D dst, int width, int height) = 0;
 };
 
 #endif

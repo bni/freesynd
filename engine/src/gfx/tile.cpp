@@ -34,16 +34,20 @@ const int Tile::kTileHeight = 48;
 const int Tile::kSubTileWidth = 32;
 const int Tile::kSubTileHeight = 16;
 
-/*! @brief 
+
+/*!
+ * @brief 
  * @param id 
  * @param notAlpha 
  * @param type 
-*/
-Tile::Tile(int id, bool notAlpha, EType type)
+ * @param textLoc 
+ */
+Tile::Tile(int id, bool notAlpha, EType type, Point2D textLoc)
 {
     id_ = id;
     type_ = type;
     notAlpha_ = notAlpha;
+    textureLocation_ = textLoc;
 }
 
 /*bool Tile::drawTo(uint8 * screen, int swidth, int sheight, int x, int y) const

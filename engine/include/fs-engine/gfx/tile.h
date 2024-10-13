@@ -66,13 +66,17 @@ public:
         kNbTypes  = 0x11,
     };
 
-    Tile(int id, bool notAlpha, EType type);
+    //! Constructor
+    Tile(int id, bool notAlpha, EType type, Point2D textLoc);
     ~Tile() {}
 
     //! Returns the tile id
     int id() const { return id_; }
     //! Returns the tile type
-    EType type() { return type_; }
+    EType type() const { return type_; }
+    //! Returns the position in the tileset texture
+    Point2D textureLocation() const { return textureLocation_; }
+
     //! Convenience method to tell whether this tile is a road type or not
     bool isRoad() {
         return  (type_ == kRoadCurve || type_ == kRoadPedCross ||
@@ -95,6 +99,8 @@ protected:
     bool notAlpha_;
     /*! The tile type. */
     EType type_;
+    //! Position of tile in the tileset texture
+    Point2D textureLocation_;
 };
 
 #endif

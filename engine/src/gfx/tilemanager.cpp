@@ -27,10 +27,12 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <format>
 
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 #include "fs-engine/gfx/screen.h"
+#include "fs-engine/system/system.h"
 
 /*!
  *
@@ -57,7 +59,6 @@ void unpackBlocks4(const uint8_t * data, uint8_t * pixels)
 }
 
 const int TileManager::kNumOfTiles = 256;
-const int TileManager::kTilesPerWidth = 16;
 const int TileManager::kSubTilePerWidth = 2;
 const int TileManager::kSubTilePerHeight = 3;
 const int TileManager::kSubTilePerTile = 6;
@@ -65,6 +66,8 @@ const int TileManager::kTileIndexSize = 6 * 4;  // total of subtiles per tile * 
 const int TileManager::kTileHeaderLength = 256 * kTileIndexSize; // There a 256 tiles
 const int TileManager::kBlocksPerSubTileRow = 32 / 8;
 const int TileManager::kSubTileRowLength = (4 + 1) * kBlocksPerSubTileRow;
+const int TileManager::kNumOfTilesPerRow = 16;
+const int TileManager::kNumOfTilesPerCol = 16;
 
 /*!
  * Default constructor.
@@ -94,8 +97,9 @@ TileManager::~TileManager()
  * \param id Id of the tile to load
  * \param tilesData Data containing all tiles
  * \param type The tile type
+ * \param tilesetBuffer The tile will be copied in this buffer
  */
-void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
+void TileManager::loadTile(int id, const uint8_t * tilesData, uint8 *typesData, uint8_t *tilesetBuffer)
 {
     int offset = id * kTileIndexSize;
     uint8_t tilePixels[Tile::kTileWidth * Tile::kTileHeight];
@@ -112,7 +116,7 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
         }
     }
 
-    copyTilePixelsToSurface(id, tilePixels);
+    copyTilePixelsToBuffer(id, tilePixels, tilesetBuffer);
 
     // If at least one pixel is not transparent
     // not_alpha will be true and so tile will be drawn
@@ -125,7 +129,10 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, Tile::EType type)
             }
     }
 
-    tiles_[id] = new Tile(id, notAlpha, type);
+    Point2D textureLoc {
+        (id % kNumOfTilesPerRow) * Tile::kTileWidth,
+        (id / kNumOfTilesPerCol) * Tile::kTileHeight};
+    tiles_[id] = new Tile(id, notAlpha, toTileType(typesData[id]), textureLoc);
 }
 
 /*!
@@ -150,14 +157,35 @@ void TileManager::loadSubTile(const uint8_t * data, int subTileOffset, int index
     }
 }
 
-void TileManager::copyTilePixelsToSurface(int id, const uint8_t *tilePixels) {
+/*!
+ * Copies the content of a tile to a common temporary buffer that will be used
+ * to initialize the tile texture. The buffer stores tiles as a 16x16 tileset.
+ * Each tile is copied to the buffer at a position given by its id.
+ * @param id Id of the tile
+ * @param tilePixels 
+ * @param tilesetBuffer Buffer to copy the tile to.
+ */
+void TileManager::copyTilePixelsToBuffer(int id, const uint8_t *tilePixels, uint8_t *tilesetBuffer) {
     if (id < 0 || id >= kNumOfTiles) {
         return;
     }
 
-    // Temporary implementation -> only copy to a big
-    int tileOffset = id * Tile::kTileHeight * Tile::kTileWidth;
-    memcpy(tilesPixels_ + tileOffset, tilePixels, Tile::kTileHeight * Tile::kTileWidth);
+    // TODO : Temporary implementation -> only copy to a big array of tiles
+    int tileOffsetTmp = id * Tile::kTileHeight * Tile::kTileWidth;
+    memcpy(tilesPixels_ + tileOffsetTmp, tilePixels, Tile::kTileHeight * Tile::kTileWidth);
+
+    // Coords in the destination surface
+    int row = id / kNumOfTilesPerRow;
+    int col = id % kNumOfTilesPerCol;
+    // start of the tile pixels in the destination surface (upper left corner of tile)
+    int tileOffsetDest = (col * Tile::kTileWidth) + (row * kNumOfTilesPerRow * Tile::kTileWidth * Tile::kTileHeight);
+
+    // Copy line by line
+    for (int j=0; j < Tile::kTileHeight; j++) {
+        int lineOffsetDest = j * Tile::kTileWidth * kNumOfTilesPerRow;
+        int lineOffsetSrc = (Tile::kTileHeight - j) * Tile::kTileWidth;
+        memcpy(tilesetBuffer + tileOffsetDest + lineOffsetDest, tilePixels + lineOffsetSrc, Tile::kTileWidth);
+    }
 }
 
 
@@ -230,14 +258,55 @@ bool TileManager::loadTiles()
         return false;
     }
 
-    // Loads all tiles
+    // Loads all tiles and put pixels in a temporaty buffer
+    uint8_t *tilesPixels = new uint8_t[kNumOfTiles * Tile::kTileHeight * Tile::kTileWidth];
     for (int i = 0; i < kNumOfTiles; ++i) {
-        loadTile(i, tilesData, toTileType(typesData[i]));
+        loadTile(i, tilesData, typesData, tilesPixels);
     }
+
+    // Then init texture with the buffer
+    tilesTexture_ = g_System.createTexture();
+    bool res = tilesTexture_->importTilesetInSurface(tilesPixels, 
+                                            kNumOfTilesPerRow * Tile::kTileWidth, 
+                                            kNumOfTilesPerCol * Tile::kTileHeight);
 
     delete[] typesData;
     delete[] tilesData;
-    return true;
+    delete [] tilesPixels;
+
+    return res;
+}
+
+
+/*!
+ * 
+ * @param missionId Id of the mission to find the right palette 
+ * @param sixbit 6 bits or 8 bits palette
+ * @return true is ok
+ */
+bool TileManager::setPaletteForMission(int missionId, bool sixbit) {
+    bool res = false;
+    //NOTE: I'm not sure of the way we get the palette
+    std::string fname = std::format("hpal0{}.dat", missionId % 5 + 1);
+
+    LOG(Log::k_FLG_GFX, "MenuManager", "setPalette", ("Setting palette : %s", fname.c_str()))
+    size_t size;
+    uint8 *data = File::loadOriginalFile(fname, size);
+
+    if (data) {
+        if (sixbit) {
+            res = tilesTexture_->setPalette6b3(data, 256);
+        } else {
+            res = tilesTexture_->setPalette8b3(data, 256);
+        }
+        delete[] data;
+
+        if (res) {
+            res = tilesTexture_->loadTextureFromSurface();
+        }
+    }
+
+    return res;
 }
 
 /*!
@@ -289,5 +358,18 @@ bool TileManager::drawTile(const Tile *tile, int x, int y) {
             ++cp_ptr_screen;
         }
     }
+    return true;
+}
+
+/*!
+ * TODO : to be complemented
+ * @param tile 
+ * @param x 
+ * @param y 
+ * @return 
+ */
+bool TileManager::drawTile2(const Tile *tile, int x, int y) {
+    tilesTexture_->render(tile->textureLocation(), {x, y}, Tile::kTileWidth, Tile::kTileHeight);
+
     return true;
 }

@@ -26,8 +26,11 @@
 #ifndef TILEMANAGER_H
 #define TILEMANAGER_H
 
+#include <memory>
+
 #include "fs-utils/common.h"
 #include "fs-engine/gfx/tile.h"
+#include "fs-engine/gfx/fstexture.h"
 
 /*!
  * Tile manager loads and holds all the game tiles.
@@ -42,7 +45,10 @@ public:
     static const int kSubTilePerHeight;
     //! The total number of sub-tiles for a tile
     static const int kSubTilePerTile;
-    static const int kTilesPerWidth;
+    //! The number of tiles on a row in the tile texture
+    static const int kNumOfTilesPerRow;
+    //! The number of tiles on a column in the tile texture
+    static const int kNumOfTilesPerCol;
     /*!
      * The size in bytes of the indexes of subtiles for tile in the header file.
      * There are 6 subtiles of 4 bytes for each tile.
@@ -59,27 +65,33 @@ public:
     ~TileManager();
     //! Loads tiles from the file
     bool loadTiles();
+    //! Sets the palette for the given mission
+    bool setPaletteForMission(int missionId, bool sixbit);
 
     //! Returns tile with the given index
     Tile * getTile(uint8 index);
     //! Draws the tile to the screen
     bool drawTile(const Tile *tile, int x, int y);
+    //! TODO : Temp implementation using texture
+    bool drawTile2(const Tile *tile, int x, int y);
 
 protected:
     //! Load a given tile
-    void loadTile(int id, const uint8_t * tileData, Tile::EType type);
+    void loadTile(int id, const uint8_t * tileData, uint8 *typesData, uint8_t *tilesetBuffer);
     //! Load a given sub-tile
     void loadSubTile(const uint8_t * data, int offset, int index, int stride, uint8_t * pixels);
-    //!
-    void copyTilePixelsToSurface(int id, const uint8_t *tilePixels);
+    //! Copy the tile from the tile array to the tilesetBuffer
+    void copyTilePixelsToBuffer(int id, const uint8_t *tilePixels, uint8_t *tilesetBuffer);
     //! Returns the good enum for the given data
     Tile::EType toTileType(uint8_t data);
 
 protected:
     //! All the tiles in the game
     Tile **tiles_;
-    //!
+    //! TODO : Remove
     uint8_t *tilesPixels_;
+    //! A texture that store the tileset
+    std::unique_ptr<FSTexture> tilesTexture_;
 };
 
 #endif
