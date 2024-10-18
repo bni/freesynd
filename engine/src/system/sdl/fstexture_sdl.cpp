@@ -24,6 +24,8 @@
 
 #include "fs-utils/log/log.h"
 
+const int FSTextureSDL::kColorKeyIndex = 255;
+
 /*!
  * @brief 
  * @param pRenderer 
@@ -91,6 +93,7 @@ void FSTextureSDL::render(Point2D src, Point2D dst, int width, int height) {
  * @return 
  */
 bool FSTextureSDL::importTilesetInSurface(const uint8_t *tilesPixels, int width, int height) {
+    LOG(Log::k_FLG_GFX, "FSTextureSDL", "importTilesetInSurface", ("Importing tileset..."))
     bool res = true;
     // Initialize an indexed surface
     freeSurface();
@@ -117,6 +120,8 @@ bool FSTextureSDL::importTilesetInSurface(const uint8_t *tilesPixels, int width,
             SDL_UnlockSurface(pSurface_);
         }
     }
+    // Set the color at given index in the palette as a transparent color
+    SDL_SetColorKey(pSurface_, SDL_TRUE, kColorKeyIndex);
     
     return res;
 }

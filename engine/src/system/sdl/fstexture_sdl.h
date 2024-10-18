@@ -52,6 +52,9 @@ private:
     void freeTexture();
 
 private:
+    //! Index in the palette for the transparent color
+    static const int kColorKeyIndex;
+
     //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
     SDL_Renderer *pRenderer_;
     //! This surface is loaded from original file and used for storing palette
