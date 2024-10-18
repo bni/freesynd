@@ -122,11 +122,12 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, uint8 *typesData, 
     // not_alpha will be true and so tile will be drawn
     bool notAlpha = false;
     for (int h = 0; h < Tile::kTileHeight; h++) {
-        for (int w = 0; w < Tile::kTileWidth; w++)
+        for (int w = 0; w < Tile::kTileWidth; w++) {
             if (tilePixels[h * Tile::kTileHeight + w] != 255) {
                 notAlpha = true;
                 break;
             }
+        }
     }
 
     Point2D textureLoc {
@@ -183,7 +184,7 @@ void TileManager::copyTilePixelsToBuffer(int id, const uint8_t *tilePixels, uint
     // Copy line by line
     for (int j=0; j < Tile::kTileHeight; j++) {
         int lineOffsetDest = j * Tile::kTileWidth * kNumOfTilesPerRow;
-        int lineOffsetSrc = (Tile::kTileHeight - j) * Tile::kTileWidth;
+        int lineOffsetSrc = (Tile::kTileHeight -1 - j) * Tile::kTileWidth;
         memcpy(tilesetBuffer + tileOffsetDest + lineOffsetDest, tilePixels + lineOffsetSrc, Tile::kTileWidth);
     }
 }
