@@ -32,6 +32,7 @@
 #include "fs-utils/misc/singleton.h"
 #include "fs-engine/io/keys.h"
 #include "fs-engine/sound/audio.h"
+#include "fs-engine/gfx/fstexture.h"
 
 class Sprite;
 
@@ -114,7 +115,15 @@ public:
     /**
      * Draw a rectangle with the given color
      */
-    virtual void drawRect(int x, int y, int width, int height, uint8 color) = 0;
+    virtual void drawRect(int x, int y, int width, int height, FSColor color) = 0;
+    /*!
+     * @brief Draw a rect filled with the given color
+     * @param pos Upper left corner position of the rect
+     * @param width Width of the rectangle
+     * @param height Height of the rectangle
+     * @param color Color to fill the rectangle
+     */
+    virtual void drawFillRect(Point2D pos, int width, int height, FSColor color) = 0;
 
     //! Returns the mouse pointer coordinates
     virtual uint32_t getMousePos(Point2D &point) = 0;
@@ -141,6 +150,9 @@ public:
 
     //! Return a pointer to the Audio system instance
     Audio* getAudio() {return audio_.get();}
+
+    //! Create a FSTexture with the current system
+    virtual std::unique_ptr<FSTexture> createTexture() = 0;
 
 protected:
     std::unique_ptr<Audio> audio_;

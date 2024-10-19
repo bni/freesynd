@@ -86,6 +86,8 @@ protected:
     Tile::EType toTileType(uint8_t data);
 
 protected:
+    //! Index in the palette for the transparent color
+    static const int kTileColorKeyIndex;
     //! All the tiles in the game
     Tile **tiles_;
     //! TODO : Remove

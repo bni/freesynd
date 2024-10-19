@@ -26,8 +26,11 @@
 #ifndef ENGINE_LOGOMANAGER_H
 #define ENGINE_LOGOMANAGER_H
 
+#include <memory>
+
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
+#include "fs-engine/gfx/fstexture.h"
 
 /*!
  * This class manages the logo sprites and proposes a method to display a logo.
@@ -37,13 +40,12 @@ class LogoManager : public Singleton<LogoManager>{
 public:
     /*! Max number of colors for logos.*/
     static const int kMaxColour;
-    /*! Width for a normal logo*/
-    static const int kLogoBigWidth;
-    /*! Width for a small logo*/
-    static const int kLogoSmallWidth;
 
     explicit LogoManager();
     ~LogoManager();
+
+    //! Initialize logoManager by loading the logos
+    bool loadLogos(const uint8_t * paletteColors, int nbColors);
 
     //! Return the color value at the given index
     uint8_t getColorAtIndex(int colourIdx);
@@ -51,8 +53,20 @@ public:
     int numLogos();
     //! Draws a logo at given position with the given color
     void drawLogo(int x, int y, int logo, int colourIdx, bool mini = false);
+    //! Draws a logo at given position with the given color in big format or not
+    void draw(Point2D pos, int logoId, int colourIdx, bool big);
 
 private:
+    //! Copies logos data found in original files into a buffer before copying it to a surface
+    void copyLogosPixelsToBuffer(const uint8_t *bigLogosData, uint8_t *logosBuffer);
+
+private:
+    /*! Width for a normal logo*/
+    static const int kLogoBigWidth;
+    /*! Width for a small logo*/
+    static const int kLogoSmallWidth;
+    /*! How many logos on a line in a texture.*/
+    static const int kNumOfLogosPerRow;
     //! Number of logos in the game
     int numberLogo_;
     //! This contains the pixels data for all logos and are loaded from a file
@@ -63,6 +77,10 @@ private:
     uint8 *data_all_mini_logos_;
     //! This contains the data for one mini logo that will be drawn on screen
     uint8_t *data_mini_logo_;
+    //! A texture that stores the logos big and small
+    std::unique_ptr<FSTexture> logosTexture_;
+    //! An array of positions for each logo in the texture
+    Point2D **logoPositions_;
 };
 
 #define g_LogoMgr    LogoManager::singleton()

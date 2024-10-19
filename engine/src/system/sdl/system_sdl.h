@@ -73,7 +73,8 @@ public:
     void drawHLine(int x, int y, int length, uint8 color) override;
     void drawLine(int x1, int y1, int x2, int y2, uint8 color, int skip = 0,
             int off = 0) override;
-    void drawRect(int x, int y, int width, int height, uint8 color) override;
+    void drawRect(int x, int y, int width, int height, FSColor color) override;
+    void drawFillRect(Point2D pos, int width, int height, FSColor color) override;
 
     //! Returns the mouse pointer coordinates
     uint32_t getMousePos(Point2D &point) override;
@@ -99,6 +100,7 @@ public:
     //! Call this method to deactivate the text event
     void stopReceiveText() override;
 
+    std::unique_ptr<FSTexture> createTexture() override;
 
 protected:
     //! Creates a SDL window either for fullscreen or not

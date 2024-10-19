@@ -32,8 +32,8 @@ class FSTexture {
 public:
 
     virtual ~FSTexture() {}
-    //! Import tileset for drawing maps
-    virtual bool importTilesetInSurface(const uint8_t *tilesPixels, int width, int height) = 0;
+    //! Import a raw pixel array into a 8 bits surface of given width and height, with the color key
+    virtual bool importSurface(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) = 0;
     //! Set a new palette in the surface
     virtual bool setPalette6b3(const uint8_t * pal, int cols) = 0;
     //! Set a new palette in the surface
@@ -42,6 +42,10 @@ public:
     virtual bool loadTextureFromSurface() = 0;
     //! Renders a rectangle from the current texture to the current renderer
     virtual void render(Point2D src, Point2D dst, int width, int height) = 0;
+    //! Renders a portion of the current texture to the destination with a given ration
+    virtual void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) = 0;
+    //! Return the color stored at given index in the palette store in this texture
+    virtual bool getColorFromPalette(const int index, FSColor& color) = 0;
 };
 
 #endif

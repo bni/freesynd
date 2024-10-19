@@ -41,6 +41,7 @@
 #include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+#include "fstexture_sdl.h"
 
 SDL_Joystick *joy = NULL;
 
@@ -230,7 +231,7 @@ void SystemSDL::updateScreen() {
 
         // Copy texture to the screen buffer
         SDL_RenderCopy(pRenderer_, pScreenTexture_, NULL, NULL);
-
+        
         if (cursor_visible_) {
             SDL_Rect dst;
 
@@ -244,7 +245,7 @@ void SystemSDL::updateScreen() {
 
         // Flip screen
         SDL_RenderPresent( pRenderer_ );
-    }
+}
 }
 
 /*!
@@ -439,8 +440,8 @@ bool SystemSDL::setPalette6b3(const uint8 * pal, int cols) {
         palette[i].b = (b << 2) | (b >> 4);
 
 #if 0
-        if (like(palette[i].r, 28) && like(palette[i].g, 144)
-            && like(palette[i].b, 0))
+        //if (like(palette[i].r, 28) && like(palette[i].g, 144)
+        //    && like(palette[i].b, 0))
             printf("col %i = %i, %i, %i\n", i, palette[i].r, palette[i].g,
                    palette[i].b);
 #endif
@@ -500,11 +501,31 @@ void SystemSDL::drawLine(int x1, int y1, int x2, int y2, uint8 color, int skip,
     SDL_RenderDrawLine( pRenderer_, x1, y1, x2, y2 );
 }
 
-void SystemSDL::drawRect(int x, int y, int width, int height, uint8 color) {
+/*!
+ * Draw a rect with given color
+ * @param x 
+ * @param y 
+ * @param width 
+ * @param height 
+ * @param color 
+ */
+void SystemSDL::drawRect(int x, int y, int width, int height, FSColor color) {
     SDL_Rect outlineRect = { x, y, width, height};
-    // TODO : use the color parameter
-    SDL_SetRenderDrawColor( pRenderer_, 0xFF, 0x00, 0x00, 0xFF );        
+    SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderDrawRect( pRenderer_, &outlineRect );
+}
+
+/*!
+ * Draw a rect filled with given color
+ * @param pos 
+ * @param width 
+ * @param height 
+ * @param color 
+ */
+void SystemSDL::drawFillRect(Point2D pos, int width, int height, FSColor color) {
+    SDL_Rect outlineRect = { pos.x, pos.y, width, height};
+    SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
+    SDL_RenderFillRect( pRenderer_, &outlineRect );
 }
 
 /*!
@@ -622,4 +643,8 @@ void SystemSDL::startReceiveText() {
  */
 void SystemSDL::stopReceiveText() {
     SDL_StopTextInput();
+}
+
+std::unique_ptr<FSTexture> SystemSDL::createTexture() {
+    return std::make_unique<FSTextureSDL>(pRenderer_);
 }

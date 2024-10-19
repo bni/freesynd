@@ -161,9 +161,23 @@ bool MenuManager::initialize(bool loadIntroFont) {
         }
     }
 
-    // Loads fonts
-    LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
-    return fonts_.loadFonts(&menuSprites_, pIntroFontSprites_);
+    // Load logos
+    size_t size;
+    uint8 *paletteData = File::loadOriginalFile("mselect.pal", size);
+
+    if (!paletteData) {
+        return false;
+    }
+    
+    bool res = logoManager_.loadLogos(paletteData, 256);
+    delete[] paletteData;
+    
+    if (res) {
+        // Loads fonts
+        LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
+        res = fonts_.loadFonts(&menuSprites_, pIntroFontSprites_);
+    }
+    return res;
 }
 
 /*!

@@ -24,8 +24,6 @@
 
 #include "fs-utils/log/log.h"
 
-const int FSTextureSDL::kColorKeyIndex = 255;
-
 /*!
  * @brief 
  * @param pRenderer 
@@ -85,21 +83,32 @@ void FSTextureSDL::render(Point2D src, Point2D dst, int width, int height) {
     }
 }
 
+void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) {
+    //Set rendering space and render to screen
+    SDL_Rect renderQuad = { dst.x, dst.y, width*ratio, height*ratio };
+    SDL_Rect tileQuad = { src.x, src.y, width, height};
+    if (!SDL_RenderCopy( pRenderer_, pTexture_, &tileQuad, &renderQuad )) {
+        //printf("Failed to copy: %s\n", SDL_GetError());
+    }
+}
+
 /*!
- * 
- * @param tilesPixels 
- * @param width 
- * @param height 
- * @return 
+ * Copy an array of pixel in the surface stored inside this class.
+ * The surface is an 8 bits pixel so an empty palette is created.
+ * @param srcPixels Array of pixel. Must be the same size as width and height
+ * @param width Width of the surface
+ * @param height Height of the surface
+ * @param colorKey The index in the palette of the color key to use
+ * @return True if import is ok
  */
-bool FSTextureSDL::importTilesetInSurface(const uint8_t *tilesPixels, int width, int height) {
-    LOG(Log::k_FLG_GFX, "FSTextureSDL", "importTilesetInSurface", ("Importing tileset..."))
+bool FSTextureSDL::importSurface(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) {
+    LOG(Log::k_FLG_GFX, "FSTextureSDL", "importSurface", ("Importing pixels in surface..."))
     bool res = true;
     // Initialize an indexed surface
     freeSurface();
     pSurface_ = SDL_CreateRGBSurface(0, width, height, 8, 0, 0, 0, 0);
     if (pSurface_ == nullptr) {
-        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "importTilesetInSurface", ("Critical error, Tileset surface could not be created! SDL Error : %s", SDL_GetError()))
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "importSurface", ("Critical error, Tileset surface could not be created! SDL Error : %s", SDL_GetError()))
         return false;
     }
     width_ = width;
@@ -107,13 +116,13 @@ bool FSTextureSDL::importTilesetInSurface(const uint8_t *tilesPixels, int width,
 
     if (SDL_MUSTLOCK(pSurface_) && !SDL_LockSurface(pSurface_)) {
         res = false;
-        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "importTilesetInSurface", ("Critical error, Could not lock surface! SDL Error : %s", SDL_GetError()))
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "importSurface", ("Critical error, Could not lock surface! SDL Error : %s", SDL_GetError()))
     }
 
     if (res) {
         Uint8 *dstPixels = (Uint8 *) (pSurface_->pixels);
         for (int i = 0; i < width * height; i++) {
-            dstPixels[i] = tilesPixels[i];
+            dstPixels[i] = srcPixels[i];
         }
 
         if (SDL_MUSTLOCK(pSurface_)) {
@@ -121,7 +130,7 @@ bool FSTextureSDL::importTilesetInSurface(const uint8_t *tilesPixels, int width,
         }
     }
     // Set the color at given index in the palette as a transparent color
-    SDL_SetColorKey(pSurface_, SDL_TRUE, kColorKeyIndex);
+    SDL_SetColorKey(pSurface_, SDL_TRUE, colorKey);
     
     return res;
 }
@@ -193,4 +202,24 @@ bool FSTextureSDL::loadTextureFromSurface() {
         FSERR(Log::k_FLG_GFX, "FSTextureSDL", "loadTextureFromSurface", ("Critical error, Could create texture from surface! SDL Error : %s", SDL_GetError()))
     }
     return pTexture_ != nullptr;
+}
+
+/*!
+ * Returns the color in the palette at the given index
+ * @param index Index of the color in the palette
+ * @param color Resulting color
+ * @return True if color was found
+ */
+bool FSTextureSDL::getColorFromPalette(const int index, FSColor& color) {
+    if (index < 0 || index > pSurface_->format->palette->ncolors) {
+        return false;
+    }
+
+    SDL_Color sdlColor = pSurface_->format->palette->colors[index];
+    color.r = sdlColor.r;
+    color.g = sdlColor.g;
+    color.b = sdlColor.b;
+    color.a = sdlColor.a;
+    
+    return true;
 }

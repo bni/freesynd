@@ -36,13 +36,16 @@ public:
     ~FSTextureSDL();
 
     void render(Point2D src, Point2D dst, int width, int height) override;
-
-    bool importTilesetInSurface(const uint8_t *tilesPixels, int width, int height) override;
-
+    void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) override;
+    //! Creates a sufrace initialized with the array of pixel
+    bool importSurface(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
+    //! Set a palette for the surface
     bool setPalette6b3(const uint8_t * pal, int cols) override;
     bool setPalette8b3(const uint8_t * pal, int cols) override;
-
+    //! Create a texture from the surface (a palette should have been defined first)
     bool loadTextureFromSurface();
+    //! Return the color from the palette at given index
+    bool getColorFromPalette(const int index, FSColor& color) override;
 
 private:
     //! Deallocates surface
@@ -52,9 +55,6 @@ private:
     void freeTexture();
 
 private:
-    //! Index in the palette for the transparent color
-    static const int kColorKeyIndex;
-
     //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
     SDL_Renderer *pRenderer_;
     //! This surface is loaded from original file and used for storing palette

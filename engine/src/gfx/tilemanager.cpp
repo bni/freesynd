@@ -68,6 +68,7 @@ const int TileManager::kBlocksPerSubTileRow = 32 / 8;
 const int TileManager::kSubTileRowLength = (4 + 1) * kBlocksPerSubTileRow;
 const int TileManager::kNumOfTilesPerRow = 16;
 const int TileManager::kNumOfTilesPerCol = 16;
+const int TileManager::kTileColorKeyIndex = 255;
 
 /*!
  * Default constructor.
@@ -123,7 +124,7 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, uint8 *typesData, 
     bool notAlpha = false;
     for (int h = 0; h < Tile::kTileHeight; h++) {
         for (int w = 0; w < Tile::kTileWidth; w++) {
-            if (tilePixels[h * Tile::kTileHeight + w] != 255) {
+            if (tilePixels[h * Tile::kTileHeight + w] != kTileColorKeyIndex) {
                 notAlpha = true;
                 break;
             }
@@ -267,9 +268,10 @@ bool TileManager::loadTiles()
 
     // Then init texture with the buffer
     tilesTexture_ = g_System.createTexture();
-    bool res = tilesTexture_->importTilesetInSurface(tilesPixels, 
+    bool res = tilesTexture_->importSurface(tilesPixels, 
                                             kNumOfTilesPerRow * Tile::kTileWidth, 
-                                            kNumOfTilesPerCol * Tile::kTileHeight);
+                                            kNumOfTilesPerCol * Tile::kTileHeight,
+                                            kTileColorKeyIndex);
 
     delete[] typesData;
     delete[] tilesData;
