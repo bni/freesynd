@@ -40,12 +40,6 @@
 
 #define STUB_FUNC               printf("STUB: %s\n", __PRETTY_FUNCTION__)
 
-// TODO: Convert these to const int's -- we are using C++, yes? :-)
-#define PIXELS_PER_BLOCK        8
-#define COLOR_BYTES_PER_BLOCK   (PIXELS_PER_BLOCK / 2)
-#define ALPHA_BYTES_PER_BLOCK   (PIXELS_PER_BLOCK / 8)
-#define BLOCK_LENGTH            (COLOR_BYTES_PER_BLOCK + ALPHA_BYTES_PER_BLOCK)
-
 typedef signed char int8;
 typedef unsigned char uint8;
 

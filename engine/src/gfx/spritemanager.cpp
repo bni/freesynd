@@ -102,7 +102,7 @@ bool SpriteManager::loadSprites(uint8 * tabData, size_t tabSize,
     assert(tabData);
     assert(spriteData);
 
-    sprite_count_ = int(tabSize) / TABENTRY_SIZE;
+    sprite_count_ = int(tabSize) / Sprite::kTabEntrySize;
     sprites_ = new Sprite[sprite_count_];
     assert(sprites_);
 

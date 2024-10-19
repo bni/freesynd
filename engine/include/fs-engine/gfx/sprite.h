@@ -28,12 +28,21 @@
 
 #include "fs-utils/common.h"
 
-const int TABENTRY_SIZE = 6;
 
 /*!
  * Sprite class.
  */
 class Sprite {
+    /*!
+     * A Block is a group of pixels stored in original files.
+     * It stores partial information for 8 pixels.
+     */
+    static const int kPixelPerBlock;
+    /*!
+     * A complete pixel information is 1 bit for transparency and 4 bits for color.
+     * It needs 5 blocks to complete a pixel.
+     */
+    static const int kBlockLength;
 
     int width_;
     int height_;
@@ -45,6 +54,8 @@ class Sprite {
     uint8_t *sprite_data_;
 
 public:
+    //! Size of a sprite record in the tab file
+    static const int kTabEntrySize;
     /*! Id of sprite agent selector 1 in the menu sprite list.*/
     static const int MSPR_SELECT_1;
     /*! Id of sprite agent selector 2 in the menu sprite list.*/
@@ -87,14 +98,14 @@ public:
     virtual ~Sprite();
 
     void loadSpriteFromPNG(const char *filename);
-    bool loadSprite(uint8 *tabData, uint8 *spriteData, int offset,
+    bool loadSprite(uint8_t *tabData, uint8_t *spriteData, int offset,
             bool rle = false);
     void draw(int x, int y, int z, bool flipped = false, bool x2 = false);
 
     int width() const { return width_; }
     int height() const { return height_; }
 
-    void data(uint8 *spr_data) const;
+    void data(uint8_t *spr_data) const;
 };
 
 #endif

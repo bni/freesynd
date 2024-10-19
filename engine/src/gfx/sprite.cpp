@@ -32,25 +32,28 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/screen.h"
 
-void unpackBlocks1(const uint8 * data, uint8 * pixels)
+void unpackBlocks1(const uint8_t * data, uint8_t * pixels)
 {
     for (int i = 0; i < 8; ++i) {
         if (bitSet(data[0], 7 - i)) {
             pixels[i] = 255;    // transparent
         } else {
             pixels[i] =
-                static_cast < uint8 >
+                static_cast < uint8_t >
                 ((bitValue(data[1], 7 - i) << 0) & 0xff)
-                | static_cast < uint8 >
+                | static_cast < uint8_t >
                 ((bitValue(data[2], 7 - i) << 1) & 0xff)
-                | static_cast < uint8 >
+                | static_cast < uint8_t >
                 ((bitValue(data[3], 7 - i) << 2) & 0xff)
-                | static_cast < uint8 >
+                | static_cast < uint8_t >
                 ((bitValue(data[4], 7 - i) << 3) & 0xff);
         }
     }
 }
 
+const int Sprite::kPixelPerBlock = 8;
+const int Sprite::kBlockLength = kPixelPerBlock / 2 + kPixelPerBlock / 8;
+const int Sprite::kTabEntrySize = 6;
 const int Sprite::MSPR_SELECT_1 = 1;
 const int Sprite::MSPR_SELECT_2 = 2;
 const int Sprite::MSPR_SELECT_3 = 3;
@@ -143,7 +146,7 @@ void Sprite::loadSpriteFromPNG(const char *filename)
     fclose(fp);
 }
 
-bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, int offset,
+bool Sprite::loadSprite(uint8_t * tabData, uint8_t * spriteData, int offset,
                         bool rle)
 {
     if (tabData == nullptr || spriteData == nullptr) {
@@ -154,9 +157,9 @@ bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, int offset,
         return false;
     }
 
-    uint8 *tabEntry = tabData + offset * TABENTRY_SIZE;
+    uint8_t *tabEntry = tabData + offset * kTabEntrySize;
 
-    uint32 spriteOffset = READ_LE_UINT32(tabEntry);
+    uint32_t spriteOffset = READ_LE_UINT32(tabEntry);
 
     tabEntry += 4;
     width_ = *tabEntry;
@@ -167,19 +170,19 @@ bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, int offset,
         return true;
 
     stride_ = ceil8(width_);
-    uint8 *spriteBlocks = spriteData + spriteOffset;
+    uint8_t *spriteBlocks = spriteData + spriteOffset;
 
-    sprite_data_ = new uint8[stride_ * height_];
+    sprite_data_ = new uint8_t[stride_ * height_];
     memset(sprite_data_, 255, size_t(stride_ * height_));
 
-    uint8 *currentPixel;
+    uint8_t *currentPixel;
 
     if (rle) {
         for (int i = 0; i < height_; ++i) {
             int spriteWidth = width_;
             currentPixel = sprite_data_ + i * stride_;
 
-            uint8 b = *spriteBlocks++;
+            uint8_t b = *spriteBlocks++;
             int runLength = b < 128 ? b : -(256 - b);
             while (runLength != 0) {
                 spriteWidth -= runLength;
@@ -222,11 +225,11 @@ bool Sprite::loadSprite(uint8 * tabData, uint8 * spriteData, int offset,
         for (int j = 0; j < height_; ++j) {
             currentPixel = sprite_data_ + j * stride_;
 
-            for (int i = 0; i < width_; i += PIXELS_PER_BLOCK) {
+            for (int i = 0; i < width_; i += kPixelPerBlock) {
                 unpackBlocks1(spriteBlocks, currentPixel);
 
-                spriteBlocks += BLOCK_LENGTH;
-                currentPixel += PIXELS_PER_BLOCK;
+                spriteBlocks += kBlockLength;
+                currentPixel += kPixelPerBlock;
             }
         }
     }
@@ -243,7 +246,7 @@ void Sprite::draw(int x, int y, int z, bool flipped, bool x2)
                       stride_);
 }
 
-void Sprite::data(uint8 * spr_data) const
+void Sprite::data(uint8_t * spr_data) const
 {
     for (int j = 0; j < height_; j++) {
         memcpy(spr_data + j * width_, sprite_data_ + j * stride_, (size_t) width_);
