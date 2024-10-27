@@ -149,8 +149,6 @@ void ConfMenu::handleShow() {
 
 void ConfMenu::handleLeave() {
     showMainPanel();
-
-    g_System.hideCursor();
 }
 
 void ConfMenu::handleAction(const int actionId, void *ctx) {

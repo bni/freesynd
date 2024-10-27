@@ -59,10 +59,6 @@ void MainMenu::handleShow()
     g_System.showCursor();
 }
 
-void MainMenu::handleLeave() {
-    g_System.hideCursor();
-}
-
 void MainMenu::handleAction(const int actionId, void *ctx)
 {
     if (actionId == resetButId_)

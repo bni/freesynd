@@ -310,7 +310,6 @@ void BriefMenu::handleRender(DirtyList &dirtyList) {
 void BriefMenu::handleLeave() {
     delete p_briefing_;
     p_briefing_ = NULL;
-    g_System.hideCursor();
 }
 
 void BriefMenu::handleAction(const int actionId, void *ctx) {

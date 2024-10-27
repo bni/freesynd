@@ -487,7 +487,6 @@ void GameplayMenu::handleLeave()
     EventManager::remove_listener(handleWeaponSelected_);
     EventManager::remove_listener(handleAgentWarned_);
 
-    g_System.hideCursor();
     menu_manager_->setDefaultPalette();
     selection_.clear();
 

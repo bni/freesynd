@@ -447,7 +447,6 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
 }
 
 void SelectMenu::handleLeave() {
-    g_System.hideCursor();
     // resetting menu, all other variables are reset in handleShow
     // with showItemList()
     tab_ = TAB_EQUIPS;

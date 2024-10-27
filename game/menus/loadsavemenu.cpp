@@ -88,7 +88,6 @@ void LoadSaveMenu::handleShow()
 }
 
 void LoadSaveMenu::handleLeave() {
-    g_System.hideCursor();
     if (editNameId_ != -1) {
         pTextFields_[editNameId_]->setHighlighted(false);
     }

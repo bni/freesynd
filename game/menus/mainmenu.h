@@ -35,7 +35,6 @@ public:
     MainMenu(MenuManager *m);
 
     void handleShow();
-    void handleLeave();
     void handleAction(const int actionId, void *ctx);
 
 protected:

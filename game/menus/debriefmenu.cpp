@@ -191,8 +191,6 @@ void DebriefMenu::handleLeave() {
     getStatic(txtNewWeap1Id_)->setText("");
     getStatic(txtNewWeap2Id_)->setText("");
     getStatic(txtSearchId_)->setText("");
-
-    g_System.hideCursor();
 }
 
 void DebriefMenu::onResearchEndEvent(ResearchEndEvent *pEvt) {

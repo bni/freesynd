@@ -192,6 +192,8 @@ void MenuManager::changeCurrentMenu()
     }
 
     if (current_) {
+        // hide cursor to display transition
+        g_System.hideCursor();
         // Give the possibility to the old menu
         // to clean before leaving
         leaveMenu(current_);

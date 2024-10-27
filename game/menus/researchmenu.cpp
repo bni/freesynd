@@ -332,7 +332,6 @@ void ResearchMenu::handleRender(DirtyList &dirtyList)
 }
 
 void ResearchMenu::handleLeave() {
-    g_System.hideCursor();
     // reset window presentation
     pResForGraph_ = NULL;
     showFieldList();

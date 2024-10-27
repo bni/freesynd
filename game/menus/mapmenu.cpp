@@ -359,9 +359,6 @@ void MapMenu::handleRender(DirtyList &dirtyList) {
     drawSelector();
 }
 
-void MapMenu::handleLeave() {
-    g_System.hideCursor();
-}
 
 bool MapMenu::handleMouseDown(Point2D point, int button) {
     // Checks among the missions which one has been clicked on
