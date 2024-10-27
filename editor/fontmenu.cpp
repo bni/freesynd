@@ -35,16 +35,11 @@ FontMenu::FontMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, "", "")
 {
     isCachable_ = false;
-
+    cursorOnShow_ = kMenuCursor;
 }
 
 void FontMenu::handleShow()
 {
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
-
     g_Screen.clear(0);
     menu_manager_->setDefaultPalette();
     displayFont();

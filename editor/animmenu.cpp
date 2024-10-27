@@ -36,6 +36,7 @@ AnimMenu::AnimMenu(MenuManager * m)
         : Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain,
                "mscrenup.dat", "", true) {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     animId_ = 416;
     frameId_ = 0;
 
@@ -54,11 +55,6 @@ AnimMenu::AnimMenu(MenuManager * m)
 
 void AnimMenu::handleShow()
 {
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
-
     menu_manager_->setDefaultPalette();
 }
 

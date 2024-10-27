@@ -66,8 +66,7 @@ public:
     SearchMissionMenu(MenuManager *m);
     ~SearchMissionMenu();
 
-    void handleShow();
-    void handleLeave();
+    void handleShow() override;
     void handleAction(const int actionId, void *ctx) override;
 
 protected:

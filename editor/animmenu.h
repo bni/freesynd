@@ -34,9 +34,9 @@ class AnimMenu : public Menu {
 public:
     AnimMenu(MenuManager *m);
 
-    void handleShow();
-    void handleRender(DirtyList &dirtyList);
-    void handleLeave();
+    void handleShow() override;
+    void handleRender(DirtyList &dirtyList) override;
+    void handleLeave() override;
 
 protected:
     bool handleUnMappedKey(const FS_Key key) override;

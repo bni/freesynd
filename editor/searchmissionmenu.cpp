@@ -65,6 +65,7 @@ SearchMissionMenu::SearchMissionMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdSrchMis, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
 {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     addStatic(0, 40, g_Screen.gameScreenWidth(), "SEARCH MISSION", FontManager::SIZE_4, false);
 
     initPedTypeListAndWidget();
@@ -111,16 +112,7 @@ void SearchMissionMenu::initSearchCriterias() {
 
 void SearchMissionMenu::handleShow()
 {
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
-
     initSearchCriterias();
-}
-
-void SearchMissionMenu::handleLeave() {
-    g_System.hideCursor();
 }
 
 bool SearchMissionMenu::matchMissionWithPedType(Mission *pMission) {

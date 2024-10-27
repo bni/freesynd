@@ -37,6 +37,7 @@ ListMissionMenu::ListMissionMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdListMis, fs_edit_menus::kMenuIdSrchMis, "mscrenup.dat", "")
 {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     addStatic(0, 40, g_Screen.gameScreenWidth(), "MISSIONS FOUND", FontManager::SIZE_4, false);
 
     // Display list of missions found in search menu
@@ -68,18 +69,6 @@ ListMissionMenu::ListMissionMenu(MenuManager * m):
 
     // Back button
     addOption(17, 347, 128, 25, "BACK", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis);
-}
-
-void ListMissionMenu::handleShow()
-{
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
-}
-
-void ListMissionMenu::handleLeave() {
-    g_System.hideCursor();
 }
 
 void ListMissionMenu::handleAction(const int actionId, void *ctx)

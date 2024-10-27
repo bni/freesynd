@@ -34,6 +34,7 @@
 MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
 {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     addStatic(0, 40, g_Screen.gameScreenWidth(), "GAME EDITOR", FontManager::SIZE_4, false);
 
     addStatic(201, 130, 100, "GRAPHICS", FontManager::SIZE_3, false);
@@ -43,18 +44,6 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_
     addStatic(201, 210, 100, "MISSIONS", FontManager::SIZE_3, false);
     addOption(210, 235, 130, 25, "- SEARCH", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis, true, false);
     quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
-}
-
-void MainMenu::handleShow()
-{
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
-}
-
-void MainMenu::handleLeave() {
-    g_System.hideCursor();
 }
 
 void MainMenu::handleAction(const int actionId, void *ctx)

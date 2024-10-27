@@ -35,8 +35,6 @@ class ListMissionMenu : public Menu {
 public:
     ListMissionMenu(MenuManager *m);
 
-    void handleShow();
-    void handleLeave();
     void handleAction(const int actionId, void *ctx) override;
 
 protected:
