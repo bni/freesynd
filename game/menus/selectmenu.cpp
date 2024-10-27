@@ -41,6 +41,8 @@
 SelectMenu::SelectMenu(MenuManager * m):
         Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, "mselect.dat", "mselout.dat", true),
         cur_agent_(0), tick_count_(0), rnd_(0), sel_all_(false) {
+    cursorOnShow_ = kMenuCursor;
+    
     tab_ = TAB_EQUIPS;
     pSelectedWeap_ = NULL;
     selectedWInstId_ = 0;
@@ -354,10 +356,6 @@ void SelectMenu::drawSelectedModInfos(int x, int y)
 }
 
 void SelectMenu::handleShow() {
-
-    // Show the mouse
-    g_System.showCursor();
-
     // Update the time
     updateClock();
 

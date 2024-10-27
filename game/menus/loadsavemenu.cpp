@@ -44,6 +44,7 @@ LoadSaveMenu::LoadSaveMenu(MenuManager * m):
         Menu(m, fs_game_menus::kMenuIdLdSave, fs_game_menus::kMenuIdMain, "mlosa.dat",
              "mlosaout.dat", true) {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     // Title
     addStatic(0, 40, g_Screen.gameScreenWidth(), "#LS_TITLE", FontManager::SIZE_4, false);
 
@@ -83,8 +84,6 @@ void LoadSaveMenu::handleShow()
     for (int i=0; i<10; i++) {
         pTextFields_[i]->setText(files[i].c_str());
     }
-
-    g_System.showCursor();
 }
 
 void LoadSaveMenu::handleLeave() {

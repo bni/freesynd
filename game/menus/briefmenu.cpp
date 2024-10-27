@@ -45,6 +45,8 @@ BriefMenu::BriefMenu(MenuManager * m)
         : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap,
                "mbrief.dat", "mbrieout.dat", true),
           start_line_(0), p_briefing_(NULL), mm_renderer_() {
+    cursorOnShow_ = kMenuCursor;
+    
     addStatic(85, 35, 545, "#BRIEF_TITLE", FontManager::SIZE_4, false);
     txtTimeId_ = addStatic(500, 9, "", FontManager::SIZE_2, true);       // Time
 
@@ -164,8 +166,6 @@ void BriefMenu::handleShow() {
         getStatic(txtEnhId_)->setText("");
         getOption(enhButId_)->setWidgetEnabled(false);
     }
-
-    g_System.showCursor();
 }
 
 /*!

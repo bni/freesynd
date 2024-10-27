@@ -242,6 +242,18 @@ void MenuManager::showMenu(Menu *pMenu) {
     dirtyList_.flush();
     pMenu->handleShow();
 
+    // After showing the window, check to see if a cursor must be display
+    if (pMenu->cursorWhenShown() == Menu::kNoCursor) {
+        g_System.hideCursor();
+    } else {
+        if (pMenu->cursorWhenShown() == Menu::kGameplayCursor) {
+            g_System.usePointerCursor();
+        } else {
+            g_System.useMenuCursor();
+        }
+        g_System.showCursor();
+    }
+
     // then plot the mouse to draw the button
     // that could be highlighted because the mouse
     // is upon it

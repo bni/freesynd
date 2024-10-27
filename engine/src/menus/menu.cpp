@@ -50,6 +50,7 @@ Menu::Menu(MenuManager * menuManager, int id, int parentId, const char *showAnim
     pCaptureInput_ = NULL;
     isCachable_ = true;
     paused_ = false;
+    cursorOnShow_ = kNoCursor;
 }
 
 Menu::~Menu() {

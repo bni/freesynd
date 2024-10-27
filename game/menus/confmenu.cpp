@@ -44,6 +44,7 @@ ConfMenu::ConfMenu(MenuManager *m) :
         Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain,
              "mconfup.dat", "mconfout.dat", true) {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     toAcceptLogo_ = 0;
     toAcceptColourId_ = 0;
     tempLogo_ = 0;
@@ -143,8 +144,6 @@ void ConfMenu::handleShow() {
 
     getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName(), false);
     getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName(), false);
-
-    g_System.showCursor();
 }
 
 void ConfMenu::handleLeave() {

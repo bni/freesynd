@@ -61,6 +61,7 @@ mission_hint_(0), mission_(NULL), selection_(),
 target_(NULL),
 mm_renderer_(), warningTimer_(20000)
 {
+    cursorOnShow_ = kGameplayCursor;
     displayOriginPt_.x = 0;
     displayOriginPt_.y = 0;
     scroll_x_ = 0;
@@ -314,10 +315,6 @@ void GameplayMenu::handleShow() {
     handleAgentDied_ = EventManager::listen<AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
     handleWeaponSelected_ = EventManager::listen<ShootingWeaponSelectedEvent>(this, &GameplayMenu::onShootingWeaponSelectedEvent);
     handleAgentWarned_ = EventManager::listen<PoliceWarningEmittedEvent>(this, &GameplayMenu::onPoliceWarningEmittedEvent);
-
-    // Change cursor to game cursor
-    g_System.usePointerCursor();
-    g_System.showCursor();
 
     // play game track
     g_MusicMgr.playTrack(msc::TRACK_ASSASSINATE);

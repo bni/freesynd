@@ -44,6 +44,7 @@
 
 DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain, "mdebrief.dat",
      "mdeout.dat") {
+    cursorOnShow_ = kMenuCursor;
     int y = 35;
     int right_x = 310;
     int left_x = 20;
@@ -105,9 +106,6 @@ DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief
  * updates infos based on mission statistics.
  */
 void DebriefMenu::handleShow() {
-    g_System.useMenuCursor();
-    g_System.showCursor();
-
     Mission *pMission = g_missionCtrl.mission();
 
     // update game state and listen for any change

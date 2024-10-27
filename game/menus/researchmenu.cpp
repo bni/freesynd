@@ -37,6 +37,8 @@
 ResearchMenu::ResearchMenu(MenuManager * m):
         Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect,
              "mresrch.dat", "mresout.dat", true) {
+    cursorOnShow_ = kMenuCursor;
+    
     tab_ = TAB_EQUIPS;
     pSelectedWeapon_ = NULL;
     pSelectedMod_ = NULL;
@@ -260,10 +262,6 @@ void ResearchMenu::updateClock() {
 }
 
 void ResearchMenu::handleShow() {
-
-    // Show the mouse
-    g_System.showCursor();
-
     // Update the time
     updateClock();
 

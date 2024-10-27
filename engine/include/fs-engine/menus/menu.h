@@ -44,6 +44,19 @@ class MenuManager;
  */
 class Menu {
 public:
+
+    /*!
+     * These are the different types of cursor.
+     * Each Menu says what cursor to display when showed at first.
+     */
+    enum CursorType {
+        //! Don't show any cursor
+        kNoCursor,
+        //! Show the menu cursor
+        kMenuCursor,
+        //! Show the game cursor
+        kGameplayCursor
+    };
     static const int MENU_NO_MENU;
     static const int kMenuIdLogout;
     /*! Id of the mouse left button.*/
@@ -77,6 +90,8 @@ public:
     const char * getLeaveAnimName() { return leaveAnim_.c_str(); }
     //! Returns true is Menu can be put in cache
     bool isCachable() { return isCachable_; }
+    //! Return the cursor to use when shown
+    CursorType cursorWhenShown() { return cursorOnShow_; }
 
     //! Returns the sprites used in menus
     SpriteManager &menuSprites();
@@ -212,6 +227,8 @@ protected:
     bool isCachable_;
     /*! Used only in gameplay menu, pauses game*/
     bool paused_;
+    //! What type of cursor to show at first
+    CursorType cursorOnShow_;
 
 private:
     /*!

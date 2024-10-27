@@ -113,6 +113,7 @@ MapMenu::MapMenu(MenuManager * m)
         : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain,
                "mmap.dat", "mmapout.dat", true),
           mapblk_data_(NULL), select_tick_count_(0) {
+    cursorOnShow_ = kMenuCursor;
     //
     briefButId_ = addOption(17, 347, 128, 25, "#MAP_BRIEF_BUT",
         FontManager::SIZE_2, fs_game_menus::kMenuIdBrief);
@@ -325,9 +326,6 @@ void MapMenu::drawSelector() {
 }
 
 void MapMenu::handleShow() {
-
-    // Show the mouse
-    g_System.showCursor();
 
     // State of the briefing button
     handleBlockSelected();

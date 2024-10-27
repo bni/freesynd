@@ -37,6 +37,7 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_
      "moptout.dat")
 {
     isCachable_ = false;
+    cursorOnShow_ = kMenuCursor;
     addStatic(0, 40, g_Screen.gameScreenWidth(), "#MAIN_TITLE", FontManager::SIZE_4, false);
 
     int id = addOption(201, 130, 300, 25, "#MAIN_CONF", FontManager::SIZE_3, fs_game_menus::kMenuIdConf, true, false);
@@ -49,14 +50,6 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_
     registerHotKey(kKeyCode_F4, resetButId_);
     quitButId_ = addOption(201, 266, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
     registerHotKey(kKeyCode_F5, quitButId_);
-}
-
-void MainMenu::handleShow()
-{
-    // If we came from the intro, the cursor is invisible
-    // otherwise, it does no harm
-    g_System.useMenuCursor();
-    g_System.showCursor();
 }
 
 void MainMenu::handleAction(const int actionId, void *ctx)

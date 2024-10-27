@@ -34,8 +34,7 @@ class MainMenu : public Menu {
 public:
     MainMenu(MenuManager *m);
 
-    void handleShow();
-    void handleAction(const int actionId, void *ctx);
+    void handleAction(const int actionId, void *ctx) override;
 
 protected:
     /*! Id of the reset button.*/
