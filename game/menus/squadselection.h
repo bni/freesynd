@@ -48,7 +48,8 @@ class SquadSelection {
             }
 
             ~Iterator() {
-                idx_ = idx_;
+                idx_ = 0;
+                pSel_ = nullptr;
             }
 
             // The assignment and relational operators are straightforward
@@ -168,11 +169,11 @@ class SquadSelection {
     //! Deselects all selected agents weapons
     void deselectWeaponOfSameCategory(Weapon *pWeaponFromLeader);
     //! Select a weapon for the leader and for all selected agents
-    void selectWeaponFromLeader(int weapon_idx, bool apply_to_all);
+    void selectWeaponFromLeader(uint8_t weapon_idx, bool apply_to_all);
     //! Go and pick up weapon
     void pickupWeapon(WeaponInstance *pWeapon, bool addAction);
     //! Follow Ped
-    void followPed(PedInstance *pPed, bool addAction);
+    void followPed(PedInstance *pPed);
     //! Enter or leave the vehicle : do the same as leader
     void enterOrLeaveVehicle(Vehicle *pVehicle, bool addAction);
     //! Move selected agents to the given point

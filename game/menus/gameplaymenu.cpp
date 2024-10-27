@@ -772,6 +772,11 @@ void GameplayMenu::updateIPALevelMeters(int elapsed)
     }
 }
 
+/*!
+ * React to a click on the map
+ * @param point Where the player clicked in screen coordinates
+ * @param button The mouse button he clicked
+ */
 void GameplayMenu::handleClickOnMap(Point2D point, int button) {
     TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + point.x - 129,
                     displayOriginPt_.y + point.y);
@@ -799,7 +804,7 @@ void GameplayMenu::handleClickOnMap(Point2D point, int button) {
                 selection_.pickupWeapon(dynamic_cast<WeaponInstance *>(target_), ctrl);
                 break;
             case MapObject::kNaturePed:
-                selection_.followPed(dynamic_cast<PedInstance *>(target_), ctrl);
+                selection_.followPed(dynamic_cast<PedInstance *>(target_));
                 break;
             case MapObject::kNatureVehicle:
                 selection_.enterOrLeaveVehicle(dynamic_cast<Vehicle *>(target_), ctrl);

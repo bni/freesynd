@@ -65,7 +65,7 @@ void SquadSelection::clear() {
  * \return 0 if no agent is selected.
  */
 size_t SquadSelection::size() {
-    int agents = 0;
+    size_t agents = 0;
 
     for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
         if (isAgentSelected(i)) {
@@ -186,7 +186,7 @@ void SquadSelection::deselectWeaponOfSameCategory(Weapon *pWeaponFromLeader) {
  * \param weapon_idx The index in the leader inventory of the weapon to select.
  * \param apply_to_all In case of Medikit, all selected agents must use one.
  */
-void SquadSelection::selectWeaponFromLeader(int weapon_idx, bool applySelectionToAll) {
+void SquadSelection::selectWeaponFromLeader(uint8_t weapon_idx, bool applySelectionToAll) {
     PedInstance *pLeader = leader();
     WeaponInstance *pLeaderWeapon = pLeader->weapon(weapon_idx);
 
@@ -228,11 +228,10 @@ void SquadSelection::pickupWeapon(WeaponInstance *pWeapon, bool addAction) {
 
 /*!
  * All selected agents that are not in a vehicle, follows the given pedestrian.
+ * This action replaces all actions in the agents list.
  * \param pPed The ped to follow
- * \param addAction True to add the action at the end of the list of action,
- * false to set as the only action.
  */
-void SquadSelection::followPed(PedInstance *pPed, bool addAction) {
+void SquadSelection::followPed(PedInstance *pPed) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it)
     {
         PedInstance *pAgent = *it;
@@ -285,7 +284,7 @@ void SquadSelection::enterOrLeaveVehicle(Vehicle *pVehicle, bool addAction) {
  * false to set as the only action.
  */
 void SquadSelection::moveTo(TilePoint &mapPt, bool addAction) {
-    int i=0;
+    size_t i=0;
     for (SquadSelection::Iterator it = begin(); it != end(); ++it, i++)
     {
         PedInstance *pAgent = *it;
@@ -341,7 +340,6 @@ void SquadSelection::shootAt(const WorldPoint &aimedLocW) {
  * \param pMission Mission*
  * \param pTarget ShootableMapObject*
  * \return bool
- *
  */
 bool SquadSelection::isTargetInRange(Mission *pMission, ShootableMapObject *pTarget) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it) {
