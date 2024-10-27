@@ -397,6 +397,8 @@ public:
 
     bool inSightRange(MapObject *t);
     Vehicle * inVehicle() const;
+    //! Return true if this ped is inside a vehicle
+    bool isInVehicle() { return in_vehicle_ != nullptr; }
 
     void putInVehicle(Vehicle *v);
     void leaveVehicle();

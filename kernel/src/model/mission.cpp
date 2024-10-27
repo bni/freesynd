@@ -2493,17 +2493,17 @@ MapObject * Mission::checkBlockedByObject(WorldPoint * pStartPt, WorldPoint * pE
         }
     }
 
-    for (unsigned int i = 0; i < peds_.size(); ++i) {
-        PedInstance * p_blocker = peds_[i];
-        if (p_blocker->isAlive() && p_blocker != pOrigin && p_blocker->inVehicle() == NULL) {
-            if (p_blocker->isBlocker(&copyStartPt, &copyEndPt, inc_xyz)) {
+    for (size_t i = getSquad()->size(); i < peds_.size(); ++i) {
+        PedInstance * pPed = peds_[i];
+        if (pPed->isAlive() && pPed != pOrigin && !pPed->isInVehicle()) {
+            if (pPed->isBlocker(&copyStartPt, &copyEndPt, inc_xyz)) {
                 int cx = pStartPt->x - copyStartPt.x;
                 int cy = pStartPt->y - copyStartPt.y;
                 int cz = pStartPt->z - copyStartPt.z;
                 double dist_blocker = sqrt((double) (cx * cx + cy * cy + cz * cz));
                 if (closest == -1 || dist_blocker < closest) {
                     closest = dist_blocker;
-                    pBlocker = p_blocker;
+                    pBlocker = pPed;
                     blockStartPt = copyStartPt;
                     blockEndPt = copyEndPt;
                 }
@@ -2700,12 +2700,12 @@ uint8 Mission::checkBlockedByTile(const WorldPoint & originPosW, WorldPoint *pTa
  * \param distTo
  * \param pOrigin
  * \return mask where bits are:
- * - 0b : target in range(1)
- * - 1b : blocker is object, "t" is set(2)
- * - 2b : blocker object, "pn" is set(4)
- * - 3b : reachable point set (8)
- * - 4b : blocker tile, "pn" is set(16)
- * - 5b : out of visible reach(32)
+ *   - 0b : target in range(1)
+ *   - 1b : blocker is object, "t" is set(2)
+ *   - 2b : blocker object, "pn" is set(4)
+ *   - 3b : reachable point set (8)
+ *   - 4b : blocker tile, "pn" is set(16)
+ *   - 5b : out of visible reach(32)
  * NOTE: only if "pn" or "t" are not null, variables are set
 
 */
@@ -2714,7 +2714,7 @@ uint8 Mission::checkIfBlockersInShootingLine(const WorldPoint & originLoc, Shoot
     double * distTo, const ShootableMapObject *pOrigin)
 {
     // search for a tile blocking the path towards the target
-    // tmp will hold the updated position after that search
+    // tmpPosW will hold the updated position after that search
     WorldPoint tmpPosW;
     if (pTarget && *pTarget) {
         tmpPosW.convertFromTilePoint((*pTarget)->position());
