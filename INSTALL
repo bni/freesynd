@@ -43,10 +43,10 @@ The root directory containing the source code will be called *FS_ROOT* in the fo
 **Note**: For more information on how to setup those prerequisites for your plateform, please consult this [Wiki Page](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/#requirements).
 
 To build Freesynd, you will need to install :
-    1/ [Cmake 3.22](https://cmake.org/) with preferrably Ninja build
+    1/ [Cmake 3.28](https://cmake.org/) with preferrably Ninja build
     2/ A C++ compiler
 	3/ The following required Libraries (for build and run) :
-    - SDL-1.2
+    - SDL-2
     - SDL_mixer
     - SDL_image
     - Png

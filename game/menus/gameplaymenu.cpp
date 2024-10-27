@@ -553,12 +553,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
     target_ = NULL;
 
     if (point.x > 128) {
-#ifdef _DEBUG
-        // During debug our agents are included in possible targets
-        for (size_t i = 0; mission_ && i < mission_->numPeds(); ++i) {
-#else
         for (size_t i = mission_->getSquad()->size(); mission_ && i < mission_->numPeds(); ++i) {
-#endif
             PedInstance *p = mission_->ped(i);
             if (p->isAlive() && p->isDrawable()) {
                 Point2D scPt;
@@ -640,13 +635,13 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
     }
 
     if (target_) {
-        if (target_->nature() == MapObject::kNaturePed ||
-            target_->nature() == MapObject::kNatureVehicle) {
+        if (target_->is(MapObject::kNaturePed) ||
+            target_->is(MapObject::kNatureVehicle)) {
             if (inrange)
                 g_System.useTargetRedCursor();
             else
                 g_System.useTargetCursor();
-        } else if (target_->nature() == MapObject::kNatureWeapon) {
+        } else if (target_->is(MapObject::kNatureWeapon)) {
             g_System.usePickupCursor();
         }
     } else if (point.x > 128) {

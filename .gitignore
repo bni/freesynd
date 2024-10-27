@@ -14,3 +14,4 @@ freesynd.ini
 /.vscode/
 
 CMakeUserPresets.json
+.DS_Store
