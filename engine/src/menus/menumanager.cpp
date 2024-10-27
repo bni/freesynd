@@ -36,6 +36,25 @@
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/soundmanager.h"
+#include "fs-engine/menus/logoutmenu.h"
+
+/*!
+ * First instanciate a default menu. If menuID is not a default menu,
+ * then asked subclass to instanciate via createCustomMenu().
+ * @param menuId Id of the menu
+ * @return 
+ */
+Menu * MenuFactory::createMenu(const int menuId) {
+    Menu *pMenu = NULL;
+
+    if (menuId == Menu::kMenuIdLogout) {
+        pMenu = new LogoutMenu(pManager_);
+    } else {
+        pMenu = createCustomMenu(menuId);
+    }
+
+    return pMenu;
+}
 
 MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
         : dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),

@@ -47,9 +47,13 @@ class MenuManager;
 class MenuFactory {
 public:
     virtual ~MenuFactory() {}
-
-    virtual Menu * createMenu(const int menuId) = 0;
+    //! Create an instance of Menu corresponding to the given id 
+    Menu * createMenu(const int menuId);
     void setMenuManager(MenuManager *pManager) { pManager_ = pManager; }
+
+protected:
+    //! Create a menu for the component
+    virtual Menu * createCustomMenu(const int menuId) = 0;
 
 protected:
     MenuManager *pManager_;

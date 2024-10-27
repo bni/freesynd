@@ -24,14 +24,13 @@
  *                                                                      *
  ************************************************************************/
 
-#include "logoutmenu.h"
+#include "fs-engine/menus/logoutmenu.h"
 
-#include "menus/gamemenuid.h"
 #include "fs-engine/events/event.h"
 #include "fs-engine/events/default_events.h"
 #include "fs-engine/gfx/screen.h"
 
-LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, fs_game_menus::kMenuIdMain),
+LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, MENU_NO_MENU),
 tick_count_(0)
 {
     isCachable_ = false;

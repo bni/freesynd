@@ -16,7 +16,6 @@ set (SOURCES
 	menus/gameplaymenu.cpp
 	menus/loadingmenu.cpp
 	menus/loadsavemenu.cpp
-	menus/logoutmenu.cpp
 	menus/mainmenu.cpp
 	menus/mapmenu.cpp
 	menus/gamemenufactory.cpp
@@ -46,7 +45,6 @@ set(HEADERS
 	menus/gameplaymenu.h
 	menus/loadingmenu.h
 	menus/loadsavemenu.h
-	menus/logoutmenu.h
 	menus/mainmenu.h
 	menus/mapmenu.h
 	menus/gamemenufactory.h

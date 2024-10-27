@@ -30,11 +30,16 @@
 #include "fs-engine/menus/menumanager.h"
 
 /*!
- *
+ * Menu factory for the Game.
  */
 class GameMenuFactory : public MenuFactory {
-public:
-    Menu * createMenu(const int menuId);
+protected:
+    /*!
+     * Instanciate menus for the Game.
+     * @param menuId A menu ID
+     * @return null if menu ID is unknown
+     */
+    Menu * createCustomMenu(const int menuId);
 };
 
 #endif // MENUS_GAMEMENUFACTORY_

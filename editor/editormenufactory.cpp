@@ -29,19 +29,16 @@
 
 #include "editormenuid.h"
 #include "mainmenu.h"
-#include "logoutmenu.h"
 #include "fontmenu.h"
 #include "animmenu.h"
 #include "searchmissionmenu.h"
 #include "listmissionmenu.h"
 
-Menu * EditorMenuFactory::createMenu(const int menuId) {
+Menu * EditorMenuFactory::createCustomMenu(const int menuId) {
     Menu *pMenu = NULL;
 
     if (menuId == fs_edit_menus::kMenuIdMain) {
         pMenu =  new MainMenu(pManager_);
-    } else if (menuId == Menu::kMenuIdLogout) {
-        pMenu =  new LogoutMenu(pManager_);
     } else if (menuId == fs_edit_menus::kMenuIdFont) {
         pMenu =  new FontMenu(pManager_);
     } else if (menuId == fs_edit_menus::kMenuIdAnim) {

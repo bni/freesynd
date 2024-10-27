@@ -3,7 +3,6 @@ set(DEV_TOOLS_HEADERS
 	editorcontroller.h
 	editormenufactory.h
 	editormenuid.h
-	logoutmenu.h
 	mainmenu.h
 	fontmenu.h
 	animmenu.h
@@ -15,7 +14,6 @@ add_executable (fs-editor
 	editorapp.cpp
 	editorcontroller.cpp
 	editormenufactory.cpp
-	logoutmenu.cpp
 	mainmenu.cpp
 	fontmenu.cpp
 	animmenu.cpp

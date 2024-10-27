@@ -33,8 +33,13 @@
  * Creates menus for the editor application.
  */
 class EditorMenuFactory : public MenuFactory {
-public:
-    Menu * createMenu(const int menuId);
+protected:
+    /*!
+     * Instanciate menus for the Editor.
+     * @param menuId A menu ID
+     * @return null if menu ID is unknown
+     */
+    Menu * createCustomMenu(const int menuId);
 };
 
 #endif // EDITOR_EDITORMENUFACTORY_H_

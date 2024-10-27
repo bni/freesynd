@@ -35,11 +35,10 @@
 #include "menus/loadingmenu.h"
 #include "menus/gameplaymenu.h"
 #include "menus/debriefmenu.h"
-#include "menus/logoutmenu.h"
 #include "menus/flimenu.h"
 #include "fs-utils/log/log.h"
 
-Menu * GameMenuFactory::createMenu(const int menuId) {
+Menu * GameMenuFactory::createCustomMenu(const int menuId) {
     Menu *pMenu = NULL;
 
     if (menuId == fs_game_menus::kMenuIdMain) {
@@ -54,8 +53,6 @@ Menu * GameMenuFactory::createMenu(const int menuId) {
         pMenu =  new GameplayMenu(pManager_);
     } else if (menuId == fs_game_menus::kMenuIdLoading) {
         pMenu =  new LoadingMenu(pManager_);
-    } else if (menuId == Menu::kMenuIdLogout) {
-        pMenu =  new LogoutMenu(pManager_);
     } else if (menuId == fs_game_menus::kMenuIdResearch) {
         pMenu =  new ResearchMenu(pManager_);
     } else if (menuId == fs_game_menus::kMenuIdSelect) {
