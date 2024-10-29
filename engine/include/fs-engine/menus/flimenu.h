@@ -61,24 +61,28 @@ struct FliDesc {
  */
 class FliMenu : public Menu {
 public:
-    FliMenu(MenuManager *m, int menuId);
+    FliMenu(MenuManager *m, int menuId, int parentId);
     ~FliMenu();
 
-    void handleTick(uint32_t elapsed) override;
-    void handleShow();
+    //! Set the menu to be display at the end of the last animation
+    void setNextMenu(int menuId) { nextMenu_ = menuId; }
 
-    void handleLeave();
+    void handleTick(uint32_t elapsed) override;
+    void handleShow() override;
+
+    void handleLeave() override;
+
+    //! Append a animation to play with its caracteristics
+    void addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool skipable, const FrameEvent *events);
 
 protected:
-    void handleRender(DirtyList &dirtyList);
+    void handleRender(DirtyList &dirtyList) override;
 
     bool handleMouseDown(Point2D point, int button) override;
 
     bool handleUnMappedKey(const FS_Key key) override;
 
     bool loadNextFli();
-
-    void addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool skipable, const FrameEvent *events);
 
 protected:
     /*! The Fli player.*/

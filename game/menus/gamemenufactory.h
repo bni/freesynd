@@ -39,7 +39,9 @@ protected:
      * @param menuId A menu ID
      * @return null if menu ID is unknown
      */
-    Menu * createCustomMenu(const int menuId);
+    Menu * createCustomMenu(const int menuId) override;
+
+    Menu * createFliMenu(const int menuId);
 };
 
 #endif // MENUS_GAMEMENUFACTORY_
