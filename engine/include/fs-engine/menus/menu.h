@@ -59,6 +59,8 @@ public:
     };
     static const int MENU_NO_MENU;
     static const int kMenuIdLogout;
+    //! Id of the Fli transition menu
+    static const int kMenuIdFliTransition;
     /*! Id of the mouse left button.*/
     static const int kMouseLeftButton;
     /*! Id of the mouse right button.*/

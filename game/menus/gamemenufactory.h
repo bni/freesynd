@@ -41,7 +41,14 @@ protected:
      */
     Menu * createCustomMenu(const int menuId) override;
 
+    //! Create an instance of a FliMenu to display the intro and game title
     Menu * createFliMenu(const int menuId);
+
+    //! Return the name of the animation to play before showing a menu
+    const char* getShowAnimation(int menuId) override;
+
+    //! Return the name of the animation to play after leaving a menu
+    const char* getLeaveAnimation(int menuId) override;
 };
 
 #endif // MENUS_GAMEMENUFACTORY_

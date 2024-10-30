@@ -74,6 +74,8 @@ public:
 
     //! Append a animation to play with its caracteristics
     void addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool skipable, const FrameEvent *events);
+    //! Remove all FliDesc
+    void clearFliDescList();
 
 protected:
     void handleRender(DirtyList &dirtyList) override;

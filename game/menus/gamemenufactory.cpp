@@ -119,8 +119,13 @@ const FrameEvent no_event[] = {
     {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
+/*!
+ * Create an instance of a Menu based on its id
+ * @param menuId The id of the menu
+ * @return Null of id is unknown
+ */
 Menu * GameMenuFactory::createCustomMenu(const int menuId) {
-    Menu *pMenu = NULL;
+    Menu *pMenu = nullptr;
 
     if (menuId == fs_game_menus::kMenuIdMain) {
         pMenu =  new MainMenu(pManager_);
@@ -155,6 +160,12 @@ Menu * GameMenuFactory::createCustomMenu(const int menuId) {
     return pMenu;
 }
 
+
+/*!
+ * Create an instance of a FliMenu.
+ * @param menuId The id for the menu
+ * @return A new instance of FliMenu
+ */
 Menu * GameMenuFactory::createFliMenu(const int menuId) {
     FliMenu *pMenu = new FliMenu(pManager_, menuId, fs_game_menus::kMenuIdMain);
     if (pMenu->getId() == fs_game_menus::kMenuIdFliSuccess || menuId == fs_game_menus::kMenuIdFliFailedMission) {
@@ -183,4 +194,78 @@ Menu * GameMenuFactory::createFliMenu(const int menuId) {
     }
 
     return pMenu;
+}
+
+/*!
+ * Return the name of the file for the show animation per Menu
+ * @param menuId The id of the menu
+* @return Empty string if no animation
+ */
+const char* GameMenuFactory::getShowAnimation(int menuId) {
+    if (menuId == fs_game_menus::kMenuIdMain) {
+        return "moption.dat";
+    } else if (menuId == fs_game_menus::kMenuIdBrief) {
+        return "mbrief.dat";
+    } else if (menuId == fs_game_menus::kMenuIdConf) {
+        return "mconfup.dat";
+    } else if (menuId == fs_game_menus::kMenuIdDebrief) {
+        return "mdebrief.dat";
+    } else if (menuId == fs_game_menus::kMenuIdGameplay) {
+        return "";
+    } else if (menuId == fs_game_menus::kMenuIdLoading) {
+        return "";
+    } else if (menuId == fs_game_menus::kMenuIdResearch) {
+        return "mresrch.dat";
+    } else if (menuId == fs_game_menus::kMenuIdSelect) {
+        return "mselect.dat";
+    } else if (menuId == fs_game_menus::kMenuIdLdSave) {
+        return "mlosa.dat";
+    } else if (menuId == fs_game_menus::kMenuIdMap) {
+        return "mmap.dat";
+    } else if (menuId == fs_game_menus::kMenuIdFliSuccess ||
+        menuId == fs_game_menus::kMenuIdFliFailedMission ||
+        menuId == fs_game_menus::kMenuIdFliTitle||
+        menuId == fs_game_menus::kMenuIdFliIntro) {
+        return "";
+        ;
+    } else {
+        return "";
+    }
+}
+
+/*!
+ * Return the name of the file for the leave animation per Menu
+ * @param menuId The id of the menu
+ * @return Empty string if no animation
+ */
+const char* GameMenuFactory::getLeaveAnimation(int menuId) {
+    if (menuId == fs_game_menus::kMenuIdMain) {
+        return "moptout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdBrief) {
+        return "mbrieout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdConf) {
+        return "mconfout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdDebrief) {
+        return "mdeout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdGameplay) {
+        return "mscrenup.dat";
+    } else if (menuId == fs_game_menus::kMenuIdLoading) {
+        return "";
+    } else if (menuId == fs_game_menus::kMenuIdResearch) {
+        return "mresout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdSelect) {
+        return "mselout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdLdSave) {
+        return "mlosaout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdMap) {
+        return "mmapout.dat";
+    } else if (menuId == fs_game_menus::kMenuIdFliSuccess ||
+        menuId == fs_game_menus::kMenuIdFliFailedMission ||
+        menuId == fs_game_menus::kMenuIdFliTitle||
+        menuId == fs_game_menus::kMenuIdFliIntro) {
+        return "";
+        ;
+    } else {
+        return "";
+    }
 }

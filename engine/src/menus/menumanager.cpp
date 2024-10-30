@@ -26,8 +26,7 @@
 
 #include "fs-engine/menus/menumanager.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <cassert>
 
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/io/file.h"
@@ -37,6 +36,13 @@
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/menus/logoutmenu.h"
+#include "fs-engine/menus/flimenu.h"
+
+// TODO : separate between show and leave animation with a sound
+//! This defines the list of events for the transition animation
+const FrameEvent transition_event[] = {
+    {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+};
 
 /*!
  * First instanciate a default menu. If menuID is not a default menu,
@@ -45,10 +51,12 @@
  * @return 
  */
 Menu * MenuFactory::createMenu(const int menuId) {
-    Menu *pMenu = NULL;
+    Menu *pMenu = nullptr;
 
     if (menuId == Menu::kMenuIdLogout) {
         pMenu = new LogoutMenu(pManager_);
+    } else if (menuId == Menu::kMenuIdFliTransition) {
+        pMenu = new FliMenu(pManager_, Menu::kMenuIdFliTransition, 0);
     } else {
         pMenu = createCustomMenu(menuId);
     }
@@ -56,6 +64,53 @@ Menu * MenuFactory::createMenu(const int menuId) {
     return pMenu;
 }
 
+/*!
+ * Return true if there is an animation for the given menu.
+ * @param menuId 
+ * @return 
+ */
+bool MenuFactory::hasLeaveAnimation(int menuId) {
+    std::string anim(getLeaveAnimation(menuId));
+
+    return anim.length() != 0;
+}
+
+/*!
+ * Return true if there is an animation for the given menu.
+ * @param menuId 
+ * @return 
+ */
+bool MenuFactory::hasShowAnimation(int menuId) {
+    std::string anim(getShowAnimation(menuId));
+
+    return anim.length() != 0;
+}
+
+/*!
+ * Return the animation for the given menu.
+ * For the menus under the default MenuFactory, there are no animations.
+ * @param menuId 
+ * @return 
+ */
+const char* MenuFactory::getShowAnimation(int menuId) {
+    return "";
+}
+
+/*!
+ * Return the animation for the given menu.
+ * For the menus under the default MenuFactory, there are no animations.
+ * @param menuId 
+ * @return 
+ */
+const char* MenuFactory::getLeaveAnimation(int menuId) {
+    return "";
+}
+
+/*!
+ * @brief 
+ * @param pFactory 
+ * @param pGameSounds 
+ */
 MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
         : dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
           menuSprites_(), fonts_(), logoManager_() {
@@ -180,38 +235,76 @@ Menu * MenuManager::getMenu(int menuId) {
 }
 
 /*!
+ * Method to search for the FliMenu used for transitions.
+ * If no menu is found in cache, the menu is created and added to cache.
+ * @return 
+ */
+FliMenu *MenuManager::getFliTransitionMenu() {
+    Menu *pMenu = getMenu(Menu::kMenuIdFliTransition);
+    return dynamic_cast<FliMenu *>(pMenu);
+}
+
+/*!
  * Change the current menu with the one with the given name.
  * Plays the transition animations between the two menus.
  */
 void MenuManager::changeCurrentMenu()
 {
-    // Get the next menu
-    Menu *pMenu = getMenu(nextMenuId_);
-    if (pMenu == NULL) {
-        return;
-    }
+    leaveCurrentMenu();
 
-    if (current_) {
-        // hide cursor to display transition
-        g_System.hideCursor();
-        // Give the possibility to the old menu
-        // to clean before leaving
-        leaveMenu(current_);
-        // If menu is not in cache, it means it must be destroyed
-        if (menus_.find(current_->getId()) == menus_.end()) {
-            delete current_;
-            current_ = NULL;
-        }
-    }
-    current_ = pMenu;
-    nextMenuId_ = -1;
-    showMenu(pMenu);
+    showNextMenu();
 }
 
 void MenuManager::gotoMenu(int menuId) {
     nextMenuId_ = menuId;
     // stop listening for events until window changed
     drop_events_ = true;
+}
+
+/*!
+ * Open the menu with the id defined in nextMenuId field.
+ * Calls handleShow() on this instance.
+ */
+void MenuManager::showNextMenu() {
+    // Get the next menu
+    current_ = getMenu(nextMenuId_);
+    if (current_ == nullptr) {
+        return;
+    }
+
+    nextMenuId_ = -1;
+
+    // Make a snapshot of background is menu needs it
+    if (current_->doNeedBackground()) {
+        g_Screen.saveBackground();
+    }
+
+    dirtyList_.flush();
+    current_->handleShow();
+
+    // After showing the window, check to see if a cursor must be display
+    if (current_->cursorWhenShown() == Menu::kNoCursor) {
+        g_System.hideCursor();
+    } else {
+        if (current_->cursorWhenShown() == Menu::kGameplayCursor) {
+            g_System.usePointerCursor();
+        } else {
+            g_System.useMenuCursor();
+        }
+        g_System.showCursor();
+
+        // then plot the mouse to draw the button
+        // that could be highlighted because the mouse is upon it
+        Point2D point;
+        uint32_t state = g_System.getMousePos(point);
+        current_->mouseMotionEvent(point, state);
+    }
+
+    // Adds a dirty rect to force menu rendering
+    addRect(0, 0, g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight());
+
+    // reopen the event processing
+    drop_events_ = false;
 }
 
 /*!
@@ -269,25 +362,62 @@ void MenuManager::showMenu(Menu *pMenu) {
 }
 
 /*!
- * Displays the closing menu animation if the flag is true.
- * Before playing animation calls Menu.handleLeave().
- * \param pMenu The closing menu
- * \param playAnim True to play the animation.
+ * Close the current menu if it exists.
+ * Calls handleLeave() on this instance.
+ * Adds transitions between this menu and the next one by
+ * inserting an instance of FliMenu with one or two animations.
+ * If current is not in cache, destroys it.
  */
-void MenuManager::leaveMenu(Menu *pMenu) {
-    pMenu->leave();
+void MenuManager::leaveCurrentMenu() {
+    /*current_->leave();
 
-    if (pMenu->hasLeaveAnim()) {
+    if (current_->hasLeaveAnim()) {
         drop_events_ = true;
         FliPlayer fliPlayer(this);
         uint8 *data;
         size_t size;
-        data = File::loadOriginalFile(pMenu->getLeaveAnimName(), size);
+        data = File::loadOriginalFile(current_->getLeaveAnimName(), size);
         fliPlayer.loadFliData(data);
         pGameSounds_->play(MENU_CHANGE);
         fliPlayer.play();
         delete[] data;
         drop_events_ = false;
+    }*/
+
+    if (current_) {
+        bool currentIsNotTransitionFli = (current_->getId() != Menu::kMenuIdFliTransition);
+        int currentId = current_->getId();
+        // hide cursor to display transition
+        g_System.hideCursor();
+        // Give the possibility to the old menu
+        // to clean before leaving
+        std::cout << "MenuManager : leave " << currentId << "\n";
+        current_->leave();
+
+        if (currentIsNotTransitionFli && (pFactory_->hasLeaveAnimation(currentId) || pFactory_->hasShowAnimation(nextMenuId_))) {
+            FliMenu *pTransitionFliMenu = getFliTransitionMenu();
+            // save next menu for after transition
+            pTransitionFliMenu->setNextMenu(nextMenuId_);
+            pTransitionFliMenu->clearFliDescList();
+
+            if (pFactory_->hasLeaveAnimation(currentId)) {
+                std::cout << "MenuManager : leave anim " << pFactory_->getLeaveAnimation(currentId) << "\n";
+                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 66, false, false, transition_event);
+            }
+
+            if (pFactory_->hasShowAnimation(nextMenuId_)) {
+                std::cout << "MenuManager : show anim " << pFactory_->getShowAnimation(nextMenuId_) << "\n";
+                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 66, false, false, transition_event);
+            }
+            // set next menu to be the transition menu
+            nextMenuId_ = Menu::kMenuIdFliTransition;
+        }
+
+        // If menu is not in cache, it means it must be destroyed
+        if (!current_->isCachable()) {
+            delete current_;
+            current_ = nullptr;
+        }
     }
 }
 

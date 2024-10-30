@@ -36,6 +36,7 @@
 
 const int Menu::MENU_NO_MENU = -1;
 const int Menu::kMenuIdLogout = 6;
+const int Menu::kMenuIdFliTransition = 99;
 const int Menu::kMouseLeftButton = 1;
 const int Menu::kMouseRightButton = 3;
 

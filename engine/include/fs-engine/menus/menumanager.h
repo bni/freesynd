@@ -29,6 +29,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-utils/io/configfile.h"
@@ -40,6 +41,7 @@
 #include "fs-engine/sound/soundmanager.h"
 
 class MenuManager;
+class FliMenu;
 
 /*!
  * This abstract class is responsible for instanciating menus from a given id.
@@ -49,6 +51,16 @@ public:
     virtual ~MenuFactory() {}
     //! Create an instance of Menu corresponding to the given id 
     Menu * createMenu(const int menuId);
+
+    //! Return true if there is an animation for the given menu
+    virtual bool hasLeaveAnimation(int menuId);
+    //! Return true if there is an animation for the given menu
+    virtual bool hasShowAnimation(int menuId);
+    //! Return the animation file for the show of the menu
+    virtual const char* getShowAnimation(int menuId);
+    //! Return the animation file for the leave of the menu
+    virtual const char* getLeaveAnimation(int menuId);
+    
     void setMenuManager(MenuManager *pManager) { pManager_ = pManager; }
 
 protected:
@@ -129,11 +141,15 @@ public:
 protected:
     //! Returns a menu with the given id
     Menu * getMenu(int menuId);
-    //! Shows the menu opening animation
+    //! Returns the FliMenu used for transition
+    FliMenu *getFliTransitionMenu();
+    //! Show the next menu
+    void showNextMenu();
+    //! TODO : remove
     void showMenu(Menu *pMenu);
-    //! Shows the menu closing animation
-    void leaveMenu(Menu *pMenu);
-    //! Switch from menu and plays the transition animation.
+    //! Close current menu 
+    void leaveCurrentMenu();
+    //! Switch from menu and plays the transition animations.
     void changeCurrentMenu();
 
 protected:

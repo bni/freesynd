@@ -38,7 +38,7 @@ FliMenu::FliMenu(MenuManager *m, int menuId, int parentId) : Menu(m, menuId, par
     fliIndex_ = 0;
     pData_ = NULL;
     playingFli_ = false;
-    isCachable_ = false;
+    isCachable_ = (menuId == Menu::kMenuIdFliTransition);
     currSubTitle_ = "";
 }
 
@@ -71,6 +71,13 @@ void FliMenu::addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool 
 }
 
 /*!
+ * Remove all entries in the FliDesc list.
+ */
+void FliMenu::clearFliDescList() {
+    fliList_.clear();
+}
+
+/*!
  * Loads the next animation if there is one still in the list.
  * \return True if an animation has been loaded.
  */
@@ -93,7 +100,6 @@ bool FliMenu::loadNextFli() {
         if (pData_) {
             fliPlayer_.loadFliData(pData_);
             if (fliPlayer_.hasFrames()) {
-                g_Screen.clear(0);
                 // init frame delay counter with max value so first frame is
                 // drawn in the first pass
                 frameDelay_ = desc.frameDelay;
