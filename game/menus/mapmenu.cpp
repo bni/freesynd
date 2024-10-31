@@ -110,8 +110,7 @@ struct BlockDisplay {
  * \param m The menu manager.
  */
 MapMenu::MapMenu(MenuManager * m)
-        : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain,
-               "mmap.dat", "mmapout.dat", true),
+        : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain, true),
           mapblk_data_(NULL), select_tick_count_(0) {
     cursorOnShow_ = kMenuCursor;
     //

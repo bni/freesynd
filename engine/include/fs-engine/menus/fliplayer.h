@@ -26,7 +26,6 @@
 #define FLIPLAYER_H
 
 #include "fs-utils/common.h"
-#include "fs-engine/system/system.h"
 
 typedef struct FliHeader {
     uint32 size;
@@ -61,8 +60,6 @@ public:
     FliPlayer(MenuManager *pManager) : fli_data_(0), offscreen_(0) {pManager_ = pManager;}
     virtual ~FliPlayer();
 
-    //! Play an entire animation without interruption
-    bool play(bool intro = false);
     void loadFliData(uint8 *buf);
     bool decodeFrame();
     void copyCurrentFrameToScreen();

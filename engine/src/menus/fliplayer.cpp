@@ -434,31 +434,3 @@ void FliPlayer::copyCurrentFrameToScreen() {
                      0, false);
 }
 
-bool FliPlayer::play(bool intro) {
-    if (!fli_data_)
-        return false;
-
-    g_Screen.clear(0);
-    int cur_frame = 0;
-    while (hasFrames()) {
-        // Consumes events now so they won't be piled up after the animation
-        FS_Event fsEvt;
-        while(g_System.pumpEvents(fsEvt)) {
-            pManager_->handleEvent(fsEvt);
-        }
-
-        if (!decodeFrame())
-            break;
-        copyCurrentFrameToScreen();
-
-        cur_frame++;
-
-        g_System.updateScreen();
-        g_System.delay(1000 / (intro ? 10 : 15));      //fps
-    }
-
-    //clear the backscreen
-    //bzero(Screen::pixels(), GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT);
-
-    return true;
-}

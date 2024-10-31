@@ -39,7 +39,7 @@
 #include "fs-kernel/model/mod.h"
 
 SelectMenu::SelectMenu(MenuManager * m):
-        Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, "mselect.dat", "mselout.dat", true),
+        Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, true),
         cur_agent_(0), tick_count_(0), rnd_(0), sel_all_(false) {
     cursorOnShow_ = kMenuCursor;
     

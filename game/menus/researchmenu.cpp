@@ -35,8 +35,7 @@
 #include "core/gamecontroller.h"
 
 ResearchMenu::ResearchMenu(MenuManager * m):
-        Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect,
-             "mresrch.dat", "mresout.dat", true) {
+        Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect, true) {
     cursorOnShow_ = kMenuCursor;
     
     tab_ = TAB_EQUIPS;

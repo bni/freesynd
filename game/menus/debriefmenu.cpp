@@ -42,8 +42,7 @@
 #include "core/gamesession.h"
 
 
-DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain, "mdebrief.dat",
-     "mdeout.dat") {
+DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain) {
     cursorOnShow_ = kMenuCursor;
     int y = 35;
     int right_x = 310;

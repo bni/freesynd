@@ -41,8 +41,7 @@
 
 
 ConfMenu::ConfMenu(MenuManager *m) :
-        Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain,
-             "mconfup.dat", "mconfout.dat", true) {
+        Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain, true) {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
     toAcceptLogo_ = 0;

@@ -145,8 +145,6 @@ protected:
     FliMenu *getFliTransitionMenu();
     //! Show the next menu
     void showNextMenu();
-    //! TODO : remove
-    void showMenu(Menu *pMenu);
     //! Close current menu 
     void leaveCurrentMenu();
     //! Switch from menu and plays the transition animations.

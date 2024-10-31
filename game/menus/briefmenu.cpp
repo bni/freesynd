@@ -42,8 +42,7 @@ const int BriefMenu::kMaxLinePerPage = 14;
 #define EXECUTION_SPEED_TIME
 #endif
 BriefMenu::BriefMenu(MenuManager * m)
-        : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap,
-               "mbrief.dat", "mbrieout.dat", true),
+        : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap, true),
           start_line_(0), p_briefing_(NULL), mm_renderer_() {
     cursorOnShow_ = kMenuCursor;
     

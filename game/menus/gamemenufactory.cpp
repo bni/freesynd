@@ -150,7 +150,8 @@ Menu * GameMenuFactory::createCustomMenu(const int menuId) {
     } else if (menuId == fs_game_menus::kMenuIdFliSuccess ||
         menuId == fs_game_menus::kMenuIdFliFailedMission ||
         menuId == fs_game_menus::kMenuIdFliTitle||
-        menuId == fs_game_menus::kMenuIdFliIntro) {
+        menuId == fs_game_menus::kMenuIdFliIntro ||
+        menuId == fs_game_menus::kMenuIdFliMissionAborted) {
         pMenu =  createFliMenu(menuId);
         ;
     } else {
@@ -179,6 +180,9 @@ Menu * GameMenuFactory::createFliMenu(const int menuId) {
             pMenu->addFliDesc("mlosegam.dat", 66, false, true, game_lost);
         }
         // common fli to prepare next menu show
+        pMenu->addFliDesc("mscrenup.dat", 50, false, false, menu_up);
+        pMenu->setNextMenu(fs_game_menus::kMenuIdDebrief);
+    } else if (menuId == fs_game_menus::kMenuIdFliMissionAborted) {
         pMenu->addFliDesc("mscrenup.dat", 50, false, false, menu_up);
         pMenu->setNextMenu(fs_game_menus::kMenuIdDebrief);
     } else if (menuId == fs_game_menus::kMenuIdFliTitle || menuId == fs_game_menus::kMenuIdFliIntro) {
@@ -210,10 +214,6 @@ const char* GameMenuFactory::getShowAnimation(int menuId) {
         return "mconfup.dat";
     } else if (menuId == fs_game_menus::kMenuIdDebrief) {
         return "mdebrief.dat";
-    } else if (menuId == fs_game_menus::kMenuIdGameplay) {
-        return "";
-    } else if (menuId == fs_game_menus::kMenuIdLoading) {
-        return "";
     } else if (menuId == fs_game_menus::kMenuIdResearch) {
         return "mresrch.dat";
     } else if (menuId == fs_game_menus::kMenuIdSelect) {
@@ -222,14 +222,8 @@ const char* GameMenuFactory::getShowAnimation(int menuId) {
         return "mlosa.dat";
     } else if (menuId == fs_game_menus::kMenuIdMap) {
         return "mmap.dat";
-    } else if (menuId == fs_game_menus::kMenuIdFliSuccess ||
-        menuId == fs_game_menus::kMenuIdFliFailedMission ||
-        menuId == fs_game_menus::kMenuIdFliTitle||
-        menuId == fs_game_menus::kMenuIdFliIntro) {
-        return "";
-        ;
     } else {
-        return "";
+        return MenuFactory::getShowAnimation(menuId);
     }
 }
 
@@ -247,10 +241,6 @@ const char* GameMenuFactory::getLeaveAnimation(int menuId) {
         return "mconfout.dat";
     } else if (menuId == fs_game_menus::kMenuIdDebrief) {
         return "mdeout.dat";
-    } else if (menuId == fs_game_menus::kMenuIdGameplay) {
-        return "mscrenup.dat";
-    } else if (menuId == fs_game_menus::kMenuIdLoading) {
-        return "";
     } else if (menuId == fs_game_menus::kMenuIdResearch) {
         return "mresout.dat";
     } else if (menuId == fs_game_menus::kMenuIdSelect) {
@@ -259,13 +249,7 @@ const char* GameMenuFactory::getLeaveAnimation(int menuId) {
         return "mlosaout.dat";
     } else if (menuId == fs_game_menus::kMenuIdMap) {
         return "mmapout.dat";
-    } else if (menuId == fs_game_menus::kMenuIdFliSuccess ||
-        menuId == fs_game_menus::kMenuIdFliFailedMission ||
-        menuId == fs_game_menus::kMenuIdFliTitle||
-        menuId == fs_game_menus::kMenuIdFliIntro) {
-        return "";
-        ;
     } else {
-        return "";
+        return MenuFactory::getLeaveAnimation(menuId);
     }
 }

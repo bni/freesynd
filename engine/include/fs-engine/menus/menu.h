@@ -69,27 +69,16 @@ public:
     /**
      * Menu constructor.
      * \param menuManager
-     * \param id
-     * \param parentId
-     * \param showAnim
-     * \param leaveAnim
+     * \param id Id for this Menu
+     * \param parentId Used when the user press escape to return to previous menu
      * \param needsBackground True means a snapshot of the background is made before showing the menu
      *
      */
-    Menu(MenuManager *menuManager, int id, int parentId,
-        const char *showAnim = "", const char *leaveAnim = "", bool needsBackground = false);
+    Menu(MenuManager *menuManager, int id, int parentId, bool needsBackground = false);
     virtual ~Menu();
 
     int getId() { return id_; }
 
-    /*! Returns true if an animation has been defined when opening the menu.*/
-    bool hasShowAnim() { return showAnim_.size() != 0; }
-    /*! Returns the opening animation file name. */
-    const char * getShowAnimName() { return showAnim_.c_str(); }
-    /*! Returns true if an animation has been defined when leaving the menu.*/
-    bool hasLeaveAnim() { return leaveAnim_.size() != 0; }
-    /*! Returns the leaving animation file name. */
-    const char * getLeaveAnimName() { return leaveAnim_.c_str(); }
     //! Returns true is Menu can be put in cache
     bool isCachable() { return isCachable_; }
     //! Return the cursor to use when shown
@@ -212,7 +201,6 @@ protected:
     int id_;
     /*! Parent menu when leaving this menu.*/
     int parentId_;
-    std::string showAnim_, leaveAnim_;
     /*! The list of all static widgets (MenuText).*/
     std::list<MenuText> statics_;
     /*! The list of all dynamic widgets (Option).*/

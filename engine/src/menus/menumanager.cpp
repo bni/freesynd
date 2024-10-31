@@ -38,9 +38,14 @@
 #include "fs-engine/menus/logoutmenu.h"
 #include "fs-engine/menus/flimenu.h"
 
-// TODO : separate between show and leave animation with a sound
-//! This defines the list of events for the transition animation
-const FrameEvent transition_event[] = {
+//! This defines the list of events for the transition show animation
+const FrameEvent transition_show_event[] = {
+    {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+};
+
+//! This defines the list of events for the transition leave animation
+const FrameEvent transition_leave_event[] = {
+    { 1, msc::NO_TRACK, MENU_CHANGE,   0x1, NULL },
     {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
@@ -308,60 +313,6 @@ void MenuManager::showNextMenu() {
 }
 
 /*!
- * Display the opening animation if the flag is true.
-  * After having played the animation, renders one time the menu.
- * \param pMenu The menu to show.
- * \param playAnim True if the intro can be played.
- */
-void MenuManager::showMenu(Menu *pMenu) {
-    if (pMenu->hasShowAnim()) {
-        // Stop processing event during menu transitions
-        drop_events_ = true;
-        FliPlayer fliPlayer(this);
-        uint8 *data;
-        size_t size;
-        data = File::loadOriginalFile(pMenu->getShowAnimName(), size);
-        fliPlayer.loadFliData(data);
-        fliPlayer.play();
-        delete[] data;
-
-    }
-
-    // Make a snapshot of background is menu needs it
-    if (pMenu->doNeedBackground()) {
-        g_Screen.saveBackground();
-    }
-
-    dirtyList_.flush();
-    pMenu->handleShow();
-
-    // After showing the window, check to see if a cursor must be display
-    if (pMenu->cursorWhenShown() == Menu::kNoCursor) {
-        g_System.hideCursor();
-    } else {
-        if (pMenu->cursorWhenShown() == Menu::kGameplayCursor) {
-            g_System.usePointerCursor();
-        } else {
-            g_System.useMenuCursor();
-        }
-        g_System.showCursor();
-    }
-
-    // then plot the mouse to draw the button
-    // that could be highlighted because the mouse
-    // is upon it
-    Point2D point;
-    uint32_t state = g_System.getMousePos(point);
-    pMenu->mouseMotionEvent(point, state);
-
-    // Adds a dirty rect to force menu rendering
-    addRect(0, 0, g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight());
-
-    // reopen the event processing
-    drop_events_ = false;
-}
-
-/*!
  * Close the current menu if it exists.
  * Calls handleLeave() on this instance.
  * Adds transitions between this menu and the next one by
@@ -369,21 +320,6 @@ void MenuManager::showMenu(Menu *pMenu) {
  * If current is not in cache, destroys it.
  */
 void MenuManager::leaveCurrentMenu() {
-    /*current_->leave();
-
-    if (current_->hasLeaveAnim()) {
-        drop_events_ = true;
-        FliPlayer fliPlayer(this);
-        uint8 *data;
-        size_t size;
-        data = File::loadOriginalFile(current_->getLeaveAnimName(), size);
-        fliPlayer.loadFliData(data);
-        pGameSounds_->play(MENU_CHANGE);
-        fliPlayer.play();
-        delete[] data;
-        drop_events_ = false;
-    }*/
-
     if (current_) {
         bool currentIsNotTransitionFli = (current_->getId() != Menu::kMenuIdFliTransition);
         int currentId = current_->getId();
@@ -391,7 +327,6 @@ void MenuManager::leaveCurrentMenu() {
         g_System.hideCursor();
         // Give the possibility to the old menu
         // to clean before leaving
-        std::cout << "MenuManager : leave " << currentId << "\n";
         current_->leave();
 
         if (currentIsNotTransitionFli && (pFactory_->hasLeaveAnimation(currentId) || pFactory_->hasShowAnimation(nextMenuId_))) {
@@ -401,13 +336,11 @@ void MenuManager::leaveCurrentMenu() {
             pTransitionFliMenu->clearFliDescList();
 
             if (pFactory_->hasLeaveAnimation(currentId)) {
-                std::cout << "MenuManager : leave anim " << pFactory_->getLeaveAnimation(currentId) << "\n";
-                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 66, false, false, transition_event);
+                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 66, false, false, transition_leave_event);
             }
 
             if (pFactory_->hasShowAnimation(nextMenuId_)) {
-                std::cout << "MenuManager : show anim " << pFactory_->getShowAnimation(nextMenuId_) << "\n";
-                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 66, false, false, transition_event);
+                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 66, false, false, transition_show_event);
             }
             // set next menu to be the transition menu
             nextMenuId_ = Menu::kMenuIdFliTransition;

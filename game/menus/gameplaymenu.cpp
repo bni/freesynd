@@ -54,7 +54,7 @@ const int GameplayMenu::kMiniMapScreenY = 46 + 44 + 10 + 46 + 44 + 15 + 2 * 32 +
 //#define ANIM_PLUS_FRAME_VIEW
 
 GameplayMenu::GameplayMenu(MenuManager *m) :
-Menu(m, fs_game_menus::kMenuIdGameplay, fs_game_menus::kMenuIdDebrief, "", "mscrenup.dat"),
+Menu(m, fs_game_menus::kMenuIdGameplay, fs_game_menus::kMenuIdDebrief),
 tick_count_(0), last_animate_tick_(0), last_motion_tick_(0),
 last_motion_x_(320), last_motion_y_(240), mission_hint_ticks_(0),
 mission_hint_(0), mission_(NULL), selection_(),
@@ -926,18 +926,14 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
     bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
 
     // SPACE is pressed when the mission failed or succeeded to return
-    // to menu
+    // to debrief menu
     if (key.keyCode == kKeyCode_Space) {
         if (mission_->completed() || mission_->failed()) {
-            // Do not display default leaving animation because
-            // a success/failed animation will be played
-            leaveAnim_ = "";
             if (mission_->completed()) {
                 // Display success animation
                 menu_manager_->gotoMenu(fs_game_menus::kMenuIdFliSuccess);
             }
             else if (mission_->failed()) {
-
                 menu_manager_->gotoMenu(fs_game_menus::kMenuIdFliFailedMission);
             }
 
@@ -946,8 +942,9 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
     } else if (key.keyCode == kKeyCode_Escape) {
         // Abort mission
         mission_->endWithStatus(Mission::kMissionStatusAborted);
-        // Return false so when can still go to parent menu with escape
-        return false;
+        // Display only the menu up animation
+        menu_manager_->gotoMenu(fs_game_menus::kMenuIdFliMissionAborted);
+        return true;
     }
 
     /* Handle agent selection by numeric keys. Key 0 cycles between one agent

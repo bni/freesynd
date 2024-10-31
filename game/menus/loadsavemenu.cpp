@@ -41,8 +41,7 @@ const int LoadSaveMenu::Y_ORIGIN = 100;
 const size_t LoadSaveMenu::NAME_MAX_SIZE = 31;
 
 LoadSaveMenu::LoadSaveMenu(MenuManager * m):
-        Menu(m, fs_game_menus::kMenuIdLdSave, fs_game_menus::kMenuIdMain, "mlosa.dat",
-             "mlosaout.dat", true) {
+        Menu(m, fs_game_menus::kMenuIdLdSave, fs_game_menus::kMenuIdMain, true) {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
     // Title

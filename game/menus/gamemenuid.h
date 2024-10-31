@@ -42,6 +42,7 @@ namespace fs_game_menus {
     static const int kMenuIdFliTitle = 13;
     static const int kMenuIdFliIntro = 14;
     static const int kMenuIdFliGameLost = 15;
+    static const int kMenuIdFliMissionAborted = 16;
 };
 
 #endif  // MENUS_GAMEMENUID_H_

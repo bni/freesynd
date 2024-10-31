@@ -33,8 +33,7 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
-MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain, "moption.dat",
-     "moptout.dat")
+MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain)
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
