@@ -79,6 +79,19 @@ Sprite::Sprite()
 {
 }
 
+/*!
+ * Construct a Sprite using a SpriteTabEntry.
+ * Mainly reads the width and height
+ * @param entry 
+ */
+Sprite::Sprite(SpriteTabEntry entry)
+:  width_(entry.width)
+    , height_(entry.height)
+    , stride_(ceil8(entry.width))
+    , sprite_data_(NULL)
+{
+}
+
 Sprite::~Sprite()
 {
     if (sprite_data_)
@@ -235,6 +248,99 @@ bool Sprite::loadSprite(uint8_t * tabData, uint8_t * spriteData, int offset,
     }
 
     return true;
+}
+
+/*!
+ * Load the sprite pixels from the spritesData array using info from entry.
+ * @param spritesData An array with all sprites pixels
+ * @param entry Information on where to find the sprite
+ * @param rle Is the sprite store using RLE
+ * @return An array of the pixels
+ */
+uint8_t * Sprite::loadSprite(const uint8_t * spritesData, SpriteTabEntry entry, bool rle) {
+    if (entry.width == 0 || entry.height == 0)
+        return nullptr;
+
+    const uint8_t *spriteBlocks = spritesData + entry.spriteOffset;
+
+    uint8_t *spritePixel = new uint8_t[ stride_ * height_];
+    memset(spritePixel, 255, size_t(stride_ * height_));
+
+    uint8_t *currentPixel;
+
+    if (rle) {
+        for (int i = 0; i < height_; ++i) {
+            int spriteWidth = width_;
+            currentPixel = spritePixel + i * stride_;
+
+            uint8_t b = *spriteBlocks++;
+            int runLength = b < 128 ? b : -(256 - b);
+            while (runLength != 0) {
+                spriteWidth -= runLength;
+
+                if (runLength > 0) {
+                    if (currentPixel < spritePixel)
+                        currentPixel = spritePixel;
+                    if (currentPixel + runLength >
+                        spritePixel + height_ * stride_)
+                        runLength =
+                            spritePixel + height_ * stride_ -
+                            currentPixel;
+                    // pixel run
+                    for (int j = 0; j < runLength; ++j)
+                        *currentPixel++ = *spriteBlocks++;
+
+                } else if (runLength < 0) {
+                    // transparent run
+                    runLength *= -1;
+                    if (currentPixel < spritePixel)
+                        currentPixel = spritePixel;
+                    if (currentPixel + runLength >
+                        spritePixel + height_ * stride_)
+                        runLength =
+                            spritePixel + height_ * stride_ -
+                            currentPixel;
+                    memset(currentPixel, 255, size_t(runLength));
+                    currentPixel += runLength;
+
+                } else if (runLength == 0) {
+                    // end of the row
+                    spriteWidth = 0;
+                }
+
+                b = *spriteBlocks++;
+                runLength = b < 128 ? b : -(256 - b);
+            }
+        }
+    } else {
+        for (int j = 0; j < height_; ++j) {
+            currentPixel = spritePixel + j * stride_;
+
+            for (int i = 0; i < width_; i += Sprite::kPixelPerBlock) {
+                unpackBlocks1(spriteBlocks, currentPixel);
+
+                spriteBlocks += Sprite::kBlockLength;
+                currentPixel += Sprite::kPixelPerBlock;
+            }
+        }
+    }
+
+    return spritePixel;
+}
+
+void Sprite::copyToBuffer(const uint8_t * spritePixels, uint8_t * spriteBuffer, int bufferWidth, int bufferHeight){
+    if (location_.x + stride_ > bufferWidth || location_.y + height_ > bufferHeight) {
+        return;
+    }
+    // start of the tile pixels in the destination surface (upper left corner of tile)
+    int spriteOffsetDest = (location_.y * bufferWidth) + location_.x;
+
+    // Copy line by line
+    for (int j=0; j < height_; j++) {
+        int lineOffsetDest = j * bufferWidth;
+        int lineOffsetSrc = j * stride_;
+        memcpy(spriteBuffer + spriteOffsetDest + lineOffsetDest, spritePixels + lineOffsetSrc, stride_);
+    }
 }
 
 void Sprite::draw(int x, int y, int z, bool flipped, bool x2)

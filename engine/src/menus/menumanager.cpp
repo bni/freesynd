@@ -69,6 +69,8 @@ Menu * MenuFactory::createMenu(const int menuId) {
     return pMenu;
 }
 
+const int MenuManager::kPaletteMaxColor = 256;
+
 /*!
  * Return true if there is an animation for the given menu.
  * @param menuId 
@@ -118,7 +120,7 @@ const char* MenuFactory::getLeaveAnimation(int menuId) {
  */
 MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
         : dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
-          menuSprites_(), fonts_(), logoManager_() {
+          menuSprites_(true), fonts_(), logoManager_() {
     pFactory_ = pFactory;
     pFactory_->setMenuManager(this);
     pGameSounds_ = pGameSounds;
@@ -145,9 +147,17 @@ MenuManager::~MenuManager()
 bool MenuManager::initialize(bool loadIntroFont) {
     LOG(Log::k_FLG_INFO, "MenuManager", "initialize", ("initializing menus..."))
 
+    // Load menu palette
+    size_t size;
+    uint8 *paletteData = File::loadOriginalFile("mselect.pal", size);
+
+    if (!paletteData) {
+        return false;
+    }
+
     // Loads menu sprites
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading menu sprites ..."))
-    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", true)) {
+    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", paletteData, kPaletteMaxColor)) {
         return false;
     }
 
@@ -155,21 +165,14 @@ bool MenuManager::initialize(bool loadIntroFont) {
     if (loadIntroFont) {
         LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading intro sprites ..."))
 
-        pIntroFontSprites_ = new SpriteManager();
-        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", true)) {
+        pIntroFontSprites_ = new SpriteManager(true);
+        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", paletteData, kPaletteMaxColor)) {
             return false;
         }
     }
 
     // Load logos
-    size_t size;
-    uint8 *paletteData = File::loadOriginalFile("mselect.pal", size);
-
-    if (!paletteData) {
-        return false;
-    }
-    
-    bool res = logoManager_.loadLogos(paletteData, 256);
+    bool res = logoManager_.loadLogos(paletteData, kPaletteMaxColor);
     delete[] paletteData;
     
     if (res) {

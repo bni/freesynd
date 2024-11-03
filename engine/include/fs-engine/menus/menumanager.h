@@ -76,6 +76,9 @@ protected:
  */
 class MenuManager {
 public:
+    //! Maximum number of colors in a palette
+    static const int kPaletteMaxColor;
+    
     MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds);
     ~MenuManager();
 

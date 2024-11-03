@@ -25,34 +25,63 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
+#include <list>
 #include <vector>
+#include <memory>
+#include <stack>
 
 #include "sprite.h"
 #include "fs-utils/misc/singleton.h"
+#include "fs-engine/gfx/fstexture.h"
+
+/*!
+ * This class is used to track the position of a Sprite in
+ * the Spriteset texture.
+ */
+class SpriteInsert {
+public:
+    //! Position where the sprite is located
+    Point2D insertedAt;
+    //! Width of the sprite
+    int width;
+    //! Height of the sprite
+    int height;
+};
 
 /*!
  * Sprite manager class.
  */
 class SpriteManager {
 public:
-    SpriteManager();
+    SpriteManager(bool rle);
     virtual ~SpriteManager();
     //! clear all loaded sprites
     void clear();
 
     //! Loads sprites from the given files
-    bool loadSprites(const std::string &tabFile, const std::string &datFile, bool rle);
+    bool loadSprites(const std::string &tabFile, const std::string &datFile, const uint8_t * paletteColors, int nbColors);
     //! Returns true if this manager has loaded files
-    bool loaded() { return sprite_count_ != 0; }
+    bool loaded() { return spriteCount_ != 0; }
     //! Returns the number of loaded sprites
-    int spriteCount() { return sprite_count_; }
+    int spriteCount() { return spriteCount_; }
 
     //! Return the sprite at given index
     Sprite *sprite(int spriteNum);
+    // TODO : remove
+    Sprite *sprite2(int spriteNum);
     bool drawSpriteXYZ(int spriteNum, int x, int y, int z, bool flipped = false,
             bool x2 = false);
+    //! Draw a sprite with given Id at given position on screen. Sprite can be flipped or stretched
+    bool drawSprite(int spriteNum, int x, int y, bool flipped = false, bool x2 = false);
 
 protected:
+    /*!
+     * This is the width for the texture that holds the sprites.
+     * It has be chosen to use 512x512 because it is a power of 2
+     * enough to hold all sprites.
+     */
+    static const int kTextureWidth;
+    
     /*!
      * Load sprites from the given files
      * \param
@@ -60,11 +89,27 @@ protected:
      * \return
      *
      */
-    bool loadSprites(uint8 * tabData, size_t tabSize, uint8 *spriteData,
-            bool rle = false);
+    bool loadSprites(uint8_t * tabData, size_t tabSize, uint8_t *spriteData, const uint8_t * paletteColors, int nbColors);
+    // TODO : Remove
+    bool loadSprites2(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors);
+    //! Sort tab entries from the tab file by height then width
+    void readAndSortTabEntries(const uint8_t * tabData, std::list<SpriteTabEntry>& spriteList);
+    //! Read a sprite pixels and copy those pixels at the right location in the sprite set buffer
+    Sprite readSpriteDataAndCopyToBuffer(const uint8_t *spriteData, SpriteTabEntry entry, std::stack<SpriteInsert> &spriteStack, uint8_t *spriteBuffer);
+    //! Compute the location where to place the sprite in the buffer
+    void getInsertPoint(Sprite &sprite, std::stack<SpriteInsert> &spriteStack);
+
 protected:
+    //! The list of sprites
     Sprite *sprites_;
-    int sprite_count_;
+    //! Total number of sprites
+    int spriteCount_;
+    // TODO : remove
+    Sprite *sprites2_;
+    //! True means the sprites are stored using RLE in the original file
+    bool isRle_;
+    //! A texture that store all the sprites with an optimization of placements
+    std::unique_ptr<FSTexture> spritesetTexture_;
 };
 
 /*!
