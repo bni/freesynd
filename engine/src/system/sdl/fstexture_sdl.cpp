@@ -101,7 +101,7 @@ void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height
  * @param colorKey The index in the palette of the color key to use
  * @return True if import is ok
  */
-bool FSTextureSDL::importSurface(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) {
+bool FSTextureSDL::createSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) {
     LOG(Log::k_FLG_GFX, "FSTextureSDL", "importSurface", ("Importing pixels in surface..."))
     bool res = true;
     // Initialize an indexed surface

@@ -38,7 +38,7 @@ public:
     void render(Point2D src, Point2D dst, int width, int height) override;
     void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) override;
     //! Creates a sufrace initialized with the array of pixel
-    bool importSurface(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
+    bool createSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
     //! Set a palette for the surface
     bool setPalette6b3(const uint8_t * pal, int cols) override;
     bool setPalette8b3(const uint8_t * pal, int cols) override;

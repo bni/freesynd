@@ -33,7 +33,7 @@ public:
 
     virtual ~FSTexture() {}
     //! Import a raw pixel array into a 8 bits surface of given width and height, with the color key
-    virtual bool importSurface(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) = 0;
+    virtual bool createSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) = 0;
     //! Set a new palette in the surface
     virtual bool setPalette6b3(const uint8_t * pal, int cols) = 0;
     //! Set a new palette in the surface
