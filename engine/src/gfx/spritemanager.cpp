@@ -325,18 +325,24 @@ bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
     return true;
 }
 
+
 /*!
- * TODO : to be complemented
- * @param tile 
- * @param x 
- * @param y 
- * @return 
+ * TODO : Implement flipped parameter
+ * @param spriteNum Id of the sprite
+ * @param x Position on the screen
+ * @param y Position on the screen
+ * @param flipped Do we flip the sprite before drawing it
+ * @param x2 do we multiply the size by two before drawing it
+ * @return True if drawing is ok
  */
 bool SpriteManager::drawSprite(int spriteNum, int x, int y, bool flipped, bool x2) {
     Sprite *pSprite = sprite2(spriteNum);
     if (pSprite) {
-        spritesetTexture_->render(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height());
-        //spritesTexture_->render({372, 164}, {x, y}, 30, 33);
+        if (x2) {
+            spritesetTexture_->renderStretch(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height(), 2);
+        } else {
+            spritesetTexture_->render(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height());
+        }
     }
 
     return true;

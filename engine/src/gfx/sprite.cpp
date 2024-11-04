@@ -72,10 +72,11 @@ const int Sprite::MSPR_RIGHT_ARROW2_D = 81;
 const int Sprite::MSPR_RIGHT_ARROW2_L = 79;
 
 Sprite::Sprite()
-:  width_(0)
-    , height_(0)
-    , stride_(0)
-    , sprite_data_(NULL)
+:  id_(0),
+    width_(0),
+    height_(0),
+    stride_(0),
+    sprite_data_(NULL)
 {
 }
 
@@ -85,10 +86,11 @@ Sprite::Sprite()
  * @param entry 
  */
 Sprite::Sprite(SpriteTabEntry entry)
-:  width_(entry.width)
-    , height_(entry.height)
-    , stride_(ceil8(entry.width))
-    , sprite_data_(NULL)
+:  id_(entry.spriteId),
+    width_(entry.width),
+    height_(entry.height),
+    stride_(ceil8(entry.width)),
+    sprite_data_(NULL)
 {
 }
 

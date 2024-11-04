@@ -102,6 +102,9 @@ public:
     Sprite(SpriteTabEntry entry);
     virtual ~Sprite();
 
+    //! Return the id of the sprite
+    size_t id() { return id_; }
+
     void loadSpriteFromPNG(const char *filename);
     bool loadSprite(uint8_t *tabData, uint8_t *spriteData, int offset,
             bool rle = false);
@@ -128,6 +131,8 @@ public:
     void data(uint8_t *spr_data) const;
 
 private:
+    //! Id of the sprite. This is the order in the tab file
+    size_t id_;
     //! Width of the sprite
     int width_;
     //! Height of the sprite
