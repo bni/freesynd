@@ -197,9 +197,11 @@ bool FSTextureSDL::setPalette8b3(const uint8_t * pal, int cols) {
  */
 bool FSTextureSDL::loadTextureFromSurface() {
     freeTexture();
-    pTexture_ = SDL_CreateTextureFromSurface(pRenderer_, pSurface_);
-    if (pTexture_ == nullptr) {
-        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "loadTextureFromSurface", ("Critical error, Could create texture from surface! SDL Error : %s", SDL_GetError()))
+    if (pSurface_) {
+        pTexture_ = SDL_CreateTextureFromSurface(pRenderer_, pSurface_);
+        if (pTexture_ == nullptr) {
+            FSERR(Log::k_FLG_GFX, "FSTextureSDL", "loadTextureFromSurface", ("Critical error, Could create texture from surface! SDL Error : %s", SDL_GetError()))
+        }
     }
     return pTexture_ != nullptr;
 }
