@@ -31,7 +31,7 @@
 
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/sound/musicmanager.h"

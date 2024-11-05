@@ -32,6 +32,7 @@
 #include <assert.h>
 
 #include "fs-engine/appcontext.h"
+#include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-utils/log/log.h"
 #include "fs-kernel/model/ped.h"

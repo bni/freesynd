@@ -28,7 +28,7 @@
 #include "fs-kernel/model/sfxobject.h"
 
 #include "fs-utils/log/log.h"
-#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/animationmanager.h"
 
 uint16 SFXObject::sfxIdCnt = 0;
 

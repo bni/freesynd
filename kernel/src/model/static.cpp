@@ -29,7 +29,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
-#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/animationmanager.h"
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/ped.h"
 
