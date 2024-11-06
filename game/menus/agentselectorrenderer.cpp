@@ -144,10 +144,8 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
     int springUnselected = 1748 + (agentSlot > 1 ? agentSlot + 2 : agentSlot);
 
     // Draw the background of selector
-    g_SpriteMgr.sprite(isSelected ? spriteSelected : springUnselected)->draw(
-            topX, topY, 0);
-    g_SpriteMgr.sprite(isSelected ? 1778 : 1754)->draw(
-            topX, topY + 46, 0);
+    g_SpriteMgr.drawSprite(isSelected ? spriteSelected : springUnselected, {topX, topY});
+    g_SpriteMgr.drawSprite(isSelected ? 1778 : 1754, {topX, topY + 46});
 
     if (pAgent) {
         // draw health bar

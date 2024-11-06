@@ -57,16 +57,20 @@ public:
 /*!
  * Game sprite class.
  */
-class GameSpriteManager : public SpriteManager, public Singleton < GameSpriteManager > {
+class AnimationManager : public Singleton < AnimationManager > {
 public:
-    GameSpriteManager();
-    virtual ~GameSpriteManager();
+    AnimationManager();
+    virtual ~AnimationManager();
 
     //! Loads the sprites from original files
     bool load();
+    //! Returns true if this manager has loaded files
+    bool loaded() { return spritesManager_.loaded(); }
 
     int numAnims() { return (int) index_.size(); }
-
+    //! Draw a single sprite without animation
+    void drawSprite(int spriteId, const Point2D &screenPos);
+    //! Draw a frame for a given animation
     bool drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos);
     bool lastFrame(unsigned int animNum, int frameNum);
     int lastFrame(unsigned int animNum);
@@ -77,11 +81,12 @@ protected:
     bool loadElementsFromCustomFiles();
     bool loadElementsFromOriginalFiles();
 protected:
+    SpriteManager spritesManager_;
     std::vector<size_t> index_;
     std::vector<GameSpriteFrame> frames_;
     std::vector<GameSpriteFrameElement> elements_;
 };
 
-#define g_SpriteMgr   GameSpriteManager::singleton()
+#define g_SpriteMgr   AnimationManager::singleton()
 
 #endif //GFX_ANIMATIONMANAGER_H

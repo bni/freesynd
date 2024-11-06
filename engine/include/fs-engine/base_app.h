@@ -132,7 +132,7 @@ protected:
 
 private:
     bool running_;
-    GameSpriteManager game_sprites_;
+    AnimationManager animationManager_;
     SoundManager soundManager_;
     MusicManager music_;
     MenuManager menus_;

@@ -28,11 +28,11 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
-GameSpriteManager::GameSpriteManager() : SpriteManager(false)
+AnimationManager::AnimationManager() : spritesManager_(false)
 {
 }
 
-GameSpriteManager::~GameSpriteManager()
+AnimationManager::~AnimationManager()
 {
 }
 
@@ -41,10 +41,10 @@ GameSpriteManager::~GameSpriteManager()
  * \return bool return true if everything is ok.
  *
  */
-bool GameSpriteManager::load()
+bool AnimationManager::load()
 {
-    LOG(Log::k_FLG_GFX, "GameSpriteManager", "load", ("Loading game sprites ..."))
-    if (!loadSprites("hspr-0.tab", "hspr-0.dat", nullptr, 0)) {
+    LOG(Log::k_FLG_GFX, "AnimationManager", "load", ("Loading game sprites ..."))
+    if (!spritesManager_.loadSprites("hspr-0.tab", "hspr-0.dat", nullptr, 0)) {
         return false;
     }
 
@@ -61,7 +61,7 @@ bool GameSpriteManager::load()
  * @brief Load animations from files made by us
  * @return true if loading is ok
  */
-bool GameSpriteManager::loadElementsFromCustomFiles() {
+bool AnimationManager::loadElementsFromCustomFiles() {
     FILE *fp = File::openOriginalFile("HELE-0.TXT");
     if (!fp) {
         return false;
@@ -87,7 +87,7 @@ bool GameSpriteManager::loadElementsFromCustomFiles() {
         if (esprite) {
             char tmp[1024];
             sprintf(tmp, "sprites/%i.png", esprite);
-            sprites_[esprite].loadSpriteFromPNG(tmp);
+            spritesManager_.sprite(esprite)->loadSpriteFromPNG(tmp);
         }
     }
 
@@ -129,7 +129,7 @@ bool GameSpriteManager::loadElementsFromCustomFiles() {
  * @brief Load animations from original game files
  * @return true if loading is ok
  */
-bool GameSpriteManager::loadElementsFromOriginalFiles() {
+bool AnimationManager::loadElementsFromOriginalFiles() {
     size_t size;
     uint8 *data;
 
@@ -156,7 +156,7 @@ bool GameSpriteManager::loadElementsFromOriginalFiles() {
     }
     delete[] data;
 
-    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frame elements", (int)elements_.size()))
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frame elements", (int)elements_.size()))
 
     // Load sprite frame
     data = File::loadOriginalFile("HFRA-0.ANI", size);
@@ -174,7 +174,7 @@ bool GameSpriteManager::loadElementsFromOriginalFiles() {
     }
     delete[] data;
 
-    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frames", (int)frames_.size()))
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frames", (int)frames_.size()))
 
     // Load index
     data = File::loadOriginalFile("HSTA-0.ANI", size);
@@ -185,12 +185,28 @@ bool GameSpriteManager::loadElementsFromOriginalFiles() {
     }
     delete[] data;
 
-    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("index contains %i animations", (int)index_.size()))
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("index contains %i animations", (int)index_.size()))
 
     return true;
 }
 
-bool GameSpriteManager::drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos)
+/*!
+ * Convienient method to draw a single sprite 
+ * @param spriteId Id of the sprite
+ * @param screenPos Position on the screen
+ */
+void AnimationManager::drawSprite(int spriteId, const Point2D &screenPos) {
+    spritesManager_.sprite(spriteId)->draw(screenPos.x, screenPos.y, 0);
+}
+
+/*!
+ * @brief 
+ * @param animNum 
+ * @param frameNum 
+ * @param screenPos 
+ * @return 
+ */
+bool AnimationManager::drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos)
 {
     assert(animNum < index_.size());
 
@@ -205,7 +221,7 @@ bool GameSpriteManager::drawFrame(unsigned int animNum, int frameNum, const Poin
 
     GameSpriteFrameElement *e = &elements_[f->first_element_];
     while (1) {
-        sprites_[e->sprite_].draw(screenPos.x + e->off_x_, screenPos.y + e->off_y_, 0,
+        spritesManager_.sprite(e->sprite_)->draw(screenPos.x + e->off_x_, screenPos.y + e->off_y_, 0,
                                   e->flipped_);
         if (e->next_element_ == 0)
             break;
@@ -215,7 +231,7 @@ bool GameSpriteManager::drawFrame(unsigned int animNum, int frameNum, const Poin
     return f->next_frame_ == index_[animNum];
 }
 
-bool GameSpriteManager::lastFrame(unsigned int animNum, int frameNum)
+bool AnimationManager::lastFrame(unsigned int animNum, int frameNum)
 {
     assert(animNum < index_.size());
 
@@ -228,7 +244,7 @@ bool GameSpriteManager::lastFrame(unsigned int animNum, int frameNum)
     return f->next_frame_ == index_[animNum];
 }
 
-int GameSpriteManager::lastFrame(unsigned int animNum)
+int AnimationManager::lastFrame(unsigned int animNum)
 {
     int frameNum = 0;
     assert(animNum < index_.size());
@@ -241,7 +257,7 @@ int GameSpriteManager::lastFrame(unsigned int animNum)
     return frameNum;
 }
 
-int GameSpriteManager::getFrameFromFrameIndx(unsigned int frameIndx)
+int AnimationManager::getFrameFromFrameIndx(unsigned int frameIndx)
 {
     int frameNum = 0;
 
@@ -260,7 +276,7 @@ int GameSpriteManager::getFrameFromFrameIndx(unsigned int frameIndx)
     }
 }
 
-int GameSpriteManager::getFrameNum(unsigned int animNum)
+int AnimationManager::getFrameNum(unsigned int animNum)
 {
     assert(animNum < index_.size());
     int frameNum = 1;

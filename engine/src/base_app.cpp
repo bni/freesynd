@@ -119,7 +119,7 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
     : context_(std::make_unique<AppContext>()),
       screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
       system_(System::createSystem()),
-      game_sprites_(),
+      animationManager_(),
       soundManager_(),
       music_(),
       menus_(pMenuFactory, &soundManager_) {
@@ -151,8 +151,8 @@ bool BaseApp::initialize(const CliParam& param) {
         return false;
     }
 
-    if (!game_sprites_.loaded()) {
-        game_sprites_.load();
+    if (!animationManager_.loaded()) {
+        animationManager_.load();
     }
 
     soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), context_->isPlayIntro());
