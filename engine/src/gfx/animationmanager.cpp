@@ -43,56 +43,44 @@ GameSpriteManager::~GameSpriteManager()
  */
 bool GameSpriteManager::load()
 {
-    size_t size;
-    uint8 *data;
-
     LOG(Log::k_FLG_GFX, "GameSpriteManager", "load", ("Loading game sprites ..."))
     if (!loadSprites("hspr-0.tab", "hspr-0.dat", nullptr, 0)) {
         return false;
     }
 
-    FILE *fp = File::openOriginalFile("HELE-0.TXT");
-    if (fp) {
-        char line[1024];
-        while (fgets(line, 1024, fp)) {
-            GameSpriteFrameElement e;
-            char flipped;
-            if (*line == '#')
-                continue;
-            sscanf(line, "%i %i %i %c %lu", &e.sprite_, &e.off_x_, &e.off_y_,
-                   &flipped, &e.next_element_);
-            e.flipped_ = (flipped == 'f');
-            elements_.push_back(e);
-        }
-        for (unsigned int i = 0; i < elements_.size(); i++)
-            assert(elements_[i].next_element_ < elements_.size());
-        fclose(fp);
-    } else {
-        // try original data file
-        data = File::loadOriginalFile("HELE-0.ANI", size);
-        assert(size % 10 == 0);
-        for (unsigned int i = 0; i < size / 10; i++) {
-            GameSpriteFrameElement e;
-            e.sprite_ = data[i * 10] | (data[i * 10 + 1] << 8);
-            assert(e.sprite_ % 6 == 0);
-            e.sprite_ /= 6;
-            e.off_x_ = data[i * 10 + 2] | (data[i * 10 + 3] << 8);
-            e.off_y_ = data[i * 10 + 4] | (data[i * 10 + 5] << 8);
-            e.flipped_ =
-                (data[i * 10 + 6] | (data[i * 10 + 7] << 8)) !=
-                0 ? true : false;
-            e.next_element_ = data[i * 10 + 8] | (data[i * 10 + 9] << 8);
-            if (e.off_x_ & (1 << 15))
-                e.off_x_ = -(65536 - e.off_x_);
-            if (e.off_y_ & (1 << 15))
-                e.off_y_ = -(65536 - e.off_y_);
-            assert(e.next_element_ < size / 10);
-            elements_.push_back(e);
-        }
-        delete[] data;
+    if (!loadElementsFromCustomFiles()) {
+        // If we could not load custom file
+        // we try loading from original files
+        return loadElementsFromOriginalFiles();
     }
 
-    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frame elements", (int)elements_.size()))
+    return true;
+}
+
+/*!
+ * @brief Load animations from files made by us
+ * @return true if loading is ok
+ */
+bool GameSpriteManager::loadElementsFromCustomFiles() {
+    FILE *fp = File::openOriginalFile("HELE-0.TXT");
+    if (!fp) {
+        return false;
+    }
+
+    char line[1024];
+    while (fgets(line, 1024, fp)) {
+        GameSpriteFrameElement e;
+        char flipped;
+        if (*line == '#')
+            continue;
+        sscanf(line, "%i %i %i %c %lu", &e.sprite_, &e.off_x_, &e.off_y_,
+                &flipped, &e.next_element_);
+        e.flipped_ = (flipped == 'f');
+        elements_.push_back(e);
+    }
+    for (unsigned int i = 0; i < elements_.size(); i++)
+        assert(elements_[i].next_element_ < elements_.size());
+    fclose(fp);
 
     for (unsigned int i = 0; i < elements_.size(); i++) {
         int esprite = elements_[i].sprite_;
@@ -118,25 +106,7 @@ bool GameSpriteManager::load()
         for (unsigned int i = 0; i < frames_.size(); i++)
             assert(frames_[i].next_frame_ < frames_.size());
         fclose(fp);
-    } else {
-        // try original data file
-        data = File::loadOriginalFile("HFRA-0.ANI", size);
-        assert(size % 8 == 0);
-        for (unsigned int i = 0; i < size / 8; i++) {
-            GameSpriteFrame f;
-            f.first_element_ = data[i * 8] | (data[i * 8 + 1] << 8);
-            assert(f.first_element_ < elements_.size());
-            f.width_ = data[i * 8 + 2];
-            f.height_ = data[i * 8 + 3];
-            f.flags_ = data[i * 8 + 4] | (data[i * 8 + 5] << 8);
-            f.next_frame_ = data[i * 8 + 6] | (data[i * 8 + 7] << 8);
-            assert(f.next_frame_ < size / 8);
-            frames_.push_back(f);
-        }
-        delete[] data;
     }
-
-    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frames", (int)frames_.size()))
 
     fp = File::openOriginalFile("HSTA-0.TXT");
     if (fp) {
@@ -150,16 +120,70 @@ bool GameSpriteManager::load()
             index_.push_back(index);
         }
         fclose(fp);
-    } else {
-        // try original data file
-        data = File::loadOriginalFile("HSTA-0.ANI", size);
-        assert(size % 2 == 0);
-        for (unsigned int i = 0; i < size / 2; i++) {
-            index_.push_back(data[i * 2] | (data[i * 2 + 1] << 8));
-            assert(index_[i] < frames_.size());
-        }
-        delete[] data;
     }
+
+    return true;
+}
+
+/*!
+ * @brief Load animations from original game files
+ * @return true if loading is ok
+ */
+bool GameSpriteManager::loadElementsFromOriginalFiles() {
+    size_t size;
+    uint8 *data;
+
+    // Load Sprite Frame Element
+    data = File::loadOriginalFile("HELE-0.ANI", size);
+    assert(size % 10 == 0);
+    for (unsigned int i = 0; i < size / 10; i++) {
+        GameSpriteFrameElement e;
+        e.sprite_ = data[i * 10] | (data[i * 10 + 1] << 8);
+        assert(e.sprite_ % 6 == 0);
+        e.sprite_ /= 6;
+        e.off_x_ = data[i * 10 + 2] | (data[i * 10 + 3] << 8);
+        e.off_y_ = data[i * 10 + 4] | (data[i * 10 + 5] << 8);
+        e.flipped_ =
+            (data[i * 10 + 6] | (data[i * 10 + 7] << 8)) !=
+            0 ? true : false;
+        e.next_element_ = data[i * 10 + 8] | (data[i * 10 + 9] << 8);
+        if (e.off_x_ & (1 << 15))
+            e.off_x_ = -(65536 - e.off_x_);
+        if (e.off_y_ & (1 << 15))
+            e.off_y_ = -(65536 - e.off_y_);
+        assert(e.next_element_ < size / 10);
+        elements_.push_back(e);
+    }
+    delete[] data;
+
+    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frame elements", (int)elements_.size()))
+
+    // Load sprite frame
+    data = File::loadOriginalFile("HFRA-0.ANI", size);
+    assert(size % 8 == 0);
+    for (unsigned int i = 0; i < size / 8; i++) {
+        GameSpriteFrame f;
+        f.first_element_ = data[i * 8] | (data[i * 8 + 1] << 8);
+        assert(f.first_element_ < elements_.size());
+        f.width_ = data[i * 8 + 2];
+        f.height_ = data[i * 8 + 3];
+        f.flags_ = data[i * 8 + 4] | (data[i * 8 + 5] << 8);
+        f.next_frame_ = data[i * 8 + 6] | (data[i * 8 + 7] << 8);
+        assert(f.next_frame_ < size / 8);
+        frames_.push_back(f);
+    }
+    delete[] data;
+
+    LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("loaded %i frames", (int)frames_.size()))
+
+    // Load index
+    data = File::loadOriginalFile("HSTA-0.ANI", size);
+    assert(size % 2 == 0);
+    for (unsigned int i = 0; i < size / 2; i++) {
+        index_.push_back(data[i * 2] | (data[i * 2 + 1] << 8));
+        assert(index_[i] < frames_.size());
+    }
+    delete[] data;
 
     LOG(Log::k_FLG_SND, "GameSpriteManager", "load", ("index contains %i animations", (int)index_.size()))
 

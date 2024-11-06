@@ -23,7 +23,7 @@
 #include "menus/agentselectorrenderer.h"
 
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/animationmanager.h"
 #include "fs-kernel/model/ped.h"
 
 const int AgentSelectorRenderer::kIpaBarWidth = 56;

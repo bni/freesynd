@@ -74,6 +74,9 @@ public:
     int getFrameNum(unsigned int animNum);
 
 protected:
+    bool loadElementsFromCustomFiles();
+    bool loadElementsFromOriginalFiles();
+protected:
     std::vector<size_t> index_;
     std::vector<GameSpriteFrame> frames_;
     std::vector<GameSpriteFrameElement> elements_;

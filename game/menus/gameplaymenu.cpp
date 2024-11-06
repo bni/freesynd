@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/sound/musicmanager.h"
 #include "menus/gamemenuid.h"
 #include "fs-engine/menus/fliplayer.h"
