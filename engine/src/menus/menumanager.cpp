@@ -120,7 +120,7 @@ const char* MenuFactory::getLeaveAnimation(int menuId) {
  */
 MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
         : dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
-          menuSprites_(true), fonts_(), logoManager_() {
+          menuSprites_(true, SpriteManager::kMenuSpritesTextureWidth), fonts_(), logoManager_() {
     pFactory_ = pFactory;
     pFactory_->setMenuManager(this);
     pGameSounds_ = pGameSounds;
@@ -165,7 +165,7 @@ bool MenuManager::initialize(bool loadIntroFont) {
     if (loadIntroFont) {
         LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading intro sprites ..."))
 
-        pIntroFontSprites_ = new SpriteManager(true);
+        pIntroFontSprites_ = new SpriteManager(true, SpriteManager::kMenuSpritesTextureWidth);
         if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", paletteData, kPaletteMaxColor)) {
             return false;
         }

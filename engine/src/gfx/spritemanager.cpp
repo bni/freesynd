@@ -51,9 +51,10 @@ void unpackBlocks1b(const uint8_t * data, uint8_t * pixels)
     }
 }
 
-const int SpriteManager::kTextureWidth = 512;
+const size_t SpriteManager::kMenuSpritesTextureWidth = 512;
 
-SpriteManager::SpriteManager(bool rle):sprites_(nullptr), spriteCount_(0), sprites2_(nullptr), isRle_(rle)
+SpriteManager::SpriteManager(bool rle, size_t textureWidth):
+    sprites_(nullptr), spriteCount_(0), sprites2_(nullptr), isRle_(rle), textureWidth_(textureWidth)
 {
 }
 
@@ -101,9 +102,6 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
     }
 
     spriteCount_ = int(tabSize) / Sprite::kTabEntrySize;
-
-    if (isRle_)
-        loadSprites2(tabData, data, paletteColors, nbColors);
 
     bool res = loadSprites(tabData, tabSize, data, paletteColors, nbColors);
     delete[] tabData;
@@ -154,7 +152,7 @@ bool SpriteManager::loadSprites2(const uint8_t * tabData, const uint8_t * sprite
     readAndSortTabEntries(tabData, spriteList);
 
     sprites2_ = new Sprite[spriteCount_];
-    uint8_t *spriteBuffer = new uint8_t[kTextureWidth * kTextureWidth];
+    uint8_t *spriteBuffer = new uint8_t[textureWidth_ * textureWidth_];
     
     // This stack is used to track sprites inserted in a line
     std::stack<SpriteInsert> spriteStack;
@@ -169,8 +167,8 @@ bool SpriteManager::loadSprites2(const uint8_t * tabData, const uint8_t * sprite
     // Then init texture with the buffer
     spritesetTexture_ = g_System.createTexture();
     bool res = spritesetTexture_->createSurfaceFromData(spriteBuffer, 
-                                            kTextureWidth, 
-                                            kTextureWidth,
+                                            textureWidth_, 
+                                            textureWidth_,
                                             255);
 
     if (res) {
@@ -242,7 +240,7 @@ Sprite SpriteManager::readSpriteDataAndCopyToBuffer(const uint8_t *spritesData, 
         spriteStack.push(insert);
     }
 
-    sprite.copyToBuffer(spritePixels, spriteBuffer, kTextureWidth, kTextureWidth);
+    sprite.copyToBuffer(spritePixels, spriteBuffer, textureWidth_, textureWidth_);
 
     delete[] spritePixels;
 
@@ -265,7 +263,7 @@ void SpriteManager::getInsertPoint(Sprite &sprite, std::stack<SpriteInsert> &spr
         insertAt.x = topSprite.insertedAt.x + topSprite.width;
         insertAt.y = topSprite.insertedAt.y;
         // and check if we can append the new sprite on the same line
-        if (insertAt.x + sprite.width() >= kTextureWidth) {
+        if (insertAt.x + sprite.width() >= textureWidth_) {
             // sprite is too large so fine a place below starting at the first
             // sprite that is high enough or it can be a new line
             while (!spriteStack.empty()) {

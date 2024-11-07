@@ -28,7 +28,9 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
-AnimationManager::AnimationManager() : spritesManager_(false)
+const size_t AnimationManager::kAnimSpritesTextureWidth = 1024;
+
+AnimationManager::AnimationManager() : spritesManager_(false, kAnimSpritesTextureWidth)
 {
 }
 

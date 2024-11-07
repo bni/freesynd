@@ -53,7 +53,14 @@ public:
  */
 class SpriteManager {
 public:
-    SpriteManager(bool rle);
+    /*!
+     * This is the width for the texture that holds the sprites.
+     * It has be chosen to use 512x512 because it is a power of 2
+     * enough to hold all sprites.
+     */
+    static const size_t kMenuSpritesTextureWidth;
+
+    SpriteManager(bool rle, size_t textureWidth);
     virtual ~SpriteManager();
     //! clear all loaded sprites
     void clear();
@@ -75,12 +82,6 @@ public:
     bool drawSprite(int spriteNum, int x, int y, bool flipped = false, bool x2 = false);
 
 protected:
-    /*!
-     * This is the width for the texture that holds the sprites.
-     * It has be chosen to use 512x512 because it is a power of 2
-     * enough to hold all sprites.
-     */
-    static const int kTextureWidth;
     
     /*!
      * Load sprites from the given files
@@ -110,6 +111,8 @@ protected:
     bool isRle_;
     //! A texture that store all the sprites with an optimization of placements
     std::unique_ptr<FSTexture> spritesetTexture_;
+    //! Size of the texture that holds the spriteset
+    size_t textureWidth_;
 };
 
 #endif

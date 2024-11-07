@@ -81,6 +81,9 @@ protected:
     bool loadElementsFromCustomFiles();
     bool loadElementsFromOriginalFiles();
 protected:
+    //! Size for the texture for storing animation sprites
+    static const size_t kAnimSpritesTextureWidth;
+
     SpriteManager spritesManager_;
     std::vector<size_t> index_;
     std::vector<GameSpriteFrame> frames_;
