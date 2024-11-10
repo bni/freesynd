@@ -68,32 +68,7 @@ ConfMenu::ConfMenu(MenuManager *m) :
     toAcceptCmpNameTxtId_ = addStatic(32, 93, "", FontManager::SIZE_1, false);
     toAcceptUsrNameTxtId_ = addStatic(32, 115, "", FontManager::SIZE_1, false);
 
-    currPanel_ = PNL_MAIN;
-
-    // Initialize data for the buttons frame
-    memset(butFrameData_, 255, 68 * 13);
-    for (int i = 4; i < 66; i++) {
-        butFrameData_[i + 0 * 68] = 16;
-        butFrameData_[i + 11 * 68] = 16;
-    }
-
-    for (int j = 0; j < 12; j++) {
-        butFrameData_[4 + j * 68] = 16;
-        butFrameData_[66 + j * 68] = 16;
-    }
-
-    // Initialize data for the text field frame
-    memset(tfFrameData_, 255, 136 * 13);
-
-    for (int i = 4; i < 134; i++) {
-        tfFrameData_[i + 0 * 136] = 16;
-        tfFrameData_[i + 11 * 136] = 16;
-    }
-
-    for (int j = 0; j < 12; j++) {
-        tfFrameData_[4 + j * 136] = 16;
-        tfFrameData_[134 + j * 136] = 16;
-    }
+    currPanel_ = kConfPanelMain;
 }
 
 ConfMenu::~ConfMenu() {
@@ -119,20 +94,20 @@ void ConfMenu::createPanels() {
 
 void ConfMenu::handleRender(DirtyList &dirtyList) {
     // Draw the current logo
-    g_LogoMgr.drawLogo(28, 22, toAcceptLogo_, toAcceptColourId_);
+    g_LogoMgr.draw({28, 22}, toAcceptLogo_, toAcceptColourId_, true);
 
-    if (currPanel_ == PNL_LOGO) {
+    if (currPanel_ == kConfPanelLogo) {
         // Draw the selected logo
-        g_LogoMgr.drawLogo(336, 55, tempLogo_, tempColourId_);
-    } else if (currPanel_ == PNL_CMPNM || currPanel_ == PNL_USRNM) {
+        g_LogoMgr.draw({336, 55}, tempLogo_, tempColourId_, true);
+    } else if (currPanel_ == kConfPanelPlayerCompanyName || currPanel_ == kConfPanelPlayerName) {
         // draw a frame around the textfield
-        g_Screen.scale2x(300, 77, 136, 13, tfFrameData_);
+        g_System.drawRect(300, 77, 136, 26, rectColor_);
     }
 
-    if (currPanel_ != PNL_MAIN) {
+    if (currPanel_ != kConfPanelMain) {
         // draw frame around ok and cancel buttons
-        g_Screen.scale2x(283, 122, 68, 13, butFrameData_);
-        g_Screen.scale2x(468, 122, 68, 13, butFrameData_);
+        g_System.drawRect(283, 122, 136, 26, rectColor_);
+        g_System.drawRect(468, 122, 136, 26, rectColor_);
     }
 }
 
@@ -143,6 +118,8 @@ void ConfMenu::handleShow() {
 
     getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName(), false);
     getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName(), false);
+
+    menu_manager_->menuSprites().getColorFromMenuPalette(fs_cmn::kColorDarkGreen, rectColor_);
 }
 
 void ConfMenu::handleLeave() {
@@ -175,10 +152,10 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
         tempLogo_ = (tempLogo_ + 1) % g_LogoMgr.numLogos();
         redrawPanel();
     } else if (actionId == okButId_) {
-        if (currPanel_ == PNL_LOGO) {
+        if (currPanel_ == kConfPanelLogo) {
             toAcceptColourId_ = tempColourId_;
             toAcceptLogo_ = tempLogo_;
-        } else if (currPanel_ == PNL_USRNM) {
+        } else if (currPanel_ == kConfPanelPlayerName) {
             getStatic(toAcceptUsrNameTxtId_)->setText(pUserNameTF_->getText().c_str(), false);
         } else {
             getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
@@ -197,15 +174,15 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
 }
 
 bool ConfMenu::handleUnMappedKey(const FS_Key key) {
-    if (currPanel_ != PNL_MAIN) {
+    if (currPanel_ != kConfPanelMain) {
         if (key.keyCode == kKeyCode_Escape) {
             showMainPanel();
             return true;
         } else if (key.keyCode == kKeyCode_Return) {
-            if (currPanel_ == PNL_LOGO) {
+            if (currPanel_ == kConfPanelLogo) {
                 toAcceptColourId_ = tempColourId_;
                 toAcceptLogo_ = tempLogo_;
-            } else if (currPanel_ == PNL_USRNM) {
+            } else if (currPanel_ == kConfPanelPlayerName) {
                 getStatic(toAcceptUsrNameTxtId_)->setText(pUserNameTF_->getText().c_str(), false);
             } else {
                 getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
@@ -230,7 +207,7 @@ void ConfMenu::showMainPanel() {
     getOption(acceptButId_)->setWidgetEnabled(true);
     getOption(menuButId_)->setWidgetEnabled(true);
 
-    if (currPanel_ == PNL_LOGO) {
+    if (currPanel_ == kConfPanelLogo) {
         getOption(leftColButId_)->setVisible(false);
         getOption(rightColButId_)->setVisible(false);
         getOption(leftLogoButId_)->setVisible(false);
@@ -238,18 +215,18 @@ void ConfMenu::showMainPanel() {
 
         getStatic(colStaticId_)->setVisible(false);
         getStatic(logoStaticId_)->setVisible(false);
-    } else if (currPanel_ == PNL_USRNM) {
+    } else if (currPanel_ == kConfPanelPlayerName) {
         pUserNameTF_->setVisible(false);
         pUserNameTF_->setText("");
         captureInputBy(NULL);
-    } else if (currPanel_ == PNL_CMPNM) {
+    } else if (currPanel_ == kConfPanelPlayerCompanyName) {
         pCompNameTF_->setVisible(false);
         pCompNameTF_->setText("");
         captureInputBy(NULL);
     }
 
     redrawPanel();
-    currPanel_ = PNL_MAIN;
+    currPanel_ = kConfPanelMain;
 }
 
 void ConfMenu::hideMainPanel() {
@@ -264,7 +241,7 @@ void ConfMenu::hideMainPanel() {
 }
 
 void ConfMenu::showLogoPanel() {
-    currPanel_ = PNL_LOGO;
+    currPanel_ = kConfPanelLogo;
     getStatic(panelMsgId_)->setText("#CONF_COL_LOGO_MSG");
     getOption(leftColButId_)->setVisible(true);
     getOption(rightColButId_)->setVisible(true);
@@ -284,7 +261,7 @@ void ConfMenu::showLogoPanel() {
 }
 
 void ConfMenu::showUserNamePanel() {
-    currPanel_ = PNL_USRNM;
+    currPanel_ = kConfPanelPlayerName;
     getStatic(panelMsgId_)->setText("#CONF_YOUR_NAME_MSG");
 
     pUserNameTF_->setText(getStatic(toAcceptUsrNameTxtId_)->getText().c_str());
@@ -298,7 +275,7 @@ void ConfMenu::showUserNamePanel() {
 }
 
 void ConfMenu::showCompanyNamePanel() {
-    currPanel_ = PNL_CMPNM;
+    currPanel_ = kConfPanelPlayerCompanyName;
     getStatic(panelMsgId_)->setText("#CONF_COM_NAME_MSG");
 
     pCompNameTF_->setText(getStatic(toAcceptCmpNameTxtId_)->getText().c_str());

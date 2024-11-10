@@ -318,7 +318,8 @@ void MenuFont::drawText(int x, int y, const std::string& text, bool highlighted,
                     y_offset = (defaultHeight_ *sc)/2 - (sprite->height() * sc) / 2;
                 }
 
-                sprite->draw(x, y + y_offset, 0, false, x2);
+                //sprite->draw(x, y + y_offset, 0, false, x2);
+                sprites_->drawSprite(sprite->id(), x, y + y_offset, false, x2);
 
                 x += sprite->width() * sc - sc;
             }

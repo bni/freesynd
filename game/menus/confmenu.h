@@ -61,18 +61,15 @@ protected:
      * This enum identifies the panel which is currently displayed.
      */
     enum EPanel {
-        PNL_MAIN = 0,
-        PNL_LOGO = 1,
-        PNL_USRNM = 2,
-        PNL_CMPNM = 3
+        //! Main panel that displays options to modify logo or names
+        kConfPanelMain = 0,
+        //! Panel to select the logo
+        kConfPanelLogo = 1,
+        //! Panel to edit the player name
+        kConfPanelPlayerName = 2,
+        //! Panel to edit the player company name
+        kConfPanelPlayerCompanyName = 3
     };
-
-    /*! This array holds the values for drawing a frame
-     *  around the ok and cancel button in the sub panels. */
-    uint8 butFrameData_[68 * 13];
-    /*! This array holds the values for drawing a frame
-     *  around the textfield in the user and company name panels. */
-    uint8 tfFrameData_[136 * 13];
 
     /*! keep track of the current panel.*/
     EPanel currPanel_;
@@ -112,6 +109,8 @@ protected:
     int toAcceptColourId_;
     int tempLogo_;
     int tempColourId_;
+    //! Green color for drawing rects
+    FSColor rectColor_;
 };
 
 #endif

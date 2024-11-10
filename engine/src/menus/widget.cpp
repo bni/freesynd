@@ -270,9 +270,9 @@ void Option::draw() {
     int x = x_;
 
     if (text_.isHighlighted() && lightWidget_ != NULL) {
-        lightWidget_->draw(x, y_, 0, false, true);
+        getPeer()->menuSprites().drawSprite(lightWidget_->id(), x, y_, false, true);
     } else if (darkWidget_ != NULL) {
-        darkWidget_->draw(x, y_, 0, false, true);
+        getPeer()->menuSprites().drawSprite(darkWidget_->id(), x, y_, false, true);
     }
 
     text_.draw();

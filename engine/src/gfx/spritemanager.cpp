@@ -54,7 +54,7 @@ void unpackBlocks1b(const uint8_t * data, uint8_t * pixels)
 const size_t SpriteManager::kMenuSpritesTextureWidth = 512;
 
 SpriteManager::SpriteManager(bool rle, size_t textureWidth):
-    sprites_(nullptr), spriteCount_(0), sprites2_(nullptr), isRle_(rle), textureWidth_(textureWidth)
+    sprites_(nullptr), spriteCount_(0), isRle_(rle), textureWidth_(textureWidth)
 {
 }
 
@@ -67,9 +67,6 @@ void SpriteManager::clear()
 {
     if (sprites_)
         delete[] sprites_;
-
-    if (sprites2_)
-        delete[] sprites2_;
 
     sprites_ = NULL;
     spriteCount_ = 0;
@@ -103,7 +100,7 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
 
     spriteCount_ = int(tabSize) / Sprite::kTabEntrySize;
 
-    bool res = loadSprites(tabData, tabSize, data, paletteColors, nbColors);
+    bool res = loadSprites(tabData, data, paletteColors, nbColors);
     delete[] tabData;
     delete[] data;
 
@@ -119,31 +116,13 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
 /**
  * Loads data from memory
  * \param tabData
- * \param tabSize
  * \param spriteData
- * \param rle
- * \return
+ * \param paletteColors
+ * \param nbColors
+ * \return true if sprites have been loaded
  *
  */
-bool SpriteManager::loadSprites(uint8 * tabData, size_t tabSize,
-                                uint8 * spriteData, const uint8_t * paletteColors, int nbColors)
-{
-    assert(tabData);
-    assert(spriteData);
-
-    sprites_ = new Sprite[spriteCount_];
-    assert(sprites_);
-
-    for (int i = 0; i < spriteCount_; ++i) {
-        if (!sprites_[i].loadSprite(tabData, spriteData, i, isRle_)) {
-            FSERR(Log::k_FLG_IO, "SpriteManager", "loadSprites", ("Failed to load sprite: %d\n", i))
-        }
-    }
-
-    return true;
-}
-
-bool SpriteManager::loadSprites2(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors) {
+bool SpriteManager::loadSprites(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors) {
     assert(tabData);
     assert(spriteData);
 
@@ -151,7 +130,7 @@ bool SpriteManager::loadSprites2(const uint8_t * tabData, const uint8_t * sprite
     std::list<SpriteTabEntry> spriteList;
     readAndSortTabEntries(tabData, spriteList);
 
-    sprites2_ = new Sprite[spriteCount_];
+    sprites_ = new Sprite[spriteCount_];
     uint8_t *spriteBuffer = new uint8_t[textureWidth_ * textureWidth_];
     
     // This stack is used to track sprites inserted in a line
@@ -160,7 +139,7 @@ bool SpriteManager::loadSprites2(const uint8_t * tabData, const uint8_t * sprite
     // load all sprites in a buffer and add them to the buffer ordered by size
     for (auto entry : spriteList) {
         if (entry.spriteId < spriteCount_) {
-            sprites2_[entry.spriteId] = readSpriteDataAndCopyToBuffer(spriteData, entry, spriteStack, spriteBuffer);
+            sprites_[entry.spriteId] = readSpriteDataAndCopyToBuffer(spriteData, entry, spriteStack, spriteBuffer);
         }
     }
 
@@ -300,15 +279,6 @@ Sprite *SpriteManager::sprite(int spriteNum)
     return &sprites_[spriteNum];
 }
 
-Sprite *SpriteManager::sprite2(int spriteNum)
-{
-    if (spriteNum >= spriteCount_) {
-        FSERR(Log::k_FLG_IO, "SpriteManager", "sprite", ("spriteNum %d is out of bound!\n", spriteNum))
-        return NULL;
-    }
-    return &sprites2_[spriteNum];
-}
-
 
 bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
                                   bool flipped, bool x2)
@@ -334,7 +304,7 @@ bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
  * @return True if drawing is ok
  */
 bool SpriteManager::drawSprite(int spriteNum, int x, int y, bool flipped, bool x2) {
-    Sprite *pSprite = sprite2(spriteNum);
+    Sprite *pSprite = sprite(spriteNum);
     if (pSprite) {
         if (x2) {
             spritesetTexture_->renderStretch(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height(), 2);
@@ -344,4 +314,13 @@ bool SpriteManager::drawSprite(int spriteNum, int x, int y, bool flipped, bool x
     }
 
     return true;
+}
+
+/*!
+ * Find the color from the palette of the MenuSprite texture at given color index
+ * @param colorIndex Index of the color in the palette
+ * @param color Resulting color
+ */
+void SpriteManager::getColorFromMenuPalette(const int colorIndex, FSColor &color) {
+    spritesetTexture_->getColorFromPalette(colorIndex, color);
 }

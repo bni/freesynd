@@ -74,25 +74,19 @@ public:
 
     //! Return the sprite at given index
     Sprite *sprite(int spriteNum);
-    // TODO : remove
-    Sprite *sprite2(int spriteNum);
+
     bool drawSpriteXYZ(int spriteNum, int x, int y, int z, bool flipped = false,
             bool x2 = false);
     //! Draw a sprite with given Id at given position on screen. Sprite can be flipped or stretched
     bool drawSprite(int spriteNum, int x, int y, bool flipped = false, bool x2 = false);
 
+    //! Return the color at given index for the current palette
+    void getColorFromMenuPalette(const int colorIndex, FSColor &color);
+
 protected:
     
-    /*!
-     * Load sprites from the given files
-     * \param
-     * \param
-     * \return
-     *
-     */
-    bool loadSprites(uint8_t * tabData, size_t tabSize, uint8_t *spriteData, const uint8_t * paletteColors, int nbColors);
-    // TODO : Remove
-    bool loadSprites2(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors);
+    //! Load sprites from the given files
+    bool loadSprites(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors);
     //! Sort tab entries from the tab file by height then width
     void readAndSortTabEntries(const uint8_t * tabData, std::list<SpriteTabEntry>& spriteList);
     //! Read a sprite pixels and copy those pixels at the right location in the sprite set buffer
@@ -105,8 +99,6 @@ protected:
     Sprite *sprites_;
     //! Total number of sprites
     int spriteCount_;
-    // TODO : remove
-    Sprite *sprites2_;
     //! True means the sprites are stored using RLE in the original file
     bool isRle_;
     //! A texture that store all the sprites with an optimization of placements
