@@ -390,6 +390,7 @@ void MenuManager::leaveCurrentMenu() {
  * and if it needs to be refreshed.
  */
 void MenuManager::renderMenu() {
+    addRect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     if (current_ && !dirtyList_.isEmpty()) {
         if (current_->doNeedBackground()) {
             for (int i=0; i < dirtyList_.getSize(); i++) {

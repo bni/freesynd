@@ -57,6 +57,7 @@ public:
 
     //! Initialize the SDL resources
     bool initialize(bool fullscreen) override;
+    bool clearScreen() override;
     //! Render back buffer to the screen
     void updateScreen() override;
     //! Pumps an event from the event queue

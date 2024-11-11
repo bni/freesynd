@@ -118,12 +118,13 @@ void LogoManager::copyLogosPixelsToBuffer(const uint8_t *bigLogosData, uint8_t *
 
         // start of the logo pixels in the destination surface (upper left corner of logo)
         int logoOffsetDest = (col * kLogoBigWidth) + (row * kNumOfLogosPerRow * kLogoBigWidth * kLogoBigWidth);
+        int logoOffsetSrc = i * kLogoBigWidth * kLogoBigWidth;
 
         // Copy pixels line by line
         for (int j=0; j < kLogoBigWidth; j++) {
             int lineOffsetDest = j * kLogoBigWidth * kNumOfLogosPerRow;
             int lineOffsetSrc = j * kLogoBigWidth;
-            memcpy(logosBuffer + logoOffsetDest + lineOffsetDest, bigLogosData + lineOffsetSrc, kLogoBigWidth);
+            memcpy(logosBuffer + logoOffsetDest + lineOffsetDest, bigLogosData + logoOffsetSrc + lineOffsetSrc, kLogoBigWidth);
         }
 
         logoPositions_[i] = new Point2D();

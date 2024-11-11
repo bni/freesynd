@@ -197,10 +197,19 @@ SDL_Window * SystemSDL::createWindow(bool fullscreen) {
     return sdlWindow;
 }
 
+/*!
+ * Clear the screen with the black color.
+ * @return True if ok.
+ */
+bool SystemSDL::clearScreen() {
+    SDL_SetRenderDrawColor(pRenderer_, 0x00, 0x00, 0x00, 0xFF);
+    return SDL_RenderClear(pRenderer_);
+}
+
 void SystemSDL::updateScreen() {
-    if (g_Screen.dirty()|| (cursor_visible_ && update_cursor_)) {
+    //if (g_Screen.dirty()|| (cursor_visible_ && update_cursor_)) {
         // Clear screen buffer
-        SDL_RenderClear(pRenderer_);
+        /*SDL_RenderClear(pRenderer_);
 
         SDL_LockSurface(pScreenSurface_);
 
@@ -230,7 +239,7 @@ void SystemSDL::updateScreen() {
         SDL_UpdateTexture(pScreenTexture_, NULL, pixels_, Screen::kScreenWidth * sizeof(Uint32));
 
         // Copy texture to the screen buffer
-        SDL_RenderCopy(pRenderer_, pScreenTexture_, NULL, NULL);
+        SDL_RenderCopy(pRenderer_, pScreenTexture_, NULL, NULL);*/
         
         if (cursor_visible_) {
             SDL_Rect dst;
@@ -242,10 +251,10 @@ void SystemSDL::updateScreen() {
             SDL_RenderCopy( pRenderer_, pCursorTexture_, &cursor_rect_, &dst );
             update_cursor_ = false;
         }
+    //}
 
-        // Flip screen
-        SDL_RenderPresent( pRenderer_ );
-}
+    // Flip screen
+    SDL_RenderPresent( pRenderer_ );
 }
 
 /*!

@@ -232,6 +232,7 @@ void BaseApp::run(const CliParam& param) {
             system_->delay(30 - diff_ticks);
             continue;
         }
+        system_->clearScreen();
         menus_.handleTick(diff_ticks);
         menus_.renderMenu();
         lasttick = curtick;

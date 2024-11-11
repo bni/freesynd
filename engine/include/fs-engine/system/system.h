@@ -89,6 +89,7 @@ public:
 
     virtual ~System() {}
     virtual bool initialize(bool fullscreen) = 0;
+    virtual bool clearScreen() = 0;
     virtual void updateScreen() = 0;
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event &evtOut) = 0;
