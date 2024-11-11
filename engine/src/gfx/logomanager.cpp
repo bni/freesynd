@@ -40,8 +40,7 @@ const int LogoManager::kLogoSmallWidth = 16;
 const int LogoManager::kNumOfLogosPerRow = 32;
 
 LogoManager::LogoManager()
-: data_all_logos_(nullptr), data_logo_(nullptr),
-  data_all_mini_logos_(nullptr), data_mini_logo_(nullptr),
+: data_all_logos_(nullptr),
   logoPositions_(nullptr)
 {
 }
@@ -50,12 +49,7 @@ LogoManager::~LogoManager()
 {
     if (data_all_logos_)
         delete[] data_all_logos_;
-    if (data_logo_)
-        delete[] data_logo_;
-    if (data_all_mini_logos_)
-        delete[] data_all_mini_logos_;
-    if (data_mini_logo_)
-        delete[] data_mini_logo_;
+
     if (logoPositions_)
         delete[] logoPositions_;
 }
@@ -78,15 +72,6 @@ bool LogoManager::loadLogos(const uint8_t * paletteColors, int nbColors) {
     }
 
     numberLogo_ = int(fileSize) / (kLogoBigWidth * kLogoBigWidth);
-    data_logo_ = new uint8[kLogoBigWidth * kLogoBigWidth];
-
-    data_all_mini_logos_ = File::loadOriginalFile("mminlogo.dat", fileSize);
-    if (data_all_mini_logos_ == nullptr) {
-        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not read mminlogo.dat"))
-        return false;
-    }
-
-    data_mini_logo_ = new uint8[kLogoSmallWidth * kLogoSmallWidth];
 
     // We store all logos in a temporaty buffer before copying everything in the texture
     // We only use the big logos and use SDL to strech texture
@@ -163,32 +148,6 @@ uint8_t LogoManager::getColorAtIndex(int colourIdx) {
 int LogoManager::numLogos()
 {
     return numberLogo_;
-}
-
-void LogoManager::drawLogo(int x, int y, int logo, int colour, bool mini) {
-
-    // Fill the data_logo_ array with the current logo and given color
-    int offsetBigLogo = logo * kLogoBigWidth * kLogoBigWidth;
-    for (int i = 0; i < kLogoBigWidth * kLogoBigWidth; i++) {
-        if (data_all_logos_[offsetBigLogo + i] == 0xFE)
-            data_logo_[i] = g_Colours[colour];
-        else
-            data_logo_[i] = data_all_logos_[offsetBigLogo + i];
-    }
-
-    // Fill the data_small_logo_ array with the current logo and given color
-    int offsetSmallLogo = logo * kLogoSmallWidth * kLogoSmallWidth;
-    for (int i = 0; i < kLogoSmallWidth * kLogoSmallWidth; i++) {
-        if (data_all_mini_logos_[offsetSmallLogo + i] == 0xFE)
-            data_mini_logo_[i] = g_Colours[colour];
-        else
-            data_mini_logo_[i] = data_all_mini_logos_[offsetSmallLogo + i];
-    }
-
-    if (mini)
-        g_Screen.scale2x(x, y, kLogoSmallWidth, kLogoSmallWidth, data_mini_logo_, kLogoSmallWidth);
-    else
-        g_Screen.scale2x(x, y, kLogoBigWidth, kLogoBigWidth, data_logo_, kLogoBigWidth);
 }
 
 /*!

@@ -51,8 +51,6 @@ public:
     uint8_t getColorAtIndex(int colourIdx);
     //! Returns the number of available logos
     int numLogos();
-    //! Draws a logo at given position with the given color
-    void drawLogo(int x, int y, int logo, int colourIdx, bool mini = false);
     //! Draws a logo at given position with the given color in big format or not
     void draw(Point2D pos, int logoId, int colourIdx, bool big);
 
@@ -67,16 +65,12 @@ private:
     static const int kLogoSmallWidth;
     /*! How many logos on a line in a texture.*/
     static const int kNumOfLogosPerRow;
+    
     //! Number of logos in the game
     int numberLogo_;
     //! This contains the pixels data for all logos and are loaded from a file
     uint8 *data_all_logos_;
-    //! This contains the data for one logo that will be drawn on screen
-    uint8_t *data_logo_;
-    //! This contains the pixels data for all mini logos and are loaded from a file
-    uint8 *data_all_mini_logos_;
-    //! This contains the data for one mini logo that will be drawn on screen
-    uint8_t *data_mini_logo_;
+
     //! A texture that stores the logos big and small
     std::unique_ptr<FSTexture> logosTexture_;
     //! An array of positions for each logo in the texture

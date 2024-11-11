@@ -272,7 +272,7 @@ void ResearchMenu::handleShow() {
 
 void ResearchMenu::handleRender(DirtyList &dirtyList)
 {
-    g_LogoMgr.drawLogo(18, 14, g_Session.getLogo(), g_Session.getLogoColour());
+    g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
     if (pSelectedWeapon_) {
         uint8 ldata[62];
