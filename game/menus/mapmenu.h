@@ -30,6 +30,7 @@
 #include <assert.h>
 
 #include "fs-engine/menus/menu.h"
+#include "fs-utils/misc/timer.h"
 
 //! Displays the mission selection map.
 /*!
@@ -51,18 +52,26 @@ protected:
     bool handleMouseDown(Point2D point, int button) override;
     //! Utility method to draw the mission selector
     void drawSelector();
+    //! Draw the segments on the line to simulate a dotted line
+    void drawDottedline(Point2D start, Point2D end);
     //! Utility method to update mission informations
     void handleBlockSelected();
     //! Update the game time display
     void updateClock();
 
 protected:
+    //! Size of the segment for drawing the line connecting the block to the logo
+    static const int kSegmentSize;
+    //! The size of the interval between 2 segments
+    static const int kIntervalSize;
 
     size_t mapblk_size_;
     /*! Contains the images of the differents blocks.*/
     uint8 *mapblk_data_;
     /*! A counter for the blinking line of the selector.*/
-    int select_tick_count_;
+    fs_utils::Timer timerBlinkLine_;
+    //! Used for blinking of the line of the selector.
+    int offsetLine_;
     /*! A counter for the blinking available blocks. */
     int blk_tick_count_;
     /*! */

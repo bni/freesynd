@@ -35,10 +35,6 @@
 #include "fs-engine/system/system.h"
 #include "fs-engine/menus/menumanager.h"
 
-struct pos {
-    int x;
-    int y;
-};
 
 /*!
  * This structure holds the position of the various
@@ -47,10 +43,14 @@ struct pos {
  * the block file.
  */
 struct BlockDisplay {
-    struct pos pos;
-    struct pos logo_pos;
-    struct pos line_start;
-    struct pos line_end;
+    //! Position of the block on the map
+    Point2D pos;
+    //! Position of the logo when the block is selected
+    Point2D logo_pos;
+    //! Start position of the line that links the logo to the selected block
+    Point2D line_start;
+    //! End position of the line that links the logo to the selected block
+    Point2D line_end;
 } g_BlocksDisplay[50] = {
     { {46, 18}, {14, 12}, {48, 32}, {76, 36}},
     { {90, 16}, {14, 12}, {48, 32}, {107, 40}},
@@ -104,6 +104,8 @@ struct BlockDisplay {
     { {504, 160}, {471, 197}, {507, 211}, {536, 207}}
 };
 
+const int MapMenu::kSegmentSize = 5;
+const int MapMenu::kIntervalSize = 5;
 
 /*!
  * Class constructor.
@@ -111,8 +113,9 @@ struct BlockDisplay {
  */
 MapMenu::MapMenu(MenuManager * m)
         : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain, true),
-          mapblk_data_(NULL), select_tick_count_(0) {
+          mapblk_data_(NULL), timerBlinkLine_(200) {
     cursorOnShow_ = kMenuCursor;
+    offsetLine_ = 0;
     //
     briefButId_ = addOption(17, 347, 128, 25, "#MAP_BRIEF_BUT",
         FontManager::SIZE_2, fs_game_menus::kMenuIdBrief);
@@ -249,11 +252,8 @@ void MapMenu::handleBlockSelected() {
 
 void MapMenu::handleTick(uint32_t elapsed) {
     // This a count to refresh the blinking line of the selector
-    select_tick_count_ += elapsed;
-    if (select_tick_count_ > 200) {
-        static int count = 0;
-        select_tick_count_ = count++;
-        needRendering();
+    if (timerBlinkLine_.update(elapsed)) {
+        offsetLine_ = (offsetLine_ + 1) % kIntervalSize;
     }
 
     blk_tick_count_ += elapsed;
@@ -285,43 +285,74 @@ void MapMenu::updateClock() {
  * a line that links the logo to the selected region.
  */
 void MapMenu::drawSelector() {
-    uint8 selId = g_Session.getSelectedBlockId();
-    int logo_x = g_BlocksDisplay[selId].logo_pos.x;
-    int logo_y = g_BlocksDisplay[selId].logo_pos.y;
-    g_LogoMgr.drawLogo(logo_x, logo_y, g_Session.getLogo(),
-        g_Session.getLogoColour(), true);
+    BlockDisplay block = g_BlocksDisplay[g_Session.getSelectedBlockId()];
+    g_LogoMgr.draw(block.logo_pos, g_Session.getLogo(),
+        g_Session.getLogoColour(), false);
 
     // Draw box enclosing logo
-    uint8 box[18 * 18];
-    memset(box, 255, 18 * 18);
-    for (int i = 0; i < 18; i++) {
-        box[i] = 252;
-        box[i + 17 * 18] = 252;
-    }
-    for (int j = 0; j < 18; j++) {
-        box[j * 18] = 252;
-        box[j * 18 + 17] = 252;
-    }
-    g_Screen.scale2x(logo_x - 2, logo_y - 2, 18, 18, box);
+    FSColor darkGreen;
+    getMenuManager()->getColorFromMenuPalette(fs_cmn::kMenuColorDarkGreen, darkGreen);
+
+    g_System.drawRect(block.logo_pos.add(-2, -2), 36, 36, darkGreen);
 
     // Draw line between country and logobox
-    int blk_line_end_x = g_BlocksDisplay[selId].line_end.x;
-    int blk_line_end_y = g_BlocksDisplay[selId].line_end.y;
-    int blk_line_start_x = g_BlocksDisplay[selId].line_start.x;
-    int blk_line_start_y = g_BlocksDisplay[selId].line_start.y;
-    g_Screen.drawLine(blk_line_start_x, blk_line_start_y, blk_line_end_x,
-                      blk_line_end_y, 252, 5, select_tick_count_ % 10);
-    g_Screen.drawLine(blk_line_start_x, blk_line_start_y - 1,
-                      blk_line_end_x, blk_line_end_y - 1, 252, 5,
-                      select_tick_count_ % 10);
-    g_Screen.drawLine(blk_line_start_x, blk_line_start_y, blk_line_end_x,
-                      blk_line_end_y, 4, 5, select_tick_count_ % 10 + 5);
-    g_Screen.drawLine(blk_line_start_x, blk_line_start_y - 1,
-                      blk_line_end_x, blk_line_end_y - 1, 4, 5,
-                      select_tick_count_ % 10 + 5);
+    // Draw 2 lines for thickness    
+    g_System.drawLine(block.line_start, block.line_end, darkGreen);
+    g_System.drawLine(block.line_start.add(0, -1), block.line_end.add(0, -1), darkGreen);
+    drawDottedline(block.line_start, block.line_end);
+}
 
-    // Reset the counter
-    select_tick_count_ = 0;
+/*!
+ * Draw spaced lines using an adaptation of Bresenham algorithm.
+ * @param start Start of the whole line
+ * @param end  End of the whole line
+ */
+void MapMenu::drawDottedline(Point2D start, Point2D end) {
+    std::vector<Point2D> points;
+    Point2D currentPoint = start;
+    int dx = abs(end.x - start.x);
+    int dy = abs(end.y - start.y);
+    int sx = start.x < end.x ? 1 : -1;
+    int sy = start.y < end.y ? 1 : -1;
+    int err = dx - dy;
+    int distanceDone = -offsetLine_;
+    bool inSeg = false;
+
+    while(currentPoint.x != end.x || currentPoint.y != end.y) {
+        if (distanceDone >= 0 && distanceDone < kSegmentSize) {
+            if (!inSeg) {
+                // we start a new segment so add start point
+                points.push_back(currentPoint);
+                inSeg = true;
+            }
+        }
+        distanceDone += 1;
+
+        if (distanceDone >= kSegmentSize + kIntervalSize) {
+            distanceDone = 0;
+        } else if (distanceDone >= kSegmentSize && inSeg) {
+            // end of the segment
+            points.push_back(currentPoint);
+            inSeg = false;
+        }
+
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            currentPoint.x += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            currentPoint.y += sy;
+        }
+    }
+
+    FSColor lightGreen;
+    getMenuManager()->getColorFromMenuPalette(fs_cmn::kMenuColorLightGreen, lightGreen);
+    for (size_t i=0; i+1 < points.size(); i += 2) {
+        g_System.drawLine(points[i], points[i+1], lightGreen);
+        g_System.drawLine(points[i].add(0,-1), points[i+1].add(0,-1), lightGreen);
+    }
 }
 
 void MapMenu::handleShow() {

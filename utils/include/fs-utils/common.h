@@ -159,6 +159,14 @@ namespace fs_cmn {
     static const uint8 kColorDarkGreen = 16;
 
     /*!
+     * Constants for colors in the Menu palette.
+     */
+    enum MenuPaletteColor {
+        kMenuColorLightGreen = 252,
+        kMenuColorDarkGreen = 16
+    };
+
+    /*!
      * Turn bits given by mask on in the given bitfield.
      * \param bitfield the bitfield to update
      * \param mask The bitmask to apply
@@ -198,6 +206,14 @@ inline void boxify(int &left, int &width, int x1, int x2)
 struct Point2D {
     int x;
     int y;
+
+    Point2D add(int offsetX, int offsetY) {
+        Point2D res;
+        res.x = x + offsetX;
+        res.y = y + offsetY;
+
+        return res;
+    }
 };
 
 /*!

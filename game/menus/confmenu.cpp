@@ -101,13 +101,13 @@ void ConfMenu::handleRender(DirtyList &dirtyList) {
         g_LogoMgr.draw({336, 55}, tempLogo_, tempColourId_, true);
     } else if (currPanel_ == kConfPanelPlayerCompanyName || currPanel_ == kConfPanelPlayerName) {
         // draw a frame around the textfield
-        g_System.drawRect(300, 77, 136, 26, rectColor_);
+        g_System.drawRect({300, 77}, 136, 26, rectColor_);
     }
 
     if (currPanel_ != kConfPanelMain) {
         // draw frame around ok and cancel buttons
-        g_System.drawRect(283, 122, 136, 26, rectColor_);
-        g_System.drawRect(468, 122, 136, 26, rectColor_);
+        g_System.drawRect({283, 122}, 136, 26, rectColor_);
+        g_System.drawRect({468, 122}, 136, 26, rectColor_);
     }
 }
 
@@ -119,7 +119,7 @@ void ConfMenu::handleShow() {
     getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName(), false);
     getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName(), false);
 
-    menu_manager_->menuSprites().getColorFromMenuPalette(fs_cmn::kColorDarkGreen, rectColor_);
+    menu_manager_->getColorFromMenuPalette(fs_cmn::kMenuColorDarkGreen, rectColor_);
 }
 
 void ConfMenu::handleLeave() {
