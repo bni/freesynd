@@ -145,7 +145,7 @@ bool SpriteManager::loadSprites(const uint8_t * tabData, const uint8_t * spriteD
 
     // Then init texture with the buffer
     spritesetTexture_ = g_System.createTexture();
-    bool res = spritesetTexture_->createSurfaceFromData(spriteBuffer, 
+    bool res = spritesetTexture_->create8bitsSurfaceFromData(spriteBuffer, 
                                             textureWidth_, 
                                             textureWidth_,
                                             255);

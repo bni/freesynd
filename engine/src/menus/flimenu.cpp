@@ -33,7 +33,7 @@
  * @param menuId 
  * @param parentId 
  */
-FliMenu::FliMenu(MenuManager *m, int menuId, int parentId) : Menu(m, menuId, parentId), fliPlayer_(m)
+FliMenu::FliMenu(MenuManager *m, int menuId, int parentId) : Menu(m, menuId, parentId), fliPlayer_()
 {
     fliIndex_ = 0;
     pData_ = NULL;
@@ -174,7 +174,7 @@ void FliMenu::handleTick(uint32_t elapsed)
         // trying to load next fli.
         playingFli_ = false;
         FliDesc desc = fliList_.at(fliIndex_ - 1);
-        if (!desc.waitKeyPressed && !loadNextFli()) {
+                if (!desc.waitKeyPressed && !loadNextFli()) {
             // no more animation so quit
             menu_manager_->gotoMenu(nextMenu_);
         }
@@ -183,6 +183,8 @@ void FliMenu::handleTick(uint32_t elapsed)
 
 void FliMenu::handleRender(DirtyList &dirtyList)
 {
+    fliPlayer_.renderFrame();
+
     if (currSubTitle_.size() != 0) {
         menu_manager_->fonts().introFont()->drawText(10, 360, currSubTitle_, true);
     }

@@ -85,7 +85,7 @@ bool LogoManager::loadLogos(const uint8_t * paletteColors, int nbColors) {
     copyLogosPixelsToBuffer(data_all_logos_, logosBuffer);
 
     logosTexture_ = g_System.createTexture();
-    bool res = logosTexture_->createSurfaceFromData(logosBuffer, 
+    bool res = logosTexture_->create8bitsSurfaceFromData(logosBuffer, 
                                             textureWidth, 
                                             textureHeight, 254);
     

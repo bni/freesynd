@@ -37,8 +37,12 @@ public:
 
     void render(Point2D src, Point2D dst, int width, int height) override;
     void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) override;
-    //! Creates a sufrace initialized with the array of pixel
-    bool createSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
+
+    //! Create a 32bits texture with streaming access
+    bool createStreamingTexture(int width, int height) override;
+
+    //! Creates a surface initialized with the array of pixel
+    bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
     //! Set a palette for the surface
     bool setPalette6b3(const uint8_t * pal, int cols) override;
     bool setPalette8b3(const uint8_t * pal, int cols) override;

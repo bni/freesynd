@@ -92,6 +92,17 @@ void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height
     }
 }
 
+bool FSTextureSDL::createStreamingTexture(int width, int height) {
+    freeTexture();
+    
+    pTexture_ = SDL_CreateTexture(pRenderer_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+    if (pTexture_ == nullptr) {
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "createStreamingTexture", ("Critical error, Could create texture! SDL Error : %s", SDL_GetError()))
+    }
+
+    return pTexture_ != nullptr;
+}
+
 /*!
  * Copy an array of pixel in the surface stored inside this class.
  * The surface is an 8 bits pixel so an empty palette is created.
@@ -101,7 +112,7 @@ void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height
  * @param colorKey The index in the palette of the color key to use
  * @return True if import is ok
  */
-bool FSTextureSDL::createSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) {
+bool FSTextureSDL::create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) {
     LOG(Log::k_FLG_GFX, "FSTextureSDL", "importSurface", ("Importing pixels in surface..."))
     bool res = true;
     // Initialize an indexed surface

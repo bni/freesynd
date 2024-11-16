@@ -268,7 +268,7 @@ bool TileManager::loadTiles()
 
     // Then init texture with the buffer
     tilesTexture_ = g_System.createTexture();
-    bool res = tilesTexture_->createSurfaceFromData(tilesPixels, 
+    bool res = tilesTexture_->create8bitsSurfaceFromData(tilesPixels, 
                                             kNumOfTilesPerRow * Tile::kTileWidth, 
                                             kNumOfTilesPerCol * Tile::kTileHeight,
                                             kTileColorKeyIndex);

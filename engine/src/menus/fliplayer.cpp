@@ -28,7 +28,7 @@
 
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/screen.h"
-#include "fs-engine/menus/menumanager.h"
+#include "fs-engine/system/system.h"
 
 #if 0 // TMN: Data for playing samples during intro video. Hardcoded from intro.exe.
 
@@ -194,6 +194,11 @@ const sample_timings g_rg_sample_offsets_and_timings[] = {
 
 #endif
 
+FliPlayer::FliPlayer(): 
+    fli_data_(nullptr), 
+    offscreen_(nullptr),
+    texture_(g_System.createTexture()) {}
+
 FliPlayer::~FliPlayer() {
     if (offscreen_) {
         delete[] offscreen_;
@@ -201,7 +206,7 @@ FliPlayer::~FliPlayer() {
     }
 }
 
-void FliPlayer::loadFliData(uint8 *data) {
+void FliPlayer::loadFliData(uint8_t *data) {
     fli_data_ = data;
 
     fli_info_.size = READ_LE_UINT32(fli_data_);
@@ -225,12 +230,12 @@ void FliPlayer::loadFliData(uint8 *data) {
     assert(fli_info_.width == 320 && fli_info_.height == 200);
     if (offscreen_)
         delete[] offscreen_;
-    offscreen_ = new uint8[fli_info_.width * fli_info_.height];
+    offscreen_ = new uint8_t[fli_info_.width * fli_info_.height];
 
     memset(palette_, 0, sizeof(palette_));
 }
 
-bool FliPlayer::isValidChunk(uint16 type) {
+bool FliPlayer::isValidChunk(uint16_t type) {
     //Even though it may be a valid chunk type, only return true if we know how to deal with it
     switch (type) {
     case 4:                    //COLOR_256
@@ -245,7 +250,7 @@ bool FliPlayer::isValidChunk(uint16 type) {
     }
 }
 
-ChunkHeader FliPlayer::readChunkHeader(uint8 * mem) {
+ChunkHeader FliPlayer::readChunkHeader(uint8_t * mem) {
     ChunkHeader head;
     head.size = READ_LE_UINT32(mem + 0);
     head.type = READ_LE_UINT16(mem + 4);
@@ -253,7 +258,7 @@ ChunkHeader FliPlayer::readChunkHeader(uint8 * mem) {
 }
 
 FrameTypeChunkHeader FliPlayer::readFrameTypeChunkHeader(ChunkHeader chunkHead,
-        uint8 *&mem) {
+        uint8_t *&mem) {
     FrameTypeChunkHeader head;
 
     head.header = chunkHead;
@@ -272,10 +277,10 @@ FrameTypeChunkHeader FliPlayer::readFrameTypeChunkHeader(ChunkHeader chunkHead,
     return head;
 }
 
-void FliPlayer::decodeByteRun(uint8 *data) {
-    uint8 *ptr = (uint8 *) offscreen_;
+void FliPlayer::decodeByteRun(uint8_t *data) {
+    uint8_t *ptr = (uint8_t *) offscreen_;
     while ((ptr - offscreen_) < (fli_info_.width * fli_info_.height)) {
-        uint8 chunks = *data++;
+        uint8_t chunks = *data++;
         while (chunks--) {
             int8 count = *data++;
             if (count > 0) {
@@ -284,7 +289,7 @@ void FliPlayer::decodeByteRun(uint8 *data) {
                 }
                 data++;
             } else {
-                uint8 copyBytes = -count;
+                uint8_t copyBytes = -count;
                 memcpy(ptr, data, copyBytes);
                 ptr += copyBytes;
                 data += copyBytes;
@@ -298,14 +303,14 @@ void FliPlayer::decodeByteRun(uint8 *data) {
 #define OP_LASTPIXEL        2
 #define OP_LINESKIPCOUNT    3
 
-void FliPlayer::decodeDeltaFLC(uint8 *data) {
-    uint16 linesInChunk = READ_LE_UINT16(data);
+void FliPlayer::decodeDeltaFLC(uint8_t *data) {
+    uint16_t linesInChunk = READ_LE_UINT16(data);
     data += 2;
-    uint16 currentLine = 0;
-    uint16 packetCount = 0;
+    uint16_t currentLine = 0;
+    uint16_t packetCount = 0;
 
     while (linesInChunk--) {
-        uint16 opcode;
+        uint16_t opcode;
 
         // First process all the opcodes.
         do {
@@ -319,7 +324,7 @@ void FliPlayer::decodeDeltaFLC(uint8 *data) {
             case OP_UNDEFINED:
                 break;
             case OP_LASTPIXEL:
-                *(uint8 *) (offscreen_ + (currentLine * fli_info_.width) +
+                *(uint8_t *) (offscreen_ + (currentLine * fli_info_.width) +
                             (fli_info_.width - 1)) = (opcode & 0xFF);
                 break;
             case OP_LINESKIPCOUNT:
@@ -328,7 +333,7 @@ void FliPlayer::decodeDeltaFLC(uint8 *data) {
             }
         } while (((opcode >> 14) & 3) != OP_PACKETCOUNT);
 
-        uint16 column = 0;
+        uint16_t column = 0;
 
         //Now interpret the RLE data
         while (packetCount--) {
@@ -343,10 +348,10 @@ void FliPlayer::decodeDeltaFLC(uint8 *data) {
                 column += rleCount * 2;
             }
             else if (rleCount < 0) {
-                uint16 dataWord = *(uint16 *) data;
+                uint16_t dataWord = *(uint16_t *) data;
                 data += 2;
                 for (int i = 0; i < -(int16) rleCount; ++i) {
-                    *(uint16 *) (offscreen_ +
+                    *(uint16_t *) (offscreen_ +
                                  (currentLine * fli_info_.width) + column +
                                  (i * 2)) = dataWord;
                 }
@@ -400,31 +405,54 @@ bool FliPlayer::decodeFrame() {
 
 }
 
-void FliPlayer::setPalette(uint8 *mem) {
-    uint16 numPackets = READ_LE_UINT16(mem);
+void FliPlayer::setPalette(uint8_t *mem) {
+    // The number of packets to define the palette changes
+    uint16_t numPackets = READ_LE_UINT16(mem);
     mem += 2;
 
     if (0 == READ_LE_UINT16(mem)) {     //special case
         mem += 2;
-        for (int i = 0; i < 256; ++i)
+        for (int i = 0; i < 256; ++i) {
             for (int j = 0; j < 3; ++j)
                 palette_[i * 3 + j] =
                     (mem[i * 3 + j] << 2) | (mem[i * 3 + j] & 3);
+
+            // new method
+            colorPalette_[i] = {
+                (uint8_t) ((mem[i * 3] << 2) | (mem[i * 3] & 3)),   // red
+                (uint8_t) ((mem[i * 3 + 1] << 2) | (mem[i * 3 + 1] & 3)),   // green
+                (uint8_t) ((mem[i * 3 + 2] << 2) | (mem[i * 3 + 2] & 3)),   // blue
+                0xFF    // always opaque
+            };
+        }
     }
     else {
-        uint8 palPos = 0;
+        // Used to keep track of the next index to update in the palette
+        // we start at index 0
+        uint8_t palPos = 0;
 
         while (numPackets--) {
+            //Each packet is composed of a first byte that indicate how many
+            // index to skip
             palPos += *mem++;
-            uint8 change = *mem++;
-
-            for (int i = 0; i < change; ++i)
+            // second byte is how many contiguous index to change
+            uint8_t nbColorToUpdate = *mem++;
+            // and then the list of new colors for those index
+            for (int i = 0; i < nbColorToUpdate; ++i) {
                 for (int j = 0; j < 3; ++j)
                     palette_[(palPos + i) * 3 + j] =
                         (mem[i * 3 + j] << 2) | (mem[i * 3 + j] & 3);
 
-            palPos += change;
-            mem += (change * 3);
+                // new method
+                colorPalette_[palPos + i] = {
+                    (uint8_t) ((mem[i * 3] << 2) | (mem[i * 3] & 3)),   // red
+                    (uint8_t) ((mem[i * 3 + 1] << 2) | (mem[i * 3 + 1] & 3)),   // green
+                    (uint8_t) ((mem[i * 3 + 2] << 2) | (mem[i * 3 + 2] & 3)),   // blue
+                    0xFF    // always opaque
+                };
+            }
+            palPos += nbColorToUpdate;
+            mem += (nbColorToUpdate * 3);
         }
     }
 }
@@ -432,5 +460,9 @@ void FliPlayer::setPalette(uint8 *mem) {
 void FliPlayer::copyCurrentFrameToScreen() {
     g_Screen.scale2x(0, 0, fli_info_.width, fli_info_.height, offscreen(),
                      0, false);
+}
+
+void FliPlayer::renderFrame() {
+    //texture_->render();
 }
 

@@ -69,8 +69,6 @@ Menu * MenuFactory::createMenu(const int menuId) {
     return pMenu;
 }
 
-const int MenuManager::kPaletteMaxColor = 256;
-
 /*!
  * Return true if there is an animation for the given menu.
  * @param menuId 
@@ -157,7 +155,7 @@ bool MenuManager::initialize(bool loadIntroFont) {
 
     // Loads menu sprites
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading menu sprites ..."))
-    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", paletteData, kPaletteMaxColor)) {
+    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", paletteData, fs_cmn::kPaletteMaxColor)) {
         return false;
     }
 
@@ -166,13 +164,13 @@ bool MenuManager::initialize(bool loadIntroFont) {
         LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading intro sprites ..."))
 
         pIntroFontSprites_ = new SpriteManager(true, SpriteManager::kMenuSpritesTextureWidth);
-        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", paletteData, kPaletteMaxColor)) {
+        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", paletteData, fs_cmn::kPaletteMaxColor)) {
             return false;
         }
     }
 
     // Load logos
-    bool res = logoManager_.loadLogos(paletteData, kPaletteMaxColor);
+    bool res = logoManager_.loadLogos(paletteData, fs_cmn::kPaletteMaxColor);
     delete[] paletteData;
     
     if (res) {
