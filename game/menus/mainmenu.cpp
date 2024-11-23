@@ -33,7 +33,7 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
-MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain)
+MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain, true)
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;

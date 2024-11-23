@@ -398,6 +398,7 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
 
 
 #define FRAME_TYPE  0xF1FA
+#define CHUNK_HEADER_SIZE 6
 
 bool FliPlayer::decodeFrame() {
     FrameTypeChunkHeader frameHeader;
@@ -405,14 +406,14 @@ bool FliPlayer::decodeFrame() {
     do {
         switch (cHeader.type) {
         case 4:
-            setPalette(pCurrentFrameOffset_ + 6);
+            setPalette(pCurrentFrameOffset_ + CHUNK_HEADER_SIZE);
             //g_System.setPalette8b3(palette_);
             break;
         case 7:
-            decodeDeltaFLC(pCurrentFrameOffset_ + 6);
+            decodeDeltaFLC(pCurrentFrameOffset_ + CHUNK_HEADER_SIZE);
             break;
         case 15:
-            decodeByteRun(pCurrentFrameOffset_ + 6);
+            decodeByteRun(pCurrentFrameOffset_ + CHUNK_HEADER_SIZE);
             break;
         case FRAME_TYPE:
             frameHeader = readFrameTypeChunkHeader(cHeader, pCurrentFrameOffset_);

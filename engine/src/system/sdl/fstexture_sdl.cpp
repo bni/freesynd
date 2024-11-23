@@ -99,6 +99,20 @@ void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height
 }
 
 /*!
+ * Render this texture as a whole to the target at position (0,0) and with the given size.
+ * @param destWidth Width of destination
+ * @param destHeight Height of destination
+ */
+void FSTextureSDL::renderFullTextureStrech(int destWidth, int destHeight) {
+    //Set rendering space and render to screen
+    SDL_Rect renderQuad = { 0, 0, destWidth, destHeight };
+    SDL_Rect tileQuad = { 0, 0, width_, height_};
+    if (!SDL_RenderCopy( pRenderer_, pTexture_, &tileQuad, &renderQuad )) {
+        //printf("Failed to copy: %s\n", SDL_GetError());
+    }
+}
+
+/*!
  * Create a texture with pixel format of RGBA8888 for a stream access.
  * The resulting format of the texture is kept in pFormat_ member.
  * @param width Width of the new texture
@@ -145,6 +159,40 @@ bool FSTextureSDL::updateStreamingTexture(const uint8_t *pixels, FSColor *colorP
     }
 
     SDL_UnlockTexture(pTexture_);
+
+    return true;
+}
+
+/*!
+ * @brief 
+ * @param width 
+ * @param height 
+ * @return 
+ */
+bool FSTextureSDL::createRenderTargetTexture(int width, int height) {
+    freeTexture();
+
+    pTexture_ = SDL_CreateTexture(pRenderer_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    if (pTexture_ == nullptr) {
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "createRenderTargetTexture", ("Critical error, Could not create texture! SDL Error : %s", SDL_GetError()))
+    }
+
+    width_ = width;
+    height_ = height;
+    pFormat_ = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+
+    return pTexture_ != nullptr;
+}
+
+/*!
+ * Set this texture to be the target
+ * @return true if operation succeeded
+ */
+bool FSTextureSDL::setAsRenderTarget() {
+    if (SDL_SetRenderTarget( pRenderer_, pTexture_ )) {
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "setAsRenderTarget", ("Critical error, Could not set target texture! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
 
     return true;
 }

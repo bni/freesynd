@@ -213,6 +213,15 @@ bool FliMenu::handleUnMappedKey(const FS_Key key) {
 
 void FliMenu::handleLeave()
 {
+    // If this is the animation between two screen
+    // we save the last frame that will serve as the background 
+    // for the menu
+    if (id_ == Menu::kMenuIdFliTransition) {
+        menu_manager_->preSaveBackground();
+        fliPlayer_.renderFrame();
+        menu_manager_->postSaveBackground();
+    }
+
     fliPlayer_.resetPlayer();
 
     fliList_.clear();

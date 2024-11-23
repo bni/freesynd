@@ -257,6 +257,15 @@ void SystemSDL::updateScreen() {
     SDL_RenderPresent( pRenderer_ );
 }
 
+bool SystemSDL::resetRenderTarget() {
+    if (SDL_SetRenderTarget( pRenderer_, NULL )) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "resetRenderTarget", ("Critical error, Could not reset target texture! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
+
+    return true;
+}
+
 /*!
  * Using the keysym parameter, verify if the given key is a function key (ie
  * a not printable key) returns the corresponding entry in the KeyFunc enumeration.

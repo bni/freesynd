@@ -60,6 +60,9 @@ public:
     bool clearScreen() override;
     //! Render back buffer to the screen
     void updateScreen() override;
+    //! @copydoc System::resetRenderTarget()
+    bool resetRenderTarget() override;
+    
     //! Pumps an event from the event queue
     bool pumpEvents(FS_Event &evtOut) override;
 

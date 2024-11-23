@@ -37,11 +37,17 @@ public:
 
     void render(Point2D src, Point2D dst, int width, int height) override;
     void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) override;
+    void renderFullTextureStrech(int width, int height) override;
 
     //! Create a 32bits texture with streaming access
     bool createStreamingTexture(int width, int height) override;
     //! @copydoc FSTexture::updateStreamingTexture()
     bool updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) override;
+
+    //! Creates a texure to be used as a render target
+    bool createRenderTargetTexture(int width, int height) override;
+    //! @copydoc FSTexture::setAsRenderTarget()
+    bool setAsRenderTarget() override;
 
     //! Creates a surface initialized with the array of pixel
     bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;

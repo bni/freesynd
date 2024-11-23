@@ -88,9 +88,14 @@ public:
     static std::unique_ptr<System> createSystem();
 
     virtual ~System() {}
+
     virtual bool initialize(bool fullscreen) = 0;
+
     virtual bool clearScreen() = 0;
     virtual void updateScreen() = 0;
+    // Set the render target to be the default one
+    virtual bool resetRenderTarget() = 0;
+
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event &evtOut) = 0;
     virtual void delay(uint32 msec) = 0;

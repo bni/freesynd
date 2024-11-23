@@ -30,7 +30,7 @@
 #include "fs-engine/events/default_events.h"
 #include "fs-engine/gfx/screen.h"
 
-LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, MENU_NO_MENU),
+LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, MENU_NO_MENU, true),
 tick_count_(0)
 {
     isCachable_ = false;

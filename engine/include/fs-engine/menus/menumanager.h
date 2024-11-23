@@ -126,6 +126,11 @@ public:
     //! Displays the current menu
     void renderMenu();
 
+    //! Called before we save background for rendering menu
+    void preSaveBackground();
+    //! Called after background is saved
+    void postSaveBackground();
+
     //! Returns true if a menu is being displayed
     bool showingMenu() { return current_ != NULL; }
 
@@ -181,6 +186,8 @@ protected:
     uint32_t since_mouse_down_;
     //! Will not update since_mouse_down_ after this event
     bool mouseup_was_;
+    //! This texture is used to draw the background for menus
+    std::unique_ptr<FSTexture> pBackgroundTexture_;
 };
 
 #endif

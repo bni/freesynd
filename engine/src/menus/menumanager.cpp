@@ -131,6 +131,8 @@ MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
 
     since_mouse_down_ = 0;
     mouseup_was_ = false;
+
+    pBackgroundTexture_ = g_System.createTexture();
 }
 
 MenuManager::~MenuManager()
@@ -178,6 +180,10 @@ bool MenuManager::initialize(bool loadIntroFont) {
         LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
         res = fonts_.loadFonts(&menuSprites_, pIntroFontSprites_);
     }
+
+    pBackgroundTexture_ = g_System.createTexture();
+    pBackgroundTexture_->createRenderTargetTexture(Screen::kScreenWidth, Screen::kScreenHeight);
+
     return res;
 }
 
@@ -308,11 +314,6 @@ void MenuManager::showNextMenu() {
 
     nextMenuId_ = -1;
 
-    // Make a snapshot of background is menu needs it
-    if (current_->doNeedBackground()) {
-        g_Screen.saveBackground();
-    }
-
     dirtyList_.flush();
     current_->handleShow();
 
@@ -383,18 +384,26 @@ void MenuManager::leaveCurrentMenu() {
     }
 }
 
+void MenuManager::preSaveBackground() {
+    pBackgroundTexture_->setAsRenderTarget();
+}
+
+//! Called after background is saved
+void MenuManager::postSaveBackground() {
+    g_System.resetRenderTarget();
+}
+
+
 /*!
  * Renders the current menu if there is one
  * and if it needs to be refreshed.
  */
 void MenuManager::renderMenu() {
+    // TODO : refactor dirty rect management
     addRect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     if (current_ && !dirtyList_.isEmpty()) {
         if (current_->doNeedBackground()) {
-            for (int i=0; i < dirtyList_.getSize(); i++) {
-                DirtyRect *rect = dirtyList_.getRectAt(i);
-                g_Screen.blitFromBackground(rect->x, rect->y, rect->width, rect->height);
-            }
+           pBackgroundTexture_->renderFullTextureStrech(Screen::kScreenWidth, Screen::kScreenHeight);
         }
         current_->render(dirtyList_);
         // flush dirty list
