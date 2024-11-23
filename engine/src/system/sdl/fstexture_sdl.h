@@ -40,6 +40,8 @@ public:
 
     //! Create a 32bits texture with streaming access
     bool createStreamingTexture(int width, int height) override;
+    //! @copydoc FSTexture::updateStreamingTexture()
+    bool updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) override;
 
     //! Creates a surface initialized with the array of pixel
     bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
@@ -65,6 +67,8 @@ private:
     SDL_Surface *pSurface_;
     //! The actual hardware texture. It can be loaded multiple time
     SDL_Texture* pTexture_;
+    //! Store the pixel format for the texture
+    SDL_PixelFormat *pFormat_;
     //Image dimensions
     int width_;
     int height_;

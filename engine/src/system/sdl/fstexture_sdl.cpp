@@ -32,6 +32,7 @@ FSTextureSDL::FSTextureSDL(SDL_Renderer *pRenderer) {
     pRenderer_ = pRenderer;
     pSurface_ = nullptr;
     pTexture_ = nullptr;
+    pFormat_ = nullptr; 
     width_ = 0;
     height_ = 0;
 }
@@ -65,6 +66,11 @@ void FSTextureSDL::freeTexture() {
         SDL_DestroyTexture( pTexture_ );
         pTexture_ = NULL;
     }
+
+    if (pFormat_ != nullptr) {
+        SDL_FreeFormat(pFormat_);
+        pFormat_ = nullptr;
+    }
 }
 
 /*!
@@ -92,6 +98,13 @@ void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height
     }
 }
 
+/*!
+ * Create a texture with pixel format of RGBA8888 for a stream access.
+ * The resulting format of the texture is kept in pFormat_ member.
+ * @param width Width of the new texture
+ * @param height Height of the new texture
+ * @return true if creation is ok
+ */
 bool FSTextureSDL::createStreamingTexture(int width, int height) {
     freeTexture();
     
@@ -100,7 +113,40 @@ bool FSTextureSDL::createStreamingTexture(int width, int height) {
         FSERR(Log::k_FLG_GFX, "FSTextureSDL", "createStreamingTexture", ("Critical error, Could create texture! SDL Error : %s", SDL_GetError()))
     }
 
+    width_ = width;
+    height_ = height;
+    pFormat_ = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+
     return pTexture_ != nullptr;
+}
+
+/*!
+ * Update the whole texture with the given pixels.
+ * Pixels are expected to be index in the given color palette.
+ * @param pixels 
+ * @param colorPalette_ 
+ * @return 
+ */
+bool FSTextureSDL::updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) {
+    int pitch;
+    Uint32 *destPixels;
+    if (SDL_LockTexture(pTexture_, nullptr, (void **)&destPixels, &pitch)) {
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "updateStreamingTexture", ("Critical error, Could not lock texture! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
+
+    const uint8_t *srcPixels = pixels;
+
+    for (int i = 0; i < width_ * height_; i++) {
+        uint8_t index = srcPixels[i];
+        FSColor color = colorPalette_[index];
+
+        destPixels[i] = SDL_MapRGBA(pFormat_, color.r, color.g, color.b, color.a);
+    }
+
+    SDL_UnlockTexture(pTexture_);
+
+    return true;
 }
 
 /*!

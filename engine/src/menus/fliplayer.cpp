@@ -27,6 +27,7 @@
 #include <cstdio>
 
 #include "fs-utils/log/log.h"
+#include "fs-utils/io/file.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
@@ -195,44 +196,72 @@ const sample_timings g_rg_sample_offsets_and_timings[] = {
 #endif
 
 FliPlayer::FliPlayer(): 
-    fli_data_(nullptr), 
+    fliData_(nullptr), 
     offscreen_(nullptr),
     texture_(g_System.createTexture()) {}
 
 FliPlayer::~FliPlayer() {
-    if (offscreen_) {
-        delete[] offscreen_;
-        offscreen_ = NULL;
-    }
+    resetPlayer();
 }
 
-void FliPlayer::loadFliData(uint8_t *data) {
-    fli_data_ = data;
+void FliPlayer::resetPlayer() {
+    if (offscreen_) {
+        delete[] offscreen_;
+        offscreen_ = nullptr;
+    }
 
-    fli_info_.size = READ_LE_UINT32(fli_data_);
-    fli_data_ += 4;
-    fli_info_.type = READ_LE_UINT16(fli_data_);
-    fli_data_ += 2;
-    fli_info_.numFrames = READ_LE_UINT16(fli_data_);
-    fli_data_ += 2;
-    fli_info_.width = READ_LE_UINT16(fli_data_);
-    fli_data_ += 2;
-    fli_info_.height = READ_LE_UINT16(fli_data_);
-    fli_data_ += 2;
+    if (fliData_) {
+        delete[] fliData_;
+        fliData_ = nullptr;
+        pCurrentFrameOffset_ = nullptr;
+    }
+
+    fli_info_.numFrames = 0;
+    fli_info_.width = fli_info_.height = 0;
+}
+
+/*!
+ * 
+ * @param filename 
+ * @return 
+ */
+bool FliPlayer::loadFliData(const std::string &filename) {
+    LOG(Log::k_FLG_GFX, "FliPlayer", "loadFliData", ("Loading data from file %s", filename.c_str()))
+    size_t size = 0;
+
+    resetPlayer();
+    fliData_ = File::loadOriginalFile(filename, size);
+    uint8_t *pData = fliData_;
+
+    if (fliData_ == nullptr) {
+        FSERR(Log::k_FLG_GFX, "FliPlayer", "loadFliData()", ("Unable to load FLI file %s\n", filename.c_str()));
+        return false;
+    }
+
+    // Read the fli Header
+    fli_info_.size = READ_LE_UINT32(pData);
+    pData += 4;
+    fli_info_.type = READ_LE_UINT16(pData);
+    pData += 2;
+    fli_info_.numFrames = READ_LE_UINT16(pData);
+    pData += 2;
+    fli_info_.width = READ_LE_UINT16(pData);
+    pData += 2;
+    fli_info_.height = READ_LE_UINT16(pData);
+    // Move to the first frame
+    pCurrentFrameOffset_ = pData + 2;
 
     if (fli_info_.type != 0xAF12) {     //simple check to verify it is indeed a (Bullfrog) FLI
         FSERR(Log::k_FLG_GFX, "FliPlayer", "loadFliData()", ("Attempted to load non-FLI data (type = 0x%04X)\n", fli_info_.type));
-        fli_info_.width = fli_info_.height = 100;
-        fli_info_.numFrames = 0;
-        return;
+        resetPlayer();
+
+        return false;
     }
 
     assert(fli_info_.width == 320 && fli_info_.height == 200);
-    if (offscreen_)
-        delete[] offscreen_;
     offscreen_ = new uint8_t[fli_info_.width * fli_info_.height];
 
-    memset(palette_, 0, sizeof(palette_));
+    return texture_->createStreamingTexture(fli_info_.width, fli_info_.height);
 }
 
 bool FliPlayer::isValidChunk(uint16_t type) {
@@ -372,21 +401,21 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
 
 bool FliPlayer::decodeFrame() {
     FrameTypeChunkHeader frameHeader;
-    ChunkHeader cHeader = readChunkHeader(fli_data_);
+    ChunkHeader cHeader = readChunkHeader(pCurrentFrameOffset_);
     do {
         switch (cHeader.type) {
         case 4:
-            setPalette(fli_data_ + 6);
-            g_System.setPalette8b3(palette_);
+            setPalette(pCurrentFrameOffset_ + 6);
+            //g_System.setPalette8b3(palette_);
             break;
         case 7:
-            decodeDeltaFLC(fli_data_ + 6);
+            decodeDeltaFLC(pCurrentFrameOffset_ + 6);
             break;
         case 15:
-            decodeByteRun(fli_data_ + 6);
+            decodeByteRun(pCurrentFrameOffset_ + 6);
             break;
         case FRAME_TYPE:
-            frameHeader = readFrameTypeChunkHeader(cHeader, fli_data_);
+            frameHeader = readFrameTypeChunkHeader(cHeader, pCurrentFrameOffset_);
             fli_info_.numFrames--;
             //printf("Frames Remaining: %d\n", fli_info_.numFrames);
             break;
@@ -395,13 +424,18 @@ bool FliPlayer::decodeFrame() {
         }
 
         if (cHeader.type != FRAME_TYPE)
-            fli_data_ += cHeader.size;
+            pCurrentFrameOffset_ += cHeader.size;
 
-        cHeader = readChunkHeader(fli_data_);
+        cHeader = readChunkHeader(pCurrentFrameOffset_);
 
     } while (isValidChunk(cHeader.type) && cHeader.type != FRAME_TYPE);
 
-    return isValidChunk(cHeader.type);
+    if (isValidChunk(cHeader.type)) {
+        copyCurrentFrameToScreen();
+        return true;
+    } else {
+        return false;
+    }
 
 }
 
@@ -410,14 +444,10 @@ void FliPlayer::setPalette(uint8_t *mem) {
     uint16_t numPackets = READ_LE_UINT16(mem);
     mem += 2;
 
-    if (0 == READ_LE_UINT16(mem)) {     //special case
+    if (0 == READ_LE_UINT16(mem)) {     //set the whole palette
         mem += 2;
         for (int i = 0; i < 256; ++i) {
-            for (int j = 0; j < 3; ++j)
-                palette_[i * 3 + j] =
-                    (mem[i * 3 + j] << 2) | (mem[i * 3 + j] & 3);
-
-            // new method
+            // store colors as FSColor
             colorPalette_[i] = {
                 (uint8_t) ((mem[i * 3] << 2) | (mem[i * 3] & 3)),   // red
                 (uint8_t) ((mem[i * 3 + 1] << 2) | (mem[i * 3 + 1] & 3)),   // green
@@ -426,7 +456,7 @@ void FliPlayer::setPalette(uint8_t *mem) {
             };
         }
     }
-    else {
+    else { // Only update some colors
         // Used to keep track of the next index to update in the palette
         // we start at index 0
         uint8_t palPos = 0;
@@ -439,11 +469,7 @@ void FliPlayer::setPalette(uint8_t *mem) {
             uint8_t nbColorToUpdate = *mem++;
             // and then the list of new colors for those index
             for (int i = 0; i < nbColorToUpdate; ++i) {
-                for (int j = 0; j < 3; ++j)
-                    palette_[(palPos + i) * 3 + j] =
-                        (mem[i * 3 + j] << 2) | (mem[i * 3 + j] & 3);
-
-                // new method
+                // store colors as FSColor
                 colorPalette_[palPos + i] = {
                     (uint8_t) ((mem[i * 3] << 2) | (mem[i * 3] & 3)),   // red
                     (uint8_t) ((mem[i * 3 + 1] << 2) | (mem[i * 3 + 1] & 3)),   // green
@@ -457,12 +483,17 @@ void FliPlayer::setPalette(uint8_t *mem) {
     }
 }
 
+/*!
+ * Update the texture with the current frame.
+ */
 void FliPlayer::copyCurrentFrameToScreen() {
-    g_Screen.scale2x(0, 0, fli_info_.width, fli_info_.height, offscreen(),
-                     0, false);
+    texture_->updateStreamingTexture(offscreen_, colorPalette_);
 }
 
+/*!
+ * Render the current frame which is in the texture.
+ */
 void FliPlayer::renderFrame() {
-    //texture_->render();
+    texture_->renderStretch({0, 0}, {0, 0}, fli_info_.width, fli_info_.height, 2);
 }
 

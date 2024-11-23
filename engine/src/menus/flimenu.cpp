@@ -22,7 +22,6 @@
 
 #include "fs-engine/menus/flimenu.h"
 
-#include "fs-utils/io/file.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/musicmanager.h"
 
@@ -36,19 +35,13 @@
 FliMenu::FliMenu(MenuManager *m, int menuId, int parentId) : Menu(m, menuId, parentId), fliPlayer_()
 {
     fliIndex_ = 0;
-    pData_ = NULL;
     playingFli_ = false;
     isCachable_ = (menuId == Menu::kMenuIdFliTransition);
     currSubTitle_ = "";
 }
 
 FliMenu::~FliMenu()
-{
-    if (pData_) {
-        delete[] pData_;
-        pData_ = NULL;
-    }
-}
+{}
 
 /*!
  * Adds a new description.
@@ -59,7 +52,7 @@ FliMenu::~FliMenu()
  * \param music
  * \param sound
  */
-void FliMenu::addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool skipable, const FrameEvent *events) {
+void FliMenu::addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, const FrameEvent *events) {
     FliDesc desc;
     desc.name = anim;
     desc.frameDelay = frameDelay;
@@ -87,18 +80,10 @@ bool FliMenu::loadNextFli() {
     playingFli_ = false;
     // loads Fli
     if ( fliIndex_ < fliList_.size()) {
-        size_t size = 0;
-
-        if (pData_) {
-            delete[] pData_;
-            pData_ = NULL;
-        }
         // Gets the fli description
         FliDesc desc = fliList_.at(fliIndex_);
         // Loads data from file
-        pData_ = File::loadOriginalFile(desc.name, size);
-        if (pData_) {
-            fliPlayer_.loadFliData(pData_);
+        if (fliPlayer_.loadFliData(desc.name)) {
             if (fliPlayer_.hasFrames()) {
                 // init frame delay counter with max value so first frame is
                 // drawn in the first pass
@@ -130,21 +115,20 @@ void FliMenu::handleTick(uint32_t elapsed)
         // There is a frame to display
         frameDelay_ += elapsed;
         if (frameDelay_ > desc.frameDelay) {
-            // read frame
+            // time to change frame -> read frame
             if (!fliPlayer_.decodeFrame()) {
                 // Frame is not good -> quit
                 menu_manager_->gotoMenu(nextMenu_);
                 return;
             }
 
-            fliPlayer_.copyCurrentFrameToScreen();
             // Add a dirty rect just to start the render routine
             addDirtyRect(0, 0, 1, 1);
             // Reset delay between frames
             frameDelay_ = 0;
 
             // handle events
-            for (uint16 i = 0; desc.evtList[i].frame != (uint16)-1; i++) {
+            for (uint16_t i = 0; desc.evtList[i].frame != (uint16_t)-1; i++) {
                 if (desc.evtList[i].frame > frameIndex_)
                     break;
                 else if (desc.evtList[i].frame == frameIndex_) {
@@ -174,7 +158,7 @@ void FliMenu::handleTick(uint32_t elapsed)
         // trying to load next fli.
         playingFli_ = false;
         FliDesc desc = fliList_.at(fliIndex_ - 1);
-                if (!desc.waitKeyPressed && !loadNextFli()) {
+        if (!desc.waitKeyPressed && !loadNextFli()) {
             // no more animation so quit
             menu_manager_->gotoMenu(nextMenu_);
         }
@@ -229,10 +213,7 @@ bool FliMenu::handleUnMappedKey(const FS_Key key) {
 
 void FliMenu::handleLeave()
 {
-    if (pData_) {
-        delete[] pData_;
-        pData_ = NULL;
-    }
+    fliPlayer_.resetPlayer();
 
     fliList_.clear();
     fliIndex_ = 0;

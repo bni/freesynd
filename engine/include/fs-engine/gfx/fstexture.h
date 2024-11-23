@@ -34,6 +34,8 @@ public:
     virtual ~FSTexture() {}
     //! Create a 32bits texture with streaming access
     virtual bool createStreamingTexture(int width, int height) = 0;
+    //! Update the pixels in the texture with the given pixels index and a palette
+    virtual bool updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) = 0;
     //! Import a raw pixel array into a 8 bits surface of given width and height, with the color key
     virtual bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) = 0;
     //! Set a new palette in the surface

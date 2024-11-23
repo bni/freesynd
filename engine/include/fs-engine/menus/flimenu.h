@@ -35,7 +35,7 @@ struct FrameEvent {
     msc::MusicTrack    music;
     /*! Game sound to play.*/
     InGameSample    sound;
-    uint8    sndChan;
+    uint8_t    sndChan;
     /*! Operation on subtitle.*/
     const char* subtitle;
 };
@@ -47,7 +47,7 @@ struct FliDesc {
     /*! Name of the file containing the animation.*/
     std::string name;
     /*! Speed of animation : delay between 2 frames.*/
-    uint8 frameDelay;
+    uint8_t frameDelay;
     /*! True means user has to press key or mouse to go to
      * next animation or next menu after the end of animation.*/
     bool waitKeyPressed;
@@ -73,7 +73,7 @@ public:
     void handleLeave() override;
 
     //! Append a animation to play with its caracteristics
-    void addFliDesc(const char *anim, uint8 frameDelay, bool waitKey, bool skipable, const FrameEvent *events);
+    void addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, const FrameEvent *events);
     //! Remove all FliDesc
     void clearFliDescList();
 
@@ -93,11 +93,9 @@ protected:
     std::vector<FliDesc> fliList_;
     /*! Index of the next animation to play.*/
     size_t fliIndex_;
-    uint16 frameIndex_;
+    uint16_t frameIndex_;
     /*! Timer to control animation speed.*/
-    int frameDelay_;
-    /*! Content of current animation.*/
-    uint8 *pData_;
+    uint32_t frameDelay_;
     /*! A flag telling if an animation is being played.*/
     bool playingFli_;
     /*! Id of the menu to go after all animations have been played.*/

@@ -31,7 +31,7 @@
 #include "fs-engine/gfx/fstexture.h"
 
 typedef struct FliHeader {
-    uint32 size;
+    uint32_t size;
     uint16_t type;                //0xAF12
     uint16_t numFrames;
     uint16_t width;
@@ -39,7 +39,7 @@ typedef struct FliHeader {
 } FliHeader;
 
 typedef struct ChunkHeader {
-    uint32 size;
+    uint32_t size;
     uint16_t type;
 } ChunkHeader;
 
@@ -62,20 +62,24 @@ public:
     FliPlayer();
     virtual ~FliPlayer();
 
-    void loadFliData(uint8_t *buf);
+    void resetPlayer();
+
+    bool loadFliData(const std::string &filename);
+
+    int width() const { return fliData_ ? fli_info_.width : 0; }
+    int height() const { return fliData_ ? fli_info_.height : 0; }
+
     bool decodeFrame();
-    void copyCurrentFrameToScreen();
 
-    int width() const { return fli_data_ ? fli_info_.width : 0; }
-    int height() const { return fli_data_ ? fli_info_.height : 0; }
-
+    /*!
+     * Return true if this animation contains frames to display
+     * @return 
+     */
     bool hasFrames() const {
-        return fli_data_ ? fli_info_.numFrames > 0 : false;
+        return fliData_ ? fli_info_.numFrames > 0 : false;
     }
 
     void renderFrame();
-
-    const uint8_t *offscreen() const { return offscreen_; }
 
 protected:
     bool isValidChunk(uint16_t type);
@@ -85,13 +89,18 @@ protected:
     void decodeByteRun(uint8_t *data);
     void decodeDeltaFLC(uint8_t *data);
     void setPalette(uint8_t *mem);
+    void copyCurrentFrameToScreen();
 
 private:
-    uint8_t *fli_data_;
+    //! The content data
+    uint8_t *fliData_;
+    //! A pointer the frame to load in the fliData
+    uint8_t *pCurrentFrameOffset_;
+    //! this is the content of the frame
     const uint8_t *offscreen_;
-    uint8_t palette_[256 * 3];
     //! The palette for the fli using FSColor
     FSColor colorPalette_[fs_cmn::kPaletteMaxColor];
+    //! Info on the Fli to play
     FliHeader fli_info_;
     //! FSTexture to display a frame
     std::unique_ptr<FSTexture> texture_;
