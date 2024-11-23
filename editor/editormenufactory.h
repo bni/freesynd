@@ -40,6 +40,12 @@ protected:
      * @return null if menu ID is unknown
      */
     Menu * createCustomMenu(const int menuId);
+
+    //! Return the name of the animation to play before showing a menu
+    const char* getShowAnimation(int menuId) override;
+
+    //! Return the name of the animation to play after leaving a menu
+    const char* getLeaveAnimation(int menuId) override;
 };
 
 #endif // EDITOR_EDITORMENUFACTORY_H_

@@ -31,7 +31,7 @@
 
 #include "editormenuid.h"
 
-MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
+MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain)
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;

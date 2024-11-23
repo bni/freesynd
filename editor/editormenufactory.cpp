@@ -53,3 +53,37 @@ Menu * EditorMenuFactory::createCustomMenu(const int menuId) {
 
     return pMenu;
 }
+
+//! Return the name of the animation to play before showing a menu
+const char* EditorMenuFactory::getShowAnimation(int menuId) {
+    if (menuId == fs_edit_menus::kMenuIdMain) {
+        return "mscrenup.dat";
+    } else if (menuId == fs_edit_menus::kMenuIdFont) {
+        return "";
+    } else if (menuId == fs_edit_menus::kMenuIdAnim) {
+        return "mscrenup.dat";
+    } else if (menuId == fs_edit_menus::kMenuIdSrchMis) {
+        return "mscrenup.dat";
+    } else if (menuId == fs_edit_menus::kMenuIdListMis) {
+        return "mscrenup.dat";
+    } else {
+        return MenuFactory::getShowAnimation(menuId);
+    }
+}
+
+//! Return the name of the animation to play after leaving a menu
+const char* EditorMenuFactory::getLeaveAnimation(int menuId) {
+    if (menuId == fs_edit_menus::kMenuIdMain) {
+        return "";
+    } else if (menuId == fs_edit_menus::kMenuIdFont) {
+        return "";
+    } else if (menuId == fs_edit_menus::kMenuIdAnim) {
+        return "";
+    } else if (menuId == fs_edit_menus::kMenuIdSrchMis) {
+        return "";
+    } else if (menuId == fs_edit_menus::kMenuIdListMis) {
+        return "";
+    } else {
+        return MenuFactory::getLeaveAnimation(menuId);
+    }
+}

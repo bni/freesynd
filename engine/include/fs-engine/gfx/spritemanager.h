@@ -80,6 +80,8 @@ public:
     //! Draw a sprite with given Id at given position on screen. Sprite can be flipped or stretched
     bool drawSprite(int spriteNum, int x, int y, bool flipped = false, bool x2 = false);
 
+    bool drawTexture(Point2D src, Point2D dst, int width, int height);
+
     //! Return the color at given index for the current palette
     void getColorFromMenuPalette(const int colorIndex, FSColor &color);
 

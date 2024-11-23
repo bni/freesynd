@@ -34,7 +34,7 @@
 
 
 ListMissionMenu::ListMissionMenu(MenuManager * m):
-    Menu(m, fs_edit_menus::kMenuIdListMis, fs_edit_menus::kMenuIdSrchMis, "mscrenup.dat", "")
+    Menu(m, fs_edit_menus::kMenuIdListMis, fs_edit_menus::kMenuIdSrchMis)
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;

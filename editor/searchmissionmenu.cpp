@@ -62,7 +62,7 @@ std::string VehicleTypeAdapter::getName() {
 }
 
 SearchMissionMenu::SearchMissionMenu(MenuManager * m):
-    Menu(m, fs_edit_menus::kMenuIdSrchMis, fs_edit_menus::kMenuIdMain, "mscrenup.dat", "")
+    Menu(m, fs_edit_menus::kMenuIdSrchMis, fs_edit_menus::kMenuIdMain)
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;

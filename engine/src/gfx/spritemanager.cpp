@@ -317,6 +317,21 @@ bool SpriteManager::drawSprite(int spriteNum, int x, int y, bool flipped, bool x
 }
 
 /*!
+ * This method is provided for debugging purpose to look inside the texture
+ * without worrying at sprite locations.
+ * @param src Where to take the origin of the texture
+ * @param dst Where to copy the texture on the target
+ * @param width Width of the portion of texture to copy
+ * @param height Height of the portion of texture to copy
+ * @return 
+ */
+bool SpriteManager::drawTexture(Point2D src, Point2D dst, int width, int height) {
+    spritesetTexture_->render(src, dst, width, height);
+    
+    return true;
+}
+
+/*!
  * Find the color from the palette of the MenuSprite texture at given color index
  * @param colorIndex Index of the color in the palette
  * @param color Resulting color

@@ -28,13 +28,12 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
-#include "fs-engine/gfx/spritemanager.h"
+#include "fs-engine/gfx/animationmanager.h"
 
 #include "editormenuid.h"
 
 AnimMenu::AnimMenu(MenuManager * m)
-        : Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain,
-               "mscrenup.dat", "", true) {
+        : Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, true) {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
     animId_ = 416;
@@ -63,6 +62,7 @@ void AnimMenu::handleRender(DirtyList &dirtyList)
     g_Screen.drawRect(150, 110, 350, 150);
     Point2D pos = {310, 180};
     g_SpriteMgr.drawFrame(animId_, frameId_, pos);
+
 }
 
 void AnimMenu::handleLeave() {

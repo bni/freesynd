@@ -35,10 +35,27 @@ public:
     FontMenu(MenuManager *m);
 
     void handleShow();
+    void handleRender(DirtyList &dirtyList) override;
     void handleLeave();
 
+    void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;
+
 private:
-    void displayFont();
+    void displayObjects();
+    void displayFonts();
+
+    int  displaySprite(Point2D startAt, int fromId, int range);
+
+    void displaySpriteset();
+
+private:
+    static const size_t kSpriteMaxObjects;
+
+    FSColor defaultColor_;
+    int panelId_;
+    int idButtonSprites_;
+    int idButtonFonts_;
+    int idButtonSpriteset_;
 };
 
 #endif // EDITOR_FONTMENU_H_
