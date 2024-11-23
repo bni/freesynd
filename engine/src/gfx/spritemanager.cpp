@@ -242,8 +242,8 @@ void SpriteManager::getInsertPoint(Sprite &sprite, std::stack<SpriteInsert> &spr
         insertAt.x = topSprite.insertedAt.x + topSprite.width;
         insertAt.y = topSprite.insertedAt.y;
         // and check if we can append the new sprite on the same line
-        if (insertAt.x + sprite.width() >= textureWidth_) {
-            // sprite is too large so fine a place below starting at the first
+        if (insertAt.x + sprite.stride() >= textureWidth_) {
+            // sprite is too large so find a place below starting at the first
             // sprite that is high enough or it can be a new line
             while (!spriteStack.empty()) {
                 int currentHeight = topSprite.height;

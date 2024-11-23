@@ -125,7 +125,7 @@ int FontMenu::displaySprite(Point2D startAt, int fromId, int range) {
             }
 
             if (drawAt.y + sprh > 370) {
-                printf("depassement\n");
+                printf("overflow\n");
                 break;
             }
 
