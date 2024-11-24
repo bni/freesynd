@@ -534,7 +534,8 @@ TextField::TextField(Menu *peer, int x, int y, int width, int height,
     text_.setLocation(text_.getX(), y_ + (height_ / 2) - (text_.getHeight() / 2) + 1);
     isDisplayEmpty_ = displayEmpty;
     caretPosition_ = 0;
-    yCaret_ = text_.getY() + text_.getFont()->textHeight(true);
+    caretScreenPos_.y = text_.getY() + text_.getFont()->textHeight(true);
+    getPeer()->getMenuManager()->getColorFromMenuPalette(fs_cmn::kMenuColorLightGreen, caretColor_);
     isInEdition_ = false;
     maxSize_ = maxSize;
 }
@@ -788,7 +789,7 @@ void TextField::drawCaret() {
 
     // Find the width in pixel of all the text before the caret
     // this will give the starting point of the caret
-    int x = getX() + text_.getFont()->textWidth(tmpText) + 1;
+    caretScreenPos_.x = getX() + text_.getFont()->textWidth(tmpText) + 1;
     tmpText.erase();
 
     // width of caret is the same of the letter above
@@ -799,5 +800,5 @@ void TextField::drawCaret() {
     }
 
     // Draw caret
-    g_Screen.drawRect(x, yCaret_, caretLength, 2, 252);
+    g_System.drawFillRect(caretScreenPos_, caretLength, 2, caretColor_);
 }

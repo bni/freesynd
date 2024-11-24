@@ -433,7 +433,7 @@ protected:
     // Insert new character at caret position
     void handleCharacter(FS_Key key);
 
-protected:
+private:
     /*! Label for empty lines.*/
     static std::string emptyLbl_;
 
@@ -443,8 +443,10 @@ protected:
     bool isDisplayEmpty_;
     /*! Position of caret in the name.*/
     size_t caretPosition_;
-    /*! Vertical position of the caret.*/
-    int yCaret_;
+    /*! Position of the caret on the screen.*/
+    Point2D caretScreenPos_;
+    //! The color to use to draw the caret
+    FSColor caretColor_;
     /*! Tells whether the field is being edited.*/
     bool isInEdition_;
     /*! Maximum size of the text.*/

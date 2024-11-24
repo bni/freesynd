@@ -101,13 +101,16 @@ void ConfMenu::handleRender(DirtyList &dirtyList) {
         g_LogoMgr.draw({336, 55}, tempLogo_, tempColourId_, true);
     } else if (currPanel_ == kConfPanelPlayerCompanyName || currPanel_ == kConfPanelPlayerName) {
         // draw a frame around the textfield
-        g_System.drawRect({300, 77}, 136, 26, rectColor_);
+        g_System.drawRect({300, 77}, 272, 26, rectColor_);
+        g_System.drawRect({301, 78}, 270, 24, rectColor_);
     }
 
     if (currPanel_ != kConfPanelMain) {
         // draw frame around ok and cancel buttons
-        g_System.drawRect({283, 122}, 136, 26, rectColor_);
+        g_System.drawRect({284, 122}, 136, 26, rectColor_);
+        g_System.drawRect({285, 123}, 134, 24, rectColor_);
         g_System.drawRect({468, 122}, 136, 26, rectColor_);
+        g_System.drawRect({469, 123}, 134, 24, rectColor_);
     }
 }
 
