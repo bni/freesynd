@@ -76,11 +76,11 @@ void SpriteManager::clear()
  * Loads data from the couple tab/dat files
  * \param tabFile const std::string& name of tabfile
  * \param datFile const std::string& name of data file
- * \param rle bool
+ * \param palette
  * \return bool Return true if loading is ok
  *
  */
-bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &datFile, const uint8_t * paletteColors, int nbColors) {
+bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &datFile, const fs_eng::Palette &palette) {
     size_t size = 0, tabSize = 0;
     uint8_t *data, *tabData;
 
@@ -100,7 +100,7 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
 
     spriteCount_ = int(tabSize) / Sprite::kTabEntrySize;
 
-    bool res = loadSprites(tabData, data, paletteColors, nbColors);
+    bool res = loadSprites(tabData, data, palette);
     delete[] tabData;
     delete[] data;
 
@@ -117,12 +117,11 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
  * Loads data from memory
  * \param tabData
  * \param spriteData
- * \param paletteColors
- * \param nbColors
+ * \param palette
  * \return true if sprites have been loaded
  *
  */
-bool SpriteManager::loadSprites(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors) {
+bool SpriteManager::loadSprites(const uint8_t * tabData, const uint8_t * spriteData, const fs_eng::Palette &palette) {
     assert(tabData);
     assert(spriteData);
 
@@ -151,7 +150,7 @@ bool SpriteManager::loadSprites(const uint8_t * tabData, const uint8_t * spriteD
                                             255);
 
     if (res) {
-        res = spritesetTexture_->setPalette6b3(paletteColors, nbColors);
+        res = spritesetTexture_->setPalette(palette);
 
         if (res) {
             // Finally create texture

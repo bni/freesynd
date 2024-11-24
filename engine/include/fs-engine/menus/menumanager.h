@@ -29,10 +29,12 @@
 
 #include <string>
 #include <map>
+#include <array>
 #include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-utils/io/configfile.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/gfx/dirtylist.h"
@@ -122,6 +124,8 @@ public:
     void setPalette(const char *fname, bool sixbit = true);
     //! Return the color at given index for the current palette
     void getColorFromMenuPalette(const int colorIndex, FSColor &color);
+    //! Returns the palette for menus
+    fs_eng::Palette & getMenuPalette() { return menuPalette_; }
 
     //! Displays the current menu
     void renderMenu();
@@ -157,6 +161,10 @@ protected:
     //! Switch from menu and plays the transition animations.
     void changeCurrentMenu();
 
+private:
+    //! Loads the palette used in menu sprites
+    bool loadMenuPalette();
+
 protected:
     /** The menu factory.*/
     MenuFactory *pFactory_;
@@ -173,8 +181,10 @@ protected:
 
     /*! Sprite manager for menu sprites.*/
     SpriteManager menuSprites_;
-    //! Colors used in the menu palette
+    [[deprecated("Use menuPalette_ instead.")]]
     std::map<int, FSColor> menuColors_;
+    //! This is the palette for menu sprites
+    fs_eng::Palette menuPalette_;
     /*! Sprite manager for intro font. */
     SpriteManager *pIntroFontSprites_;
     /*! Font manager.*/

@@ -24,6 +24,7 @@
 #define ENGINE_FSTEXTURE_H
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 
 /*! \brief An abstract representing a texture used to render on screen using material acceleration.
  *
@@ -42,9 +43,9 @@ public:
     virtual bool setAsRenderTarget() = 0;
     //! Import a raw pixel array into a 8 bits surface of given width and height, with the color key
     virtual bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) = 0;
-    //! Set a new palette in the surface
+    [[deprecated("remove this method and use setPalette")]]
     virtual bool setPalette6b3(const uint8_t * pal, int cols) = 0;
-    //! Set a new palette in the surface
+    [[deprecated("remove this method and use setPalette")]]
     virtual bool setPalette8b3(const uint8_t * pal, int cols) = 0;
     //! Create a texture from an already loaded surface. Delete preexisting texture
     virtual bool loadTextureFromSurface() = 0;
@@ -56,6 +57,8 @@ public:
     virtual void renderFullTextureStrech(int width, int height) = 0;
     //! Return the color stored at given index in the palette store in this texture
     virtual bool getColorFromPalette(const int index, FSColor& color) = 0;
+    //! Set a new palette for a existing surface.
+    virtual bool setPalette(const fs_eng::Palette &palette) = 0;
 };
 
 #endif

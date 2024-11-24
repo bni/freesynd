@@ -66,7 +66,7 @@ public:
     void clear();
 
     //! Loads sprites from the given files
-    bool loadSprites(const std::string &tabFile, const std::string &datFile, const uint8_t * paletteColors, int nbColors);
+    bool loadSprites(const std::string &tabFile, const std::string &datFile, const fs_eng::Palette &palette);
     //! Returns true if this manager has loaded files
     bool loaded() { return spriteCount_ != 0; }
     //! Returns the number of loaded sprites
@@ -88,7 +88,7 @@ public:
 protected:
     
     //! Load sprites from the given files
-    bool loadSprites(const uint8_t * tabData, const uint8_t * spriteData, const uint8_t * paletteColors, int nbColors);
+    bool loadSprites(const uint8_t * tabData, const uint8_t * spriteData, const fs_eng::Palette &palette);
     //! Sort tab entries from the tab file by height then width
     void readAndSortTabEntries(const uint8_t * tabData, std::list<SpriteTabEntry>& spriteList);
     //! Read a sprite pixels and copy those pixels at the right location in the sprite set buffer

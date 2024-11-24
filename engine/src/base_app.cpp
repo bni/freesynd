@@ -188,9 +188,6 @@ void BaseApp::doDestroy() {}
  */
 void BaseApp::run(const CliParam& param) {
 
-    // load palette
-    menus().setDefaultPalette();
-
 #if 0
     system_->updateScreen();
     int nx = 0, ny = 0, my = 0;

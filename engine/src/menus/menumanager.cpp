@@ -31,6 +31,7 @@
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/gfx/screen.h"
@@ -147,17 +148,13 @@ MenuManager::~MenuManager()
 bool MenuManager::initialize(bool loadIntroFont) {
     LOG(Log::k_FLG_INFO, "MenuManager", "initialize", ("initializing menus..."))
 
-    // Load menu palette
-    size_t size;
-    uint8 *paletteData = File::loadOriginalFile("mselect.pal", size);
-
-    if (!paletteData) {
+    if (!loadMenuPalette()) {
         return false;
     }
 
     // Loads menu sprites
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading menu sprites ..."))
-    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", paletteData, fs_cmn::kPaletteMaxColor)) {
+    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", menuPalette_)) {
         return false;
     }
 
@@ -166,25 +163,24 @@ bool MenuManager::initialize(bool loadIntroFont) {
         LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading intro sprites ..."))
 
         pIntroFontSprites_ = new SpriteManager(true, SpriteManager::kMenuSpritesTextureWidth);
-        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", paletteData, fs_cmn::kPaletteMaxColor)) {
+        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", menuPalette_)) {
             return false;
         }
     }
 
     // Load logos
-    bool res = logoManager_.loadLogos(paletteData, fs_cmn::kPaletteMaxColor);
-    delete[] paletteData;
+    if (!logoManager_.loadLogos(menuPalette_)) {
+        return false;
+    }
     
-    if (res) {
-        // Loads fonts
-        LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
-        res = fonts_.loadFonts(&menuSprites_, pIntroFontSprites_);
+    // Loads fonts
+    LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
+    if (!fonts_.loadFonts(&menuSprites_, pIntroFontSprites_)) {
+        return false;
     }
 
     pBackgroundTexture_ = g_System.createTexture();
-    pBackgroundTexture_->createRenderTargetTexture(Screen::kScreenWidth, Screen::kScreenHeight);
-
-    return res;
+    return pBackgroundTexture_->createRenderTargetTexture(Screen::kScreenWidth, Screen::kScreenHeight);
 }
 
 /*!
@@ -215,6 +211,43 @@ void MenuManager::destroy() {
     for (std::map<int, Menu*>::iterator it = menus_.begin();
         it != menus_.end(); it++)
         delete it->second;
+}
+
+/*!
+ * Load the palette for menu widget from the mselect.pal file
+ * @return true if ok
+ */
+bool MenuManager::loadMenuPalette() {
+    size_t size;
+
+    LOG(Log::k_FLG_GFX, "MenuManager", "loadMenuPalette", ("Loading menu palette"))
+
+    uint8 *paletteData = File::loadOriginalFile("mselect.pal", size);
+
+    if (!paletteData) {
+        FSERR(Log::k_FLG_GFX, "MenuManager", "loadMenuPalette", ("Could not read mselect.pal"))
+        return false;
+    }
+
+    for (size_t i = 0; i < fs_eng::kPaletteMaxColor; ++i) {
+        uint8_t r = paletteData[i * 3 + 0];
+        uint8_t g = paletteData[i * 3 + 1];
+        uint8_t b = paletteData[i * 3 + 2];
+
+        // multiply by 255 divide by 63 isn't good enough?
+        menuPalette_[i].r = (r << 2) | (r >> 4);
+        menuPalette_[i].g = (g << 2) | (g >> 4);
+        menuPalette_[i].b = (b << 2) | (b >> 4);
+
+#if 0
+        //if (like(palette[i].r, 28) && like(palette[i].g, 144)
+        //    && like(palette[i].b, 0))
+            printf("col %i = %i, %i, %i\n", i, palette[i].r, palette[i].g,
+                   palette[i].b);
+#endif
+    }
+
+    return true;
 }
 
 void MenuManager::setDefaultPalette() {

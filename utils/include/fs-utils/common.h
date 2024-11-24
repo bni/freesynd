@@ -166,9 +166,6 @@ namespace fs_cmn {
         kMenuColorDarkGreen = 16
     };
 
-    //! The maximum number of colors in a palette
-    static const int kPaletteMaxColor = 256;
-
     /*!
      * Turn bits given by mask on in the given bitfield.
      * \param bitfield the bitfield to update

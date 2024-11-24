@@ -29,6 +29,7 @@
 #include <memory>
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-utils/misc/singleton.h"
 #include "fs-engine/gfx/fstexture.h"
 
@@ -45,7 +46,7 @@ public:
     ~LogoManager();
 
     //! Initialize logoManager by loading the logos
-    bool loadLogos(const uint8_t * paletteColors, int nbColors);
+    bool loadLogos(const fs_eng::Palette &palette);
 
     //! Return the color value at the given index
     uint8_t getColorAtIndex(int colourIdx);

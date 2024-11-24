@@ -56,11 +56,10 @@ LogoManager::~LogoManager()
 
 /*!
  * Load logos from original game files
- * @param paletteColors Palette used for logos
- * @param nbColors number of colors in the palette
+ * @param paletteColors Palette used for logos ie the menu palette
  * @return True if everything is ok
  */
-bool LogoManager::loadLogos(const uint8_t * paletteColors, int nbColors) {
+bool LogoManager::loadLogos(const fs_eng::Palette &palette) {
     size_t fileSize;
 
     LOG(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Loading logos..."))
@@ -89,17 +88,25 @@ bool LogoManager::loadLogos(const uint8_t * paletteColors, int nbColors) {
                                             textureWidth, 
                                             textureHeight, 254);
     
-    if (res) {
-        logosTexture_->setPalette6b3(paletteColors, nbColors);
-        logosTexture_->loadTextureFromSurface();
-    }
-
-    if (res) {
-        LOG(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("%i logos loaded\n", numberLogo_))
-    }
-    
     delete [] logosBuffer;
 
+    if (!res) {
+        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not create logo texture"))
+        return false;
+    }
+
+    if (!logosTexture_->setPalette(palette)) {
+        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not set palette"))
+        return false;
+    }
+    
+    if (!logosTexture_->loadTextureFromSurface()) {
+        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not load texture"))
+        return false;
+    }
+    
+    LOG(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("%i logos loaded", numberLogo_))
+    
     return true;
 }
 

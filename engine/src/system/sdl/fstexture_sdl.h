@@ -58,6 +58,8 @@ public:
     bool loadTextureFromSurface();
     //! Return the color from the palette at given index
     bool getColorFromPalette(const int index, FSColor& color) override;
+    //! @copydoc FSTexture::setPalette()
+    bool setPalette(const fs_eng::Palette &palette) override;
 
 private:
     //! Deallocates surface

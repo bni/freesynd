@@ -275,6 +275,30 @@ bool FSTextureSDL::setPalette6b3(const uint8_t * pal, int cols) {
 }
 
 /*!
+ * Sets a new palette. This texture must have been created with create8bitsSurfaceFromData().
+ * @param palette A palette of color
+ * @return True if everything is ok
+ */
+bool FSTextureSDL::setPalette(const fs_eng::Palette &palette) {
+    SDL_Color sdlPalette[fs_eng::kPaletteMaxColor];
+    size_t i = 0;
+
+    for (const auto& color : palette) {
+        sdlPalette[i].r = color.r;
+        sdlPalette[i].g = color.g;
+        sdlPalette[i].b = color.b;
+        sdlPalette[i].a = 0xFF;
+        i++;
+    }
+
+    if (SDL_SetPaletteColors(pSurface_->format->palette, sdlPalette, 0, fs_eng::kPaletteMaxColor)) {
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "setPalette", ("Could not set palette with %i colors! SDL Error : %s", fs_eng::kPaletteMaxColor, SDL_GetError()))
+        return false;
+    }
+    return true;
+}
+
+/*!
  * @brief 
  * @param pal 
  * @param cols 

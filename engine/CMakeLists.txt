@@ -1,5 +1,6 @@
 
 set(HEADER_LIST
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/enginecommon.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/base_app.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/appcontext.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/config.h"

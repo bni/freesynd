@@ -27,6 +27,7 @@
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+#include "fs-engine/enginecommon.h"
 
 const size_t AnimationManager::kAnimSpritesTextureWidth = 1024;
 
@@ -46,7 +47,8 @@ AnimationManager::~AnimationManager()
 bool AnimationManager::load()
 {
     LOG(Log::k_FLG_GFX, "AnimationManager", "load", ("Loading game sprites ..."))
-    if (!spritesManager_.loadSprites("hspr-0.tab", "hspr-0.dat", nullptr, 0)) {
+    fs_eng::Palette emptyPalette;
+    if (!spritesManager_.loadSprites("hspr-0.tab", "hspr-0.dat", emptyPalette)) {
         return false;
     }
 
@@ -95,7 +97,6 @@ bool AnimationManager::loadElementsFromCustomFiles() {
 
     fp = File::openOriginalFile("HFRA-0.TXT");
     if (fp) {
-        char line[1024];
         while (fgets(line, 1024, fp)) {
             GameSpriteFrame f;
             if (*line == '#')
@@ -112,7 +113,6 @@ bool AnimationManager::loadElementsFromCustomFiles() {
 
     fp = File::openOriginalFile("HSTA-0.TXT");
     if (fp) {
-        char line[1024];
         while (fgets(line, 1024, fp)) {
             size_t index;
             if (*line == '#')
