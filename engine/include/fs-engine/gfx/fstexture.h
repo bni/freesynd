@@ -59,6 +59,10 @@ public:
     virtual bool getColorFromPalette(const int index, FSColor& color) = 0;
     //! Set a new palette for a existing surface.
     virtual bool setPalette(const fs_eng::Palette &palette) = 0;
+    //! Set a color in the palette
+    virtual void setColorInPalette(int index, fs_eng::FSColor color) = 0;
+    //! Set the color for color modulation
+    virtual void setColorModulation( fs_eng::FSColor color ) = 0;
 };
 
 #endif

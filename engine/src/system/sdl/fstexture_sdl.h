@@ -60,6 +60,10 @@ public:
     bool getColorFromPalette(const int index, FSColor& color) override;
     //! @copydoc FSTexture::setPalette()
     bool setPalette(const fs_eng::Palette &palette) override;
+    //! @copydoc FSTexture::setColorInPalette()
+    void setColorInPalette(int index, fs_eng::FSColor color) override;
+    //! @copydoc FSTexture::setColorModulation()
+    void setColorModulation( fs_eng::FSColor color ) override;
 
 private:
     //! Deallocates surface

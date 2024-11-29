@@ -27,10 +27,9 @@
 #ifndef MAPMENU_H
 #define MAPMENU_H
 
-#include <assert.h>
-
 #include "fs-engine/menus/menu.h"
 #include "fs-utils/misc/timer.h"
+#include "fs-engine/gfx/fstexture.h"
 
 //! Displays the mission selection map.
 /*!
@@ -58,24 +57,41 @@ protected:
     void handleBlockSelected();
     //! Update the game time display
     void updateClock();
+    
+private:
+    //! Read the countries data and init the texture
+    void initCountriesTexture();
+    //! Copies countries data to a buffer
+    void copyCountriesPixelsToBuffer(const uint8_t *mapblkData, uint8_t *countriesBuffer);
+    //! Used for rendering optimization
+    void buildMapOfCountriesPerColor();
 
 protected:
+    //! The width of the array that stores the color of a country
+    static const int kCountrySpriteWidth;
+    //! The height of the array that stores the color of a country
+    static const int kCountrySpriteHeight;
+    //! All sprites are store in a square texture
+    static const int kCountryTextureSize;
+    //! How many sprites are on a line in the texture
+    static const int kCountrySpritePerRow;
     //! Size of the segment for drawing the line connecting the block to the logo
     static const int kSegmentSize;
     //! The size of the interval between 2 segments
     static const int kIntervalSize;
 
-    size_t mapblk_size_;
     /*! Contains the images of the differents blocks.*/
     uint8 *mapblk_data_;
+    //! A texture that stores the masks for drawing each country
+    std::unique_ptr<FSTexture> countriesTexture_;
+    //! An array of positions for each country in the texture
+    Point2D **countrySpritePositions_;
     /*! A counter for the blinking line of the selector.*/
     fs_utils::Timer timerBlinkLine_;
     //! Used for blinking of the line of the selector.
     int offsetLine_;
     /*! A counter for the blinking available blocks. */
-    int blk_tick_count_;
-    /*! */
-    bool blink_status_;
+    fs_utils::BoolTimer timerBlinkCountry_;
 
     /*! Id of the text widget for time.*/
     int txtTimeId_;
@@ -99,6 +115,10 @@ protected:
 
     /*! Id of the briefing button.*/
     int briefButId_;
+
+    /*! This is a repartition of countries per owner
+     * so we can optimized rendering.*/
+    std::map<fs_eng::FSColor, std::list<int>> countriesPerColor_;
 };
 
 #endif

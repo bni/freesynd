@@ -122,8 +122,10 @@ public:
     //! Sets the palette for the given mission id
     void setPaletteForMission(int i_id);
     void setPalette(const char *fname, bool sixbit = true);
-    //! Return the color at given index for the current palette
+    [[deprecated("Use getColorFromMenuPalette(const int colorIndex, fs_eng::FSColor &color) instead.")]]
     void getColorFromMenuPalette(const int colorIndex, FSColor &color);
+    //! Return the color at given index for the current palette
+    void getColorFromMenuPalette(const int colorIndex, fs_eng::FSColor &color);
     //! Returns the palette for menus
     fs_eng::Palette & getMenuPalette() { return menuPalette_; }
 
@@ -181,8 +183,6 @@ protected:
 
     /*! Sprite manager for menu sprites.*/
     SpriteManager menuSprites_;
-    [[deprecated("Use menuPalette_ instead.")]]
-    std::map<int, FSColor> menuColors_;
     //! This is the palette for menu sprites
     fs_eng::Palette menuPalette_;
     /*! Sprite manager for intro font. */

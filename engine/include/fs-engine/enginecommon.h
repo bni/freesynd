@@ -46,10 +46,35 @@ namespace fs_eng
         uint8_t g;
         uint8_t b;
         uint8_t a;
+
+        // Operator < for storing in map
+        bool operator<(const FSColor& other) const {
+            if (r != other.r) {
+                return r < other.r;
+            } else if (g != other.g) {
+                return g < other.g;
+            } else {
+                return b < other.b;
+            }
+        }
     };
  
     //! This type represents a Palette of kPaletteMaxColor
     typedef std::array<FSColor, kPaletteMaxColor> Palette;
+
+    //! This type represents index in the menu palette for major colors
+    enum PaletteMenuColorIndex {
+        kMenuPaletteColorLogo1 = 6,
+        kMenuPaletteColorLogo2 = 7,
+        kMenuPaletteColorLogo3 = 14, 
+        kMenuPaletteColorLogo4 = 3,
+        kMenuPaletteColorLogo5 = 11,
+        kMenuPaletteColorLogo6 = 12,
+        kMenuPaletteColorLogo7 = 13,
+        kMenuPaletteColorLogo8 = 15,
+        kMenuPaletteColorDarkGreen = 16,
+        kMenuPaletteColorLightGreen = 252
+    };
 }
 
 #endif // ENGINE_ENGINECOMMON_H

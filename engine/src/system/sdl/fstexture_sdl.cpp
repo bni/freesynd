@@ -298,6 +298,14 @@ bool FSTextureSDL::setPalette(const fs_eng::Palette &palette) {
     return true;
 }
 
+void FSTextureSDL::setColorInPalette(int index, fs_eng::FSColor color) {
+    SDL_Color newColor {color.r, color.g, color.b, color.a};
+
+    if (SDL_SetPaletteColors(pSurface_->format->palette, &newColor, index, 1)) {
+        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "setPalette", ("Could not set color in palette! SDL Error : %s", SDL_GetError()))
+    }
+}
+
 /*!
  * @brief 
  * @param pal 
@@ -353,4 +361,13 @@ bool FSTextureSDL::getColorFromPalette(const int index, FSColor& color) {
     color.a = sdlColor.a;
     
     return true;
+}
+
+/*!
+ * Set the color factor for color modulation
+ * @param color The color factor
+ */
+void FSTextureSDL::setColorModulation( fs_eng::FSColor color ) {
+    //Modulate texture
+    SDL_SetTextureColorMod( pTexture_, color.r, color.g, color.b );
 }

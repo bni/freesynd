@@ -82,6 +82,10 @@ Block g_Blocks[50] = {
     {"#CNTRY_25", 48000000, 48000000, 25, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0}
 };
 
+/*! 
+ * This array contains the index in the menu palette
+ * of the possible colors for logos and countries.
+ */
 int g_syndicate_color_id[7];
 
 const int GameSession::HOUR_DELAY = 4000;

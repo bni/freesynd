@@ -24,14 +24,12 @@
  *                                                                      *
  ************************************************************************/
 
-#include <stdio.h>
-#include <assert.h>
+#include "menus/mapmenu.h"
 
 #include "fs-utils/io/file.h"
-#include "menus/mapmenu.h"
+#include "fs-utils/log/log.h"
 #include "menus/gamemenuid.h"
 #include "core/gamesession.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/menus/menumanager.h"
 
@@ -106,6 +104,10 @@ struct BlockDisplay {
 
 const int MapMenu::kSegmentSize = 5;
 const int MapMenu::kIntervalSize = 5;
+const int MapMenu::kCountrySpriteWidth = 64;
+const int MapMenu::kCountrySpriteHeight = 44;
+const int MapMenu::kCountryTextureSize = 512;
+const int MapMenu::kCountrySpritePerRow = 8;
 
 /*!
  * Class constructor.
@@ -113,7 +115,7 @@ const int MapMenu::kIntervalSize = 5;
  */
 MapMenu::MapMenu(MenuManager * m)
         : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain, true),
-          mapblk_data_(NULL), timerBlinkLine_(200) {
+          mapblk_data_(NULL), timerBlinkLine_(200), timerBlinkCountry_(500, true) {
     cursorOnShow_ = kMenuCursor;
     offsetLine_ = 0;
     //
@@ -148,13 +150,6 @@ MapMenu::MapMenu(MenuManager * m)
     incrTaxButId_ = addImageOption(435, 346, Sprite::MSPR_TAX_INCR,
         Sprite::MSPR_TAX_INCR, false);
     registerHotKey(kKeyCode_Up, incrTaxButId_);
-
-    // 64 x 44 x 50
-    // Load map block informations
-    mapblk_data_ = File::loadOriginalFile("mmapblk.dat", mapblk_size_);
-
-    blk_tick_count_ = 0;
-    blink_status_ = true;
 }
 
 MapMenu::~MapMenu() {
@@ -256,12 +251,8 @@ void MapMenu::handleTick(uint32_t elapsed) {
         offsetLine_ = (offsetLine_ + 1) % kIntervalSize;
     }
 
-    blk_tick_count_ += elapsed;
-    if (blk_tick_count_ > 500) {
-        blk_tick_count_ = 0;
-        blink_status_ = !blink_status_;
-        needRendering();
-    }
+   // This counter is used for blinking available countries
+   timerBlinkCountry_.update(elapsed);
 
     if (g_Session.updateTime(elapsed)) {
         handleBlockSelected();
@@ -291,7 +282,7 @@ void MapMenu::drawSelector() {
 
     // Draw box enclosing logo
     FSColor darkGreen;
-    getMenuManager()->getColorFromMenuPalette(fs_cmn::kMenuColorDarkGreen, darkGreen);
+    getMenuManager()->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, darkGreen);
 
     g_System.drawRect(block.logo_pos.add(-2, -2), 36, 36, darkGreen);
 
@@ -356,30 +347,55 @@ void MapMenu::drawDottedline(Point2D start, Point2D end) {
 }
 
 void MapMenu::handleShow() {
-
+    if (!countriesTexture_) {
+        initCountriesTexture();
+    }
     // State of the briefing button
     handleBlockSelected();
 
     // Update the time
     updateClock();
+
+    buildMapOfCountriesPerColor();
+}
+
+void MapMenu::buildMapOfCountriesPerColor() {
+    countriesPerColor_.clear();
+
+    for (int i = 0; i < GameSession::NB_MISSION; i++) {
+        Block blk = g_Session.getBlock(i);
+        fs_eng::FSColor color;
+        getMenuManager()->getColorFromMenuPalette(g_Session.get_owner_color(blk), color);
+
+        if (countriesPerColor_.contains(color)) {
+            countriesPerColor_[color].push_back(i);
+        } else {
+            std::list<int> newList;
+            newList.push_back(i);
+            countriesPerColor_[color] = newList;
+        }
+    }
 }
 
 void MapMenu::handleRender(DirtyList &dirtyList) {
     // Draws all countries
-    for (int i = 0; i < GameSession::NB_MISSION; i++) {
-        Block blk = g_Session.getBlock(i);
-        if ((i == g_Session.getSelectedBlockId()) ||
-            (blk.status == BLK_AVAIL && blink_status_) ||
-            blk.status != BLK_AVAIL) {
-            uint8 data[64 * 44];
-            memcpy(data, mapblk_data_ + i * 64 * 44, 64 * 44);
-            for (int j = 0; j < 64 * 44; j++)
-                if (data[j] == 0)
-                    data[j] = 255;
-                else
-                    data[j] = g_Session.get_owner_color(blk);
-            g_Screen.scale2x(g_BlocksDisplay[i].pos.x,
-                g_BlocksDisplay[i].pos.y, 64, 44, data, 64);
+    for (auto const& [color, countries] : countriesPerColor_) {
+        // We are using color modulation to draw each country with the right color
+        countriesTexture_->setColorModulation(color);
+        // Countries are grouped by color
+        for(int countryId : countries ) {
+            Block block = g_Session.getBlock(countryId);
+            // Available countries blink to show they are available
+            // but the selected country does not blink
+            if ((countryId == g_Session.getSelectedBlockId()) ||
+                (block.status == BLK_AVAIL && timerBlinkCountry_.state()) ||
+                block.status != BLK_AVAIL) {
+                countriesTexture_->renderStretch(*countrySpritePositions_[countryId], 
+                                                g_BlocksDisplay[countryId].pos,
+                                                kCountrySpriteWidth,
+                                                kCountrySpriteHeight,
+                                                2);
+            }
         }
     }
 
@@ -485,3 +501,75 @@ bool MapMenu::handleUnMappedKey(const FS_Key key) {
 
     return consumed;
 }
+
+/*!
+ * Reads the file containing map data and build a spriteset with all countries.
+ * We then modify the palette of the texture to use the color white as it is
+ * not in the menu palette by default so it's easier for color modulation
+ */
+void MapMenu::initCountriesTexture() {
+    LOG(Log::k_FLG_GFX, "MapMenu", "initCountriesTexture", ("Initiate countries texture\n"))
+    
+    // 64 x 44 x 50
+    // Load map block informations
+    size_t mapblk_size;
+    mapblk_data_ = File::loadOriginalFile("mmapblk.dat", mapblk_size);
+    if (mapblk_data_ == nullptr) {
+        FSERR(Log::k_FLG_GFX, "MapMenu", "initCountriesTexture", ("Could not read file: mmapblk.dat"))
+        return;
+    }
+
+    uint8_t *countriesBuffer = new uint8_t[kCountryTextureSize * kCountryTextureSize];
+    countrySpritePositions_ = new Point2D*[GameSession::NB_MISSION];
+
+    copyCountriesPixelsToBuffer(mapblk_data_, countriesBuffer);
+
+    countriesTexture_ = g_System.createTexture();
+    // In the mmapblk.dat, each visible pixel that composes a country is set to index 1 
+    // All remaining pixels are set to index 0. So we set the color key to be the one at index 0
+    bool res = countriesTexture_->create8bitsSurfaceFromData(countriesBuffer, 
+                                            kCountryTextureSize, 
+                                            kCountryTextureSize, 0);
+
+    if (!res) {
+        FSERR(Log::k_FLG_GFX, "MapMenu", "initCountriesTexture", ("Could not create texture for countries"))
+    }
+
+    if (res) {
+        countriesTexture_->setPalette(getMenuManager()->getMenuPalette());
+        // We also change the color at index 1 to be white for easier color modulation
+        fs_eng::FSColor white {0xFF, 0xFF, 0xFF, 0xFF};
+        countriesTexture_->setColorInPalette(1, white);
+        countriesTexture_->loadTextureFromSurface();
+    }
+    delete [] countriesBuffer;
+}
+
+/*!
+ * @brief 
+ * @param mapblkData 
+ * @param countriesBuffer 
+ */
+void MapMenu::copyCountriesPixelsToBuffer(const uint8_t *mapblkData, uint8_t *countriesBuffer) {
+    for (int i=0; i < GameSession::NB_MISSION; i++) {
+        // Coords in the destination surface
+        int row = i / kCountrySpritePerRow;
+        int col = i - (row * kCountrySpritePerRow);
+
+        // start of the country pixels in the destination texture (upper left corner of logo)
+        int logoOffsetDest = (col * kCountrySpriteWidth) + (row * kCountrySpritePerRow * kCountrySpriteWidth * kCountrySpriteHeight);
+        int logoOffsetSrc = i * kCountrySpriteWidth * kCountrySpriteHeight;
+        
+        // Copy pixels line by line
+        for (int j=0; j < kCountrySpriteHeight; j++) {
+            int lineOffsetDest = j * kCountrySpriteWidth * kCountrySpritePerRow;
+            int lineOffsetSrc = j * kCountrySpriteWidth;
+            memcpy(countriesBuffer + logoOffsetDest + lineOffsetDest, mapblkData + logoOffsetSrc + lineOffsetSrc, kCountrySpriteWidth);
+        }
+
+        countrySpritePositions_[i] = new Point2D();
+        countrySpritePositions_[i]->x = col * kCountrySpriteWidth;
+        countrySpritePositions_[i]->y = row * kCountrySpriteHeight;
+    }
+}
+

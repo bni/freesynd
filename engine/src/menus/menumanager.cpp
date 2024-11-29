@@ -282,11 +282,27 @@ void MenuManager::setPalette(const char *fname, bool sixbit) {
  * @param color 
  */
 void MenuManager::getColorFromMenuPalette(const int colorIndex, FSColor &color) {
-    if (menuColors_.contains(colorIndex)) {
-        color = menuColors_[colorIndex];
-    } else {
-        menuSprites_.getColorFromMenuPalette(colorIndex, color);
-        menuColors_[colorIndex] = color;
+    fs_eng::FSColor tmp;
+    getColorFromMenuPalette(colorIndex, tmp);
+
+    color.r = tmp.r;
+    color.g = tmp.g;
+    color.b = tmp.b;
+    color.a = tmp.a;
+}
+
+/*!
+ * Find the color with given index in the palette used for menus.
+ * @param colorIndex 
+ * @param color 
+ */
+void MenuManager::getColorFromMenuPalette(const int colorIndex, fs_eng::FSColor &color) {
+    if (colorIndex < fs_eng::kPaletteMaxColor) {
+        fs_eng::FSColor tmp = menuPalette_[colorIndex];
+        color.r = tmp.r;
+        color.g = tmp.g;
+        color.b = tmp.b;
+        color.a = tmp.a;
     }
 }
 

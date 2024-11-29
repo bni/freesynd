@@ -32,7 +32,16 @@
 #include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
-uint8_t g_Colours[8] = { 6, 7, 14, 3, 11, 12, 13, 15 };
+fs_eng::PaletteMenuColorIndex g_Colours[8] = { 
+    fs_eng::kMenuPaletteColorLogo1,
+    fs_eng::kMenuPaletteColorLogo2,
+    fs_eng::kMenuPaletteColorLogo3, 
+    fs_eng::kMenuPaletteColorLogo4,
+    fs_eng::kMenuPaletteColorLogo5,
+    fs_eng::kMenuPaletteColorLogo6,
+    fs_eng::kMenuPaletteColorLogo7,
+    fs_eng::kMenuPaletteColorLogo8
+ };
 
 const int LogoManager::kMaxColour = 8;
 const int LogoManager::kLogoBigWidth = 32;
