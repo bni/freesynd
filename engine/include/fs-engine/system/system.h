@@ -30,6 +30,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-engine/io/keys.h"
 #include "fs-engine/sound/audio.h"
 #include "fs-engine/gfx/fstexture.h"
@@ -128,7 +129,7 @@ public:
      * @param height Height of the rectangle
      * @param color Color to fill the rectangle
      */
-    virtual void drawFillRect(Point2D pos, int width, int height, FSColor color) = 0;
+    virtual void drawFillRect(Point2D pos, int width, int height, fs_eng::FSColor color) = 0;
 
     //! Returns the mouse pointer coordinates
     virtual uint32_t getMousePos(Point2D &point) = 0;

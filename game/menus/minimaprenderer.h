@@ -27,6 +27,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/timer.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/pathsurfaces.h"
 #include "fs-kernel/model/objectivedesc.h"
@@ -59,10 +60,10 @@ class MinimapRenderer {
     virtual ~MinimapRenderer() {}
 
     //! update the class with elapsed time
-    bool handleTick(int elapsed) { return false; }
+    virtual bool handleTick(uint32_t elapsed) = 0;
 
     //! Render the minimap at the given point
-    void render(uint16 screen_x, uint16 screen_y) {}
+    virtual void render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) = 0;
  protected:
     void setZoom(EZoom zoom);
      //! called when zoom changes
@@ -76,9 +77,9 @@ class MinimapRenderer {
     /*! Current zoom level.*/
     EZoom zoom_;
     /*! Tile X coord on the map for the top left corner of the minimap.*/
-    uint16 world_tx_;
+    uint16_t world_tx_;
     /*! Tile Y coord on the map for the top left corner of the minimap.*/
-    uint16 world_ty_;
+    uint16_t world_ty_;
 };
 
 /*!
@@ -94,15 +95,15 @@ class BriefMinimapRenderer : public MinimapRenderer {
     void init(MissionBriefing *p_briefing, EZoom zoom, bool drawEnemies);
 
     //! update the class with elapsed time
-    bool handleTick(int elapsed);
+    bool handleTick(uint32_t elapsed) override;
 
     //! Render the minimap at the given point
-    void render(uint16 screen_x, uint16 screen_y);
+    void render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) override;
 
     //! Sets all parameters that depend on zooming level
     void zoomOut();
     //! Sets the flag whether to draw enemies on the minimap or not
-    void setDrawEnemies(bool draw) { b_draw_enemies_ = draw; }
+    void setDrawEnemies(bool draw) { drawEnemies_ = draw; }
 
     //! Scrolls the minimap to the right
     void scrollRight();
@@ -122,9 +123,8 @@ class BriefMinimapRenderer : public MinimapRenderer {
 
  protected:
     /*! A timer to control the blinking on the minimap.*/
-    fs_utils::Timer mm_timer;
-    /*! Helps controling blinking.*/
-    int minimap_blink_;
+    fs_utils::BoolTimer timerMiniMapBlink_;
+
     /*!
      * Total number of tiles displayed in the minimap.
      * same for width and height.
@@ -133,9 +133,9 @@ class BriefMinimapRenderer : public MinimapRenderer {
     /*! The scrolling step : depends on the zoom level.*/
     uint8 scroll_step_;
     /*! The MissionBriefing that contains the minimap.*/
-    MissionBriefing *p_mb_;
+    MissionBriefing *pBriefing_;
     /*! IF true, enemies are drawn on the minimap.*/
-    bool b_draw_enemies_;
+    bool drawEnemies_;
 };
 
 
@@ -158,10 +158,10 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     void setScannerEnabled(bool b_enabled);
 
     //! update the class with elapsed time
-    bool handleTick(int elapsed);
+    bool handleTick(uint32_t elapsed) override;
 
     //! Render the minimap
-    void render(uint16 screen_x, uint16 screen_y);
+    void render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) override;
 
     //! Returns the map coordinates of the point on the minimap.
     TilePoint minimapToMapPoint(int mm_x, int mm_y);

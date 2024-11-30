@@ -50,7 +50,7 @@ FontMenu::FontMenu(MenuManager * m):
 void FontMenu::handleShow()
 {
     menu_manager_->setDefaultPalette();
-    menuSprites().getColorFromMenuPalette(fs_cmn::kMenuColorDarkGreen, defaultColor_);
+    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, defaultColor_);
     panelId_ = 0;
 }
 

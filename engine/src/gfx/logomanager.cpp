@@ -33,14 +33,14 @@
 #include "fs-engine/system/system.h"
 
 fs_eng::PaletteMenuColorIndex g_Colours[8] = { 
-    fs_eng::kMenuPaletteColorLogo1,
-    fs_eng::kMenuPaletteColorLogo2,
-    fs_eng::kMenuPaletteColorLogo3, 
-    fs_eng::kMenuPaletteColorLogo4,
-    fs_eng::kMenuPaletteColorLogo5,
-    fs_eng::kMenuPaletteColorLogo6,
-    fs_eng::kMenuPaletteColorLogo7,
-    fs_eng::kMenuPaletteColorLogo8
+    fs_eng::kMenuPaletteColorRed,
+    fs_eng::kMenuPaletteColorBlueGrey,
+    fs_eng::kMenuPaletteColorOrange, 
+    fs_eng::kMenuPaletteColorLightOrange,
+    fs_eng::kMenuPaletteColorYellow,
+    fs_eng::kMenuPaletteColorWhiteBlue,
+    fs_eng::kMenuPaletteColorLightBrown,
+    fs_eng::kMenuPaletteColorDarkBlue
  };
 
 const int LogoManager::kMaxColour = 8;
@@ -175,7 +175,7 @@ int LogoManager::numLogos()
  * @param big True to draw a 64x64 logo. Else it will be 32x32
  */
 void LogoManager::draw(Point2D pos, int logoId, int colorId, bool big) {
-    FSColor color;
+    fs_eng::FSColor color;
     if (colorId > kMaxColour || !logosTexture_->getColorFromPalette(g_Colours[colorId], color)) {
         FSERR(Log::k_FLG_GFX, "LogoManager", "draw", ("Could not get color at index %i", colorId))
         return;

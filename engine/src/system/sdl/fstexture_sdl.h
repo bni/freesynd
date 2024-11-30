@@ -57,7 +57,7 @@ public:
     //! Create a texture from the surface (a palette should have been defined first)
     bool loadTextureFromSurface();
     //! Return the color from the palette at given index
-    bool getColorFromPalette(const int index, FSColor& color) override;
+    bool getColorFromPalette(const int index, fs_eng::FSColor& color) override;
     //! @copydoc FSTexture::setPalette()
     bool setPalette(const fs_eng::Palette &palette) override;
     //! @copydoc FSTexture::setColorInPalette()

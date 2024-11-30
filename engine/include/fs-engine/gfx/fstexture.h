@@ -56,7 +56,7 @@ public:
     //! Render the full texture at 0,0 on screen with the given destination size
     virtual void renderFullTextureStrech(int width, int height) = 0;
     //! Return the color stored at given index in the palette store in this texture
-    virtual bool getColorFromPalette(const int index, FSColor& color) = 0;
+    virtual bool getColorFromPalette(const int index, fs_eng::FSColor& color) = 0;
     //! Set a new palette for a existing surface.
     virtual bool setPalette(const fs_eng::Palette &palette) = 0;
     //! Set a color in the palette

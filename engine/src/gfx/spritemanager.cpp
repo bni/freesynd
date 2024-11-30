@@ -329,12 +329,3 @@ bool SpriteManager::drawTexture(Point2D src, Point2D dst, int width, int height)
     
     return true;
 }
-
-/*!
- * Find the color from the palette of the MenuSprite texture at given color index
- * @param colorIndex Index of the color in the palette
- * @param color Resulting color
- */
-void SpriteManager::getColorFromMenuPalette(const int colorIndex, FSColor &color) {
-    spritesetTexture_->getColorFromPalette(colorIndex, color);
-}

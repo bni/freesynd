@@ -64,14 +64,15 @@ namespace fs_eng
 
     //! This type represents index in the menu palette for major colors
     enum PaletteMenuColorIndex {
-        kMenuPaletteColorLogo1 = 6,
-        kMenuPaletteColorLogo2 = 7,
-        kMenuPaletteColorLogo3 = 14, 
-        kMenuPaletteColorLogo4 = 3,
-        kMenuPaletteColorLogo5 = 11,
-        kMenuPaletteColorLogo6 = 12,
-        kMenuPaletteColorLogo7 = 13,
-        kMenuPaletteColorLogo8 = 15,
+        kMenuPaletteColorBrown = 5,
+        kMenuPaletteColorRed = 6,
+        kMenuPaletteColorBlueGrey = 7,
+        kMenuPaletteColorOrange = 14, 
+        kMenuPaletteColorLightOrange = 3,
+        kMenuPaletteColorYellow = 11,
+        kMenuPaletteColorWhiteBlue = 12,
+        kMenuPaletteColorLightBrown = 13,
+        kMenuPaletteColorDarkBlue = 15,
         kMenuPaletteColorDarkGreen = 16,
         kMenuPaletteColorLightGreen = 252
     };

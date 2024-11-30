@@ -551,7 +551,7 @@ void SystemSDL::drawRect(Point2D pos, int width, int height, FSColor color) {
  * @param height 
  * @param color 
  */
-void SystemSDL::drawFillRect(Point2D pos, int width, int height, FSColor color) {
+void SystemSDL::drawFillRect(Point2D pos, int width, int height, fs_eng::FSColor color) {
     SDL_Rect outlineRect = { pos.x, pos.y, width, height};
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderFillRect( pRenderer_, &outlineRect );

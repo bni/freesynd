@@ -446,7 +446,7 @@ private:
     /*! Position of the caret on the screen.*/
     Point2D caretScreenPos_;
     //! The color to use to draw the caret
-    FSColor caretColor_;
+    fs_eng::FSColor caretColor_;
     /*! Tells whether the field is being edited.*/
     bool isInEdition_;
     /*! Maximum size of the text.*/

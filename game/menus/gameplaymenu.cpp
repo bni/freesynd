@@ -416,7 +416,7 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
     drawSelectAllButton();
     drawMissionHint(0);
     drawWeaponSelectors();
-    mm_renderer_.render(kMiniMapScreenX, kMiniMapScreenY);
+    mm_renderer_.render(kMiniMapScreenX, kMiniMapScreenY, missionPalette_);
 
 #ifdef _DEBUG
     // drawing of different sprites

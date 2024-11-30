@@ -138,6 +138,8 @@ protected:
     SquadSelection selection_;
     /*! Object mouse cursor is above*/
     ShootableMapObject *target_;
+    //! The palette of colors used for this mission
+    fs_eng::Palette missionPalette_;
     /*! This renderer is in charge of drawing the map.*/
     MapRenderer map_renderer_;
     /*! This renderer is in charge of drawing the minimap.*/

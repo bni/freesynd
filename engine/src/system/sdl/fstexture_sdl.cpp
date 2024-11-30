@@ -349,7 +349,7 @@ bool FSTextureSDL::loadTextureFromSurface() {
  * @param color Resulting color
  * @return True if color was found
  */
-bool FSTextureSDL::getColorFromPalette(const int index, FSColor& color) {
+bool FSTextureSDL::getColorFromPalette(const int index, fs_eng::FSColor& color) {
     if (index < 0 || index > pSurface_->format->palette->ncolors) {
         return false;
     }

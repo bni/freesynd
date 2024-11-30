@@ -77,7 +77,7 @@ public:
     void drawHLine(Point2D start, int length, FSColor color) override;
     void drawLine(Point2D start, Point2D end, FSColor color) override;
     void drawRect(Point2D pos, int width, int height, FSColor color) override;
-    void drawFillRect(Point2D pos, int width, int height, FSColor color) override;
+    void drawFillRect(Point2D pos, int width, int height, fs_eng::FSColor color) override;
 
     //! Returns the mouse pointer coordinates
     uint32_t getMousePos(Point2D &point) override;

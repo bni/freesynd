@@ -82,9 +82,6 @@ public:
 
     bool drawTexture(Point2D src, Point2D dst, int width, int height);
 
-    //! Return the color at given index for the current palette
-    void getColorFromMenuPalette(const int colorIndex, FSColor &color);
-
 protected:
     
     //! Load sprites from the given files
