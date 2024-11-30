@@ -159,14 +159,6 @@ namespace fs_cmn {
     static const uint8 kColorDarkGreen = 16;
 
     /*!
-     * Constants for colors in the Menu palette.
-     */
-    enum MenuPaletteColor {
-        kMenuColorLightGreen = 252,
-        kMenuColorDarkGreen = 16
-    };
-
-    /*!
      * Turn bits given by mask on in the given bitfield.
      * \param bitfield the bitfield to update
      * \param mask The bitmask to apply
@@ -214,16 +206,6 @@ struct Point2D {
 
         return res;
     }
-};
-
-/*!
- * A structure to store color.
- */
-struct FSColor {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
 };
 
 #endif

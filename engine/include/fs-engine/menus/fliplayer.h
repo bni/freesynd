@@ -100,7 +100,7 @@ private:
     //! this is the content of the frame
     const uint8_t *offscreen_;
     //! The palette for the fli using FSColor
-    FSColor colorPalette_[fs_eng::kPaletteMaxColor];
+    fs_eng::FSColor colorPalette_[fs_eng::kPaletteMaxColor];
     //! Info on the Fli to play
     FliHeader fli_info_;
     //! FSTexture to display a frame

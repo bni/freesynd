@@ -504,7 +504,7 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
  * @param length 
  * @param color 
  */
-void SystemSDL::drawVLine(Point2D start, int length, FSColor color) {
+void SystemSDL::drawVLine(Point2D start, int length, fs_eng::FSColor color) {
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderDrawLine( pRenderer_, start.x, start.y, start.x, start.y + length );
 }
@@ -515,7 +515,7 @@ void SystemSDL::drawVLine(Point2D start, int length, FSColor color) {
  * @param length 
  * @param color 
  */
-void SystemSDL::drawHLine(Point2D start, int length, FSColor color) {
+void SystemSDL::drawHLine(Point2D start, int length, fs_eng::FSColor color) {
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderDrawLine( pRenderer_, start.x, start.y, start.x + length, start.y );
 }
@@ -526,7 +526,7 @@ void SystemSDL::drawHLine(Point2D start, int length, FSColor color) {
  * @param end 
  * @param color 
  */
-void SystemSDL::drawLine(Point2D start, Point2D end, FSColor color) {
+void SystemSDL::drawLine(Point2D start, Point2D end, fs_eng::FSColor color) {
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderDrawLine( pRenderer_, start.x, start.y, end.x, end.y );
 }
@@ -538,7 +538,7 @@ void SystemSDL::drawLine(Point2D start, Point2D end, FSColor color) {
  * @param height 
  * @param color 
  */
-void SystemSDL::drawRect(Point2D pos, int width, int height, FSColor color) {
+void SystemSDL::drawRect(Point2D pos, int width, int height, fs_eng::FSColor color) {
     SDL_Rect outlineRect = { pos.x, pos.y, width, height};
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderDrawRect( pRenderer_, &outlineRect );

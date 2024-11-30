@@ -81,7 +81,7 @@ protected:
     static const int kIntervalSize;
 
     /*! Contains the images of the differents blocks.*/
-    uint8 *mapblk_data_;
+    uint8_t *mapblk_data_;
     //! A texture that stores the masks for drawing each country
     std::unique_ptr<FSTexture> countriesTexture_;
     //! An array of positions for each country in the texture

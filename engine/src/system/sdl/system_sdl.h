@@ -73,10 +73,10 @@ public:
     bool setPalette8b3(const uint8 *pal, int cols = 256) override;
     void setColor(uint8 index, uint8 r, uint8 g, uint8 b) override;
 
-    void drawVLine(Point2D start, int length, FSColor color) override;
-    void drawHLine(Point2D start, int length, FSColor color) override;
-    void drawLine(Point2D start, Point2D end, FSColor color) override;
-    void drawRect(Point2D pos, int width, int height, FSColor color) override;
+    void drawVLine(Point2D start, int length, fs_eng::FSColor color) override;
+    void drawHLine(Point2D start, int length, fs_eng::FSColor color) override;
+    void drawLine(Point2D start, Point2D end, fs_eng::FSColor color) override;
+    void drawRect(Point2D pos, int width, int height, fs_eng::FSColor color) override;
     void drawFillRect(Point2D pos, int width, int height, fs_eng::FSColor color) override;
 
     //! Returns the mouse pointer coordinates

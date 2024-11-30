@@ -51,7 +51,7 @@ private:
 private:
     static const size_t kSpriteMaxObjects;
 
-    FSColor defaultColor_;
+    fs_eng::FSColor defaultColor_;
     int panelId_;
     int idButtonSprites_;
     int idButtonFonts_;

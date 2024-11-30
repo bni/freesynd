@@ -36,7 +36,7 @@ public:
     //! Create a 32bits texture with streaming access
     virtual bool createStreamingTexture(int width, int height) = 0;
     //! Update the pixels in the texture with the given pixels index and a palette
-    virtual bool updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) = 0;
+    virtual bool updateStreamingTexture(const uint8_t *pixels, fs_eng::FSColor *colorPalette_) = 0;
     //! Create a texture to draw on it
     virtual bool createRenderTargetTexture(int width, int height) = 0;
     //! Set this texture to be the render target.

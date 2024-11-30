@@ -29,9 +29,6 @@
 
 #include "confmenu.h"
 
-#include <stdio.h>
-#include <assert.h>
-
 #include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 #include "core/gamecontroller.h"
@@ -122,7 +119,7 @@ void ConfMenu::handleShow() {
     getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName(), false);
     getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName(), false);
 
-    menu_manager_->getColorFromMenuPalette(fs_cmn::kMenuColorDarkGreen, rectColor_);
+    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, rectColor_);
 }
 
 void ConfMenu::handleLeave() {

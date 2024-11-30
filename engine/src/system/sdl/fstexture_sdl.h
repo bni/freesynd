@@ -42,7 +42,7 @@ public:
     //! Create a 32bits texture with streaming access
     bool createStreamingTexture(int width, int height) override;
     //! @copydoc FSTexture::updateStreamingTexture()
-    bool updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) override;
+    bool updateStreamingTexture(const uint8_t *pixels, fs_eng::FSColor *colorPalette_) override;
 
     //! Creates a texure to be used as a render target
     bool createRenderTargetTexture(int width, int height) override;

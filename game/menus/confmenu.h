@@ -110,7 +110,7 @@ protected:
     int tempLogo_;
     int tempColourId_;
     //! Green color for drawing rects
-    FSColor rectColor_;
+    fs_eng::FSColor rectColor_;
 };
 
 #endif

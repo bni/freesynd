@@ -535,7 +535,7 @@ TextField::TextField(Menu *peer, int x, int y, int width, int height,
     isDisplayEmpty_ = displayEmpty;
     caretPosition_ = 0;
     caretScreenPos_.y = text_.getY() + text_.getFont()->textHeight(true);
-    getPeer()->getMenuManager()->getColorFromMenuPalette(fs_cmn::kMenuColorLightGreen, caretColor_);
+    getPeer()->getMenuManager()->getColorFromMenuPalette(fs_eng::kMenuPaletteColorLightGreen, caretColor_);
     isInEdition_ = false;
     maxSize_ = maxSize;
 }

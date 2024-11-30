@@ -109,19 +109,19 @@ public:
     /**
      * Draw a vertical line with the given color
      */
-    virtual void drawVLine(Point2D start, int length, FSColor color) = 0;
+    virtual void drawVLine(Point2D start, int length, fs_eng::FSColor color) = 0;
     /**
      * Draw a horizontal line with the given color
      */
-    virtual void drawHLine(Point2D start, int length, FSColor color) = 0;
+    virtual void drawHLine(Point2D start, int length, fs_eng::FSColor color) = 0;
     /**
      * Draw a line with the given color
      */
-    virtual void drawLine(Point2D start, Point2D end, FSColor color) = 0;
+    virtual void drawLine(Point2D start, Point2D end, fs_eng::FSColor color) = 0;
     /**
      * Draw a rectangle with the given color
      */
-    virtual void drawRect(Point2D pos, int width, int height, FSColor color) = 0;
+    virtual void drawRect(Point2D pos, int width, int height, fs_eng::FSColor color) = 0;
     /*!
      * @brief Draw a rect filled with the given color
      * @param pos Upper left corner position of the rect

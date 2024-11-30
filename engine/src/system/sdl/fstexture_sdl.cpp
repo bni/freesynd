@@ -141,7 +141,7 @@ bool FSTextureSDL::createStreamingTexture(int width, int height) {
  * @param colorPalette_ 
  * @return 
  */
-bool FSTextureSDL::updateStreamingTexture(const uint8_t *pixels, FSColor *colorPalette_) {
+bool FSTextureSDL::updateStreamingTexture(const uint8_t *pixels, fs_eng::FSColor *colorPalette_) {
     int pitch;
     Uint32 *destPixels;
     if (SDL_LockTexture(pTexture_, nullptr, (void **)&destPixels, &pitch)) {
@@ -153,7 +153,7 @@ bool FSTextureSDL::updateStreamingTexture(const uint8_t *pixels, FSColor *colorP
 
     for (int i = 0; i < width_ * height_; i++) {
         uint8_t index = srcPixels[i];
-        FSColor color = colorPalette_[index];
+        fs_eng::FSColor color = colorPalette_[index];
 
         destPixels[i] = SDL_MapRGBA(pFormat_, color.r, color.g, color.b, color.a);
     }

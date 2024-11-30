@@ -281,7 +281,7 @@ void MapMenu::drawSelector() {
         g_Session.getLogoColour(), false);
 
     // Draw box enclosing logo
-    FSColor darkGreen;
+    fs_eng::FSColor darkGreen;
     getMenuManager()->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, darkGreen);
 
     g_System.drawRect(block.logo_pos.add(-2, -2), 36, 36, darkGreen);
@@ -338,8 +338,8 @@ void MapMenu::drawDottedline(Point2D start, Point2D end) {
         }
     }
 
-    FSColor lightGreen;
-    getMenuManager()->getColorFromMenuPalette(fs_cmn::kMenuColorLightGreen, lightGreen);
+    fs_eng::FSColor lightGreen;
+    getMenuManager()->getColorFromMenuPalette(fs_eng::kMenuPaletteColorLightGreen, lightGreen);
     for (size_t i=0; i+1 < points.size(); i += 2) {
         g_System.drawLine(points[i], points[i+1], lightGreen);
         g_System.drawLine(points[i].add(0,-1), points[i+1].add(0,-1), lightGreen);
