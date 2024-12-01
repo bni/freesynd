@@ -109,8 +109,6 @@ protected:
     int toAcceptColourId_;
     int tempLogo_;
     int tempColourId_;
-    //! Green color for drawing rects
-    fs_eng::FSColor rectColor_;
 };
 
 #endif

@@ -34,7 +34,6 @@
 #include "menus/gamemenuid.h"
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "fs-kernel/model/mod.h"
 
@@ -96,18 +95,18 @@ SelectMenu::~SelectMenu()
 void SelectMenu::drawAgentSelector(Point2D pos) {
     // We draw the rectangle by drawing 4 pairs of lines
     // dashoffset is used for animation
-    g_System.drawDashedHLine(pos, 57, kSegmentSize, dashOffset_, darkGreen_);
-    g_System.drawDashedHLine(pos.add(0, 1), 57, kSegmentSize, dashOffset_, darkGreen_);
+    g_System.drawDashedHLine(pos, 57, kSegmentSize, dashOffset_, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawDashedHLine(pos.add(0, 1), 57, kSegmentSize, dashOffset_, menu_manager_->kMenuColorDarkGreen);
 
-    g_System.drawDashedVLine(pos.add(59, 0), 65, kSegmentSize, dashOffset_, darkGreen_);
-    g_System.drawDashedVLine(pos.add(58, 0), 65, kSegmentSize, dashOffset_, darkGreen_);
+    g_System.drawDashedVLine(pos.add(59, 0), 65, kSegmentSize, dashOffset_, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawDashedVLine(pos.add(58, 0), 65, kSegmentSize, dashOffset_, menu_manager_->kMenuColorDarkGreen);
 
     int reverseOffset = 2 * kSegmentSize - dashOffset_;
-    g_System.drawDashedHLine(pos.add(0, 64), 57, kSegmentSize, reverseOffset, darkGreen_);
-    g_System.drawDashedHLine(pos.add(0, 65), 57, kSegmentSize, reverseOffset, darkGreen_);
+    g_System.drawDashedHLine(pos.add(0, 64), 57, kSegmentSize, reverseOffset, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawDashedHLine(pos.add(0, 65), 57, kSegmentSize, reverseOffset, menu_manager_->kMenuColorDarkGreen);
 
-    g_System.drawDashedVLine(pos, 65, kSegmentSize, reverseOffset, darkGreen_);
-    g_System.drawDashedVLine(pos.add(1, 0), 65, kSegmentSize, reverseOffset, darkGreen_);
+    g_System.drawDashedVLine(pos, 65, kSegmentSize, reverseOffset, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawDashedVLine(pos.add(1, 0), 65, kSegmentSize, reverseOffset, menu_manager_->kMenuColorDarkGreen);
 }
 
 void SelectMenu::drawAgent()
@@ -210,7 +209,6 @@ void SelectMenu::drawAgent()
     for (int j = 0, k = 0; j < 2; ++j)
         for (int i = 0; i < 4 && (j * 4 + i < selected->numWeapons()); ++i)
         {
-            // TODO: make weapon to be drawn at end
             WeaponInstance *wi = selected->weapon(j * 4 + i);
             if (wi == weapon_dragged_ && menu_manager_->isMouseDragged()) {
                 pos[7] = weapon_pos_;
@@ -237,7 +235,7 @@ void SelectMenu::drawAgent()
                 n *= 24;
                 n /= pWeaponClass->ammoCapacity();
 
-                g_System.drawFillRect(pos[i].add(4, 22), n, 6, white_);
+                g_System.drawFillRect(pos[i].add(4, 22), n, 6, menu_manager_->kMenuColorWhite);
             }
         }
     }
@@ -272,10 +270,10 @@ void SelectMenu::updateClock() {
 void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
     char tmp[100];
 
-    // Draw a border around cancel button
-    g_System.drawRect({502, 268}, 124, 2, darkGreen_);
-    g_System.drawRect({502, 292}, 124, 2, darkGreen_);
-    g_System.drawRect({502, 318}, 124, 2, darkGreen_);
+    // Draw a border around action buttons
+    g_System.drawRect({502, 268}, 124, 2, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawRect({502, 292}, 124, 2, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawRect({502, 318}, 124, 2, menu_manager_->kMenuColorDarkGreen);
 
     // Draw the selected weapon big icon
     menuSprites().drawSprite(pSelectedWeap_->getBigIconId(), 502, 106, false, true);
@@ -330,9 +328,9 @@ void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
 void SelectMenu::drawSelectedModInfos(int x, int y)
 {
     // Draw a border around cancel button
-    g_System.drawRect({502, 268}, 124, 2, darkGreen_);
-    g_System.drawRect({502, 292}, 124, 2, darkGreen_);
-    g_System.drawRect({502, 318}, 124, 2, darkGreen_);
+    g_System.drawRect({502, 268}, 124, 2, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawRect({502, 292}, 124, 2, menu_manager_->kMenuColorDarkGreen);
+    g_System.drawRect({502, 318}, 124, 2, menu_manager_->kMenuColorDarkGreen);
 
     getMenuFont(FontManager::SIZE_1)->drawText(x, y, pSelectedMod_->getName(), true);
     char tmp[100];
@@ -360,10 +358,6 @@ void SelectMenu::handleShow() {
     updateAcceptEnabled();
     menu_manager_->resetSinceMouseDown();
 
-    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorGrey, grey_);
-    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorWhite, white_);
-    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, darkGreen_);
-
     dashOffset_ = 0;
 }
 
@@ -378,33 +372,33 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     if (t1) {
         if (t1->isActive()) {
             menuSprites().drawSprite(Sprite::MSPR_SELECT_1, 20, 84, false, true);
-            g_System.drawFillRect({68, 88}, 6, 36, white_);
+            g_System.drawFillRect({68, 88}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
-            g_System.drawFillRect({68, 88}, 6, 36, grey_);
+            g_System.drawFillRect({68, 88}, 6, 36, menu_manager_->kMenuColorGrey);
         }
     }
     if (t2) {
         if (t2->isActive()) {
             menuSprites().drawSprite(Sprite::MSPR_SELECT_2, 82, 84, false, true);
-            g_System.drawFillRect({132, 88}, 6, 36, white_);
+            g_System.drawFillRect({132, 88}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
-            g_System.drawFillRect({132, 88}, 6, 36, grey_);
+            g_System.drawFillRect({132, 88}, 6, 36, menu_manager_->kMenuColorGrey);
         }
     }
     if (t3) {
         if (t3->isActive()) {
             menuSprites().drawSprite(Sprite::MSPR_SELECT_3, 20, 162, false, true);
-            g_System.drawFillRect({68, 166}, 6, 36, white_);
+            g_System.drawFillRect({68, 166}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
-            g_System.drawFillRect({68, 166}, 6, 36, grey_);
+            g_System.drawFillRect({68, 166}, 6, 36, menu_manager_->kMenuColorGrey);
         }
     }
     if (t4) {
         if (t4->isActive()) {
             menuSprites().drawSprite(Sprite::MSPR_SELECT_4, 82, 162, false, true);
-            g_System.drawFillRect({132, 166}, 6, 36, white_);
+            g_System.drawFillRect({132, 166}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
-            g_System.drawFillRect({132, 166}, 6, 36, grey_);
+            g_System.drawFillRect({132, 166}, 6, 36, menu_manager_->kMenuColorGrey);
         }
     }
     if (sel_all_) {

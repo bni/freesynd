@@ -130,13 +130,6 @@ protected:
 
     WeaponInstance *weapon_dragged_;
     Point2D weapon_pos_;
-
-    //! Color used for rendering the menu : white
-    fs_eng::FSColor white_;
-    //! Color used for rendering the menu : grey
-    fs_eng::FSColor grey_;
-    //! Color used for rendering the menu : dark green
-    fs_eng::FSColor darkGreen_;
 };
 
 #endif

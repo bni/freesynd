@@ -151,6 +151,15 @@ public:
             since_mouse_down_ += elapsed;
     }
 
+    //! Common colors for Menus : Dark green
+    fs_eng::FSColor kMenuColorDarkGreen;
+    //! Common colors for Menus : Light green
+    fs_eng::FSColor kMenuColorLightGreen;
+    //! Common colors for Menus : white
+    fs_eng::FSColor kMenuColorWhite;
+    //! Common colors for Menus : grey
+    fs_eng::FSColor kMenuColorGrey;
+
 protected:
     //! Returns a menu with the given id
     Menu * getMenu(int menuId);
@@ -167,7 +176,7 @@ private:
     //! Loads the palette used in menu sprites
     bool loadMenuPalette();
 
-protected:
+private:
     /** The menu factory.*/
     MenuFactory *pFactory_;
     /** The list of currently loaded menus.*/

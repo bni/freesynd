@@ -30,7 +30,6 @@
 #include "menus/gamemenuid.h"
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/system/system.h"
-#include "fs-engine/gfx/screen.h"
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
@@ -275,55 +274,47 @@ void ResearchMenu::handleRender(DirtyList &dirtyList)
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
     if (pSelectedWeapon_) {
-        uint8 ldata[62];
-        memset(ldata, 16, sizeof(ldata));
-        g_Screen.scale2x(502, 318, sizeof(ldata), 1, ldata);
+        g_System.drawRect({502, 318}, 124, 2, getMenuManager()->kMenuColorDarkGreen);
 
-        menuSprites().drawSpriteXYZ(pSelectedWeapon_->getBigIconId(), 502, 108, 0, false, true);
+        menuSprites().drawSprite(pSelectedWeapon_->getBigIconId(), 502, 108, false, true);
         drawSelectedWeaponInfos(504, 196);
     }
 
     if (pSelectedMod_) {
-        uint8 ldata[62];
-        memset(ldata, 16, sizeof(ldata));
-        g_Screen.scale2x(502, 318, sizeof(ldata), 1, ldata);
+        g_System.drawRect({502, 318}, 124, 2, getMenuManager()->kMenuColorDarkGreen);
 
         drawSelectedModInfos(504, 108);
     }
 
     if (pSelectedRes_) {
-        uint8 ldata[63];
-        memset(ldata, 16, sizeof(ldata));
-        g_Screen.scale2x(18, 102, sizeof(ldata), 1, ldata);
-        g_Screen.scale2x(18, 158, sizeof(ldata), 1, ldata);
-        g_Screen.scale2x(18, 182, sizeof(ldata), 1, ldata);
+        // Draw separator between buttons
+        g_System.drawRect({18, 102}, 126, 2, getMenuManager()->kMenuColorDarkGreen);
+        g_System.drawRect({18, 158}, 126, 2, getMenuManager()->kMenuColorDarkGreen);
+        g_System.drawRect({18, 182}, 126, 2, getMenuManager()->kMenuColorDarkGreen);
     }
 
     if (pResForGraph_) {
-        int lastX = 205;
-        int lastY = 350;
-        int projectedX = pResForGraph_->getProjectedHour() + 205;
-        int projectedY = 110;
+        Point2D lastPt {205, 350};
+        Point2D projectedPt {pResForGraph_->getProjectedHour() + 205, 110};
 
         // draw progression
         std::list < Research::ProgressPoint > list = pResForGraph_->getProgressList();
         for (std::list < Research::ProgressPoint >::iterator it = list.begin();
                 it != list.end(); it++) {
             Research::ProgressPoint p = *it;
-            int x = p.hours + 205;
-            int y = 350 - (int)(p.percentage *2.4f);
+            Point2D nextPt {p.hours + 205, 350 - (int)(p.percentage *2.4f)};
 
-            g_Screen.drawLine(lastX, lastY, x, y, 252);
-            g_Screen.drawLine(lastX - 1, lastY, x - 1, y, 252);
+            g_System.drawLine(lastPt, nextPt, getMenuManager()->kMenuColorLightGreen);
+            g_System.drawLine(lastPt.add(-1, 0), nextPt.add(-1, 0), getMenuManager()->kMenuColorLightGreen);
 
-            lastX = x;
-            lastY = y;
+            lastPt.x = nextPt.x;
+            lastPt.y = nextPt.y;
         }
 
         // draw projection line
         if (pResForGraph_->getCurrFunding() != 0) {
-            g_Screen.drawLine(lastX, lastY, projectedX, projectedY, 16);
-            g_Screen.drawLine(lastX - 1, lastY, projectedX - 1, projectedY, 16);
+            g_System.drawLine(lastPt, projectedPt, getMenuManager()->kMenuColorDarkGreen);
+            g_System.drawLine(lastPt.add(-1, 0), projectedPt.add(-1, 0), getMenuManager()->kMenuColorDarkGreen);
         }
     }
 }
