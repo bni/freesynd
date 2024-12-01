@@ -26,13 +26,10 @@
 
 #include "debriefmenu.h"
 
-#include <stdio.h>
-#include <assert.h>
-
+#include "fs-engine/menus/menumanager.h"
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/squad.h"
 #include "fs-engine/system/system.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/logomanager.h"
@@ -42,7 +39,7 @@
 #include "core/gamesession.h"
 
 
-DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain) {
+DebriefMenu::DebriefMenu(MenuManager *m) : Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain, true) {
     cursorOnShow_ = kMenuCursor;
     int y = 35;
     int right_x = 310;
@@ -175,8 +172,8 @@ void DebriefMenu::handleRender(DirtyList &dirtyList) {
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
     // Draws separator line between title and statistics
-    g_Screen.drawLine(20, 117, 20 + separatorSize_, 117, 252);
-    g_Screen.drawLine(20, 116, 20 + separatorSize_, 116, 252);
+    g_System.drawHLine({20, 117}, separatorSize_, getMenuManager()->kMenuColorLightGreen);
+    g_System.drawHLine({20, 116}, separatorSize_, getMenuManager()->kMenuColorLightGreen);
 }
 
 void DebriefMenu::handleLeave() {

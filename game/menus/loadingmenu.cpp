@@ -24,10 +24,8 @@
  *                                                                      *
  ************************************************************************/
 
-#include <stdio.h>
-#include <assert.h>
-
 #include "loadingmenu.h"
+
 #include "fs-engine/gfx/screen.h"
 #include "fs-kernel/model/mission.h"
 #include "core/gamecontroller.h"
@@ -35,7 +33,7 @@
 #include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 
-LoadingMenu::LoadingMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLoading, fs_game_menus::kMenuIdMain),
+LoadingMenu::LoadingMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLoading, fs_game_menus::kMenuIdMain, true),
     timer_(2000)
 {
     isCachable_ = false;
