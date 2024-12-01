@@ -38,9 +38,11 @@
 #include "fs-engine/system/system.h"
 #include "fs-kernel/model/mod.h"
 
+const int SelectMenu::kSegmentSize = 8;
+
 SelectMenu::SelectMenu(MenuManager * m):
         Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, true),
-        cur_agent_(0), tick_count_(0), rnd_(0), sel_all_(false) {
+        cur_agent_(0), timerSelector_(250), dashOffset_(0), sel_all_(false) {
     cursorOnShow_ = kMenuCursor;
     
     tab_ = TAB_EQUIPS;
@@ -88,32 +90,24 @@ SelectMenu::~SelectMenu()
 }
 
 /*!
- * Draws a dashed line around the currently selected agent selector.
- * \param x Coordinates of the top left corner
- * \param y Coordinates of the top left corner
+ * Draws a dashed rectangle around the currently selected agent selector.
+ * \param pos Coordinates of the top left corner
  */
-void SelectMenu::drawAgentSelector(int x, int y) {
-    // First create a transparent sprite
-    uint8 cdata[30 * 33];
-    int cwidth = 30;
-    int cheight = 33;
-    memset(cdata, 255, sizeof(cdata));
+void SelectMenu::drawAgentSelector(Point2D pos) {
+    // We draw the rectangle by drawing 4 pairs of lines
+    // dashoffset is used for animation
+    g_System.drawDashedHLine(pos, 57, kSegmentSize, dashOffset_, darkGreen_);
+    g_System.drawDashedHLine(pos.add(0, 1), 57, kSegmentSize, dashOffset_, darkGreen_);
 
-    // Draws the upper and lower lines
-    for (int i = 0; i < cwidth; i++) {
-        cdata[i] = ((rnd_ + i) % 8 <= 4) ? 252 : 16;
-        cdata[i + (cheight - 1) * cwidth] =
-            ((rnd_ + i) % 8 >= 4) ? 252 : 16;
-    }
+    g_System.drawDashedVLine(pos.add(59, 0), 65, kSegmentSize, dashOffset_, darkGreen_);
+    g_System.drawDashedVLine(pos.add(58, 0), 65, kSegmentSize, dashOffset_, darkGreen_);
 
-    // Draws the right and left line
-    for (int j = 0; j < cheight; j++) {
-        cdata[j * cwidth] = ((rnd_ + j) % 8 >= 4) ? 252 : 16;
-        cdata[j * cwidth + cwidth - 1] = ((rnd_ + j) % 8 <= 4) ? 252 : 16;
-    }
+    int reverseOffset = 2 * kSegmentSize - dashOffset_;
+    g_System.drawDashedHLine(pos.add(0, 64), 57, kSegmentSize, reverseOffset, darkGreen_);
+    g_System.drawDashedHLine(pos.add(0, 65), 57, kSegmentSize, reverseOffset, darkGreen_);
 
-    // blits the sprite at given position
-    g_Screen.scale2x(x, y, cwidth, cheight, cdata);
+    g_System.drawDashedVLine(pos, 65, kSegmentSize, reverseOffset, darkGreen_);
+    g_System.drawDashedVLine(pos.add(1, 0), 65, kSegmentSize, reverseOffset, darkGreen_);
 }
 
 void SelectMenu::drawAgent()
@@ -154,9 +148,9 @@ void SelectMenu::drawAgent()
             false);
     }
 
-    menuSprites().drawSpriteXYZ(arms, armsx, armsy, 0, false, true);
-    menuSprites().drawSpriteXYZ(torso, 224, torsoy, 0, false, true);
-    menuSprites().drawSpriteXYZ(legs, 224, legsy, 0, false, true);
+    menuSprites().drawSprite(arms, armsx, armsy, false, true);
+    menuSprites().drawSprite(torso, 224, torsoy, false, true);
+    menuSprites().drawSprite(legs, 224, legsy, false, true);
 
     if (selected->slot(Mod::MOD_CHEST)) {
         int chest = selected->slot(Mod::MOD_CHEST)->icon(selected->isMale());
@@ -168,15 +162,14 @@ void SelectMenu::drawAgent()
             chestx += 8;
             chesty += 2;
         }
-        menuSprites().drawSpriteXYZ(chest, chestx, chesty, 0, false,
-                                          true);
+        menuSprites().drawSprite(chest, chestx, chesty, false, true);
     }
 
     if (selected->slot(Mod::MOD_HEART)) {
         int heart = selected->slot(Mod::MOD_HEART)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 160,
             selected->slot(Mod::MOD_HEART)->getName(), false);
-        menuSprites().drawSpriteXYZ(heart, 254, 166, 0, false, true);
+        menuSprites().drawSprite(heart, 254, 166, false, true);
     }
 
     if (selected->slot(Mod::MOD_EYES)) {
@@ -187,8 +180,7 @@ void SelectMenu::drawAgent()
         if (!selected->isMale()) {
             eyesx += 2;
         }
-        menuSprites().drawSpriteXYZ(eyes, eyesx, 116, 0, false,
-                                          true);
+        menuSprites().drawSprite(eyes, eyesx, 116, false, true);
     }
 
     if (selected->slot(Mod::MOD_BRAIN)) {
@@ -199,18 +191,18 @@ void SelectMenu::drawAgent()
         if (!selected->isMale()) {
             brainx += 2;
         }
-        menuSprites().drawSpriteXYZ(brain, brainx, 114, 0, false, true);
+        menuSprites().drawSprite(brain, brainx, 114, false, true);
     }
     // restore lines over agent
-    g_Screen.blitFromBackground(254, 124, 30, 2);
-    g_Screen.blitFromBackground(264, 132, 30, 2);
-    g_Screen.blitFromBackground(266, 174, 36, 2);
-    g_Screen.blitFromBackground(252, 210, 56, 2);
-    g_Screen.blitFromBackground(302, 232, 10, 2);
-    g_Screen.blitFromBackground(264, 256, 30, 2);
+    menu_manager_->copyFromBackground({254, 124}, 30, 2);
+    menu_manager_->copyFromBackground({264, 132}, 30, 2);
+    menu_manager_->copyFromBackground({266, 174}, 36, 2);
+    menu_manager_->copyFromBackground({252, 210}, 56, 2);
+    menu_manager_->copyFromBackground({302, 232}, 10, 2);
+    menu_manager_->copyFromBackground({264, 256}, 30, 2);
 
     // draw inventory
-    screenPoint pos[8];
+    Point2D pos[8];
     WeaponInstance * draw_weapons[8];
     for (uint8 i = 0; i < 8; ++i) {
         draw_weapons[i] = NULL;
@@ -225,31 +217,27 @@ void SelectMenu::drawAgent()
                 draw_weapons[7] = wi;
             } else {
                 draw_weapons[k] = wi;
-                screenPoint pos_l = {366 + i * 32, 308 + j * 32};
+                Point2D pos_l = {366 + i * 32, 308 + j * 32};
                 pos[k] = pos_l;
                 ++k;
             }
 
         }
 
-    for (uint8 i = 0; i < 8; ++i) {
+    // Draw weapons for the selected agent
+    for (uint8_t i = 0; i < 8; ++i) {
         WeaponInstance *wi = draw_weapons[i];
 
         if (wi) {
-            Weapon *pW = wi->getClass();
-            menuSprites().drawSpriteXYZ(pW->getSmallIconId(),
-                pos[i].x, pos[i].y, 0, false, true);
-            uint8 data[3] = {204, 204, 204};
-            if (pW->ammo() != -1) {
+            Weapon *pWeaponClass = wi->getClass();
+            menuSprites().drawSprite(pWeaponClass->getSmallIconId(), pos[i].x, pos[i].y, false, true);
+
+            if (pWeaponClass->usesAmmo()) {
                 int n = wi->ammoRemaining();
-                if (pW->ammo() == 0)
-                    n = 24;
-                else {
-                    n *= 24;
-                    n /= pW->ammo();
-                }
-                for (int k = 0; k < n; k++)
-                    g_Screen.scale2x(pos[i].x + k + 4, pos[i].y + 22, 1, 3, data);
+                n *= 24;
+                n /= pWeaponClass->ammoCapacity();
+
+                g_System.drawFillRect(pos[i].add(4, 22), n, 6, white_);
             }
         }
     }
@@ -257,11 +245,9 @@ void SelectMenu::drawAgent()
 
 void SelectMenu::handleTick(uint32_t elapsed)
 {
-    tick_count_ += elapsed;
     // Updates the moving agent selector
-    if (tick_count_ > 300) {
-        rnd_ = (rnd_ + 1) % 8;
-        tick_count_ = 0;
+    if (timerSelector_.update(elapsed)) {
+        dashOffset_ = (dashOffset_ + 1) % (2*kSegmentSize);
         needRendering();
     }
 
@@ -287,12 +273,12 @@ void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
     char tmp[100];
 
     // Draw a border around cancel button
-    g_Screen.drawRect(502, 268, 124, 2, fs_cmn::kColorDarkGreen);
-    g_Screen.drawRect(502, 292, 124, 2, fs_cmn::kColorDarkGreen);
-    g_Screen.drawRect(502, 318, 124, 2, fs_cmn::kColorDarkGreen);
+    g_System.drawRect({502, 268}, 124, 2, darkGreen_);
+    g_System.drawRect({502, 292}, 124, 2, darkGreen_);
+    g_System.drawRect({502, 318}, 124, 2, darkGreen_);
 
     // Draw the selected weapon big icon
-    menuSprites().drawSpriteXYZ(pSelectedWeap_->getBigIconId(), 502, 106, 0, false, true);
+    menuSprites().drawSprite(pSelectedWeap_->getBigIconId(), 502, 106, false, true);
 
     const int shifted_x = x + 52;
     getMenuFont(FontManager::SIZE_1)->drawText(x, y, pSelectedWeap_->getName(), true);
@@ -304,7 +290,7 @@ void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
     y += 12;
 
     if (pSelectedWeap_->usesAmmo()) {
-        sprintf(tmp, ":%d", pSelectedWeap_->ammo());
+        sprintf(tmp, ":%d", pSelectedWeap_->ammoCapacity());
         getMenuFont(FontManager::SIZE_1)->drawText(x, y,
             getMessage("SELECT_WPN_AMMO").c_str(), true);
         getMenuFont(FontManager::SIZE_1)->drawText(shifted_x, y, tmp, true);
@@ -344,9 +330,9 @@ void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
 void SelectMenu::drawSelectedModInfos(int x, int y)
 {
     // Draw a border around cancel button
-    g_Screen.drawRect(502, 268, 124, 2, fs_cmn::kColorDarkGreen);
-    g_Screen.drawRect(502, 292, 124, 2, fs_cmn::kColorDarkGreen);
-    g_Screen.drawRect(502, 318, 124, 2, fs_cmn::kColorDarkGreen);
+    g_System.drawRect({502, 268}, 124, 2, darkGreen_);
+    g_System.drawRect({502, 292}, 124, 2, darkGreen_);
+    g_System.drawRect({502, 318}, 124, 2, darkGreen_);
 
     getMenuFont(FontManager::SIZE_1)->drawText(x, y, pSelectedMod_->getName(), true);
     char tmp[100];
@@ -373,6 +359,12 @@ void SelectMenu::handleShow() {
 
     updateAcceptEnabled();
     menu_manager_->resetSinceMouseDown();
+
+    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorGrey, grey_);
+    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorWhite, white_);
+    menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, darkGreen_);
+
+    dashOffset_ = 0;
 }
 
 void SelectMenu::handleRender(DirtyList &dirtyList) {
@@ -385,57 +377,57 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     Agent *t4 = g_gameCtrl.agents().squadMember(AgentManager::kSlot4);
     if (t1) {
         if (t1->isActive()) {
-            menuSprites().drawSpriteXYZ(Sprite::MSPR_SELECT_1, 20, 84, 0, false, true);
-            g_Screen.drawRect(68, 88, 6, 36, 204);
+            menuSprites().drawSprite(Sprite::MSPR_SELECT_1, 20, 84, false, true);
+            g_System.drawFillRect({68, 88}, 6, 36, white_);
         } else {
-            g_Screen.drawRect(68, 88, 6, 36, 10);
+            g_System.drawFillRect({68, 88}, 6, 36, grey_);
         }
     }
     if (t2) {
         if (t2->isActive()) {
-            menuSprites().drawSpriteXYZ(Sprite::MSPR_SELECT_2, 82, 84, 0, false, true);
-            g_Screen.drawRect(132, 88, 6, 36, 204);
+            menuSprites().drawSprite(Sprite::MSPR_SELECT_2, 82, 84, false, true);
+            g_System.drawFillRect({132, 88}, 6, 36, white_);
         } else {
-            g_Screen.drawRect(132, 88, 6, 36, 10);
+            g_System.drawFillRect({132, 88}, 6, 36, grey_);
         }
     }
     if (t3) {
         if (t3->isActive()) {
-            menuSprites().drawSpriteXYZ(Sprite::MSPR_SELECT_3, 20, 162, 0, false, true);
-            g_Screen.drawRect(68, 166, 6, 36, 204);
+            menuSprites().drawSprite(Sprite::MSPR_SELECT_3, 20, 162, false, true);
+            g_System.drawFillRect({68, 166}, 6, 36, white_);
         } else {
-            g_Screen.drawRect(68, 166, 6, 36, 10);
+            g_System.drawFillRect({68, 166}, 6, 36, grey_);
         }
     }
     if (t4) {
         if (t4->isActive()) {
-            menuSprites().drawSpriteXYZ(Sprite::MSPR_SELECT_4, 82, 162, 0, false, true);
-            g_Screen.drawRect(132, 166, 6, 36, 204);
+            menuSprites().drawSprite(Sprite::MSPR_SELECT_4, 82, 162, false, true);
+            g_System.drawFillRect({132, 166}, 6, 36, white_);
         } else {
-            g_Screen.drawRect(132, 166, 6, 36, 10);
+            g_System.drawFillRect({132, 166}, 6, 36, grey_);
         }
     }
     if (sel_all_) {
-        menuSprites().drawSpriteXYZ(77, 20, 152, 0, false, true);
+        menuSprites().drawSprite(77, 20, 152, false, true);
     }
 
     // Draw the selector around the selected agent
     switch (cur_agent_) {
         case 0:
-            drawAgentSelector(20, 84);
+            drawAgentSelector({20, 84});
             break;
         case 1:
-            drawAgentSelector(82, 84);
+            drawAgentSelector({82, 84});
             break;
         case 2:
-            drawAgentSelector(20, 162);
+            drawAgentSelector({20, 162});
             break;
         case 3:
-            drawAgentSelector(82, 162);
+            drawAgentSelector({82, 162});
             break;
     }
 
-    if (pSelectedWeap_) {
+   if (pSelectedWeap_) {
         drawSelectedWeaponInfos(504, 194);
     } else if (pSelectedMod_) {
         drawSelectedModInfos(504, 108);
@@ -448,7 +440,6 @@ void SelectMenu::handleLeave() {
     // resetting menu, all other variables are reset in handleShow
     // with showItemList()
     tab_ = TAB_EQUIPS;
-    rnd_ = 0;
     cur_agent_ = 0;
     sel_all_ = false;
     weapon_dragged_ = NULL;
@@ -493,8 +484,7 @@ void SelectMenu::updateAcceptEnabled() {
 void SelectMenu::handleMouseMotion(Point2D point, uint32_t state)
 {
     if (weapon_dragged_) {
-        weapon_pos_.x = point.x;
-        weapon_pos_.y = point.y;
+        weapon_pos_ = point;
         needRendering();
     }
 }
@@ -583,8 +573,7 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
                 WeaponInstance *wi = selected->weapon(newId - 1);
                 if (button == 3) {
                     weapon_dragged_ = wi;
-                    weapon_pos_.x = point.x;
-                    weapon_pos_.y = point.y;
+                    weapon_pos_ = point;
                 }
 
                 if (newId != selectedWInstId_) { // Do something only if a different weapon is selected

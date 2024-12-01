@@ -1271,12 +1271,12 @@ void GameplayMenu::drawWeaponSelectors() {
                 if (wi) {
                     int n;
 
-                    if (wi->ammo() == -1)
+                    if (!wi->usesAmmo())
                         continue;
-                    if (wi->ammo() == 0)
+                    if (wi->ammoCapacity() == 0)
                         n = 25;
                     else
-                        n = 25 * wi->ammoRemaining() / wi->ammo();
+                        n = 25 * wi->ammoRemaining() / wi->ammoCapacity();
 
                     g_Screen.drawRect(32 * i + 3, 46 + 44 + 10 + 46 + 44 + 15 + j * 32 + 23 + 2,
                         n, 5, 12);

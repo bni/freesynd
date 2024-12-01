@@ -132,8 +132,6 @@ MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
 
     since_mouse_down_ = 0;
     mouseup_was_ = false;
-
-    pBackgroundTexture_ = g_System.createTexture();
 }
 
 MenuManager::~MenuManager()
@@ -425,6 +423,10 @@ void MenuManager::preSaveBackground() {
 //! Called after background is saved
 void MenuManager::postSaveBackground() {
     g_System.resetRenderTarget();
+}
+
+void MenuManager::copyFromBackground(Point2D pos, int width, int height) {
+    pBackgroundTexture_->render(pos, pos, width, height);
 }
 
 

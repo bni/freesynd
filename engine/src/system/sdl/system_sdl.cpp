@@ -500,9 +500,9 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
 
 /*!
  * Draw a vertical line with given length and color
- * @param start 
- * @param length 
- * @param color 
+ * @param start The starting point of the line
+ * @param length The length of the line
+ * @param color Color of the line
  */
 void SystemSDL::drawVLine(Point2D start, int length, fs_eng::FSColor color) {
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
@@ -511,13 +511,97 @@ void SystemSDL::drawVLine(Point2D start, int length, fs_eng::FSColor color) {
 
 /*!
  * Draw a horizontal line with given length and color
- * @param start 
- * @param length 
- * @param color 
+ * @param start The starting point of the line
+ * @param length The length of the line
+ * @param color Color of the line
  */
 void SystemSDL::drawHLine(Point2D start, int length, fs_eng::FSColor color) {
     SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
     SDL_RenderDrawLine( pRenderer_, start.x, start.y, start.x + length, start.y );
+}
+
+/*!
+ * Draw a vertical line of the given length which is composed of segments of dashLength and space of same size.
+ * @param start The starting point of the line
+ * @param length The length of the line
+ * @param dashLength This is the length of a segment. Drawn segments and not drawn segment have the same size
+ * @param dashOffset This value is used to animate the dashline. Its maximum is twice of dashLength.
+ * @param color Color of the line
+ */
+void SystemSDL::drawDashedVLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) {
+    // dashOffset cannot be longer than 2 times the length of a segment
+    // knowing that drawn and non drawn segments are equals
+    dashOffset %= 2 * dashLength;
+    Point2D end = start.add(0, length);
+
+    SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
+   
+    Point2D segmentStart = start;
+    Point2D segmentEnd = start;
+
+    if (dashOffset <= dashLength) {
+        segmentEnd.y += dashOffset;
+    } else {
+        segmentStart.y += (dashOffset - dashLength);
+        segmentEnd.y = (segmentStart.y + dashLength);
+    }
+    SDL_RenderDrawLine(pRenderer_, segmentStart.x, segmentStart.y, segmentEnd.x, segmentEnd.y);
+    // distance done is the accumulation of draw segment and non drawn segment
+    int distanceDone = dashOffset;
+
+    int i=0;
+    while (distanceDone < length && i < 100) {
+        if (segmentEnd.y + dashLength > end.y) {
+            break;
+        }
+        segmentStart.y = segmentEnd.y + dashLength;
+        segmentEnd.y = (segmentStart.y + dashLength > end.y) ? end.y : segmentStart.y + dashLength;
+        SDL_RenderDrawLine(pRenderer_, segmentStart.x, segmentStart.y, segmentEnd.x, segmentEnd.y);
+        distanceDone += dashLength + (segmentEnd.y - segmentStart.y);
+        i++;
+    }
+}
+
+/*!
+ * Draw a horizontal line of the given length which is composed of segments of dashLength and space of same size.
+ * @param start The starting point of the line
+ * @param length The length of the line
+ * @param dashLength This is the length of a segment. Drawn segments and not drawn segment have the same size
+ * @param dashOffset This value is used to animate the dashline. Its maximum is twice of dashLength.
+ * @param color Color of the line
+ */
+void SystemSDL::drawDashedHLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) {
+    // dashOffset cannot be longer than 2 times the length of a segment
+    // knowing that drawn and non drawn segments are equals
+    dashOffset %= 2 * dashLength;
+    Point2D end = start.add(length, 0);
+
+    SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
+   
+    Point2D segmentStart = start;
+    Point2D segmentEnd = start;
+
+    if (dashOffset <= dashLength) {
+        segmentEnd.x += dashOffset;
+    } else {
+        segmentStart.x += (dashOffset - dashLength);
+        segmentEnd.x = (segmentStart.x + dashLength);
+    }
+    SDL_RenderDrawLine(pRenderer_, segmentStart.x, segmentStart.y, segmentEnd.x, segmentEnd.y);
+    // distance done is the accumulation of draw segment and non drawn segment
+    int distanceDone = dashOffset;
+
+    int i=0;
+    while (distanceDone < length && i < 100) {
+        if (segmentEnd.x + dashLength > end.x) {
+            break;
+        }
+        segmentStart.x = segmentEnd.x + dashLength;
+        segmentEnd.x = (segmentStart.x + dashLength > end.x) ? end.x : segmentStart.x + dashLength;
+        SDL_RenderDrawLine(pRenderer_, segmentStart.x, segmentStart.y, segmentEnd.x, segmentEnd.y);
+        distanceDone += dashLength + (segmentEnd.x - segmentStart.x);
+        i++;
+    }
 }
 
 /*!

@@ -215,7 +215,7 @@ void Weapon::initFromConfig(WeaponType w_type, ConfigFile &conf) {
         sprintf(propName, pattern, w_type, "cost");
         cost_ = conf.read<int>(propName);
         sprintf(propName, pattern, w_type, "ammo.nb");
-        ammo_ = conf.read<int>(propName, 0);
+        ammoCapacity_ = conf.read<int>(propName, 0);
         sprintf(propName, pattern, w_type, "ammo.price");
         ammo_cost_ = conf.read<int>(propName, 0);
         sprintf(propName, pattern, w_type, "range");
@@ -252,7 +252,7 @@ void Weapon::initFromConfig(WeaponType w_type, ConfigFile &conf) {
 }
 
 int Weapon::calculateReloadingCost(int remaingAmmo) {
-    return (ammo_ - remaingAmmo) * ammo_cost_;
+    return (ammoCapacity_ - remaingAmmo) * ammo_cost_;
 }
 
 /*!
@@ -270,7 +270,7 @@ WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16 anId, Map *pMap, in
         bombSoundTimer(pWeaponClass->reloadTime()), bombExplosionTimer(pWeaponClass->timeForShot()),
         flamerTimer_(180) {
     pWeaponClass_ = pWeaponClass;
-    ammo_remaining_ = remainingAmmo == -1 ? pWeaponClass->ammo() : remainingAmmo;
+    ammo_remaining_ = remainingAmmo == -1 ? pWeaponClass->ammoCapacity() : remainingAmmo;
     pOwner_ = NULL;
     activated_ = false;
     if (pWeaponClass->getType() == Weapon::TimeBomb

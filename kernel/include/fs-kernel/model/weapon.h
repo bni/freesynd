@@ -100,7 +100,8 @@ public:
     int anim() { return anim_; }
 
     int cost() { return cost_; }
-    int ammo() { return ammo_; }
+    //! Return the maximum ammo that the weapon can hold
+    int ammoCapacity() { return ammoCapacity_; }
     int ammoCost() { return ammo_cost_; }
     int range() { return range_; }
     int damagePerShot() { return dmg_per_shot_; }
@@ -231,7 +232,12 @@ protected:
     int cost_;
     /*! The price to reload the weapon.*/
     int ammo_cost_;
-    int ammo_, range_, dmg_per_shot_;
+    /*!
+     * Some weapon can have ammo and be reloaded.
+     * Weapons that don't use ammo have a zero capacity
+     */
+    int ammoCapacity_;
+    int range_, dmg_per_shot_;
     /*!Rank is used to order shooting weapons by value.*/
     int rank_;
     WeaponType type_;
@@ -294,7 +300,7 @@ public:
 
     const char * name() { return pWeaponClass_->getName(); }
     int range() { return pWeaponClass_->range(); }
-    int ammo() { return pWeaponClass_->ammo(); }
+    int ammoCapacity() { return pWeaponClass_->ammoCapacity(); }
     int rank() { return pWeaponClass_->rank(); }
     int getWeight() { return pWeaponClass_->weight(); }
     uint32 shotProperty() { return pWeaponClass_->shotProperty(); }
@@ -325,10 +331,10 @@ public:
     bool hasSameTypeAs(const WeaponInstance & otherWeapon) { return pWeaponClass_->getType() == otherWeapon.getClass()->getType();}
 
     bool needsReloading() {
-        return pWeaponClass_->ammo() > ammo_remaining_;
+        return pWeaponClass_->ammoCapacity() > ammo_remaining_;
     }
 
-    void reload() { ammo_remaining_ = pWeaponClass_->ammo(); }
+    void reload() { ammo_remaining_ = pWeaponClass_->ammoCapacity(); }
 
     //! Plays the weapon's sound.
     void playSound();

@@ -29,6 +29,7 @@
 #define SELECTMENU_H
 
 #include "fs-engine/menus/menu.h"
+#include "fs-utils/misc/timer.h"
 
 class ListBox;
 class WeaponInstance;
@@ -57,7 +58,7 @@ protected:
 
     void updateClock();
     //! Draws a focus around the selected agent picture
-    void drawAgentSelector(int x, int y);
+    void drawAgentSelector(Point2D pos);
     void drawAgent();
     void drawSelectedWeaponInfos(int x, int y);
     void drawSelectedModInfos(int x, int y);
@@ -79,13 +80,18 @@ protected:
         TAB_TEAM = 2
     };
 
+    //! Size of a segment for the dotted line of the agent selector
+    static const int kSegmentSize;
+
     ETab tab_;
     /*! Id of the currently selected agent.*/
     int cur_agent_;
     /*! Counter to update the rnd_ field.*/
-    int tick_count_;
-    /*! A counter used to draw the agent selector.*/
-    int rnd_;
+    fs_utils::Timer timerSelector_;
+    /*! This offset is used to draw the dash line for the selector.
+     * It's incremented each time the timer is updated.
+     */
+    int dashOffset_;
     bool sel_all_;
     /*! Selected weapon on the weapon list.*/
     Weapon *pSelectedWeap_;
@@ -123,11 +129,14 @@ protected:
     ListBox *pModsLBox_;
 
     WeaponInstance *weapon_dragged_;
-    struct screenPoint{
-        int x;
-        int y;
-    };
-    screenPoint weapon_pos_;
+    Point2D weapon_pos_;
+
+    //! Color used for rendering the menu : white
+    fs_eng::FSColor white_;
+    //! Color used for rendering the menu : grey
+    fs_eng::FSColor grey_;
+    //! Color used for rendering the menu : dark green
+    fs_eng::FSColor darkGreen_;
 };
 
 #endif

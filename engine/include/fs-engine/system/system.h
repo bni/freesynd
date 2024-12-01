@@ -110,10 +110,14 @@ public:
      * Draw a vertical line with the given color
      */
     virtual void drawVLine(Point2D start, int length, fs_eng::FSColor color) = 0;
+    //! Draw a vertical dashed line with the given color
+    virtual void drawDashedVLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) = 0;
     /**
      * Draw a horizontal line with the given color
      */
     virtual void drawHLine(Point2D start, int length, fs_eng::FSColor color) = 0;
+    //! Draw a horizontal dashed line with the given color
+    virtual void drawDashedHLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) = 0;
     /**
      * Draw a line with the given color
      */

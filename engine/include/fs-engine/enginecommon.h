@@ -67,6 +67,7 @@ namespace fs_eng
         kMenuPaletteColorBrown = 5,
         kMenuPaletteColorRed = 6,
         kMenuPaletteColorBlueGrey = 7,
+        kMenuPaletteColorGrey = 10,
         kMenuPaletteColorOrange = 14, 
         kMenuPaletteColorLightOrange = 3,
         kMenuPaletteColorYellow = 11,
@@ -74,7 +75,8 @@ namespace fs_eng
         kMenuPaletteColorLightBrown = 13,
         kMenuPaletteColorDarkBlue = 15,
         kMenuPaletteColorDarkGreen = 16,
-        kMenuPaletteColorLightGreen = 252
+        kMenuPaletteColorLightGreen = 252,
+        kMenuPaletteColorWhite = 204
     };
 }
 

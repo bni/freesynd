@@ -210,8 +210,8 @@ void ResearchMenu::drawSelectedWeaponInfos(int x, int y) {
     getMenuFont(FontManager::SIZE_1)->drawText(x, y + 12, tmp, false);
     y += 24;
 
-    if (pSelectedWeapon_->ammo() >= 0) {
-        sprintf(tmp, "AMMO   :%d", pSelectedWeapon_->ammo());
+    if (pSelectedWeapon_->ammoCapacity() >= 0) {
+        sprintf(tmp, "AMMO   :%d", pSelectedWeapon_->ammoCapacity());
         getMenuFont(FontManager::SIZE_1)->drawText(x, y, tmp, false);
 y += 12;
     }
@@ -222,7 +222,7 @@ y += 12;
         y += 12;
     }
 
-    if (pSelectedWeapon_->damagePerShot() >= 0 && pSelectedWeapon_->ammo() >= 0) {
+    if (pSelectedWeapon_->damagePerShot() >= 0 && pSelectedWeapon_->ammoCapacity() >= 0) {
         sprintf(tmp, "SHOT   :%d", pSelectedWeapon_->damagePerShot());
         getMenuFont(FontManager::SIZE_1)->drawText(x, y, tmp, false);
         y += 12;

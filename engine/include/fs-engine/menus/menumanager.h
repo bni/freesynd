@@ -134,6 +134,8 @@ public:
     void preSaveBackground();
     //! Called after background is saved
     void postSaveBackground();
+    //! Copy a portion of the background texture to the screen
+    void copyFromBackground(Point2D pos, int width, int height);
 
     //! Returns true if a menu is being displayed
     bool showingMenu() { return current_ != NULL; }

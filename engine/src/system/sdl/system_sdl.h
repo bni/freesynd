@@ -75,6 +75,9 @@ public:
 
     void drawVLine(Point2D start, int length, fs_eng::FSColor color) override;
     void drawHLine(Point2D start, int length, fs_eng::FSColor color) override;
+    void drawDashedVLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) override;
+    void drawDashedHLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) override;
+
     void drawLine(Point2D start, Point2D end, fs_eng::FSColor color) override;
     void drawRect(Point2D pos, int width, int height, fs_eng::FSColor color) override;
     void drawFillRect(Point2D pos, int width, int height, fs_eng::FSColor color) override;
