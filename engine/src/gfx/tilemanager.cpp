@@ -287,29 +287,35 @@ bool TileManager::loadTiles()
  * @param sixbit 6 bits or 8 bits palette
  * @return true is ok
  */
-bool TileManager::setPaletteForMission(int missionId, bool sixbit) {
-    bool res = false;
-    //NOTE: I'm not sure of the way we get the palette
-    std::string fname = std::format("hpal0{}.dat", missionId % 5 + 1);
+//bool TileManager::setPaletteForMission(int missionId, bool sixbit) {
+bool TileManager::setPalette(int paletteId) {
+    std::string fname = std::format("hpal0{}.dat", paletteId);
 
-    LOG(Log::k_FLG_GFX, "MenuManager", "setPalette", ("Setting palette : %s", fname.c_str()))
+    LOG(Log::k_FLG_GFX, "TileManager", "setPalette", ("Setting palette : %s", fname.c_str()))
     size_t size;
-    uint8 *data = File::loadOriginalFile(fname, size);
+    uint8_t *paletteData = File::loadOriginalFile(fname, size);
 
-    if (data) {
-        if (sixbit) {
-            res = tilesTexture_->setPalette6b3(data, 256);
-        } else {
-            res = tilesTexture_->setPalette8b3(data, 256);
-        }
-        delete[] data;
-
-        if (res) {
-            res = tilesTexture_->loadTextureFromSurface();
-        }
+    if (!paletteData) {
+        FSERR(Log::k_FLG_GFX, "TileManager", "setPalette", ("Could not read file %s", fname.c_str()))
+        return false;
     }
 
-    return res;
+    for (size_t i = 0; i < fs_eng::kPaletteMaxColor; ++i) {
+        uint8_t r = paletteData[i * 3 + 0];
+        uint8_t g = paletteData[i * 3 + 1];
+        uint8_t b = paletteData[i * 3 + 2];
+
+        // multiply by 255 divide by 63 isn't good enough?
+        palette_[i].r = (r << 2) | (r >> 4);
+        palette_[i].g = (g << 2) | (g >> 4);
+        palette_[i].b = (b << 2) | (b >> 4);
+    }
+
+    if (tilesTexture_->setPalette(palette_)) {
+        return tilesTexture_->loadTextureFromSurface();
+    }
+
+    return false;
 }
 
 /*!

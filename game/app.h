@@ -47,10 +47,6 @@ class App : public BaseApp {
 
     void setCheatCode(const char *name);
 
-    MapManager &maps() {
-        return maps_;
-    }
-
 #ifdef _DEBUG
 public:
     uint8 debug_breakpoint_trigger_;
@@ -67,8 +63,6 @@ protected:
 private:
     /*! Controls the game logic. */
     std::unique_ptr<GameController> game_ctlr_;
-
-    MapManager maps_;
 };
 
 #endif  // APP_H

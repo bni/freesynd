@@ -27,9 +27,10 @@
 
 #include "briefmenu.h"
 
-#include <stdio.h>
-#include <assert.h>
-#include "app.h"
+#include <cassert>
+
+#include "fs-engine/menus/menumanager.h"
+#include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
 const int BriefMenu::kMiniMapScreenX = 504;
@@ -127,7 +128,7 @@ void BriefMenu::handleShow() {
     int cur_miss = g_Session.getSelectedBlock().mis_id;
 
     // Loads mission briefing
-    p_briefing_ = g_missionCtrl.loadBriefing(cur_miss);
+    p_briefing_ = g_gameCtrl.loadBriefing(cur_miss);
     assert(p_briefing_ != NULL);
 
     start_line_ = 0;

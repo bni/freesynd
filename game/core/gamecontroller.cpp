@@ -36,14 +36,25 @@
 
 #include "core/gamesession.h"
 
-GameController::GameController(MapManager *pMapManager) :
-        missions_(pMapManager),
+GameController::GameController() :
+        missionMgr_(&tileMgr_),
         session_(std::make_unique<GameSession>(&weaponMgr_, &mods_)) {
     agents_.setModManager(&mods_);
     agents_.setWeaponManager(&weaponMgr_);
 }
 
 GameController::~GameController() {}
+
+bool GameController::initialize() {
+
+    LOG(Log::k_FLG_INFO, "GameController", "initialize", ("loading game tileset..."))
+    if (!tileMgr_.loadTiles()) {
+        return false;
+    }
+
+    LOG(Log::k_FLG_INFO, "GameController", "initialize", ("Loading game data..."))
+    return reset();
+}
 
 void GameController::destroy() {
     LOG(Log::k_FLG_MEM, "GameController", "destroy", ("Destruction..."))
@@ -66,6 +77,58 @@ bool GameController::reset() {
     return true;
 }
 
+/*!
+ * Activate a cheat code with the given name. Possible
+ * cheat codes are :
+ * - DO IT AGAIN : Possibility to replay a completed mission
+ * - NUK THEM : Enable all missions and resurrect dead agents
+ * - OWN THEM : All countries belong to the user
+ * - ROB A BANK : Puts $100 000 000 in funds
+ * - TO THE TOP : Puts $100 000 000 in funds and activates all missions
+ * - COOPER TEAM : $100 000 000 in funds, select any mission, all weapons
+ *   and mods
+ * - WATCH THE CLOCK : Accelerates time
+ *
+ * \param name The name of a cheat code.
+ */
+void GameController::setCheatCode(const char *name) {
+
+    // Repeat mission with previously obtained items, press 'C' or 'Ctrl-C'
+    // to instantly complete a mission
+    if (!strcmp(name, "DO IT AGAIN"))
+        cheatRepeatOrCompleteMission();
+    else if (!strcmp(name, "NUK THEM")) {
+        // Select any mission, resurrect dead agents
+        cheatAnyMission();
+        cheatResurrectAgents();
+    }
+    else if (!strcmp(name, "OWN THEM")) {
+        // Own all countries
+        cheatOwnAllCountries();
+    }
+    else if (!strcmp(name, "ROB A BANK")) {
+        // $100 000 000 in funds
+        cheatFunds();
+    }
+    else if (!strcmp(name, "TO THE TOP")) {
+        // $100 000 000 in funds, select any mission
+        cheatFunds();
+        cheatAnyMission();
+    }
+    else if (!strcmp(name, "COOPER TEAM")) {
+        // $100 000 000 in funds, select any mission, all weapons and mods
+        cheatFemaleRecruits();
+        cheatFunds();
+        cheatAnyMission();
+        cheatWeaponsAndMods();
+        cheatEquipAllMods();
+        cheatEquipFancyWeapons();
+    }
+    else if (!strcmp(name, "WATCH THE CLOCK")) {
+        // Accelerate time for faster research completion
+        cheatAccelerateTime();
+    }
+}
 
 /*!
  * Changes the user informations.
@@ -76,6 +139,18 @@ void GameController::change_user_infos(const char *company_name, const char *pla
     g_Session.setUserName(player_name);
     g_Session.setLogo(new_logo);
     g_Session.setLogoColour(new_color);
+}
+
+MissionBriefing * GameController::loadBriefing(int n) {
+    return missionMgr_.loadBriefing(n);
+}
+
+bool GameController::loadSelectedMission() {
+    Block block = session_->getSelectedBlock();
+    //TODO : store palette id in Block directly
+    Mission *pMission = missionMgr_.loadMission(block.mis_id, 1);
+
+    return pMission != nullptr;
 }
 
 void GameController::handle_mission_end(Mission *p_mission) {

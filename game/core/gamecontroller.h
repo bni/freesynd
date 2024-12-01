@@ -44,9 +44,11 @@
  */
 class GameController : public Singleton < GameController > {
   public:
-    GameController(MapManager *pMapManager);
+    GameController();
     virtual ~GameController();
 
+    //! initialize the game controller
+    bool initialize();
     /*!
      * Resets controller.
      * \returns True if reset has succeeded
@@ -74,9 +76,16 @@ class GameController : public Singleton < GameController > {
     //*************************************
     // Game services
     //*************************************
+    void setCheatCode(const char *name);
+
     //! Changes the user preferences (from the config menu)
     void change_user_infos(const char *company_name, const char *player_name,
                             int logo, int color);
+    
+    //! Loads briefing for the given mission id
+    MissionBriefing *loadBriefing(int n);
+    //! Loads mission
+    bool loadSelectedMission();
     //! Checks if mission is completed and updates game state
     void handle_mission_end(Mission *p_mission);
 
@@ -84,6 +93,14 @@ class GameController : public Singleton < GameController > {
     bool saveGameToFile(int fileSlot, std::string name);
     //! Load game from a file
     bool loadGameFromFile(int fileSlot);
+
+private:
+    //! Sync the returning agents with the cryo chamber roster
+    void transferAgentToCryoChamber(Mission *pMission);
+    //! Simulates syndicates fighting for countries
+    void simulate_enemy_moves();
+    // helper method
+    int get_nb_mvt_for_active_synds(int nb_active_synds);
 
     void cheatFunds();
     void cheatRepeatOrCompleteMission();
@@ -97,14 +114,6 @@ class GameController : public Singleton < GameController > {
     void cheatEquipFancyWeapons();
 
 private:
-    //! Sync the returning agents with the cryo chamber roster
-    void transferAgentToCryoChamber(Mission *pMission);
-    //! Simulates syndicates fighting for countries
-    void simulate_enemy_moves();
-    // helper method
-    int get_nb_mvt_for_active_synds(int nb_active_synds);
-
-private:
     /*!
      * Manager of agent.
      */
@@ -113,8 +122,10 @@ private:
     WeaponManager weaponMgr_;
     /*! Manager of mods.*/
     ModManager mods_;
+    //! For loading tiles
+    TileManager tileMgr_;
     /*! Manager of missions.*/
-    MissionManager missions_;
+    MissionManager missionMgr_;
     /*! A structure to hold player information.*/
     std::unique_ptr<GameSession> session_;
 };

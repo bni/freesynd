@@ -29,7 +29,6 @@
 #include "fs-engine/gfx/screen.h"
 #include "fs-kernel/model/mission.h"
 #include "core/gamecontroller.h"
-#include "core/gamesession.h"
 #include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 
@@ -45,19 +44,15 @@ void LoadingMenu::handleTick(uint32_t elapsed)
 {
     if (do_load_) {
         // Loads mission
-        int id = g_Session.getSelectedBlock().mis_id;
-        g_missionCtrl.loadMission(id);
-
-        do_load_ = false;
-    }
-
-    if (timer_.update(elapsed)) {
-        if (g_missionCtrl.mission()) {
-            menu_manager_->gotoMenu(fs_game_menus::kMenuIdGameplay);
-        } else {
+        if (!g_gameCtrl.loadSelectedMission()) {
             // there was a problem during loading the mission => quit game
             menu_manager_->gotoMenu(kMenuIdLogout);
         }
 
+        do_load_ = false;
+    }
+
+    if (timer_.update(elapsed) && g_missionCtrl.mission()) {
+        menu_manager_->gotoMenu(fs_game_menus::kMenuIdGameplay);
     }
 }

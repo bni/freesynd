@@ -41,9 +41,9 @@
  */
 class MissionManager : public Singleton < MissionManager > {
 public:
-    MissionManager(MapManager *pMapManager);
+    MissionManager(TileManager *pTileManager);
     //! Loads mission for the given mission id
-    Mission *loadMission(int n);
+    Mission *loadMission(int missionId, int paletteId);
     //! Loads briefing for the given mission id
     MissionBriefing *loadBriefing(int n);
 
@@ -104,7 +104,7 @@ private:
     void exportMissionData(LevelData::LevelDataAll &level_data, Mission *pMission);
 
 private:
-    MapManager *pMapManager_;
+    MapManager mapManager_;
     /*!
      * Currently played mission.
      */

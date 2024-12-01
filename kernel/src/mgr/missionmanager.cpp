@@ -67,8 +67,7 @@ private:
     std::string msg;
 };
 
-MissionManager::MissionManager(MapManager *pMapManager) {
-    pMapManager_ = pMapManager;
+MissionManager::MissionManager(TileManager *pTileManager) : mapManager_(pTileManager) {
     pMission_ = nullptr;
 }
 
@@ -114,7 +113,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
     LevelData::LevelDataAll level_data;
     if (load_level_data(n, level_data)) {
         uint16 map_id = READ_LE_UINT16(level_data.mapinfos.map);
-        Map *p_map = pMapManager_->loadMap(map_id);
+        Map *p_map = mapManager_.loadMap(map_id);
         if (p_map == NULL) {
             delete p_mb;
             return NULL;
@@ -132,24 +131,24 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
  * \param n Mission id.
  * \return NULL if Mission could not be loaded.
  */
-Mission *MissionManager::loadMission(int n)
+Mission *MissionManager::loadMission(int missionId, int paletteId)
 {
-    LOG(Log::k_FLG_IO, "MissionManager", "loadMission()", ("loading mission %i", n));
+    LOG(Log::k_FLG_IO, "MissionManager", "loadMission()", ("loading mission %i", missionId));
 
     // Initialize LevelData structure from data read in file
     LevelData::LevelDataAll level_data;
-    if (load_level_data(n, level_data)) {
+    if (load_level_data(missionId, level_data)) {
         pMission_ = create_mission(level_data);
 
         if (pMission_) {
             if (pMission_->setSurfaces()) {
-                return pMission_;
-            } else {
-                destroyMission();
+                if (mapManager_.loadPalette(paletteId)) {
+                    return pMission_;
+                }   
             }
         }
     }
-
+    destroyMission();
     return NULL;
 }
 
@@ -327,7 +326,7 @@ void MissionManager::exportMissionData(LevelData::LevelDataAll &level_data, Miss
  * Creates a Mission object from the LevelDataAll structure.
  */
 Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
-    Map *pMap = pMapManager_->loadMap(READ_LE_UINT16(level_data.mapinfos.map));
+    Map *pMap = mapManager_.loadMap(READ_LE_UINT16(level_data.mapinfos.map));
     if (pMap == NULL) {
         return NULL;
     }

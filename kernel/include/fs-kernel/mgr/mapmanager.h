@@ -36,19 +36,18 @@
  */
 class MapManager {
 public:
-    MapManager();
+    MapManager(TileManager *pTileManager);
     ~MapManager();
 
-    //! Initialize the manager
-    bool initialize();
-    //! Load the map with the given id
+    //! Load the map with the given id if not in cache
     Map * loadMap(uint16 i_mapNum);
-    //! Look in the cache for the map with the given id
-    Map *map(int mapNum);
+    //! Sets the palette for the given mission
+    bool loadPalette(int paletteId);
 
 protected:
+    //! a cache of the latest maps
     std::map<int, Map *> maps_;
-    TileManager tileManager_;
+    TileManager *pTileManager_;
 };
 
 #endif

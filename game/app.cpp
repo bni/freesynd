@@ -54,7 +54,7 @@
 
 App::App()
     : BaseApp(new GameMenuFactory()),
-      game_ctlr_(std::make_unique<GameController>(&maps_))
+      game_ctlr_(std::make_unique<GameController>())
 {
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;
@@ -70,68 +70,16 @@ App::~App() {
  * \return True if initialization is ok.
  */
 bool App::doInitialize([[maybe_unused]] const CliParam& param) {
-
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("loading game tileset..."))
-    if (!maps().initialize()) {
-        return false;
-    }
-
-    LOG(Log::k_FLG_INFO, "App", "initialize", ("Loading game data..."))
-    return game_ctlr_->reset();
+    return game_ctlr_->initialize();
 }
 
 
 /*!
- * Activate a cheat code with the given name. Possible
- * cheat codes are :
- * - DO IT AGAIN : Possibility to replay a completed mission
- * - NUK THEM : Enable all missions and resurrect dead agents
- * - OWN THEM : All countries belong to the user
- * - ROB A BANK : Puts $100 000 000 in funds
- * - TO THE TOP : Puts $100 000 000 in funds and activates all missions
- * - COOPER TEAM : $100 000 000 in funds, select any mission, all weapons
- *   and mods
- * - WATCH THE CLOCK : Accelerates time
- *
+ * Activate a cheat code with the given name. 
  * \param name The name of a cheat code.
  */
 void App::setCheatCode(const char *name) {
-
-    // Repeat mission with previously obtained items, press 'C' or 'Ctrl-C'
-    // to instantly complete a mission
-    if (!strcmp(name, "DO IT AGAIN"))
-        game_ctlr_->cheatRepeatOrCompleteMission();
-    else if (!strcmp(name, "NUK THEM")) {
-        // Select any mission, resurrect dead agents
-        game_ctlr_->cheatAnyMission();
-        game_ctlr_->cheatResurrectAgents();
-    }
-    else if (!strcmp(name, "OWN THEM")) {
-        // Own all countries
-        game_ctlr_->cheatOwnAllCountries();
-    }
-    else if (!strcmp(name, "ROB A BANK")) {
-        // $100 000 000 in funds
-        game_ctlr_->cheatFunds();
-    }
-    else if (!strcmp(name, "TO THE TOP")) {
-        // $100 000 000 in funds, select any mission
-        game_ctlr_->cheatFunds();
-        game_ctlr_->cheatAnyMission();
-    }
-    else if (!strcmp(name, "COOPER TEAM")) {
-        // $100 000 000 in funds, select any mission, all weapons and mods
-        game_ctlr_->cheatFemaleRecruits();
-        game_ctlr_->cheatFunds();
-        game_ctlr_->cheatAnyMission();
-        game_ctlr_->cheatWeaponsAndMods();
-        game_ctlr_->cheatEquipAllMods();
-        game_ctlr_->cheatEquipFancyWeapons();
-    }
-    else if (!strcmp(name, "WATCH THE CLOCK")) {
-        // Accelerate time for faster research completion
-        game_ctlr_->cheatAccelerateTime();
-    }
+    game_ctlr_->setCheatCode(name);
 }
 
 /*!

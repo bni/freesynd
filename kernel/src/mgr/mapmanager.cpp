@@ -24,13 +24,12 @@
 
 #include "fs-kernel/mgr/mapmanager.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <format>
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
-MapManager::MapManager()
+MapManager::MapManager(TileManager *pTileManager) : pTileManager_(pTileManager)
 {
 }
 
@@ -38,15 +37,6 @@ MapManager::~MapManager()
 {
     for (unsigned int i = 0; i < maps_.size(); i++)
         delete maps_[i];
-}
-
-/*!
- * Currently loads all tiles.
- * \return True if everything is ok
- */
-bool MapManager::initialize()
-{
-    return tileManager_.loadTiles();
 }
 
 /*!
@@ -58,9 +48,6 @@ bool MapManager::initialize()
  */
 Map * MapManager::loadMap(uint16 i_mapNum)
 {
-    char tmp[100];
-    size_t size;
-
     LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("loading map %i", i_mapNum));
     // First look in cache
     if (maps_.find(i_mapNum) != maps_.end()) {
@@ -70,13 +57,14 @@ Map * MapManager::loadMap(uint16 i_mapNum)
 
     // Not found so construct new one
     LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("Load new map"));
-    sprintf(tmp, "map%02d.dat", i_mapNum);
-    uint8 *mapData = File::loadOriginalFile(tmp, size);
+    std::string filename = std::format("map{:02}.dat", i_mapNum);
+    size_t size;
+    uint8 *mapData = File::loadOriginalFile(filename, size);
     if (mapData == NULL) {
         return NULL;
     }
 
-    maps_[i_mapNum] = new Map(&tileManager_, i_mapNum);
+    maps_[i_mapNum] = new Map(pTileManager_, i_mapNum);
     maps_[i_mapNum]->loadMap(mapData);
     // patch for "YUKON" map
     if (i_mapNum == 0x27) {
@@ -110,20 +98,13 @@ Map * MapManager::loadMap(uint16 i_mapNum)
 }
 
 /*!
- * Returns the map if found in cache.
- * The map must have been loaded first.
- * \param i_mapNum Map id.
- * \return NULL if map is not found
+ * @brief 
+ * @param paletteId 
+ * @return 
  */
-Map *MapManager::map(int i_mapNum)
-{
-    //make sure the map is loaded
-    if (maps_.find(i_mapNum) == maps_.end()) {
-        LOG(Log::k_FLG_IO, "MapManager", "map", ("map %d not in cache", i_mapNum));
-        return NULL;
-    }
-
-    return maps_[i_mapNum];
+bool MapManager::loadPalette(int paletteId) {    
+    return pTileManager_->setPalette(paletteId);
 }
+
 
 

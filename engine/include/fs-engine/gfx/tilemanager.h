@@ -34,6 +34,12 @@
 
 /*!
  * Tile manager loads and holds all the game tiles.
+ * Tiles are loaded from the original file and the color palette
+ * to use depends on the mission that is played.
+ * So calling TileManager::loadTiles() creates a FSTexture with
+ * all tiles. But before loading a mission, we must call
+ * setPaletteForMission() which will create the real texture with
+ * the good palette.
  */
 class TileManager {
 public:
@@ -65,8 +71,8 @@ public:
     ~TileManager();
     //! Loads tiles from the file
     bool loadTiles();
-    //! Sets the palette for the given mission
-    bool setPaletteForMission(int missionId, bool sixbit);
+    //! Load the palette with the given id
+    bool setPalette(int paletteId);
 
     //! Returns tile with the given index
     Tile * getTile(uint8 index);
@@ -94,6 +100,8 @@ protected:
     uint8_t *tilesPixels_;
     //! A texture that store the tileset
     std::unique_ptr<FSTexture> tilesTexture_;
+    //! The palette used for the texture of tiles
+    fs_eng::Palette palette_;
 };
 
 #endif
