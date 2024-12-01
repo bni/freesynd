@@ -82,11 +82,13 @@ struct Block {
     const char *next;
     /*! This is the index in the enemy syndicate array to get the color.
      This field is used if status field is BLK_UNAVAIL or BLK_AVAIL.*/
-    uint8 syndicate_owner;
+    uint8_t syndicate_owner;
     /*! Informations level for briefing. */
     unsigned char infoLevel;
     /*! Details level for briefing. */
     unsigned char enhanceLevel;
+    /*! The id to find the palette file hpal0X.dat*/
+    uint8_t paletteId;
 };
 
 class Mission;

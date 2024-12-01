@@ -29,57 +29,57 @@
 #include "fs-engine/gfx/logomanager.h"
 
 Block g_Blocks[50] = {
-    // name, defpop, population, mis_id, tax, addtotax, popStatus, daysToNextStatus, daysStatusElapsed, status, nextMission, color, infos, enhanced
-    {"#CNTRY_17", 46000000, 46000000, 17, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 0 - ALASKA
-    {"#CNTRY_39", 56000000, 56000000, 39, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 1 - NORTHWEST TERRITORIES
-    {"#CNTRY_08", 58000000, 58000000, 8, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 2 - NORTHEAST TERRITORIES
-    {"#CNTRY_16", 40000000, 40000000, 16, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 3 - GREENLAND
-    {"#CNTRY_20", 54000000, 54000000, 20, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "10", 0, 0, 0},            // 4 - Scandinavia
-    {"#CNTRY_18", 40000000, 40000000, 18, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "6:12:13", 0, 0, 0},       // 5 - Ural
-    {"#CNTRY_22", 54000000, 54000000, 22, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "7:13", 0, 0, 0},          // 6 - Siberia
-    {"#CNTRY_12", 56000000, 56000000, 12, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "0", 0, 0, 0},             // 7 - KAMCHATKA
-    {"#CNTRY_21", 58000000, 58000000, 21, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 8 - YUKON
-    {"#CNTRY_01", 48000000, 48000000, 1, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "4", 0, 0, 0},              // 9 - West Eur.
-    {"#CNTRY_15", 50000000, 50000000, 15, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "11", 0, 0, 0},            // 10 - Central Eur.
-    {"#CNTRY_10", 52000000, 52000000, 10, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "5", 0, 0, 0},             // 11 - Eastern Eur.
-    {"#CNTRY_09", 42000000, 42000000, 9, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "23:24", 0, 0, 0},          // 12 - KAZAKHSTAN
-    {"#CNTRY_03", 52000000, 52000000, 3, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "14", 0, 0, 0},             // 13 - MONGOLIA
-    {"#CNTRY_02", 42000000, 42000000, 2, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 14 - FAR EAST
-    {"#CNTRY_42", 44000000, 44000000, 42, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 15 -
-    {"#CNTRY_05", 46000000, 46000000, 5, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 16 -
-    {"#CNTRY_23", 56000000, 56000000, 23, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 17 -
-    {"#CNTRY_34", 58000000, 58000000, 34, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 18 -
-    {"#CNTRY_29", 40000000, 40000000, 29, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 19 -
-    {"#CNTRY_28", 50000000, 50000000, 28, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 20 -
-    {"#CNTRY_35", 40000000, 40000000, 35, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 21 -
-    {"#CNTRY_06", 50000000, 50000000, 6, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 22 -
-    {"#CNTRY_04", 52000000, 52000000, 4, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},             // 23 - Iran
-    {"#CNTRY_50", 54000000, 54000000, 50, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},            // 24 - China
-    {"#CNTRY_32", 40000000, 40000000, 32, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_24", 42000000, 42000000, 24, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_37", 44000000, 44000000, 37, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_41", 58000000, 58000000, 41, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_33", 44000000, 44000000, 33, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_38", 54000000, 54000000, 38, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_07", 56000000, 56000000, 7, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_48", 58000000, 58000000, 48, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_26", 44000000, 44000000, 26, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_44", 46000000, 46000000, 44, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_45", 48000000, 48000000, 45, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_27", 58000000, 58000000, 27, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_40", 48000000, 48000000, 40, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_14", 58000000, 58000000, 14, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_36", 40000000, 40000000, 36, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_46", 42000000, 42000000, 46, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_31", 48000000, 48000000, 31, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_13", 46000000, 46000000, 13, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_11", 48000000, 48000000, 11, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_19", 42000000, 42000000, 19, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_43", 48000000, 48000000, 43, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_49", 58000000, 58000000, 49, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_30", 40000000, 40000000, 30, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_47", 58000000, 58000000, 47, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0},
-    {"#CNTRY_25", 48000000, 48000000, 25, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0}
+    // name,      defpop,   popul,    mis_id, tax, addtotax, popStatus, daysToNextStatus, daysStatusElapsed, status, nextMission, color, infos, enhanced
+    {"#CNTRY_17", 46000000, 46000000, 17, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},            // 0 - ALASKA
+    {"#CNTRY_39", 56000000, 56000000, 39, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},            // 1 - NORTHWEST TERRITORIES
+    {"#CNTRY_08", 58000000, 58000000, 8, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},             // 2 - NORTHEAST TERRITORIES
+    {"#CNTRY_16", 40000000, 40000000, 16, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},            // 3 - GREENLAND
+    {"#CNTRY_20", 54000000, 54000000, 20, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "10", 0, 0, 0, 1},            // 4 - Scandinavia
+    {"#CNTRY_18", 40000000, 40000000, 18, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "6:12:13", 0, 0, 0, 4},       // 5 - Ural
+    {"#CNTRY_22", 54000000, 54000000, 22, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "7:13", 0, 0, 0, 3},          // 6 - Siberia
+    {"#CNTRY_12", 56000000, 56000000, 12, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "0", 0, 0, 0, 3},             // 7 - KAMCHATKA
+    {"#CNTRY_21", 58000000, 58000000, 21, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},            // 8 - YUKON
+    {"#CNTRY_01", 48000000, 48000000, 1, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "4", 0, 0, 0, 2},              // 9 - West Eur.
+    {"#CNTRY_15", 50000000, 50000000, 15, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "11", 0, 0, 0, 1},            // 10 - Central Eur.
+    {"#CNTRY_10", 52000000, 52000000, 10, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "5", 0, 0, 0, 1},             // 11 - Eastern Eur.
+    {"#CNTRY_09", 42000000, 42000000, 9, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "23:24", 0, 0, 0, 5},          // 12 - KAZAKHSTAN
+    {"#CNTRY_03", 52000000, 52000000, 3, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, "14", 0, 0, 0, 4},             // 13 - MONGOLIA
+    {"#CNTRY_02", 42000000, 42000000, 2, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},             // 14 - FAR EAST
+    {"#CNTRY_42", 44000000, 44000000, 42, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},            // 15 - New found land
+    {"#CNTRY_05", 46000000, 46000000, 5, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},          // 16 - California
+    {"#CNTRY_23", 56000000, 56000000, 23, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},            // 17 - Rockies
+    {"#CNTRY_34", 58000000, 58000000, 34, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},            // 18 - Midwest
+    {"#CNTRY_29", 40000000, 40000000, 29, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},            // 19 - New England
+    {"#CNTRY_28", 50000000, 50000000, 28, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},            // 20 - Algeria
+    {"#CNTRY_35", 40000000, 40000000, 35, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},            // 21 - Lybia
+    {"#CNTRY_06", 50000000, 50000000, 6, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // 22 - Irak
+    {"#CNTRY_04", 52000000, 52000000, 4, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},          // 23 - Iran
+    {"#CNTRY_50", 54000000, 54000000, 50, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},            // 24 - China
+    {"#CNTRY_32", 40000000, 40000000, 32, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},             // 25 - Colorado
+    {"#CNTRY_24", 42000000, 42000000, 24, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},             //26 - Southern state
+    {"#CNTRY_37", 44000000, 44000000, 37, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},             // 27 - Atlantic Accelerator
+    {"#CNTRY_41", 58000000, 58000000, 41, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // Mauritania
+    {"#CNTRY_33", 44000000, 44000000, 33, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},             // Sudan
+    {"#CNTRY_38", 54000000, 54000000, 38, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},             // Arabia
+    {"#CNTRY_07", 56000000, 56000000, 7, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},          // India
+    {"#CNTRY_48", 58000000, 58000000, 48, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},             // Pacific Rim
+    {"#CNTRY_26", 44000000, 44000000, 26, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // Mexico
+    {"#CNTRY_44", 46000000, 46000000, 44, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},             // Colombia
+    {"#CNTRY_45", 48000000, 48000000, 45, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},             // Nigeria
+    {"#CNTRY_27", 58000000, 58000000, 27, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},             // Zaire
+    {"#CNTRY_40", 48000000, 48000000, 40, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},             // Kenya
+    {"#CNTRY_14", 58000000, 58000000, 14, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},             // Peru
+    {"#CNTRY_36", 40000000, 40000000, 36, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // Venezuela
+    {"#CNTRY_46", 42000000, 42000000, 46, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // Brazil
+    {"#CNTRY_31", 48000000, 48000000, 31, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // South Africa
+    {"#CNTRY_13", 46000000, 46000000, 13, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},             // Mozambique
+    {"#CNTRY_11", 48000000, 48000000, 11, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 2},             // Western Australia
+    {"#CNTRY_19", 42000000, 42000000, 19, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},             // Northern Territories
+    {"#CNTRY_43", 48000000, 48000000, 43, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 4},             // New South Wales
+    {"#CNTRY_49", 58000000, 58000000, 49, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 5},             // Paraguay
+    {"#CNTRY_30", 40000000, 40000000, 30, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1},             // Argentina
+    {"#CNTRY_47", 58000000, 58000000, 47, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 3},             // Uruguay
+    {"#CNTRY_25", 48000000, 48000000, 25, 30, 0, STAT_VERY_HAPPY, 0, 0, BLK_UNAVAIL, NULL, 0, 0, 0, 1}              // Indonesia
 };
 
 /*! 

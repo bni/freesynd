@@ -72,6 +72,9 @@ public:
     //! Returns the number of loaded sprites
     int spriteCount() { return spriteCount_; }
 
+    //! Change the palette
+    bool setPalette(const fs_eng::Palette &newPalette);
+
     //! Return the sprite at given index
     Sprite *sprite(int spriteNum);
 

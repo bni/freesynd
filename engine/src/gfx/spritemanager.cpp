@@ -269,6 +269,18 @@ void SpriteManager::getInsertPoint(Sprite &sprite, std::stack<SpriteInsert> &spr
     sprite.setTextureLocation(insertAt);
 }
 
+/*!
+ * Change the palette of the sprite texture and reload it.
+ * @param newPalette The new palette to set
+ * @return 
+ */
+bool SpriteManager::setPalette(const fs_eng::Palette &newPalette) {
+    if (spritesetTexture_->setPalette(newPalette)) {
+        return spritesetTexture_->loadTextureFromSurface();
+    }
+    return false;
+}
+
 Sprite *SpriteManager::sprite(int spriteNum)
 {
     if (spriteNum >= spriteCount_) {

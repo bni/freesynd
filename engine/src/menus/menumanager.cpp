@@ -249,6 +249,9 @@ bool MenuManager::loadMenuPalette() {
     getColorFromMenuPalette(fs_eng::kMenuPaletteColorLightGreen, kMenuColorLightGreen);
     getColorFromMenuPalette(fs_eng::kMenuPaletteColorWhite, kMenuColorWhite);
     getColorFromMenuPalette(fs_eng::kMenuPaletteColorGrey, kMenuColorGrey);
+    getColorFromMenuPalette(fs_eng::kMenuPaletteColorWhiteBlue, kMenuColorWhiteBlue);
+    getColorFromMenuPalette(0, kMenuColorBlack);
+    getColorFromMenuPalette(fs_eng::kMenuPaletteColorYellow, kMenuColorYellow);
 
     return true;
 }

@@ -159,6 +159,12 @@ public:
     fs_eng::FSColor kMenuColorWhite;
     //! Common colors for Menus : grey
     fs_eng::FSColor kMenuColorGrey;
+    //! Common colors for Menus : whiteblue
+    fs_eng::FSColor kMenuColorWhiteBlue;
+    //! Common colors for Menus : black
+    fs_eng::FSColor kMenuColorBlack;
+    //! Common colors for Menus : yellow
+    fs_eng::FSColor kMenuColorYellow;
 
 protected:
     //! Returns a menu with the given id

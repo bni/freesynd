@@ -145,10 +145,13 @@ MissionBriefing * GameController::loadBriefing(int n) {
     return missionMgr_.loadBriefing(n);
 }
 
+/*!
+ * Load a mission based on the selection by the player
+ * @return 
+ */
 bool GameController::loadSelectedMission() {
     Block block = session_->getSelectedBlock();
-    //TODO : store palette id in Block directly
-    Mission *pMission = missionMgr_.loadMission(block.mis_id, 1);
+    Mission *pMission = missionMgr_.loadMission(block.mis_id, block.paletteId);
 
     return pMission != nullptr;
 }

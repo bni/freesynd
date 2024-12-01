@@ -73,6 +73,8 @@ public:
     bool loadTiles();
     //! Load the palette with the given id
     bool setPalette(int paletteId);
+    //! Return the palette used by this tile manager
+    fs_eng::Palette & getPalette() { return palette_; }
 
     //! Returns tile with the given index
     Tile * getTile(uint8 index);

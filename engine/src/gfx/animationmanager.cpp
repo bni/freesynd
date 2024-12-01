@@ -192,13 +192,17 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
     return true;
 }
 
+bool AnimationManager::setPalette(const fs_eng::Palette &missionPalette) {
+    return spritesManager_.setPalette(missionPalette);
+}
+
 /*!
  * Convienient method to draw a single sprite 
  * @param spriteId Id of the sprite
  * @param screenPos Position on the screen
  */
 void AnimationManager::drawSprite(int spriteId, const Point2D &screenPos) {
-    spritesManager_.sprite(spriteId)->draw(screenPos.x, screenPos.y, 0);
+    spritesManager_.drawSprite(spriteId, screenPos.x, screenPos.y);
 }
 
 /*!

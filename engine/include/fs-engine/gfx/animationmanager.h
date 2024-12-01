@@ -67,6 +67,8 @@ public:
     //! Returns true if this manager has loaded files
     bool loaded() { return spritesManager_.loaded(); }
 
+    bool setPalette(const fs_eng::Palette &missionPalette);
+
     int numAnims() { return (int) index_.size(); }
     //! Draw a single sprite without animation
     void drawSprite(int spriteId, const Point2D &screenPos);
