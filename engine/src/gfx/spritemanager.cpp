@@ -316,12 +316,9 @@ bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
  */
 bool SpriteManager::drawSprite(int spriteNum, int x, int y, bool flipped, bool x2) {
     Sprite *pSprite = sprite(spriteNum);
+    int ratio = x2 ? 2 : 1;
     if (pSprite) {
-        if (x2) {
-            spritesetTexture_->renderStretch(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height(), 2);
-        } else {
-            spritesetTexture_->render(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height());
-        }
+        spritesetTexture_->renderExtended(pSprite->textureLocation(), {x, y}, pSprite->width(), pSprite->height(), ratio, flipped);
     }
 
     return true;

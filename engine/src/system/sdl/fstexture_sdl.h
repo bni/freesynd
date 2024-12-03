@@ -38,6 +38,8 @@ public:
     void render(Point2D src, Point2D dst, int width, int height) override;
     void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) override;
     void renderFullTextureStrech(int width, int height) override;
+    //! @copydoc FSTexture::renderExtended()
+    void renderExtended(Point2D src, Point2D dst, int width, int height, int ratio, bool flipped) override;
 
     //! Create a 32bits texture with streaming access
     bool createStreamingTexture(int width, int height) override;

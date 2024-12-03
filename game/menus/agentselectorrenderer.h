@@ -62,17 +62,20 @@ public:
     //! Check if player has clicked on a agent selector
     bool hasClickedOnAgentSelector(int x, int y, SelectorEvent & evt);
     //! Renders the agent's selectors
-    void render(SquadSelection & selection, Squad * pSquad);
+    void render(SquadSelection & selection, Squad * pSquad, const fs_eng::Palette &palette);
+
+    //! gets percentage for any x coord
+    int getPercentageAnyX(size_t agent, int x) {
+        int barLeft = getIpaBarLeftForAgent(agent);
+        if (x < barLeft)
+            x = barLeft;
+        if (x > barLeft + kIpaBarWidth)
+            x = barLeft + kIpaBarWidth;
+
+        return getPercentage(barLeft, x);
+    }
 
 private:
-    static const int kIpaBarWidth;
-    static const int kIpaBarHeight;
-    static const int kIpaBarLeft13;
-    static const int kIpaBarLeft24;
-    static const int kIpaBarTop12;
-    static const int kIpaBarTop34;
-    static const int kIpaYOffset;
-
     /*!
      * Checks if the player has clicked on an IPA bar for an agent.
      * \return NULL if the player didn't click on a IPA meter.
@@ -80,7 +83,7 @@ private:
     void scanCoordsForIPA(int x, int y, SelectorEvent & evt);
 
     //! Draws all the elements for one bar
-    void drawIPABar(int agent, IPAStim *stim);
+    void drawIPABar(size_t agent, IPAStim *stim, const fs_eng::Palette &palette);
 
     /*!
      * Returns the Y coord of the top left corner of the IPA bar for a given agent slot and IPA Type.
@@ -119,37 +122,9 @@ private:
     /*!
      * Returns the color for drawing the IPA bar of given type.
      */
-    int colourForIpaType(IPAStim::IPAType type)
-    {
-        switch (type)
-        {
-            case IPAStim::Adrenaline:
-                return fs_cmn::kColorLightRed;
-            case IPAStim::Perception:
-                return fs_cmn::kColorBlue;
-            case IPAStim::Intelligence:
-                return fs_cmn::kColorLightBrown;
-            default:
-                assert(false);
-        }
-        return -1;
-    }
+    fs_eng::FSColor colourForIpaType(IPAStim::IPAType type, const fs_eng::Palette &palette);
 
-    int dim_colour(IPAStim::IPAType type)
-    {
-        switch (type)
-        {
-            case IPAStim::Adrenaline:
-                return fs_cmn::kColorDarkRed;
-            case IPAStim::Perception:
-                return fs_cmn::kColorBlueGrey;
-            case IPAStim::Intelligence:
-                return fs_cmn::kColorDarkBrown;
-            default:
-                assert(false);
-        }
-        return -1;
-    }
+    fs_eng::FSColor dim_colour(IPAStim::IPAType type, const fs_eng::Palette &palette);
 
 
     /*!
@@ -161,19 +136,16 @@ private:
         return (int)(((float)offset / (float) kIpaBarWidth) * 100.0);
     }
 
-    void drawSelectorForAgent(size_t agentSlot, PedInstance *pAgent, bool isSelected);
-
-public:
-    //! gets percentage for any x coord
-    int getPercentageAnyX(size_t agent, int x) {
-        int barLeft = getIpaBarLeftForAgent(agent);
-        if (x < barLeft)
-            x = barLeft;
-        if (x > barLeft + kIpaBarWidth)
-            x = barLeft + kIpaBarWidth;
-
-        return getPercentage(barLeft, x);
-    }
+    void drawSelectorForAgent(size_t agentSlot, PedInstance *pAgent, bool isSelected, const fs_eng::Palette &palette);
+    
+private:
+    static const int kIpaBarWidth;
+    static const int kIpaBarHeight;
+    static const int kIpaBarLeft13;
+    static const int kIpaBarLeft24;
+    static const int kIpaBarTop12;
+    static const int kIpaBarTop34;
+    static const int kIpaYOffset;
 };
 
 #endif  // MENUS_AGENTSELECTORRENDERER_H_

@@ -99,6 +99,25 @@ void FSTextureSDL::renderStretch(Point2D src, Point2D dst, int width, int height
 }
 
 /*!
+ * Render a texture clip to a destination rect and position with possible ratio and horizontal flip.
+ * @param src Origin of the clip in source texture
+ * @param dst Position on the screen to copy the texture
+ * @param destWidth Width of destination
+ * @param destHeight Height of destination
+ * @param ratio A multiplication factor that change the size of destination rect
+ * @param flipped True means to flip the texture in horizontal
+ */
+void FSTextureSDL::renderExtended(Point2D src, Point2D dst, int width, int height, int ratio, bool flipped) {
+    //Set rendering space and render to screen
+    SDL_Rect renderQuad = { dst.x, dst.y, width*ratio, height*ratio };
+    SDL_Rect tileQuad = { src.x, src.y, width, height};
+    SDL_RendererFlip flip = flipped ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    if (!SDL_RenderCopyEx( pRenderer_, pTexture_, &tileQuad, &renderQuad, 0, NULL, flip )) {
+        //printf("Failed to copy: %s\n", SDL_GetError());
+    }
+}
+
+/*!
  * Render this texture as a whole to the target at position (0,0) and with the given size.
  * @param destWidth Width of destination
  * @param destHeight Height of destination

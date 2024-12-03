@@ -227,8 +227,7 @@ bool AnimationManager::drawFrame(unsigned int animNum, int frameNum, const Point
 
     GameSpriteFrameElement *e = &elements_[f->first_element_];
     while (1) {
-        spritesManager_.sprite(e->sprite_)->draw(screenPos.x + e->off_x_, screenPos.y + e->off_y_, 0,
-                                  e->flipped_);
+        spritesManager_.drawSprite(e->sprite_, screenPos.x + e->off_x_, screenPos.y + e->off_y_, e->flipped_);
         if (e->next_element_ == 0)
             break;
         e = &elements_[e->next_element_];

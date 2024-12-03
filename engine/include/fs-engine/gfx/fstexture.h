@@ -53,6 +53,8 @@ public:
     virtual void render(Point2D src, Point2D dst, int width, int height) = 0;
     //! Renders a portion of the current texture to the destination with a given ration
     virtual void renderStretch(Point2D src, Point2D dst, int width, int height, int ratio) = 0;
+    //! Renders a portion of the current texture to the destination with a given ration and horizontal flip
+    virtual void renderExtended(Point2D src, Point2D dst, int width, int height, int ratio, bool flipped) = 0;
     //! Render the full texture at 0,0 on screen with the given destination size
     virtual void renderFullTextureStrech(int width, int height) = 0;
     //! Return the color stored at given index in the palette store in this texture

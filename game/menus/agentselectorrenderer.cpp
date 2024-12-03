@@ -22,7 +22,7 @@
 
 #include "menus/agentselectorrenderer.h"
 
-#include "fs-engine/gfx/screen.h"
+#include "fs-engine/system/system.h"
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-kernel/model/ped.h"
 
@@ -89,10 +89,50 @@ void AgentSelectorRenderer::scanCoordsForIPA(int x, int y, SelectorEvent & evt)
 }
 
 /*!
+ * Returns the color for drawing the IPA bar of given type.
+ */
+fs_eng::FSColor AgentSelectorRenderer::colourForIpaType(IPAStim::IPAType type, const fs_eng::Palette &palette)
+{
+    switch (type)
+    {
+        case IPAStim::Adrenaline:
+            return palette[fs_cmn::kColorLightRed];
+        case IPAStim::Perception:
+            return palette[fs_cmn::kColorBlue];
+        case IPAStim::Intelligence:
+            return palette[fs_cmn::kColorLightBrown];
+        default:
+            assert(false);
+    }
+    return palette[fs_cmn::kColorBlack];
+}
+
+/*!
+ * @brief 
+ * @param type 
+ * @return 
+ */
+fs_eng::FSColor AgentSelectorRenderer::dim_colour(IPAStim::IPAType type, const fs_eng::Palette &palette)
+{
+    switch (type)
+    {
+        case IPAStim::Adrenaline:
+            return palette[fs_cmn::kColorDarkRed];
+        case IPAStim::Perception:
+            return palette[fs_cmn::kColorBlueGrey];
+        case IPAStim::Intelligence:
+            return palette[fs_cmn::kColorDarkBrown];
+        default:
+            assert(false);
+    }
+    return palette[fs_cmn::kColorBlack];
+}
+
+/*!
  * Draws all the elements
  * for one bar
  */
-void AgentSelectorRenderer::drawIPABar(int agent, IPAStim *stim)
+void AgentSelectorRenderer::drawIPABar(size_t agent, IPAStim *stim, const fs_eng::Palette &palette)
 {
     // Convert those percentages to pixels
     int amount_x = (float)kIpaBarWidth * ((float)stim->getAmount()/100.0);
@@ -106,9 +146,9 @@ void AgentSelectorRenderer::drawIPABar(int agent, IPAStim *stim)
     int left, width;
     boxify(left, width, amount_x, dependency_x);
     if(width > 0) {
-        g_Screen.drawRect(getIpaBarLeftForAgent(agent) + left,
-                          getIpaBarTop(agent, type),
-                          width, kIpaBarHeight, colourForIpaType(type));
+        g_System.drawFillRect({getIpaBarLeftForAgent(agent) + left,
+                          getIpaBarTop(agent, type)},
+                          width, kIpaBarHeight, colourForIpaType(type, palette));
     }
 
     // NB: this bar stops rendering when it's neck-a-neck with 'amount'
@@ -116,15 +156,15 @@ void AgentSelectorRenderer::drawIPABar(int agent, IPAStim *stim)
     {
         boxify(left, width, effect_x, dependency_x);
         if(width > 0) {
-            g_Screen.drawRect(getIpaBarLeftForAgent(agent) + left,
-                              getIpaBarTop(agent, type),
-                              width, kIpaBarHeight, dim_colour(type));
+            g_System.drawFillRect({getIpaBarLeftForAgent(agent) + left,
+                              getIpaBarTop(agent, type)},
+                              width, kIpaBarHeight, dim_colour(type, palette));
         }
     }
 
     // Draw a vertical white line to mark the dependency level
-    g_Screen.drawVLine(getIpaBarLeftForAgent(agent) + dependency_x,
-                      getIpaBarTop(agent, type), kIpaBarHeight, 12);
+    g_System.drawVLine({getIpaBarLeftForAgent(agent) + dependency_x,
+                      getIpaBarTop(agent, type)}, kIpaBarHeight, palette[fs_cmn::kColorWhite]);
 }
 
 /*!
@@ -134,7 +174,7 @@ void AgentSelectorRenderer::drawIPABar(int agent, IPAStim *stim)
  * \param isSelected
  */
 void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
-    PedInstance *pAgent, bool isSelected)
+    PedInstance *pAgent, bool isSelected, const fs_eng::Palette &palette)
 {
     // parity check
     int topX = (agentSlot & 0x01) * 64;
@@ -150,8 +190,8 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
     if (pAgent) {
         // draw health bar
         int ydiff = 36 * pAgent->health() / pAgent->startHealth();
-        g_Screen.drawRect(topX + 51,
-            topY + 6 + 36 - ydiff, 7, ydiff, 12);
+        g_System.drawFillRect({topX + 51,
+            topY + 6 + 36 - ydiff}, 7, ydiff, palette[fs_cmn::kColorWhite]);
 
         //draw animation within selectors
         Point2D top = {topX + 32, topY + 38};
@@ -159,9 +199,9 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
 
         // draw IPA, for alive only agents
         if (pAgent->isAlive()) {
-            drawIPABar(agentSlot, pAgent->adrenaline_);
-            drawIPABar(agentSlot, pAgent->perception_);
-            drawIPABar(agentSlot, pAgent->intelligence_);
+            drawIPABar(agentSlot, pAgent->adrenaline_, palette);
+            drawIPABar(agentSlot, pAgent->perception_, palette);
+            drawIPABar(agentSlot, pAgent->intelligence_, palette);
         }
     }
 }
@@ -169,9 +209,9 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
 /*!
  * Draw all elements for the agent selectors.
  */
-void AgentSelectorRenderer::render(SquadSelection & selection, Squad * pSquad) {
+void AgentSelectorRenderer::render(SquadSelection & selection, Squad * pSquad, const fs_eng::Palette &palette) {
     for (size_t a = 0; a < AgentManager::kMaxSlot; a++) {
         PedInstance * pAgent = pSquad->member(a);
-        drawSelectorForAgent(a, pAgent, selection.isAgentSelected(a));
+        drawSelectorForAgent(a, pAgent, selection.isAgentSelected(a), palette);
     }
 }
