@@ -113,7 +113,7 @@ public:
             const std::string& valid_chars);
 
     //! draw a UTF-8 text at the given position with the given color
-    void drawText(int x, int y, const std::string& text, uint8_t toColor);
+    void drawText(int x, int y, const std::string& text, fs_eng::FSColor toColor);
 };
 
 #endif

@@ -74,6 +74,7 @@ public:
 
     //! Change the palette
     bool setPalette(const fs_eng::Palette &newPalette);
+    void setColorModulation( fs_eng::FSColor color ) { spritesetTexture_->setColorModulation(color); }
 
     //! Return the sprite at given index
     Sprite *sprite(int spriteNum);

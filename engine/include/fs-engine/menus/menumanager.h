@@ -200,8 +200,6 @@ private:
     SpriteManager menuSprites_;
     //! This is the palette for menu sprites
     fs_eng::Palette menuPalette_;
-    /*! Sprite manager for intro font. */
-    SpriteManager *pIntroFontSprites_;
     /*! Font manager.*/
     FontManager fonts_;
     SoundManager *pGameSounds_;

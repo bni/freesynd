@@ -128,8 +128,6 @@ MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
     current_ = NULL;
     nextMenuId_ = -1;
 
-    pIntroFontSprites_ = NULL;
-
     since_mouse_down_ = 0;
     mouseup_was_ = false;
 }
@@ -156,16 +154,6 @@ bool MenuManager::initialize(bool loadIntroFont) {
         return false;
     }
 
-    // loads intro sprites
-    if (loadIntroFont) {
-        LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading intro sprites ..."))
-
-        pIntroFontSprites_ = new SpriteManager(true, SpriteManager::kMenuSpritesTextureWidth);
-        if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", menuPalette_)) {
-            return false;
-        }
-    }
-
     // Load logos
     if (!logoManager_.loadLogos(menuPalette_)) {
         return false;
@@ -173,7 +161,7 @@ bool MenuManager::initialize(bool loadIntroFont) {
     
     // Loads fonts
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
-    if (!fonts_.loadFonts(&menuSprites_, pIntroFontSprites_)) {
+    if (!fonts_.loadFonts(&menuSprites_, menuPalette_, loadIntroFont)) {
         return false;
     }
 
@@ -186,11 +174,6 @@ bool MenuManager::initialize(bool loadIntroFont) {
  */
 void MenuManager::destroy() {
     LOG(Log::k_FLG_MEM, "MenuManager", "~MenuManager", ("Destruction..."))
-
-    if (pIntroFontSprites_) {
-        delete pIntroFontSprites_;
-        pIntroFontSprites_ = NULL;
-    }
 
     // NOTE: this code was before in destructor, but it should be
     // here to avoid corruption, that will happen because

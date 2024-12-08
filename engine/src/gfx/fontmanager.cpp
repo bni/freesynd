@@ -27,8 +27,9 @@
 
 #include "fs-engine/gfx/fontmanager.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <cassert>
+
+#include "fs-utils/log/log.h"
 
 FontManager::FontManager()
 {
@@ -45,14 +46,11 @@ FontManager::~FontManager()
         delete menuFonts_[i];
     }
 
-    if (pIntroFont_) {
-        delete pIntroFont_;
-    }
     if (pGameFont_)
         delete pGameFont_;
 }
 
-bool FontManager::loadFonts(SpriteManager *pMenuSprites, SpriteManager *pIntroFontSprites_) {
+bool FontManager::loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPalette, bool loadIntroFont) {
     assert(pMenuSprites);
 
     // Valid char : ' ,-/ A-Z backslash(Ox5c) ` 0x80-DCS
@@ -61,17 +59,58 @@ bool FontManager::loadFonts(SpriteManager *pMenuSprites, SpriteManager *pIntroFo
     menuFonts_[SIZE_2] = createMenuFontForSize(pMenuSprites, 528, 391, 'A', "0x21-0x60,0x80-0xa8");
     menuFonts_[SIZE_1] = createMenuFontForSize(pMenuSprites, 254, 117, 'A', "0x21-0x60,0x80-0xa8");
 
-    pGameFont_ = new GameFont(pMenuSprites, 665, 'A', "0x21-0x5a,0x80-0x90,0x93-0x9a,0xa0-0xa8");
+    if (!createGameFont(menuPalette)) {
+        return false;
+    }
 
-    if (pIntroFontSprites_) {
-        pIntroFont_ = new Font(pIntroFontSprites_, 1, '!', "0x21-0x60,0x80-0xa8");
+    if (loadIntroFont) {
+        if (createIntroFont()) {
+            return false;
+        }
     }
 
     return true;
 }
 
-MenuFont * FontManager::createMenuFontForSize(SpriteManager * sprites,
-                           int darkOffset, int lightOffset, char base, const std::string& valid_chars)
+bool FontManager::createGameFont(fs_eng::Palette &menuPalette) {
+
+    // loads intro sprites
+    LOG(Log::k_FLG_GFX, "FontManager", "loadFonts", ("Creating Game Font ..."))
+
+    pGameFontSprites_ = std::make_unique<SpriteManager>(true, SpriteManager::kMenuSpritesTextureWidth);
+    // We use a custom palette to set the color used in font to white
+    // so it's easier to use color modulation to change the color when displaying the font
+    fs_eng::Palette gameFontPalette = menuPalette;
+    gameFontPalette[252] = {254, 254, 254, 255};
+    gameFontPalette[18] = {0, 0, 0, 0};
+    if (!pGameFontSprites_->loadSprites("mspr-0.tab", "mspr-0.dat", gameFontPalette)) {
+        return false;
+    }
+
+    pGameFont_ = new GameFont(pGameFontSprites_.get(), 665, 'A', "0x21-0x5a,0x80-0x90,0x93-0x9a,0xa0-0xa8");
+
+    return true;
+}
+
+bool FontManager::createIntroFont() {
+
+    // loads intro sprites
+    LOG(Log::k_FLG_GFX, "FontManager", "loadFonts", ("Creating Intro font ..."))
+
+    pIntroFontSprites_ = std::make_unique<SpriteManager>(true, SpriteManager::kMenuSpritesTextureWidth);
+    fs_eng::Palette emptyPalette;
+    if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", emptyPalette))
+    {
+        return false;
+    }
+
+    pIntroFont_ = std::make_unique<Font>(pIntroFontSprites_.get(), 1, '!', "0x21-0x60,0x80-0xa8");
+
+    return true;
+}
+
+MenuFont *FontManager::createMenuFontForSize(SpriteManager *sprites,
+                                             int darkOffset, int lightOffset, char base, const std::string &valid_chars)
 {
     MenuFont * pFont = new MenuFont(sprites, darkOffset, lightOffset, base, valid_chars);
 

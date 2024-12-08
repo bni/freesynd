@@ -83,8 +83,10 @@ protected:
 
     //!
     void drawSelectAllButton();
-    void drawMissionHint(int elapsed);
+    void drawMissionHint(uint32_t elapsed);
     void drawWeaponSelectors();
+    void drawPausePanel();
+    
     //! Scroll the map horizontally.
     bool scrollOnX();
     //! Scroll the map vertically.

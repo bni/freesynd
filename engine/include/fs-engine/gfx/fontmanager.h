@@ -49,7 +49,7 @@ public:
     ~FontManager();
 
     //! Creates all fonts
-    bool loadFonts(SpriteManager *pMenuSprites, SpriteManager *pIntroFontSprites_);
+    bool loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPalette, bool loadIntroFont);
 
     /*!
      * Returns the font used in menus.
@@ -68,21 +68,28 @@ public:
      * Returns the font used in the intro animation.
      */
     Font * introFont() {
-        return pIntroFont_;
+        return pIntroFont_.get();
     }
 
-protected:
+private:
     //! Create a menu font for the given size
     MenuFont * createMenuFontForSize(SpriteManager *sprites, int darkOffset, int lightOffset,
             char base, const std::string& valid_chars);
 
-protected:
+    bool createGameFont(fs_eng::Palette &menuPalette);
+    bool createIntroFont();
+
+private:
     /*!
      * Menu fonts have different sizes.
      */
     MenuFont * menuFonts_[4];
+    /*! Sprite manager for intro font. */
+    std::unique_ptr<SpriteManager> pGameFontSprites_;
     GameFont *pGameFont_;
-    Font *pIntroFont_;
+    std::unique_ptr<Font> pIntroFont_;
+    /*! Sprite manager for intro font. */
+    std::unique_ptr<SpriteManager> pIntroFontSprites_;
 };
 
 #endif

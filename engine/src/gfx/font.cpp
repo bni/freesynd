@@ -346,7 +346,7 @@ GameFont::GameFont(SpriteManager *sprites, int offset, char base,
  * \param text The text to draw. It must be in UTF-8.
  * \param toColor The color used to draw the text.
  */
-void GameFont::drawText(int x, int y, const std::string& text, uint8_t toColor) {
+void GameFont::drawText(int x, int y, const std::string& text, fs_eng::FSColor toColor) {
     int sc = 1;
     int ox = x;
     uint8_t fromColor = 252;
@@ -383,17 +383,8 @@ void GameFont::drawText(int x, int y, const std::string& text, uint8_t toColor) 
                     y_offset = (defaultHeight_ *sc)/2 - (sprite->height() * sc) / 2;
                 }
 
-                uint8_t *data = new uint8_t[sprite->width() * sprite->height()];
-                sprite->data(data);
-
-                // Change original color to the specified color
-                for (int i = 0; i < sprite->width() * sprite->height(); i++)
-                    data[i] = (data[i] == fromColor ? toColor : 255);
-
-                // draw modified sprite
-                g_Screen.blit(x, y + y_offset, sprite->width(), sprite->height(), data);
-
-                delete[] data;
+                sprites_->setColorModulation(toColor);
+                sprites_->drawSprite(sprite->id(), x, y + y_offset);
 
                 x += sprite->width() * sc - sc;
             }

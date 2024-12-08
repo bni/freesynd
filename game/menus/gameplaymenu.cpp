@@ -403,7 +403,7 @@ void GameplayMenu::handleTick(uint32_t elapsed)
         handleMouseMotion({last_motion_x_, last_motion_y_}, 0);
     }
 
- /*   drawMissionHint(elapsed);*/
+    drawMissionHint(elapsed);
 }
 
 void GameplayMenu::handleRender(DirtyList &dirtyList)
@@ -413,9 +413,13 @@ void GameplayMenu::handleRender(DirtyList &dirtyList)
     g_System.drawRect({0,0}, 129, GAME_SCREEN_HEIGHT, menu_manager_->kMenuColorBlack);
     agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);
     drawSelectAllButton();
-/*    drawMissionHint(0);*/
+    drawMissionHint(0);
     drawWeaponSelectors();
     mm_renderer_.render(missionPalette_);
+
+    if (paused_) {
+        drawPausePanel();
+    }
 
 #ifdef _DEBUG
     // drawing of different sprites
@@ -894,26 +898,13 @@ void GameplayMenu::handleMouseUp(Point2D point, int button)
 }
 
 bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
-    bool change = false; /* indicator whether menu should be redrawn */
+    bool change = false;    // indicator whether menu should be redrawn 
     bool consumed = true;
 
     // Pause/unpause game
     if (key.keyCode == kKeyCode_P) {
+        paused_ = !paused_;
         if (paused_) {
-            paused_ = false;
-        } else {
-            paused_ = true;
-            // TODO: translate all paused texts
-            std::string str_paused = getMessage("GAME_PAUSED");
-            MenuFont *font_used = getMenuFont(FontManager::SIZE_1);
-            int txt_width = font_used->textWidth(str_paused);
-            int txt_posx = Screen::kScreenWidth / 2 - txt_width / 2;
-            int txt_height = font_used->textHeight(false);
-            int txt_posy = Screen::kScreenHeight / 2 - txt_height / 2;
-
-            g_Screen.drawRect(txt_posx - 10, txt_posy - 5,
-                txt_width + 20, txt_height + 10);
-            gameFont()->drawText(txt_posx, txt_posy, str_paused, 11);
             stopShootingEvent();
         }
         return true;
@@ -946,13 +937,13 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
         return true;
     }
 
-    /* Handle agent selection by numeric keys. Key 0 cycles between one agent
-     * selection and all 4 agents.
-     * Individual keys select the specified agent unless ctrl is pressed -
-     * then they add/remove agent from current selection. */
+    // Handle agent selection by numeric keys. Key 0 cycles between one agent
+    // selection and all 4 agents.
+    // Individual keys select the specified agent unless ctrl is pressed -
+    // then they add/remove agent from current selection.
     if (key.keyCode == kKeyCode_0) {
-        /* This code is exactly the same as for clicking on "group-button"
-         * as you can see above. */
+        // This code is exactly the same as for clicking on "group-button"
+        // as you can see above.
         selectAllAgents();
     }
     else if (key.keyCode == kKeyCode_1) {
@@ -1144,7 +1135,7 @@ void GameplayMenu::drawSelectAllButton() {
     }
 }
 
-void GameplayMenu::drawMissionHint(int elapsed) {
+void GameplayMenu::drawMissionHint(uint32_t elapsed) {
 
     elapsed += mission_hint_ticks_;
     int inc = elapsed / 45;
@@ -1222,7 +1213,24 @@ void GameplayMenu::drawMissionHint(int elapsed) {
 
     int width = gameFont()->textWidth(str, false);
     int x = 64 - width / 2;
-    gameFont()->drawText(x, 46 + 44 + 10 + 46 + 44 + 2 - 1, str, txtColor);
+    fs_eng::FSColor aColor;
+    menu_manager_->getColorFromMenuPalette(txtColor, aColor);
+    gameFont()->drawText(x, 46 + 44 + 10 + 46 + 44 + 2 - 1, str, aColor);
+}
+
+void GameplayMenu::drawPausePanel() {
+    std::string str_paused = getMessage("GAME_PAUSED");
+    MenuFont *font_used = getMenuFont(FontManager::SIZE_1);
+    int txt_width = font_used->textWidth(str_paused);
+    int txt_posx = Screen::kScreenWidth / 2 - txt_width / 2;
+    int txt_height = font_used->textHeight(false);
+    int txt_posy = Screen::kScreenHeight / 2 - txt_height / 2;
+
+    g_System.drawFillRect({txt_posx - 10, txt_posy - 5},
+        txt_width + 20, txt_height + 10, menu_manager_->kMenuColorBlack);
+    fs_eng::FSColor aColor;
+    menu_manager_->getColorFromMenuPalette(11, aColor);
+    gameFont()->drawText(txt_posx, txt_posy, str_paused, aColor);
 }
 
 void GameplayMenu::drawWeaponSelectors() {
