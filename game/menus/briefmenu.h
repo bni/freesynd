@@ -49,9 +49,7 @@ public:
 
 protected:
     /*! Origin of the minimap on the screen.*/
-    static const int kMiniMapScreenX;
-    /*! Origin of the minimap on the screen.*/
-    static const int kMiniMapScreenY;
+    static const Point2D kMiniMapScreenPos;
     static const int kMiniMapWidth;
     static const int kMiniMapHeight;
     /*! Number of line on a briefing page.*/

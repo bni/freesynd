@@ -33,8 +33,7 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
-const int BriefMenu::kMiniMapScreenX = 504;
-const int BriefMenu::kMiniMapScreenY = 220;
+const Point2D BriefMenu::kMiniMapScreenPos = {504, 220};
 const int BriefMenu::kMiniMapWidth = 120;
 const int BriefMenu::kMiniMapHeight = 120;
 const int BriefMenu::kMaxLinePerPage = 14;
@@ -44,7 +43,7 @@ const int BriefMenu::kMaxLinePerPage = 14;
 #endif
 BriefMenu::BriefMenu(MenuManager * m)
         : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap, true),
-          start_line_(0), p_briefing_(NULL), mm_renderer_() {
+          start_line_(0), p_briefing_(NULL), mm_renderer_(kMiniMapScreenPos) {
     cursorOnShow_ = kMenuCursor;
     
     addStatic(85, 35, 545, "#BRIEF_TITLE", FontManager::SIZE_4, false);
@@ -172,7 +171,7 @@ void BriefMenu::handleShow() {
  * Helpfull method to order minimap redraw by inserting a dirty rect.
  */
 void BriefMenu::redrawMiniMap() {
-    addDirtyRect(kMiniMapScreenX, kMiniMapScreenY, kMiniMapWidth, kMiniMapHeight);
+    addDirtyRect(kMiniMapScreenPos.x, kMiniMapScreenPos.y, kMiniMapWidth, kMiniMapHeight);
 }
 
 /*!
@@ -304,7 +303,7 @@ void BriefMenu::handleRender(DirtyList &dirtyList) {
     //     pMission->minimap_overlay_,0, false);
 
     // draw minimap
-    mm_renderer_.render(kMiniMapScreenX, kMiniMapScreenY, getMenuManager()->getMenuPalette());
+    mm_renderer_.render(getMenuManager()->getMenuPalette());
 }
 
 void BriefMenu::handleLeave() {
@@ -373,16 +372,16 @@ void BriefMenu::handleAction(const int actionId, void *ctx) {
  * \return True if the user clicked on the minimap so event is consumed
  */
 bool BriefMenu::handleMouseDown(Point2D point, int button) {
-    if (button == 1 && point.x >= kMiniMapScreenX
-        && point.x < (kMiniMapScreenX + kMiniMapWidth)
-        && point.y >= kMiniMapScreenY && point.y < (kMiniMapScreenY + kMiniMapHeight)) {
-        if (point.x >= kMiniMapScreenX && point.x < 544) {
+    if (button == 1 && point.x >= kMiniMapScreenPos.x
+        && point.x < (kMiniMapScreenPos.x + kMiniMapWidth)
+        && point.y >= kMiniMapScreenPos.y && point.y < (kMiniMapScreenPos.y + kMiniMapHeight)) {
+        if (point.x >= kMiniMapScreenPos.x && point.x < 544) {
             mm_renderer_.scrollLeft();
         } else if (point.x >= 584 && point.x < 624) {
              mm_renderer_.scrollRight();
         }
 
-        if (point.y >= kMiniMapScreenY && point.y < 260) {
+        if (point.y >= kMiniMapScreenPos.y && point.y < 260) {
              mm_renderer_.scrollUp();
         } else if (point.y >= 300 && point.y < 340) {
              mm_renderer_.scrollDown();

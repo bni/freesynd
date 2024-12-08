@@ -118,9 +118,7 @@ protected:
 
 protected:
     /*! Origin of the minimap on the screen.*/
-    static const int kMiniMapScreenX;
-    /*! Origin of the minimap on the screen.*/
-    static const int kMiniMapScreenY;
+    static const Point2D kMiniMapScreenPos;
 
     int tick_count_, last_animate_tick_;
     int last_motion_tick_, last_motion_x_, last_motion_y_;

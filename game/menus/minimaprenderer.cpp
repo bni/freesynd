@@ -22,8 +22,8 @@
 
 #include "menus/minimaprenderer.h"
 
+#include "fs-utils/log/log.h"
 #include "core/gamecontroller.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/events/event.h"
 #include "fs-kernel/model/missionbriefing.h"
@@ -32,6 +32,10 @@
 
 const int MinimapRenderer::kMiniMapSizePx = 128;
 const int GamePlayMinimapRenderer::kEvacuationRadius = 15;
+const int GamePlayMinimapRenderer::kMinimapTextureSize = 512;
+const int GamePlayMinimapRenderer::kCircleTextureWidth = 32;
+const int GamePlayMinimapRenderer::kCircleTextureHeight = 16;
+const int GamePlayMinimapRenderer::kCircleSpriteSize = 7;
 
 void MinimapRenderer::setZoom(EZoom zoom) {
     zoom_ = zoom;
@@ -39,7 +43,7 @@ void MinimapRenderer::setZoom(EZoom zoom) {
     updateRenderingInfos();
 }
 
-BriefMinimapRenderer::BriefMinimapRenderer() : timerMiniMapBlink_(500, false) {
+BriefMinimapRenderer::BriefMinimapRenderer(const Point2D &screenPos) : MinimapRenderer(screenPos), timerMiniMapBlink_(500, false) {
     scroll_step_ = 0;
 }
 
@@ -70,16 +74,16 @@ void BriefMinimapRenderer::initMinimapLocation() {
             if (pBriefing_->getMinimapOverlay(x, y) == MiniMap::kOverlayOurAgent) {
                 // We found a tile with an agent on it
                 // stop searching and memorize position
-                world_tx_ = x;
-                world_ty_ = y;
+                world_.x = x;
+                world_.y = y;
                 found = true;
             }
         }
     }
 
     uint16 halftiles = mm_maxtile_ / 2;
-    world_tx_ = (world_tx_ < halftiles) ? 0 : (world_tx_ - halftiles + 1);
-    world_ty_ = (world_ty_ < halftiles) ? 0 : (world_ty_ - halftiles + 1);
+    world_.x = (world_.x < halftiles) ? 0 : (world_.x - halftiles + 1);
+    world_.y = (world_.y < halftiles) ? 0 : (world_.y - halftiles + 1);
 
     clipMinimapToRightAndDown();
 }
@@ -88,16 +92,16 @@ void BriefMinimapRenderer::initMinimapLocation() {
  *
  */
 void BriefMinimapRenderer::clipMinimapToRightAndDown() {
-    if ((world_tx_ + mm_maxtile_) >= pBriefing_->minimap()->max_x()) {
+    if ((world_.x + mm_maxtile_) >= pBriefing_->minimap()->max_x()) {
         // We assume that map size in tiles (p_mission_->mmax_x_)
         // is bigger than the minimap size (mm_maxtile_)
-        world_tx_ = pBriefing_->minimap()->max_x() - mm_maxtile_;
+        world_.x = pBriefing_->minimap()->max_x() - mm_maxtile_;
     }
 
-    if ((world_ty_ + mm_maxtile_) >= pBriefing_->minimap()->max_y()) {
+    if ((world_.y + mm_maxtile_) >= pBriefing_->minimap()->max_y()) {
         // We assume that map size in tiles (p_mission_->mmax_y_)
         // is bigger than the minimap size (mm_maxtile_)
-        world_ty_ = pBriefing_->minimap()->max_y() - mm_maxtile_;
+        world_.y = pBriefing_->minimap()->max_y() - mm_maxtile_;
     }
 }
 
@@ -141,7 +145,7 @@ bool BriefMinimapRenderer::handleTick(uint32_t elapsed) {
  * clips scrolling to the map's right border.
  */
 void BriefMinimapRenderer::scrollRight() {
-    world_tx_ += scroll_step_;
+    world_.x += scroll_step_;
     clipMinimapToRightAndDown();
 }
 
@@ -150,14 +154,14 @@ void BriefMinimapRenderer::scrollRight() {
  * clips scrolling to the map's left border.
  */
 void BriefMinimapRenderer::scrollLeft() {
-    // if scroll_step is bigger than world_tx_
-    // then world_tx_ -= scroll_step_ would be negative
-    // but world_tx_ is usigned so it would be an error
-    if (world_tx_ < scroll_step_) {
-        world_tx_ = 0;
+    // if scroll_step is bigger than world_.x
+    // then world_.x -= scroll_step_ would be negative
+    // but world_.x is usigned so it would be an error
+    if (world_.x < scroll_step_) {
+        world_.x = 0;
     } else {
-        // we know that world_tx_ >= scroll_step_
-        world_tx_ -= scroll_step_;
+        // we know that world_.x >= scroll_step_
+        world_.x -= scroll_step_;
     }
 }
 
@@ -166,11 +170,11 @@ void BriefMinimapRenderer::scrollLeft() {
  * clips scrolling to the map's top border.
  */
 void BriefMinimapRenderer::scrollUp() {
-    if (world_ty_ < scroll_step_) {
-        world_ty_ = 0;
+    if (world_.y < scroll_step_) {
+        world_.y = 0;
     } else {
-        // we know that world_ty_ >= scroll_step_
-        world_ty_ -= scroll_step_;
+        // we know that world_.y >= scroll_step_
+        world_.y -= scroll_step_;
     }
 }
 
@@ -179,19 +183,18 @@ void BriefMinimapRenderer::scrollUp() {
  * clips scrolling to the map's bottom border.
  */
 void BriefMinimapRenderer::scrollDown() {
-    world_ty_ += scroll_step_;
+    world_.y += scroll_step_;
     clipMinimapToRightAndDown();
 }
 
 /*!
- * Renders the minimap at the given position on the screen.
- * \param screen_x X coord in absolute pixels.
- * \param screen_y Y coord in absolute pixels.
+ * Renders the minimap.
+ * \param palette the palette for colors
  */
-void BriefMinimapRenderer::render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) {
-    for (uint16_t tx = world_tx_; tx < (world_tx_ + mm_maxtile_); tx++) {
-        uint16_t xc = screen_x + (tx - world_tx_) * pixpertile_;
-        for (uint16_t ty = world_ty_; ty < (world_ty_ + mm_maxtile_); ty++) {
+void BriefMinimapRenderer::render(const fs_eng::Palette & palette) {
+    for (uint16_t tx = world_.x; tx < (world_.x + mm_maxtile_); tx++) {
+        uint16_t xc = topLeftCornerPos_.x + (tx - world_.x) * pixpertile_;
+        for (uint16_t ty = world_.y; ty < (world_.y + mm_maxtile_); ty++) {
             uint8_t c = pBriefing_->getMinimapOverlay(tx, ty);
             switch (c) {
                 case 0: // a basic tile
@@ -207,7 +210,7 @@ void BriefMinimapRenderer::render(uint16_t screen_x, uint16_t screen_y, const fs
                         c = pBriefing_->minimap()->getColourAt(tx, ty);
             }
 
-            Point2D pos {xc, screen_y + (ty - world_ty_) * pixpertile_};
+            Point2D pos {xc, topLeftCornerPos_.y + (ty - world_.y) * pixpertile_};
             g_System.drawFillRect(pos, pixpertile_, pixpertile_, palette[c]);
         }
     }
@@ -216,9 +219,10 @@ void BriefMinimapRenderer::render(uint16_t screen_x, uint16_t screen_y, const fs
 /*!
  * Default constructor.
  */
-GamePlayMinimapRenderer::GamePlayMinimapRenderer() :
+GamePlayMinimapRenderer::GamePlayMinimapRenderer(const Point2D &screenPos) : MinimapRenderer(screenPos),
     mm_timer_weap(300, false), mm_timer_ped(260, false),
-    mm_timer_signal(250) {
+    mm_timer_signal(250), minimapTexture_(g_System.createTexture()),
+    circleTexture_(g_System.createTexture()) {
     p_mission_ = NULL;
     handleClearSignal();
 
@@ -233,16 +237,17 @@ GamePlayMinimapRenderer::GamePlayMinimapRenderer() :
  * \param pMission A mission.
  * \param b_scannerEnabled True if scanner is enabled -> changes zoom level.
  */
-void GamePlayMinimapRenderer::init(Mission *pMission, bool b_scannerEnabled) {
+void GamePlayMinimapRenderer::init(Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette) {
     p_mission_ = pMission;
     p_minimap_ = pMission->getMiniMap();
     setScannerEnabled(b_scannerEnabled);
-    world_tx_ = 0;
-    world_ty_ = 0;
+    initMinimapTexture(palette);
+    initCircleTexture(palette);
+    world_.x = 0;
+    world_.y = 0;
     offset_x_ = 0;
     offset_y_ = 0;
-    cross_x_ = 64;
-    cross_y_ = 64;
+    crossPos_ = topLeftCornerPos_.add(kMiniMapSizePx / 2, kMiniMapSizePx / 2);
     mm_timer_weap.reset();
     mm_timer_signal.reset();
     handleClearSignal();
@@ -250,7 +255,7 @@ void GamePlayMinimapRenderer::init(Mission *pMission, bool b_scannerEnabled) {
 
 void GamePlayMinimapRenderer::updateRenderingInfos() {
     // mm_maxtile_ can be 17 or 33
-    mm_maxtile_ = 128 / pixpertile_ + 1;
+    mm_maxtile_ = kMiniMapSizePx / pixpertile_;
 }
 
 /*!
@@ -262,54 +267,174 @@ void GamePlayMinimapRenderer::setScannerEnabled(bool b_enabled) {
 }
 
 /*!
- * Centers the minimap on the given tile. Usually, the minimap is centered
- * on the selected agent. If the agent is too close from the border, the minimap
- * does not move anymore.
- * \param tileX The X coord of the tile.
- * \param tileX The Y coord of the tile.
- * \param offX The offset of the agent on the tile.
- * \param offY The offset of the agent on the tile.
+ * Create a texture with the representation of the minimap where 
+ * each tile is a pixel on the texture. The texture should be larger
+ * than the map and remaining pixels are transparent.
+ * @param palette 
  */
-void GamePlayMinimapRenderer::centerOn(uint16 tileX, uint16 tileY, int offX, int offY) {
-    uint16 halfSize = mm_maxtile_ / 2;
+void GamePlayMinimapRenderer::initMinimapTexture(const fs_eng::Palette & palette) {
+    uint8_t minimapBuffer[kMinimapTextureSize*kMinimapTextureSize];
 
-    if (tileX < halfSize) {
-        // we're too close of the top border -> stop moving along X axis
-        world_tx_ = 0;
-        offset_x_ = 0;
-    } else if ((tileX + halfSize) >= p_mission_->mmax_x_) {
-        // we're too close of the bottom border -> stop moving along X axis
-        world_tx_ = p_mission_->mmax_x_ - mm_maxtile_;
-        offset_x_ = 0;
-    } else {
-        world_tx_ = tileX - halfSize;
-        offset_x_ = offX / (256 / pixpertile_);
+    memset(minimapBuffer, 255, kMinimapTextureSize*kMinimapTextureSize);
+
+    if (p_minimap_->max_x() > kMinimapTextureSize || p_minimap_->max_y() > kMinimapTextureSize) {
+        FSERR(Log::k_FLG_GFX, "GamePlayMinimapRenderer", "initMinimapTexture", ("Map size is bigger than texture size : %d, %d", p_minimap_->max_x(), p_minimap_->max_y()));
     }
 
-    if (tileY < halfSize) {
-        world_ty_ = 0;
+    for (int y = 0; y < p_minimap_->max_y(); ++y) {
+        // pointer to beginning of row
+        int yOffset = y * kMinimapTextureSize;
+        for (int x = 0; x < p_minimap_->max_x(); x++) {
+            uint8_t tileColor = p_mission_->getMiniMap()->getColourAt(x, y);
+            minimapBuffer[x + yOffset] = tileColor;
+        }
+        
+    }
+
+    // Then init texture with the buffer
+    bool res = minimapTexture_->create8bitsSurfaceFromData(minimapBuffer, 
+                                            kMinimapTextureSize, 
+                                            kMinimapTextureSize,
+                                            255);
+    
+    if (res) {
+        if (minimapTexture_->setPalette(palette)) {
+            minimapTexture_->loadTextureFromSurface();
+        }
+    }
+}
+
+/*!
+ * This array is used as a mask to draw circle for peds.
+ * Values of the mask are :
+ * - 0 : use the color of the buffer
+ * - 1 : use border color if buffer color is not the fillColor
+ * - 2 : use the fillColor
+ */
+uint8 g_ped_circle_mask_[] = {
+    0,  0,  1,  1,  1,  0,  0,
+    0,  1,  2,  2,  2,  1,  0,
+    1,  2,  2,  2,  2,  2,  1,
+    1,  2,  2,  2,  2,  2,  1,
+    1,  2,  2,  2,  2,  2,  1,
+    0,  1,  2,  2,  2,  1,  0,
+    0,  0,  1,  1,  1,  0,  0
+};
+
+/*!
+ * This methode creates a texture to store a spritesheet of the different
+ * circles used to represent ped on the minimap.
+ * For each type of Ped, there are specific colors for the circle. Plus,
+ * as the circle is blinking, we store 2 sprites for each circle: one on the
+ * first line and the second just below on a second line.
+ * There are 4 types of circles.
+ * @param palette The palette of colors
+ */
+void GamePlayMinimapRenderer::initCircleTexture(const fs_eng::Palette & palette) {
+    uint8_t circleBuffer[kCircleTextureWidth*kCircleTextureHeight];
+    memset(circleBuffer, 255, kCircleTextureWidth*kCircleTextureHeight);
+    // This array contains the colors used for each type of circle
+    uint8_t colors[] {
+        // First is the circle main color, second and third are use for blinking
+        fs_cmn::kColorYellow, fs_cmn::kColorBlack, fs_cmn::kColorLightGreen,     // 0 - our agent or persuaded
+        fs_cmn::kColorLightRed, fs_cmn::kColorBlack, fs_cmn::kColorDarkRed,      // 1 - enemy agent
+        fs_cmn::kColorBlue, fs_cmn::kColorBlack, fs_cmn::kColorBlueGrey,         // 2 - Police
+        fs_cmn::kColorLightGrey, fs_cmn::kColorWhite, fs_cmn::kColorBlack        // 3 - Guard
+    };
+    const int kNumOfCirclePerRow = 4;
+
+    for (int circle=0; circle < kNumOfCirclePerRow; circle++) {
+        // start of the sprite pixels in the destination surface (upper left corner of logo)
+        int offsetDest1 = circle * (kCircleSpriteSize +1);
+        // start of the sprite for the second version of the circle
+        int offsetDest2 = circle * (kCircleSpriteSize + 1) + (kCircleTextureWidth*kCircleSpriteSize) + kCircleTextureWidth;
+
+        // Copy pixels
+        for (int j=0; j < kCircleSpriteSize; j++) {
+            int lineOffsetDest = j * kCircleTextureWidth;
+            for (int i=0; i < kCircleSpriteSize; i++) {
+                int srcPixel = i + j * kCircleSpriteSize;
+
+                switch(g_ped_circle_mask_[srcPixel]) {
+                case 2:
+                    circleBuffer[offsetDest1 + lineOffsetDest + i] = colors[circle*3];
+                    circleBuffer[offsetDest2 + lineOffsetDest + i] =colors[circle*3];
+                    break;
+                case 1:
+                    circleBuffer[offsetDest1 + lineOffsetDest + i] =colors[circle*3 + 1];
+                    circleBuffer[offsetDest2 + lineOffsetDest + i] =colors[circle*3 + 2];
+                    break;
+                default:
+                    circleBuffer[offsetDest1 + lineOffsetDest + i] = 255;
+                    circleBuffer[offsetDest2 + lineOffsetDest + i] = 255;
+                    break;
+                }
+                
+            }
+        }
+    }
+
+    // Then init texture with the buffer
+    bool res = circleTexture_->create8bitsSurfaceFromData(circleBuffer, 
+                                            kCircleTextureWidth, 
+                                            kCircleTextureHeight,
+                                            255);
+    
+    if (res) {
+        if (circleTexture_->setPalette(palette)) {
+            circleTexture_->loadTextureFromSurface();
+        }
+    }
+}
+
+/*!
+ * Centers the minimap on the given object. Usually, the minimap is centered
+ * on the selected agent. If the agent is too close from the border, the minimap
+ * does not move anymore.
+ * \param pObject The MapObject on which to center the minimap.
+ */
+void GamePlayMinimapRenderer::centerOn(MapObject *pObject) {
+    int halfSize = mm_maxtile_ / 2;
+    TilePoint tp = pObject->position();
+
+    if (tp.tx < halfSize) {
+        // we're too close of the top border -> stop moving along X axis
+        world_.x = 0;
+        offset_x_ = 0;
+    } else if ((tp.tx + halfSize) >= p_mission_->mmax_x_) {
+        // we're too close of the bottom border -> stop moving along X axis
+        world_.x = p_mission_->mmax_x_ - mm_maxtile_;
+        offset_x_ = 0;
+    } else {
+        world_.x = tp.tx - halfSize;
+        offset_x_ = tp.ox / (256 / pixpertile_);
+    }
+
+    if (tp.ty < halfSize) {
+        world_.y = 0;
         offset_y_ = 0;
-    } else if ((tileY + halfSize) >= p_mission_->mmax_y_) {
-        world_ty_ = p_mission_->mmax_y_ - mm_maxtile_;
+    } else if ((tp.ty + halfSize) >= p_mission_->mmax_y_) {
+        world_.y = p_mission_->mmax_y_ - mm_maxtile_;
         offset_y_ = 0;
     } else {
-        world_ty_ = tileY - halfSize;
-        offset_y_ = offY / (256 / pixpertile_);
+        world_.y = tp.ty - halfSize;
+        offset_y_ = tp.oy / (256 / pixpertile_);
     }
 
     // get the cross coordinate
     //
     // TODO : see if we can remove + 1
-    cross_x_ = mapToMiniMapX(tileX + 1, offX);
-    cross_y_ = mapToMiniMapY(tileY + 1, offY);
+    /* cross_x_ = mapToMiniMapX(tileX + 1, offX);
+    cross_y_ = mapToMiniMapY(tileY + 1, offY); */
+    crossPos_ = mapToScreenPosition(tp);
 }
 
-void GamePlayMinimapRenderer::onObjectiveEndedEvent(ObjectiveEndedEvent *pEvt) {
+void GamePlayMinimapRenderer::onObjectiveEndedEvent([[maybe_unused]] ObjectiveEndedEvent *pEvt) {
     p_minimap_->clearTarget();
     handleClearSignal();
 }
 
-void GamePlayMinimapRenderer::onMissionEndedEvent(MissionEndedEvent *pEvt) {
+void GamePlayMinimapRenderer::onMissionEndedEvent([[maybe_unused]] MissionEndedEvent *pEvt) {
     p_minimap_->clearTarget();
     handleClearSignal();
 }
@@ -324,17 +449,16 @@ void GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent(EvacuateObjectiveS
 
     // Check if the evacuation point is already visible
     // in this case, we draw the circle in red
-    int signal_px = signalXYZToMiniMapX();
-    int signal_py = signalXYZToMiniMapY();
-    if (isEvacuationCircleOnMinimap(signal_px, signal_py)) {
-        i_signalColor_ = fs_cmn::kColorDarkRed;
-        i_signalRadius_ = kEvacuationRadius;
+    Point2D signalPos = signalXYZToMiniMap();
+    if (isEvacuationCircleOnMinimap(signalPos.x, signalPos.y)) {
+        signalColor_ = fs_cmn::kColorDarkRed;
+        signalRadius_ = kEvacuationRadius;
     }
 }
 
 void GamePlayMinimapRenderer::handleClearSignal() {
-    i_signalRadius_ = 0;
-    i_signalColor_ = fs_cmn::kColorWhite;
+    signalRadius_ = 0;
+    signalColor_ = fs_cmn::kColorWhite;
     signalType_ = kNone;
     signalSourceLocW_.x = 0;
     signalSourceLocW_.y = 0;
@@ -358,29 +482,28 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
 
     if (signalType_ != kNone &&mm_timer_signal.update(elapsed)) {
         // Time hit max -> update radar circle size
-        i_signalRadius_ += 16;
-        int signal_px = signalXYZToMiniMapX();
-        int signal_py = signalXYZToMiniMapY();
+        signalRadius_ += 16;
+        Point2D signalPos = signalXYZToMiniMap();
 
-        if (signalType_ == kEvacuation && isEvacuationCircleOnMinimap(signal_px, signal_py)) {
+        if (signalType_ == kEvacuation && isEvacuationCircleOnMinimap(signalPos.x, signalPos.y)) {
             // the evacuation circle is completely on the map, so it's a red circle with fixed size
-            i_signalColor_ = fs_cmn::kColorDarkRed;
-            i_signalRadius_ = kEvacuationRadius;
+            signalColor_ = fs_cmn::kColorDarkRed;
+            signalRadius_ = kEvacuationRadius;
         } else {
             int maxPx = mm_maxtile_ * pixpertile_;
-            int signalRadius2 = i_signalRadius_ * i_signalRadius_;
+            int signalRadius2 = signalRadius_ * signalRadius_;
             // Distance to the top right corner
-            int dist1 = (maxPx - signal_px )* (maxPx - signal_px ) + (signal_py )* (signal_py );
+            int dist1 = (maxPx - signalPos.x )* (maxPx - signalPos.x ) + (signalPos.y )* (signalPos.y );
             // Distance to the top left corner
-            int dist2 = (signal_px )* (signal_px ) + (signal_py )* (signal_py );
+            int dist2 = (signalPos.x )* (signalPos.x ) + (signalPos.y )* (signalPos.y );
             // Distance to the bottom left corner
-            int dist3 = (signal_px )* (signal_px ) + (maxPx - signal_py )* (maxPx - signal_py );
+            int dist3 = (signalPos.x )* (signalPos.x ) + (maxPx - signalPos.y )* (maxPx - signalPos.y );
             // Distance to the bottom left corner
-            int dist4 = (maxPx - signal_px )* (maxPx - signal_px ) + (maxPx - signal_py )* (maxPx - signal_py );
+            int dist4 = (maxPx - signalPos.x )* (maxPx - signalPos.x ) + (maxPx - signalPos.y )* (maxPx - signalPos.y );
             // All four corners of the minimap must be inside the circle to stop growing
             if (signalRadius2 > dist1 && signalRadius2 > dist2 &&
                 signalRadius2 > dist3 && signalRadius2 > dist4) {
-                i_signalRadius_ = 0;
+                signalRadius_ = 0;
                 // Update signal position in case of a moving target
                 if (signalType_ == kTarget) {
                     signalSourceLocW_.convertFromTilePoint(p_minimap_->target()->position());
@@ -389,11 +512,18 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
                 //g_SoundMgr.play(snd::TRACKING_PONG);
             }
             // reset color to white in case the red circle was displayed
-            i_signalColor_ = fs_cmn::kColorWhite;
+            signalColor_ = fs_cmn::kColorWhite;
         }
     }
 
     return true;
+}
+
+Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPosition) {
+    return 
+        topLeftCornerPos_.add(
+            ((mapPosition.tx - world_.x) * pixpertile_) + (mapPosition.ox / (256 / pixpertile_)),
+            ((mapPosition.ty - world_.y) * pixpertile_) + (mapPosition.oy / (256 / pixpertile_)));
 }
 
 /*!
@@ -408,8 +538,8 @@ TilePoint GamePlayMinimapRenderer::minimapToMapPoint(int mm_x, int mm_y) {
     int ox = (mm_x + offset_x_) % pixpertile_;
     int oy = (mm_y + offset_y_) % pixpertile_;
 
-    pt.tx = tx + world_tx_;
-    pt.ty = ty + world_ty_;
+    pt.tx = tx + world_.x;
+    pt.ty = ty + world_.y;
     pt.tz = 0;
     pt.ox = ox * (256 / pixpertile_);
     pt.oy = oy * (256 / pixpertile_);
@@ -418,104 +548,55 @@ TilePoint GamePlayMinimapRenderer::minimapToMapPoint(int mm_x, int mm_y) {
 }
 
 /*!
- * Renders the minimap at the given position on the screen.
- * \param screen_x X coord in absolute pixels.
- * \param screen_y Y coord in absolute pixels.
+ * Renders the minimap.
+ * \param palette the palette for colors
  */
-void GamePlayMinimapRenderer::render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) {
-    // A temporary buffer composed of mm_maxtile + 1 columns and rows.
-    // we use a slightly larger rendering buffer not to have
-    // to check borders. At the end we only display  the mm_maxtile x mm_maxtile tiles.
-    // On top of this we use one size for both resolutions as 18*18*8*8 > 34*34*4*4
-
-    // NOTE: additional data is added to avoid stack corruption (18 * 8) * 4
-    uint8 minimap_layer[18*18*8*8 + (18 * 8) * 4];
-    // because of reading data from buffer in peds draw, to avoid
-    // conditional on uninitialized value
-    memset(minimap_layer, 0, 18*18*8*8 + (18 * 8) * 4);
-
-    uint8 mm_layer_size = mm_maxtile_ + 1;
-    // The final minimap that will be displayed : the minimap is 128*128 pixels
-    uint8 minimap_final_layer[kMiniMapSizePx*kMiniMapSizePx];
-
-    // In this loop, we fill the buffer with floor colour. the first row and column
-    // is not filled
-
-    for (int j = 0; j < mm_maxtile_; ++j) {
-        // pointer to first row
-        uint8* frow = minimap_layer + (j + 1) * pixpertile_ * pixpertile_ * mm_layer_size
-            + pixpertile_;
-        for (int i = 0; i < mm_maxtile_; i++) {
-            uint8 gcolour = p_mission_->getMiniMap()->getColourAt(world_tx_ + i, world_ty_ + j);
-            // pointer to row we draw at
-            uint8 *drow = frow + i * pixpertile_;
-            for (uint8 inc = 0; inc < pixpertile_; ++inc)
-                *drow++ = gcolour;
-        }
-        for (uint8 inc = 1; inc < pixpertile_; ++inc) {
-            uint8 *drow = frow + inc * pixpertile_ * mm_layer_size;
-            uint8 *local_frow = frow;
-            const uint32 sz = pixpertile_ * mm_maxtile_;
-            for (uint32 i = 0; i < sz; ++i)
-                *drow++ = *local_frow++;
-        }
-    }
+void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
+    // First render the background with the tiles
+    minimapTexture_->renderStretch(world_, topLeftCornerPos_, mm_maxtile_, mm_maxtile_, pixpertile_);
 
     // Draw the minimap cross
-    drawFillRect(minimap_layer, cross_x_, 0, 1, (mm_maxtile_ + 1) * pixpertile_, fs_cmn::kColorBlack);
-    drawFillRect(minimap_layer, 0, cross_y_, (mm_maxtile_ + 1) * pixpertile_, 1, fs_cmn::kColorBlack);
+    g_System.drawHLine({topLeftCornerPos_.x, crossPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
+    g_System.drawVLine({crossPos_.x, topLeftCornerPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
 
     // draw all visible elements on the minimap
-    drawPedestrians(minimap_layer);
-    drawWeapons(minimap_layer);
-    drawVehicles(minimap_layer);
+    drawPedestrians(palette);
+    drawWeapons(palette);
+    drawVehicles(palette);
 
     if (signalType_ != kNone) {
-        int signal_px = signalXYZToMiniMapX();
-        int signal_py = signalXYZToMiniMapY();
-        drawSignalCircle(minimap_layer, signal_px, signal_py, i_signalRadius_, i_signalColor_);
+        Point2D signal = signalXYZToMiniMap();
+        drawSignalCircle(signal, palette);
     }
-
-    // Copy the temp buffer in the final minimap using the tile offset so the minimap movement
-    // is smoother
-    for (int j = 0; j < kMiniMapSizePx; j++) {
-        memcpy(minimap_final_layer + (kMiniMapSizePx * j),
-            minimap_layer + (pixpertile_ * pixpertile_ * mm_layer_size) +
-            (j + offset_y_) * pixpertile_ * mm_layer_size + pixpertile_ + offset_x_, kMiniMapSizePx);
-    }
-
-    // Draw the minimap on the screen
-    g_Screen.blit(screen_x, screen_y, kMiniMapSizePx, kMiniMapSizePx, minimap_final_layer);
 }
 
-void GamePlayMinimapRenderer::drawVehicles(uint8 *a_minimap) {
+void GamePlayMinimapRenderer::drawVehicles(const fs_eng::Palette & palette) {
     for (size_t i = 0; i < p_mission_->numVehicles(); i++) {
         Vehicle *p_vehicle = p_mission_->vehicle(i);
-        int tx = p_vehicle->tileX();
-        int ty = p_vehicle->tileY();
+        Point2D screenPos = mapToScreenPosition(p_vehicle->position());
 
-        if (isVisible(tx, ty)) {
+        if (isVisible(p_vehicle)) {
             // vehicle is on minimap and must be drawn.
             // if a vehicle contains at least one of our agent
             // we only draw the yellow circle representing the agent
             if (p_vehicle->containsOurAgents()) {
-                int px = mapToMiniMapX(tx + 1, p_vehicle->offX());
+                /* int px = mapToMiniMapX(tx + 1, p_vehicle->offX());
                 int py = mapToMiniMapY(ty + 1, p_vehicle->offY());
-                uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorBlack : fs_cmn::kColorLightGreen;
-                drawPedCircle(a_minimap, px, py, fs_cmn::kColorYellow, borderColor);
+                uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorBlack : fs_cmn::kColorLightGreen; */
+                drawPedCircle(screenPos, 0);
 
             } else {
-                size_t vehicle_size = (zoom_ == ZOOM_X1) ? 2 : 4;
-                int px = mapToMiniMapX(tx + 1, p_vehicle->offX()) - vehicle_size / 2;
-                int py = mapToMiniMapY(ty + 1, p_vehicle->offY()) - vehicle_size / 2;
+                int vehicle_size = (zoom_ == ZOOM_X1) ? 2 : 4;
+                /* int px = mapToMiniMapX(tx + 1, p_vehicle->offX()) - vehicle_size / 2;
+                int py = mapToMiniMapY(ty + 1, p_vehicle->offY()) - vehicle_size / 2; */
 
-                drawFillRect(a_minimap, px, py, vehicle_size, vehicle_size, fs_cmn::kColorWhite);
+                g_System.drawFillRect(screenPos, vehicle_size, vehicle_size, palette[fs_cmn::kColorWhite]);
             }
         }
     }
 }
 
-void GamePlayMinimapRenderer::drawWeapons(uint8 * a_minimap) {
+void GamePlayMinimapRenderer::drawWeapons(const fs_eng::Palette & palette) {
     const size_t weapon_size = 2;
     for (size_t i = 0; i < p_mission_->numWeaponsOnGround(); i++)
     {
@@ -525,23 +606,17 @@ void GamePlayMinimapRenderer::drawWeapons(uint8 * a_minimap) {
         if (!w->isDrawable())
             continue;
 
-        int tx = w->tileX();
-        int ty = w->tileY();
-        int ox = w->offX();
-        int oy = w->offY();
-
-        if (isVisible(tx, ty)) {
+        if (isVisible(w)) {
             if (mm_timer_weap.state()) {
-                int px = mapToMiniMapX(tx + 1, ox) - 1;
-                int py = mapToMiniMapY(ty + 1, oy) - 1;
+                Point2D screenPos = mapToScreenPosition(w->position());
 
-                drawFillRect(a_minimap, px, py, weapon_size, weapon_size, fs_cmn::kColorLightGrey);
+                g_System.drawFillRect(screenPos, weapon_size, weapon_size, palette[fs_cmn::kColorLightGrey]);
             }
         }
     }
 }
 
-void GamePlayMinimapRenderer::drawPedestrians(uint8 * a_minimap) {
+void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
     for (size_t i = 0; i < p_mission_->numPeds(); i++)
     {
         PedInstance *p_ped = p_mission_->ped(i);
@@ -549,19 +624,12 @@ void GamePlayMinimapRenderer::drawPedestrians(uint8 * a_minimap) {
         if (p_ped->isDead() || p_ped->inVehicle())
             continue;
 
-        int tx = p_ped->tileX();
-        int ty = p_ped->tileY();
-        int ox = p_ped->offX();
-        int oy = p_ped->offY();
-
-        if (isVisible(tx, ty))
+        if (isVisible(p_ped))
         {
-            int px = mapToMiniMapX(tx + 1, ox);
-            int py = mapToMiniMapY(ty + 1, oy);
+            Point2D screenPos = mapToScreenPosition(p_ped->position());
+
             if (p_ped->isPersuaded()) {
-                // col_Yellow circle with a black or lightgreen border (blinking)
-                uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorLightGreen : fs_cmn::kColorBlack;
-                drawPedCircle(a_minimap, px, py, fs_cmn::kColorYellow, borderColor);
+                drawPedCircle(screenPos, 0);
             } else {
                 switch (p_ped->type())
                 {
@@ -569,14 +637,11 @@ void GamePlayMinimapRenderer::drawPedestrians(uint8 * a_minimap) {
                 case PedInstance::kPedTypeCriminal:
                     {
                         // white rect 2x2 (opaque and transparent blinking)
-                        size_t ped_width = 2;
-                        size_t ped_height = 2;
+                        int ped_width = 2;
+                        int ped_height = 2;
                         if (mm_timer_ped.state()) {
-                            --px;
-                            --py;
-
                             // draw the square
-                            drawFillRect(a_minimap, px, py, ped_width, ped_height, fs_cmn::kColorWhite);
+                            g_System.drawFillRect(screenPos, ped_width, ped_height, palette[fs_cmn::kColorWhite]);
                         }
                     break;
                     }
@@ -584,29 +649,20 @@ void GamePlayMinimapRenderer::drawPedestrians(uint8 * a_minimap) {
                 {
                     if (p_ped->isOurAgent())
                     {
-                        // TODO : do not draw agent if he is in a vehicle
-                        // col_Yellow circle with a black or lightgreen border (blinking)
-                        uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorBlack : fs_cmn::kColorLightGreen;
-                        drawPedCircle(a_minimap, px, py, fs_cmn::kColorYellow, borderColor);
+                        drawPedCircle(screenPos, 0);
                     } else {
-                        // col_LightRed circle with a black or dark red border (blinking)
-                        uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorBlack : fs_cmn::kColorDarkRed;
-                        drawPedCircle(a_minimap, px, py, fs_cmn::kColorLightRed, borderColor);
+                        drawPedCircle(screenPos, 1);
                     }
                 }
                 break;
                 case PedInstance::kPedTypePolice:
                     {
-                    // blue circle with a black or col_BlueGrey (blinking)
-                    uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorBlack : fs_cmn::kColorBlueGrey;
-                    drawPedCircle(a_minimap, px, py, fs_cmn::kColorBlue, borderColor);
+                    drawPedCircle(screenPos, 2);
                     }
                     break;
                 case PedInstance::kPedTypeGuard:
                     {
-                    // col_LightGrey circle with a black or white border (blinking)
-                    uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorWhite : fs_cmn::kColorBlack;
-                    drawPedCircle(a_minimap, px, py, fs_cmn::kColorLightGrey, borderColor);
+                    drawPedCircle(screenPos, 3);
                     }
                     break;
                 }
@@ -616,93 +672,90 @@ void GamePlayMinimapRenderer::drawPedestrians(uint8 * a_minimap) {
 }
 
 /*!
- * This array is used as a mask to draw circle for peds.
- * Values of the mask are :
- * - 0 : use the color of the buffer
- * - 1 : use border color if buffer color is not the fillColor
- * - 2 : use the fillColor
- */
-uint8 g_ped_circle_mask_[] = {
-    0,  0,  1,  1,  1,  0,  0,
-    0,  1,  2,  2,  2,  1,  0,
-    1,  2,  2,  2,  2,  2,  1,
-    1,  2,  2,  2,  2,  2,  1,
-    1,  2,  2,  2,  2,  2,  1,
-    0,  1,  2,  2,  2,  1,  0,
-    0,  0,  1,  1,  1,  0,  0
-};
-
-/*!
     * Draw a circle with the given colors for fill and border. This is used to represent agents, police and guards.
-    * \param a_buffer destination buffer
-    * \param mm_x X coord in the destination buffer
-    * \param mm_y Y coord in the destination buffer
-    * \param fillColor the color to fill the rect
-    * \param borderColor the color to draw the circle border
+    * \param screenPos center of the circle on the screen
+    * \param type What type of circle : 0 for our agent/persuaded, 1 for enemy, 2 for guard, 3 for police
     */
-void GamePlayMinimapRenderer::drawPedCircle(uint8 * a_buffer, int mm_x, int mm_y, uint8 fillColor, uint8 borderColor) {
-    // Size of the mask : it's a square of 4x4 pixels.
-    const uint8 kCircleMaskSize = 7;
-    // centers the circle on the ped position and add pixels to skip the first row and column
-    mm_x -= 3;
-    mm_y -= 3;
-
-    for (uint8 j = 0; j < kCircleMaskSize; j++) {
-        for (uint8 i = 0; i < kCircleMaskSize; i++) {
-            // get the color at the current point
-            int i_index = (mm_y + j) * pixpertile_ * (mm_maxtile_ + 1) + mm_x + i;
-            uint8 bufferColor = a_buffer[i_index];
-            switch(g_ped_circle_mask_[j*kCircleMaskSize + i]) {
-            case 2:
-                a_buffer[i_index] = fillColor;
-                break;
-            case 1:
-                if (bufferColor != fillColor) {
-                    a_buffer[i_index] = borderColor;
-                }
-                break;
-            default:
-                break;
-            }
+void GamePlayMinimapRenderer::drawPedCircle(const Point2D &screenPos, int type) {
+    if (type < 4) {
+        // We add 1 pixel in X and Y because it is the space between each sprite in the texture
+        Point2D originTexture {type * (kCircleSpriteSize + 1), 0};
+        if (mm_timer_ped.state()) {
+            originTexture.y += kCircleSpriteSize + 1;
         }
+        circleTexture_->render(originTexture, screenPos, kCircleSpriteSize, kCircleSpriteSize);
     }
 }
+
+/*!
+ * Draw a pixel only if inside the minimap borders
+ * @param point Position of the point
+ * @param color Color to draw the point
+ */
+void GamePlayMinimapRenderer::drawPixel (const Point2D &point, fs_eng::FSColor color) {
+        if (point.x > topLeftCornerPos_.x && point.x < (topLeftCornerPos_.x + kMiniMapSizePx) && 
+            point.y > topLeftCornerPos_.y && point.y < (topLeftCornerPos_.y + kMiniMapSizePx)) {
+            g_System.drawPoint(point, color);
+        }
+    }
 
 // NOTE: this function is derived from http://cimg.sourceforge.net/
 // and is under http://www.cecill.info/licences/Licence_CeCILL_V2-en.txt
 // or http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.txt
 // licenses
-void GamePlayMinimapRenderer::drawSignalCircle(uint8 * a_buffer, int signal_px,
-    int signal_py, uint16 radius, uint8 color)
+void GamePlayMinimapRenderer::drawSignalCircle(const Point2D &signalPos, const fs_eng::Palette & palette)
 {
-    if (!radius)
+    fs_eng::FSColor color = palette[signalColor_];
+    if (signalRadius_ == 0)
     {
-       drawPixel(a_buffer, signal_px, signal_py, color);
+       //drawPixel(a_buffer, signal_px, signal_py, color);
+        drawPixel(signalPos, color);
         return;
     }
-    drawPixel(a_buffer, signal_px-radius,signal_py, color);
+    /* drawPixel(a_buffer, signal_px-radius,signal_py, color);
     drawPixel(a_buffer, signal_px+radius,signal_py, color);
     drawPixel(a_buffer, signal_px,signal_py-radius, color);
-    drawPixel(a_buffer, signal_px,signal_py+radius, color);
-    if (radius==1)
+    drawPixel(a_buffer, signal_px,signal_py+radius, color); */
+    drawPixel(signalPos.add(-signalRadius_, 0), color);
+    drawPixel(signalPos.add(signalRadius_, 0), color);
+    drawPixel(signalPos.add(0, -signalRadius_), color);
+    drawPixel(signalPos.add(0, signalRadius_), color);
+
+
+    if (signalRadius_ == 1) {
         return;
-    for (int f = 1-radius, ddFx = 0, ddFy = -(radius<<1), x = 0, y = radius; x<y; ) {
+    }
+
+    for (int f = 1-signalRadius_, ddFx = 0, ddFy = -(signalRadius_<<1), x = 0, y = signalRadius_; x<y; ) {
         if (f>=0) { f+=(ddFy+=2); --y; }
         ++x; ++(f+=(ddFx+=2));
         if (x!=y+1) {
-            const int x1 = signal_px-y, x2 = signal_px+y, y1 = signal_py-x,
-                y2 = signal_py+x, x3 = signal_px-x, x4 = signal_px+x,
-                y3 = signal_py-y, y4 = signal_py+y;
-            drawPixel(a_buffer, x1,y1, color);
+            const int x1 = signalPos.x-y,
+                    x2 = signalPos.x+y,
+                    y1 = signalPos.y-x,
+                    y2 = signalPos.y+x,
+                    x3 = signalPos.x-x,
+                    x4 = signalPos.x+x,
+                    y3 = signalPos.y-y,
+                    y4 = signalPos.y+y;
+            /* drawPixel(a_buffer, x1,y1, color);
             drawPixel(a_buffer, x1,y2, color);
             drawPixel(a_buffer, x2,y1, color);
-            drawPixel(a_buffer, x2,y2, color);
+            drawPixel(a_buffer, x2,y2, color); */
+            drawPixel({x1,y1}, color);
+            drawPixel({x1,y2}, color);
+            drawPixel({x2,y1}, color);
+            drawPixel({x2,y2}, color);
             if (x!=y)
             {
-                drawPixel(a_buffer, x3,y3, color);
+                /* drawPixel(a_buffer, x3,y3, color);
                 drawPixel(a_buffer, x4,y4, color);
                 drawPixel(a_buffer, x4,y3, color);
-                drawPixel(a_buffer, x3,y4, color);
+                drawPixel(a_buffer, x3,y4, color); */
+                drawPixel({x3,y3}, color);
+                drawPixel({x4,y4}, color);
+                drawPixel({x4,y3}, color);
+                drawPixel({x3,y4}, color);
             }
         }
     }

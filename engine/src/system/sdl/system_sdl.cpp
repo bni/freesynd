@@ -499,6 +499,16 @@ void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
 }
 
 /*!
+ * Draw a point on the screen at given position
+ * @param position 
+ * @param color 
+ */
+void SystemSDL::drawPoint (Point2D position, fs_eng::FSColor color) {
+    SDL_SetRenderDrawColor( pRenderer_, color.r, color.g, color.b, color.a );
+    SDL_RenderDrawPoint(pRenderer_, position.x, position.y);
+}
+
+/*!
  * Draw a vertical line with given length and color
  * @param start The starting point of the line
  * @param length The length of the line

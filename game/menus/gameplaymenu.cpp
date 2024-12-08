@@ -49,8 +49,7 @@
 // The number of pixel of a scroll
 const int SCROLL_STEP = 16;
 
-const int GameplayMenu::kMiniMapScreenX = 0;
-const int GameplayMenu::kMiniMapScreenY = 46 + 44 + 10 + 46 + 44 + 15 + 2 * 32 + 2;
+const Point2D GameplayMenu::kMiniMapScreenPos = {0, 46 + 44 + 10 + 46 + 44 + 15 + 2 * 32 + 2};
 
 //#define ANIM_PLUS_FRAME_VIEW
 
@@ -60,7 +59,7 @@ tick_count_(0), last_animate_tick_(0), last_motion_tick_(0),
 last_motion_x_(320), last_motion_y_(240), mission_hint_ticks_(0),
 mission_hint_(0), mission_(NULL), selection_(),
 target_(NULL),
-mm_renderer_(), warningTimer_(20000)
+mm_renderer_(kMiniMapScreenPos), warningTimer_(20000)
 {
     cursorOnShow_ = kGameplayCursor;
     displayOriginPt_.x = 0;
@@ -300,15 +299,15 @@ void GameplayMenu::handleShow() {
     initWorldCoords();
 
     // set graphic palette
-    menu_manager_->setPaletteForMission(g_Session.getSelectedBlock().mis_id);
-    g_Screen.clear(0);
+    missionPalette_ = mission_->get_map()->getTileManager()->getPalette();
+    g_SpriteMgr.setPalette(missionPalette_);
 
     highlightLeaderMarker();
     updateMarkersPosition();
 
     // Init renderers
     map_renderer_.init(mission_, &selection_);
-    mm_renderer_.init(mission_, mission_->getSquad()->hasScanner());
+    mm_renderer_.init(mission_, mission_->getSquad()->hasScanner(), missionPalette_);
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
 
@@ -404,19 +403,19 @@ void GameplayMenu::handleTick(uint32_t elapsed)
         handleMouseMotion({last_motion_x_, last_motion_y_}, 0);
     }
 
-    drawMissionHint(elapsed);
+ /*   drawMissionHint(elapsed);*/
 }
 
 void GameplayMenu::handleRender(DirtyList &dirtyList)
 {
-    g_Screen.clear(0);
-    map_renderer_.render(displayOriginPt_);
-    g_Screen.drawRect(0,0, 129, GAME_SCREEN_HEIGHT);
-    agt_sel_renderer_.render(selection_, mission_->getSquad());
+//    g_Screen.clear(0);
+/*    map_renderer_.render(displayOriginPt_);*/
+    g_System.drawRect({0,0}, 129, GAME_SCREEN_HEIGHT, menu_manager_->kMenuColorBlack);
+    agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);
     drawSelectAllButton();
-    drawMissionHint(0);
+/*    drawMissionHint(0);*/
     drawWeaponSelectors();
-    mm_renderer_.render(kMiniMapScreenX, kMiniMapScreenY, missionPalette_);
+    mm_renderer_.render(missionPalette_);
 
 #ifdef _DEBUG
     // drawing of different sprites
@@ -485,7 +484,6 @@ void GameplayMenu::handleLeave()
     EventManager::remove_listener(handleWeaponSelected_);
     EventManager::remove_listener(handleAgentWarned_);
 
-    menu_manager_->setDefaultPalette();
     selection_.clear();
 
     tick_count_ = 0;
@@ -703,7 +701,7 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
         {
             // user clicked on the weapon selector
             handleClickOnWeaponSelector(point, button);
-        } else if ( point.y > kMiniMapScreenY && button == kMouseLeftButton) {
+        } else if ( point.y > kMiniMapScreenPos.y && button == kMouseLeftButton) {
             handleClickOnMinimap(point);
         }
     } else {
@@ -828,7 +826,7 @@ void GameplayMenu::handleClickOnMap(Point2D point, int button) {
  */
 void GameplayMenu::handleClickOnMinimap(Point2D point) {
     // convert minimap coordinate in map coordinate
-    TilePoint pt = mm_renderer_.minimapToMapPoint(point.x - kMiniMapScreenX, point.y - kMiniMapScreenY);
+    TilePoint pt = mm_renderer_.minimapToMapPoint(point.x - kMiniMapScreenPos.x, point.y - kMiniMapScreenPos.y);
     // As minimap is flat, we can't see the height. So take the Z coordinate
     // of the leader as a reference
     pt.tz = selection_.leader()->tileZ();
@@ -1213,7 +1211,7 @@ void GameplayMenu::drawMissionHint(int elapsed) {
         }
 
         if (inversed && !text_pw) {
-            g_Screen.drawRect(0, 46 + 44 + 10 + 46 + 44, 128, 12, 11);
+            g_System.drawFillRect({0, 46 + 44 + 10 + 46 + 44}, 128, 12, menu_manager_->kMenuColorYellow);
         } else {
             if (text_pw) {
                 str = ((WeaponInstance *)target_)->name();
@@ -1278,8 +1276,8 @@ void GameplayMenu::drawWeaponSelectors() {
                     else
                         n = 25 * wi->ammoRemaining() / wi->ammoCapacity();
 
-                    g_Screen.drawRect(32 * i + 3, 46 + 44 + 10 + 46 + 44 + 15 + j * 32 + 23 + 2,
-                        n, 5, 12);
+                    g_System.drawFillRect({32 * i + 3, 46 + 44 + 10 + 46 + 44 + 15 + j * 32 + 23 + 2},
+                        n, 5, menu_manager_->kMenuColorWhiteBlue);
                 }
             }
         }
@@ -1394,7 +1392,7 @@ void GameplayMenu::centerMinimapOnLeader() {
     // Centers the minimap on the selection leader
     if (selection_.size() > 0) {
         PedInstance *pAgent = mission_->ped(selection_.getLeaderSlot());
-        mm_renderer_.centerOn(pAgent->tileX(), pAgent->tileY(), pAgent->offX(), pAgent->offY());
+        mm_renderer_.centerOn(pAgent);
     }
 }
 

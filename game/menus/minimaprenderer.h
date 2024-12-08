@@ -28,6 +28,7 @@
 #include "fs-utils/common.h"
 #include "fs-utils/misc/timer.h"
 #include "fs-engine/enginecommon.h"
+#include "fs-engine/gfx/fstexture.h"
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/pathsurfaces.h"
 #include "fs-kernel/model/objectivedesc.h"
@@ -57,13 +58,14 @@ class MinimapRenderer {
         ZOOM_X4 = 0
     };
 
+    MinimapRenderer(const Point2D &screenPos) : topLeftCornerPos_(screenPos) {}
     virtual ~MinimapRenderer() {}
 
     //! update the class with elapsed time
     virtual bool handleTick(uint32_t elapsed) = 0;
 
     //! Render the minimap at the given point
-    virtual void render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) = 0;
+    virtual void render(const fs_eng::Palette & palette) = 0;
  protected:
     void setZoom(EZoom zoom);
      //! called when zoom changes
@@ -73,13 +75,13 @@ class MinimapRenderer {
     static const int kMiniMapSizePx;
 
     /*! Number of pixel used to draw a map tile.*/
-    uint8 pixpertile_;
+    int pixpertile_;
     /*! Current zoom level.*/
     EZoom zoom_;
-    /*! Tile X coord on the map for the top left corner of the minimap.*/
-    uint16_t world_tx_;
-    /*! Tile Y coord on the map for the top left corner of the minimap.*/
-    uint16_t world_ty_;
+    /*! Tile coord on the map for the top left corner of the minimap.*/
+    Point2D world_;
+    //! Top left corner of the minimap on the screen
+    Point2D topLeftCornerPos_;
 };
 
 /*!
@@ -90,7 +92,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
  public:
 
     //! Class Constructor.
-    BriefMinimapRenderer();
+    BriefMinimapRenderer(const Point2D &screenPos);
     //! Reset the class with a new mission
     void init(MissionBriefing *p_briefing, EZoom zoom, bool drawEnemies);
 
@@ -98,7 +100,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
     bool handleTick(uint32_t elapsed) override;
 
     //! Render the minimap at the given point
-    void render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) override;
+    void render(const fs_eng::Palette & palette) override;
 
     //! Sets all parameters that depend on zooming level
     void zoomOut();
@@ -146,13 +148,13 @@ class BriefMinimapRenderer : public MinimapRenderer {
 class GamePlayMinimapRenderer : public MinimapRenderer {
  public:
     //! Constructor for the class
-    GamePlayMinimapRenderer();
+    GamePlayMinimapRenderer(const Point2D &screenPos);
 
     //! Reset the class with a new mission
-    void init(Mission *pMission, bool b_scannerEnabled);
+    void init(Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette);
 
     //! Sets the minimap center on the given tile
-    void centerOn(uint16 tileX, uint16 tileY, int offX, int offY);
+    void centerOn(MapObject *pObject);
 
     //! Tells whether scanner is on or off.
     void setScannerEnabled(bool b_enabled);
@@ -161,7 +163,7 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     bool handleTick(uint32_t elapsed) override;
 
     //! Render the minimap
-    void render(uint16_t screen_x, uint16_t screen_y, const fs_eng::Palette & palette) override;
+    void render(const fs_eng::Palette & palette) override;
 
     //! Returns the map coordinates of the point on the minimap.
     TilePoint minimapToMapPoint(int mm_x, int mm_y);
@@ -181,88 +183,50 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     };
     //! called when zoom changes
     void updateRenderingInfos();
+    //! Create the texture using the minimap information
+    void initMinimapTexture(const fs_eng::Palette & palette);
+    //! Create the texture for circle
+    void initCircleTexture(const fs_eng::Palette & palette);
     //! Draw all visible cars
-    void drawVehicles(uint8 * a_minimap);
+    void drawVehicles(const fs_eng::Palette & palette);
     //! Draw all visible dropped weapons
-    void drawWeapons(uint8 * a_minimap);
+    void drawWeapons(const fs_eng::Palette & palette);
     //! Draw visible peds
-    void drawPedestrians(uint8 * a_minimap);
-    /*!
-     * Returns true if coords is visible on the map
-     * \param tx tile coord in world coord.
-     * \param ty tile coord in world coord.
-     */
-    bool isVisible(int tx, int ty) {
-        return (tx >= world_tx_ &&
-            tx < (world_tx_ + mm_maxtile_) &&
-            ty >= world_ty_ &&
-            ty < (world_ty_ + mm_maxtile_));
-    }
-    /*!
-     * Returns X coord of the given tile relatively
-     * to the top letf corner of the minimap in pixel.
-     */
-    int mapToMiniMapX(int tileX, int offX) {
-        return ((tileX - world_tx_) * pixpertile_) + (offX / (256 / pixpertile_));
-    }
+    void drawPedestrians(const fs_eng::Palette & palette);
 
     /*!
-     * Returns Y coord of the given tile relatively
+     * Returns true if object is visible on the minimap
+     * \param object to verify
+     */
+    bool isVisible(MapObject *pObject) {
+        const TilePoint pt = pObject->position();
+        return (pt.tx >= world_.x &&
+            pt.tx < (world_.x + mm_maxtile_) &&
+            pt.ty >= world_.y &&
+            pt.ty < (world_.y + mm_maxtile_));
+    }
+    /*!
+     * Returns coord of the given tile relatively
      * to the top letf corner of the minimap in pixel.
      */
-    int mapToMiniMapY(int tileY, int offY) {
-        return ((tileY - world_ty_) * pixpertile_) + (offY / (256 / pixpertile_));
-    }
+    Point2D mapToScreenPosition(const TilePoint &mapPosition);
 
     /*!
      * Returns X coord of the current real world coordinate of the signal relatively
      * to the top letf corner of the minimap in pixel.
      */
-    int signalXYZToMiniMapX() {
-        return signalSourceLocW_.x * pixpertile_ / 256 - world_tx_ * pixpertile_ + pixpertile_;
-    }
-
-    /*!
-     * Returns Y coord of the current real world coordinate of the signal relatively
-     * to the top letf corner of the minimap in pixel.
-     */
-    int signalXYZToMiniMapY() {
-        return signalSourceLocW_.y * pixpertile_ / 256 - world_ty_ * pixpertile_ + pixpertile_;
-    }
-
-    /*!
-     * Draw a rect to the given buffer with the given size and color.
-     * \param a_buffer destination buffer
-     * \param mm_x X coord in the destination buffer
-     * \param mm_y Y coord in the destination buffer
-     * \param width width of the rect to draw
-     * \param height height of the rect to draw
-     * \param color the color to fill the rect
-     */
-    inline void drawFillRect(uint8 * a_buffer, int mm_x, int mm_y, size_t width,
-                        size_t height, uint8 color)
-    {
-        uint8 *draw_base = a_buffer + mm_y * pixpertile_ * (mm_maxtile_ + 1) + mm_x;
-        for (size_t inc = 0; inc < height; ++inc) {
-            uint8 *draw_at = draw_base + inc * pixpertile_ * (mm_maxtile_ + 1);
-            for (size_t i = 0; i < width; ++i)
-                *draw_at++ = color;
-        }
+    Point2D signalXYZToMiniMap() {
+        return topLeftCornerPos_.add(
+            signalSourceLocW_.x * pixpertile_ / 256 - world_.x * pixpertile_ + pixpertile_,
+            signalSourceLocW_.y * pixpertile_ / 256 - world_.y * pixpertile_ + pixpertile_);
     }
 
     //! Draw a circle to represent agents, police and guards.
-    void drawPedCircle(uint8 * a_buffer, int mm_x, int mm_y, uint8 fillColor,
-                            uint8 borderColor);
+    void drawPedCircle(const Point2D &screenPos, int type);
     //! Draw a circle on the minimap for the signal
-    void drawSignalCircle(uint8 * a_buffer, int signal_px, int signal_py, uint16 radius, uint8 color);
+    void drawSignalCircle(const Point2D &signalPos, const fs_eng::Palette & palette);
     //! Draw a pixel on the minimap
-    void drawPixel (uint8 * a_buffer, int x, int y, uint8 color) {
-        int mm_maxtile_plus = (mm_maxtile_ + 1);
-        if (x > 0 && x < (mm_maxtile_plus * pixpertile_) && y > 0 && y < (mm_maxtile_plus * pixpertile_)) {
-            int i_index = y * pixpertile_ * mm_maxtile_plus + x;
-            a_buffer[i_index] = color;
-        }
-    }
+    void drawPixel (const Point2D &point, fs_eng::FSColor color);
 
     /*!
      * Return true if the evacuation circle is completly on the minimap.
@@ -284,6 +248,14 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
  private:
      /*! Radius of the red evacuation circle.*/
     static const int kEvacuationRadius;
+    /*! size of the texture.*/
+    static const int kMinimapTextureSize;
+    //! Width of the texture to store circles
+    static const int kCircleTextureWidth;
+    //! Height of the texture to store circles
+    static const int kCircleTextureHeight;
+    //! Width and height of a circle sprite in the texture
+    static const int kCircleSpriteSize;
 
     /*! The mission that contains the minimap.*/
     Mission *p_mission_;
@@ -292,30 +264,39 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     /*!
      * Total number of tiles displayed in the minimap.
      * same for width and height.
+     * The number of displayable tiles depends on the presence of a radar 
+     * in the inventory.
      */
-    uint16 mm_maxtile_;
+    int mm_maxtile_;
     /*! Offset for the tile.*/
     int offset_x_;
     /*! Offset for the tile.*/
     int offset_y_;
     /*! Coords in pixels of the cross.*/
-    int cross_x_;
-    /*! Coords in pixels of the cross.*/
-    int cross_y_;
+    Point2D crossPos_;
     /*! Coords on the world map of the signal source.*/
     WorldPoint signalSourceLocW_;
     /*! Type of emitted signal. If NONE, no signal is emitted.*/
     ESignalType signalType_;
     /*! Radius for the signal circle.*/
-    uint16 i_signalRadius_;
+    uint16_t signalRadius_;
     /*! Current signal color.*/
-    uint8 i_signalColor_;
+    uint8_t signalColor_;
     /*! A timer to control the blinking of weapons.*/
     fs_utils::BoolTimer mm_timer_weap;
     /*! A timer to control the blinking of pedestrians.*/
     fs_utils::BoolTimer mm_timer_ped;
     /*! Timer for the signal.*/
     fs_utils::Timer mm_timer_signal;
+    /*!
+     * A texture that store the minimap but only floor tiles.
+     * The texture is draw at different size depending on the zoom.
+     */
+    std::unique_ptr<FSTexture> minimapTexture_;
+    /*!
+     * This texture holds circles that represent peds on the minimap.
+     */
+    std::unique_ptr<FSTexture> circleTexture_;
 };
 
 #endif  // MENUS_MINIMAPRENDERER_H_

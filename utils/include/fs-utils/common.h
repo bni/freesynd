@@ -199,7 +199,7 @@ struct Point2D {
     int x;
     int y;
 
-    Point2D add(int offsetX, int offsetY) {
+    Point2D add(int offsetX, int offsetY) const {
         Point2D res;
         res.x = x + offsetX;
         res.y = y + offsetY;

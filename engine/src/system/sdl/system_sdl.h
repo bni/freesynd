@@ -73,6 +73,7 @@ public:
     bool setPalette8b3(const uint8 *pal, int cols = 256) override;
     void setColor(uint8 index, uint8 r, uint8 g, uint8 b) override;
 
+    void drawPoint (Point2D start, fs_eng::FSColor color) override;
     void drawVLine(Point2D start, int length, fs_eng::FSColor color) override;
     void drawHLine(Point2D start, int length, fs_eng::FSColor color) override;
     void drawDashedVLine(Point2D start, int length, int dashLength, int dashOffset, fs_eng::FSColor color) override;
