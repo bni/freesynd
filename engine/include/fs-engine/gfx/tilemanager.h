@@ -80,8 +80,6 @@ public:
     Tile * getTile(uint8 index);
     //! Draws the tile to the screen
     bool drawTile(const Tile *tile, int x, int y);
-    //! TODO : Temp implementation using texture
-    bool drawTile2(const Tile *tile, int x, int y);
 
 protected:
     //! Load a given tile
@@ -98,8 +96,6 @@ protected:
     static const int kTileColorKeyIndex;
     //! All the tiles in the game
     Tile **tiles_;
-    //! TODO : Remove
-    uint8_t *tilesPixels_;
     //! A texture that store the tileset
     std::unique_ptr<FSTexture> tilesTexture_;
     //! The palette used for the texture of tiles

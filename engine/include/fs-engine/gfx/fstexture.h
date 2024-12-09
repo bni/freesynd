@@ -43,10 +43,6 @@ public:
     virtual bool setAsRenderTarget() = 0;
     //! Import a raw pixel array into a 8 bits surface of given width and height, with the color key
     virtual bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) = 0;
-    [[deprecated("remove this method and use setPalette")]]
-    virtual bool setPalette6b3(const uint8_t * pal, int cols) = 0;
-    [[deprecated("remove this method and use setPalette")]]
-    virtual bool setPalette8b3(const uint8_t * pal, int cols) = 0;
     //! Create a texture from an already loaded surface. Delete preexisting texture
     virtual bool loadTextureFromSurface() = 0;
     //! Renders a rectangle from the current texture to the current renderer

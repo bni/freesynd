@@ -239,32 +239,6 @@ bool MenuManager::loadMenuPalette() {
     return true;
 }
 
-void MenuManager::setDefaultPalette() {
-    setPalette("mselect.pal", true);
-}
-
-void MenuManager::setPaletteForMission(int i_id) {
-    // I'm not sure of the way we get the palette
-    char spal[20];
-    sprintf(spal,"hpal0%i.dat", i_id % 5 + 1);
-    setPalette(spal);
-}
-
-void MenuManager::setPalette(const char *fname, bool sixbit) {
-    LOG(Log::k_FLG_GFX, "MenuManager", "setPalette", ("Setting palette : %s", fname))
-    size_t size;
-    uint8 *data = File::loadOriginalFile(fname, size);
-
-    if (data) {
-        if (sixbit)
-            g_System.setPalette6b3(data);
-        else
-            g_System.setPalette8b3(data);
-
-        delete[] data;
-    }
-}
-
 /*!
  * Find the color with given index in the palette used for menus.
  * @param colorIndex 

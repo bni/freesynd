@@ -260,40 +260,6 @@ bool FSTextureSDL::create8bitsSurfaceFromData(const uint8_t *srcPixels, int widt
 }
 
 /*!
- * @brief 
- * @param pal 
- * @param cols 
- * @return 
- */
-bool FSTextureSDL::setPalette6b3(const uint8_t * pal, int cols) {
-    static SDL_Color palette[256];
-
-    for (int i = 0; i < cols; ++i) {
-        uint8_t r = pal[i * 3 + 0];
-        uint8_t g = pal[i * 3 + 1];
-        uint8_t b = pal[i * 3 + 2];
-
-        // multiply by 255 divide by 63 isn't good enough?
-        palette[i].r = (r << 2) | (r >> 4);
-        palette[i].g = (g << 2) | (g >> 4);
-        palette[i].b = (b << 2) | (b >> 4);
-
-#if 0
-        if (like(palette[i].r, 28) && like(palette[i].g, 144)
-            && like(palette[i].b, 0))
-            printf("col %i = %i, %i, %i\n", i, palette[i].r, palette[i].g,
-                   palette[i].b);
-#endif
-    }
-
-    if (SDL_SetPaletteColors(pSurface_->format->palette, palette, 0, cols)) {
-        FSERR(Log::k_FLG_GFX, "SystemSDL", "setPalette6b3", ("Could not set palette6b3 with %i colors! SDL Error : %s", cols, SDL_GetError()))
-        return false;
-    }
-    return true;
-}
-
-/*!
  * Sets a new palette. This texture must have been created with create8bitsSurfaceFromData().
  * @param palette A palette of color
  * @return True if everything is ok
@@ -323,28 +289,6 @@ void FSTextureSDL::setColorInPalette(int index, fs_eng::FSColor color) {
     if (SDL_SetPaletteColors(pSurface_->format->palette, &newColor, index, 1)) {
         FSERR(Log::k_FLG_GFX, "FSTextureSDL", "setPalette", ("Could not set color in palette! SDL Error : %s", SDL_GetError()))
     }
-}
-
-/*!
- * @brief 
- * @param pal 
- * @param cols 
- * @return 
- */
-bool FSTextureSDL::setPalette8b3(const uint8_t * pal, int cols) {
-    static SDL_Color palette[256];
-
-    for (int i = 0; i < cols; ++i) {
-        palette[i].r = pal[i * 3 + 0];
-        palette[i].g = pal[i * 3 + 1];
-        palette[i].b = pal[i * 3 + 2];
-    }
-
-    if (SDL_SetPaletteColors(pSurface_->format->palette, palette, 0, cols)) {
-        FSERR(Log::k_FLG_GFX, "SystemSDL", "setPalette8b3", ("Could not set palette8b3 with %i colors! SDL Error : %s", cols, SDL_GetError()))
-        return false;
-    }
-    return true;
 }
 
 /*!

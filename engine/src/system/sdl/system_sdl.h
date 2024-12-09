@@ -69,10 +69,6 @@ public:
     void delay(uint32 msec) override;
     uint32_t getTicks() override;
 
-    bool setPalette6b3(const uint8 *pal, int cols = 256) override;
-    bool setPalette8b3(const uint8 *pal, int cols = 256) override;
-    void setColor(uint8 index, uint8 r, uint8 g, uint8 b) override;
-
     void drawPoint (Point2D start, fs_eng::FSColor color) override;
     void drawVLine(Point2D start, int length, fs_eng::FSColor color) override;
     void drawHLine(Point2D start, int length, fs_eng::FSColor color) override;
@@ -136,22 +132,6 @@ protected:
     SDL_Window *pWindow_;
     //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
     SDL_Renderer *pRenderer_;
-
-    /*!
-     * This array is used to transform the Screen::pixels that are uint8 into Uint32 pixels.
-     */
-    Uint32 *pixels_;
-    /*!
-     * This surface is only used to store the current palette. It should replace completely
-     * the pixels_ array.
-     * NOTE : There is currently a bug when using directly the surface to copy pixels : getting
-     * an error message "double free or corruption (!prev)" when exiting the application.
-     */
-    SDL_Surface *pScreenSurface_;
-    /*!
-     * A texture to render the screen using hardware acceleration.
-     */
-    SDL_Texture *pScreenTexture_;
 
     /*!
      * A texture that holds all cursors images.

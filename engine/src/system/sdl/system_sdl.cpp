@@ -53,26 +53,9 @@ SystemSDL::SystemSDL() {
     pCursorTexture_ = nullptr;
     pWindow_ = nullptr;
     pRenderer_ = nullptr;
-    pScreenSurface_ = nullptr;
-    pScreenTexture_ = nullptr;
-
-    pixels_ = new Uint32[Screen::kScreenWidth * Screen::kScreenHeight];
 }
 
 SystemSDL::~SystemSDL() {
-    delete[] pixels_;
-    pixels_ = nullptr;
-
-    if (pScreenSurface_) {
-        SDL_FreeSurface(pScreenSurface_);
-        pScreenSurface_ = nullptr;
-    }
-
-    if (pScreenTexture_) {
-        SDL_DestroyTexture(pScreenTexture_);
-        pScreenTexture_ = nullptr;
-    }
-
     if (pCursorTexture_) {
         SDL_DestroyTexture(pCursorTexture_);
         pCursorTexture_ = nullptr;
@@ -124,24 +107,6 @@ bool SystemSDL::initialize(bool fullscreen) {
     SDL_RenderClear(pRenderer_);
     // in case we are fullscreen and did not specify dimensions
     SDL_RenderSetLogicalSize(pRenderer_, Screen::kScreenWidth, Screen::kScreenHeight);
-
-    //Get window surface
-    pScreenSurface_ = SDL_CreateRGBSurface(0, Screen::kScreenWidth, Screen::kScreenHeight, 8, 0, 0, 0, 0);
-    if (pScreenSurface_ == nullptr) {
-        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, Screen surface could not be created! SDL Error : %s", SDL_GetError()))
-        return false;
-    }
-
-    pScreenTexture_ = SDL_CreateTexture(pRenderer_,
-                                            SDL_PIXELFORMAT_ARGB8888,
-                                            SDL_TEXTUREACCESS_STREAMING,
-                                            Screen::kScreenWidth, Screen::kScreenHeight);
-    //pScreenTexture_ = SDL_CreateTextureFromSurface(pRenderer_, pScreenSurface_);
-
-    if (pScreenTexture_ == nullptr) {
-        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, Screen texture could not be created! SDL Error : %s", SDL_GetError()))
-        return false;
-    }
 
     // Init SDL_Image library
     int sdlImgFlags = IMG_INIT_PNG;
@@ -206,52 +171,17 @@ bool SystemSDL::clearScreen() {
     return SDL_RenderClear(pRenderer_);
 }
 
-void SystemSDL::updateScreen() {
-    //if (g_Screen.dirty()|| (cursor_visible_ && update_cursor_)) {
-        // Clear screen buffer
-        /*SDL_RenderClear(pRenderer_);
+void SystemSDL::updateScreen() {        
+    if (cursor_visible_) {
+        SDL_Rect dst;
 
-        SDL_LockSurface(pScreenSurface_);
+        dst.x = cursor_x_ - cursor_hs_x_;
+        dst.y = cursor_y_ - cursor_hs_y_;
+        dst.w = dst.h = kCursorWidth;
 
-        const uint8 *srcPixels = g_Screen.pixels();
-
-        // We do manual blitting to convert from 8bpp palette indexed values to 32bpp RGB for each pixel
-        // thanks to bni (https://github.com/bni/freesynd)
-        uint8 r, g, b;
-        for (int i = 0; i < Screen::kScreenWidth * Screen::kScreenHeight; i++) {
-            uint8 index = srcPixels[i];
-
-            r = pScreenSurface_->format->palette->colors[index].r;
-            g = pScreenSurface_->format->palette->colors[index].g;
-            b = pScreenSurface_->format->palette->colors[index].b;
-
-            Uint32 c = ((r << 16) | (g << 8) | (b << 0)) | (255 << 24);
-
-            // TODO : try to use pScreenSurface directly
-            pixels_[i] = c;
-        }
-        //memcpy (pScreenSurface_->pixels, srcPixels, Screen::kScreenWidth * Screen::kScreenHeight);
-
-        SDL_UnlockSurface(pScreenSurface_);
-
-        // Copy the pixel to the texture
-        //SDL_UpdateTexture(pScreenTexture_, NULL, pScreenSurface_->pixels, pScreenSurface_->pitch);
-        SDL_UpdateTexture(pScreenTexture_, NULL, pixels_, Screen::kScreenWidth * sizeof(Uint32));
-
-        // Copy texture to the screen buffer
-        SDL_RenderCopy(pRenderer_, pScreenTexture_, NULL, NULL);*/
-        
-        if (cursor_visible_) {
-            SDL_Rect dst;
-
-            dst.x = cursor_x_ - cursor_hs_x_;
-            dst.y = cursor_y_ - cursor_hs_y_;
-            dst.w = dst.h = kCursorWidth;
-
-            SDL_RenderCopy( pRenderer_, pCursorTexture_, &cursor_rect_, &dst );
-            update_cursor_ = false;
-        }
-    //}
+        SDL_RenderCopy( pRenderer_, pCursorTexture_, &cursor_rect_, &dst );
+        update_cursor_ = false;
+    }
 
     // Flip screen
     SDL_RenderPresent( pRenderer_ );
@@ -442,60 +372,6 @@ uint32_t SystemSDL::getTicks() {
 
 bool like(int a, int b) {
     return a == b || a == b - 1 || a == b + 1;
-}
-
-bool SystemSDL::setPalette6b3(const uint8 * pal, int cols) {
-    static SDL_Color palette[256];
-
-    for (int i = 0; i < cols; ++i) {
-        uint8 r = pal[i * 3 + 0];
-        uint8 g = pal[i * 3 + 1];
-        uint8 b = pal[i * 3 + 2];
-
-        // multiply by 255 divide by 63 isn't good enough?
-        palette[i].r = (r << 2) | (r >> 4);
-        palette[i].g = (g << 2) | (g >> 4);
-        palette[i].b = (b << 2) | (b >> 4);
-
-#if 0
-        //if (like(palette[i].r, 28) && like(palette[i].g, 144)
-        //    && like(palette[i].b, 0))
-            printf("col %i = %i, %i, %i\n", i, palette[i].r, palette[i].g,
-                   palette[i].b);
-#endif
-    }
-
-    if (SDL_SetPaletteColors(pScreenSurface_->format->palette, palette, 0, cols)) {
-        FSERR(Log::k_FLG_GFX, "SystemSDL", "setPalette6b3", ("Could not set palette6b3 with %i colors! SDL Error : %s", cols, SDL_GetError()))
-        return false;
-    }
-    return true;
-}
-
-bool SystemSDL::setPalette8b3(const uint8 * pal, int cols) {
-    static SDL_Color palette[256];
-
-    for (int i = 0; i < cols; ++i) {
-        palette[i].r = pal[i * 3 + 0];
-        palette[i].g = pal[i * 3 + 1];
-        palette[i].b = pal[i * 3 + 2];
-    }
-
-    if (SDL_SetPaletteColors(pScreenSurface_->format->palette, palette, 0, cols)) {
-        FSERR(Log::k_FLG_GFX, "SystemSDL", "setPalette6b3", ("Could not set palette8b3 with %i colors! SDL Error : %s", cols, SDL_GetError()))
-        return false;
-    }
-    return true;
-}
-
-void SystemSDL::setColor(uint8 index, uint8 r, uint8 g, uint8 b) {
-    static SDL_Color color;
-
-    color.r = r;
-    color.g = g;
-    color.b = b;
-
-    SDL_SetPaletteColors(pScreenSurface_->format->palette, &color, index, 1);
 }
 
 /*!

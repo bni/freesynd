@@ -53,9 +53,6 @@ public:
 
     //! Creates a surface initialized with the array of pixel
     bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
-    //! Set a palette for the surface
-    bool setPalette6b3(const uint8_t * pal, int cols) override;
-    bool setPalette8b3(const uint8_t * pal, int cols) override;
     //! Create a texture from the surface (a palette should have been defined first)
     bool loadTextureFromSurface();
     //! Return the color from the palette at given index

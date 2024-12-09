@@ -406,10 +406,8 @@ void GameplayMenu::handleTick(uint32_t elapsed)
     drawMissionHint(elapsed);
 }
 
-void GameplayMenu::handleRender(DirtyList &dirtyList)
-{
-//    g_Screen.clear(0);
-/*    map_renderer_.render(displayOriginPt_);*/
+void GameplayMenu::handleRender(DirtyList &dirtyList) {
+    map_renderer_.render(displayOriginPt_);
     g_System.drawRect({0,0}, 129, GAME_SCREEN_HEIGHT, menu_manager_->kMenuColorBlack);
     agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);
     drawSelectAllButton();

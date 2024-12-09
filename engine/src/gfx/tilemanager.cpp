@@ -77,7 +77,6 @@ TileManager::TileManager()
 {
     tiles_ = new Tile*[kNumOfTiles];
     memset(tiles_, 0, sizeof(Tile*) * kNumOfTiles);
-    tilesPixels_ = new uint8_t[kNumOfTiles * Tile::kTileHeight * Tile::kTileWidth];
 }
 
 /*!
@@ -89,8 +88,6 @@ TileManager::~TileManager()
         delete tiles_[i];
     }
     delete [] tiles_;
-
-    delete [] tilesPixels_;
 }
 
 /*!
@@ -172,10 +169,6 @@ void TileManager::copyTilePixelsToBuffer(int id, const uint8_t *tilePixels, uint
         return;
     }
 
-    // TODO : Temporary implementation -> only copy to a big array of tiles
-    int tileOffsetTmp = id * Tile::kTileHeight * Tile::kTileWidth;
-    memcpy(tilesPixels_ + tileOffsetTmp, tilePixels, Tile::kTileHeight * Tile::kTileWidth);
-
     // Coords in the destination surface
     int row = id / kNumOfTilesPerRow;
     int col = id % kNumOfTilesPerCol;
@@ -197,7 +190,7 @@ void TileManager::copyTilePixelsToBuffer(int id, const uint8_t *tilePixels, uint
  * \param data This data comes from the mapcolumn file.
  * \return kNone if data is unkonwn
  */
-Tile::EType TileManager::toTileType(uint8 data)
+Tile::EType TileManager::toTileType(uint8_t data)
 {
     switch(data) {
     case 0x01:
@@ -327,49 +320,6 @@ Tile * TileManager::getTile(uint8 tileNum) {
     return tiles_[tileNum];
 }
 
-/*! \brief
- *
- * \param tile const Tile*
- * \param x int
- * \param y int
- * \return bool
- *
- */
-bool TileManager::drawTile(const Tile *tile, int x, int y) {
-    //return tile->drawTo((uint8*) g_Screen.pixels(), g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight(), x, y);
-
-    if (x + Tile::kTileWidth < 0 || y + Tile::kTileHeight < 0
-        || x >= g_Screen.gameScreenWidth() || y >= g_Screen.gameScreenHeight())
-    {
-        return false;
-    }
-
-    uint8 *pixels = tilesPixels_ + (tile->id() * Tile::kTileHeight * Tile::kTileWidth);
-    int xlow = x < 0 ? 0 : x;
-    int clipped_w = Tile::kTileWidth - (xlow - x);
-    int xhigh = xlow + clipped_w >= g_Screen.gameScreenWidth() ? g_Screen.gameScreenWidth() : xlow + clipped_w;
-    int ylow = y < 0 ? 0 : y;
-    int clipped_h = Tile::kTileHeight - (ylow - y);
-    int yhigh = ylow + clipped_h >= g_Screen.gameScreenHeight() ? g_Screen.gameScreenHeight() : ylow + clipped_h;
-
-    uint8 *ptr_a_pixels = pixels + ((Tile::kTileHeight - 1) - (ylow - y)) * Tile::kTileWidth;
-    uint8 *ptr_screen = ((uint8*) g_Screen.pixels()) + ylow * g_Screen.gameScreenWidth() + xlow;
-    for (int j = ylow; j < yhigh; ++j)
-    {
-        uint8 *cp_ptr_a_pixels = ptr_a_pixels;
-        ptr_a_pixels -= Tile::kTileWidth;
-        uint8 *cp_ptr_screen = ptr_screen;
-        ptr_screen += g_Screen.gameScreenWidth();
-        for (int i = xlow; i < xhigh; ++i) {
-            uint8 c = *cp_ptr_a_pixels++;
-            if (c != 255)
-                *cp_ptr_screen = c;
-            ++cp_ptr_screen;
-        }
-    }
-    return true;
-}
-
 /*!
  * TODO : to be complemented
  * @param tile 
@@ -377,7 +327,7 @@ bool TileManager::drawTile(const Tile *tile, int x, int y) {
  * @param y 
  * @return 
  */
-bool TileManager::drawTile2(const Tile *tile, int x, int y) {
+bool TileManager::drawTile(const Tile *tile, int x, int y) {
     tilesTexture_->render(tile->textureLocation(), {x, y}, Tile::kTileWidth, Tile::kTileHeight);
 
     return true;

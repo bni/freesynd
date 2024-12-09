@@ -102,10 +102,6 @@ public:
     virtual void delay(uint32 msec) = 0;
     virtual uint32_t getTicks() = 0;
 
-    virtual bool setPalette6b3(const uint8 *pal, int cols = 256) = 0;
-    virtual bool setPalette8b3(const uint8 *pal, int cols = 256) = 0;
-    virtual void setColor(uint8 index, uint8 r, uint8 g, uint8 b) = 0;
-
     //! Draw a point on the screen at given position and color
     virtual void drawPoint (Point2D start, fs_eng::FSColor color) = 0;
     /**

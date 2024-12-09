@@ -117,11 +117,6 @@ public:
         dirtyList_.addRect(x, y, width, height);
     }
 
-    //! Sets the default palette
-    void setDefaultPalette();
-    //! Sets the palette for the given mission id
-    void setPaletteForMission(int i_id);
-    void setPalette(const char *fname, bool sixbit = true);
     //! Return the color at given index for the current palette
     void getColorFromMenuPalette(const int colorIndex, fs_eng::FSColor &color);
     //! Returns the palette for menus
