@@ -28,13 +28,12 @@
 #ifndef EDITORAPP_H
 #define EDITORAPP_H
 
+#include "editorcontroller.h"
+
 #include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
-#include "fs-kernel/mgr/mapmanager.h"
-
-#include "editorcontroller.h"
 
 /*!
  * Editor Application class.
@@ -43,10 +42,6 @@ class EditorApp : public BaseApp {
   public:
     EditorApp();
     virtual ~EditorApp();
-
-    MapManager &maps() {
-        return maps_;
-    }
 
 #ifdef _DEBUG
 public:
@@ -64,8 +59,6 @@ protected:
 private:
     /*! Controls the editor logic. */
     std::unique_ptr<EditorController> editorCtlr_;
-
-    MapManager maps_;
 };
 
 #endif // EDITORAPP_H

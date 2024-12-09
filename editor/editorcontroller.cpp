@@ -29,8 +29,8 @@
 #include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/ped.h"
 
-EditorController::EditorController(MapManager *pMapManager) :
-        missions_(pMapManager) {
+EditorController::EditorController() :
+        missions_(&tileMgr_) {
     agents_.setModManager(&mods_);
     agents_.setWeaponManager(&weaponMgr_);
     LOG(Log::k_FLG_INFO, "EditorController", "EditorController", ("EditorController constructor"))
@@ -40,7 +40,10 @@ EditorController::~EditorController() {
     LOG(Log::k_FLG_INFO, "EditorController", "~EditorController", ("EditorController destructor"))
 }
 
-bool EditorController::reset() {
+bool EditorController::initialize() {
+    if (!tileMgr_.loadTiles()) {
+        return false;
+    }
     g_missionCtrl.destroyMission();
     // Reset default mods and weapons
     mods_.reset();

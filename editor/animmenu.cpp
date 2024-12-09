@@ -52,11 +52,6 @@ AnimMenu::AnimMenu(MenuManager * m)
     txtFrameId_ = addStatic(300, 350, "0", FontManager::SIZE_2, true);
 }
 
-void AnimMenu::handleShow()
-{
-    menu_manager_->setDefaultPalette();
-}
-
 void AnimMenu::handleRender(DirtyList &dirtyList)
 {
     g_Screen.drawRect(150, 110, 350, 150);

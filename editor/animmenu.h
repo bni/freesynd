@@ -34,7 +34,6 @@ class AnimMenu : public Menu {
 public:
     AnimMenu(MenuManager *m);
 
-    void handleShow() override;
     void handleRender(DirtyList &dirtyList) override;
     void handleLeave() override;
 

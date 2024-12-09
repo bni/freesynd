@@ -56,7 +56,7 @@
 
 EditorApp::EditorApp()
     : BaseApp(new EditorMenuFactory()),
-      editorCtlr_(std::make_unique<EditorController>(&maps_))
+      editorCtlr_(std::make_unique<EditorController>())
 {
 #ifdef _DEBUG
     debug_breakpoint_trigger_ = 0;
@@ -73,15 +73,7 @@ EditorApp::~EditorApp() {
  * \return True if initialization is ok.
  */
 bool EditorApp::doInitialize(const CliParam& param) {
-
-    LOG(Log::k_FLG_INFO, "EditorApp", "initialize", ("loading game tileset..."))
-    if (!maps().initialize()) {
-        return false;
-    }
-
-    editorCtlr_->reset();
-
-    return true;
+    return editorCtlr_->initialize();
 }
 
 /*!

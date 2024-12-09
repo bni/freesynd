@@ -38,14 +38,14 @@
  */
 class EditorController : public Singleton < EditorController > {
   public:
-    EditorController(MapManager *pMapManager);
+    EditorController();
     virtual ~EditorController();
 
     /*!
      * Resets controller.
      * \returns True if reset has succeeded
      */
-    bool reset();
+    bool initialize();
 
     //! Delete all ressources. Called by App:destroy()
     void destroy();
@@ -80,6 +80,8 @@ private:
     WeaponManager weaponMgr_;
     /*! Manager of mods.*/
     ModManager mods_;
+    //! For loading tiles
+    TileManager tileMgr_;
     /*! Manager of missions.*/
     MissionManager missions_;
 

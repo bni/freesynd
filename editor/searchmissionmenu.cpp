@@ -151,7 +151,7 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx) {
         g_editorCtrl.getMissionResultList().clear();
 
         for (int misId = 1; misId <= 50; misId++) {
-            Mission *pMission = g_missionCtrl.loadMission(misId);
+            Mission *pMission = g_missionCtrl.loadMission(misId, 1);
 
             if (pMission) {
                 bool keepMission = matchMissionWithPedType(pMission);
