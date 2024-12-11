@@ -57,6 +57,9 @@ public:
             const std::string& valid_chars);
     virtual ~Font() {}
 
+    // Set a new palette for this font
+    bool setPalette(const fs_eng::Palette &newPalette);
+
     //! Draw a utf-8 string with this font.
     void drawText(int x, int y, const std::string& text, bool x2);
     //! Return the width in pixels of the rendered text

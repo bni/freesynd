@@ -400,13 +400,19 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
 #define FRAME_TYPE  0xF1FA
 #define CHUNK_HEADER_SIZE 6
 
-bool FliPlayer::decodeFrame() {
+/*!
+ * Read the current frame content from loaded FLI file.
+ * @param nbColor Set to non zero only for the first frame where palette is loaded
+ * @return True if frame has been read
+ */
+bool FliPlayer::decodeFrame(int &nbColor) {
     FrameTypeChunkHeader frameHeader;
     ChunkHeader cHeader = readChunkHeader(pCurrentFrameOffset_);
+    nbColor = 0;
     do {
         switch (cHeader.type) {
         case 4:
-            setPalette(pCurrentFrameOffset_ + CHUNK_HEADER_SIZE);
+            setPalette(pCurrentFrameOffset_ + CHUNK_HEADER_SIZE, nbColor);
             //g_System.setPalette8b3(palette_);
             break;
         case 7:
@@ -440,12 +446,13 @@ bool FliPlayer::decodeFrame() {
 
 }
 
-void FliPlayer::setPalette(uint8_t *mem) {
+void FliPlayer::setPalette(uint8_t *mem, int &nbColor) {
     // The number of packets to define the palette changes
     uint16_t numPackets = READ_LE_UINT16(mem);
     mem += 2;
 
     if (0 == READ_LE_UINT16(mem)) {     //set the whole palette
+        nbColor = 256;
         mem += 2;
         for (int i = 0; i < 256; ++i) {
             // store colors as FSColor

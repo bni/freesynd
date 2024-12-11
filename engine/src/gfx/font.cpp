@@ -110,6 +110,15 @@ Font::Font(SpriteManager *sprites, int offset, char base, const std::string& val
     defaultWidth_ = pDef->width();
 }
 
+/*!
+ * Change the palette of the sprite texture and reload it.
+ * @param newPalette The new palette to set
+ * @return 
+ */
+bool Font::setPalette(const fs_eng::Palette &newPalette) {
+    return sprites_->setPalette(newPalette);
+}
+
 /**
  * Return the sprite font for the given unicode codepoint
  * \param codePoint utf8::utfchar32_t The codepoint
@@ -180,7 +189,7 @@ void Font::drawText(int x, int y, const std::string& text, bool x2) {
                     y_offset = 2 * sc;
                 }
 
-                sprite->draw(x, y + y_offset, 0, false, x2);
+                sprites_->drawSprite(sprite->id(), x, y + y_offset, false, x2);
 
                 x += sprite->width() * sc - sc;
             }

@@ -171,29 +171,29 @@ Menu * GameMenuFactory::createFliMenu(const int menuId) {
     FliMenu *pMenu = new FliMenu(pManager_, menuId, fs_game_menus::kMenuIdMain);
     if (pMenu->getId() == fs_game_menus::kMenuIdFliSuccess || menuId == fs_game_menus::kMenuIdFliFailedMission) {
         if (menuId == fs_game_menus::kMenuIdFliSuccess) {
-            pMenu->addFliDesc("mgamewin.dat", 66, false, true, mission_win);
+            pMenu->addFliDesc("mgamewin.dat", 66, false, true, false, mission_win);
         } else if (menuId == fs_game_menus::kMenuIdFliFailedMission) {
-            pMenu->addFliDesc("mendlose.dat", 66, false, true, mission_failed);
+            pMenu->addFliDesc("mendlose.dat", 66, false, true, false, mission_failed);
         } else if (menuId == fs_game_menus::kMenuIdFliGameLost) {
             // All availiable agents are dead
             // TODO: use it
-            pMenu->addFliDesc("mlosegam.dat", 66, false, true, game_lost);
+            pMenu->addFliDesc("mlosegam.dat", 66, false, true, false, game_lost);
         }
         // common fli to prepare next menu show
-        pMenu->addFliDesc("mscrenup.dat", 50, false, false, menu_up);
+        pMenu->addFliDesc("mscrenup.dat", 50, false, false, false, menu_up);
         pMenu->setNextMenu(fs_game_menus::kMenuIdDebrief);
     } else if (menuId == fs_game_menus::kMenuIdFliMissionAborted) {
-        pMenu->addFliDesc("mscrenup.dat", 50, false, false, menu_up);
+        pMenu->addFliDesc("mscrenup.dat", 50, false, false, false, menu_up);
         pMenu->setNextMenu(fs_game_menus::kMenuIdDebrief);
     } else if (menuId == fs_game_menus::kMenuIdFliTitle || menuId == fs_game_menus::kMenuIdFliIntro) {
         if ( menuId == fs_game_menus::kMenuIdFliIntro) {
             // Display the intro animation
-            pMenu->addFliDesc("intro.dat", 66, false, true, intro);
+            pMenu->addFliDesc("intro.dat", 66, false, true, true, intro);
         }
         // Display the splash screen
-        pMenu->addFliDesc("mtitle.dat", 66, true, true, no_event);
+        pMenu->addFliDesc("mtitle.dat", 66, true, true, false, no_event);
         // common fli to prepare next menu show
-        pMenu->addFliDesc("mscrenup.dat", 50, false, false, menu_up);
+        pMenu->addFliDesc("mscrenup.dat", 50, false, false, false, menu_up);
         pMenu->setNextMenu(fs_game_menus::kMenuIdMain);
     }
 

@@ -53,6 +53,8 @@ struct FliDesc {
     bool waitKeyPressed;
     /*! True means animation can be skipped by pressing key or mouse.*/
     bool skipable;
+    //! True means the intro font uses the palette from FLI
+    bool usePaletteForFont;
     const FrameEvent *evtList;
 };
 
@@ -73,7 +75,7 @@ public:
     void handleLeave() override;
 
     //! Append a animation to play with its caracteristics
-    void addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, const FrameEvent *events);
+    void addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events);
     //! Remove all FliDesc
     void clearFliDescList();
 

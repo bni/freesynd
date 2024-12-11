@@ -49,15 +49,17 @@ FliMenu::~FliMenu()
  * \param frameDelay animation speed.
  * \param waitKey True to wait for the user input
  * \param skipable True means user can skip animation
+ * \param usePalette True with reload the sprite texture for intro font with the palette in the fli
  * \param music
  * \param sound
  */
-void FliMenu::addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, const FrameEvent *events) {
+void FliMenu::addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events) {
     FliDesc desc;
     desc.name = anim;
     desc.frameDelay = frameDelay;
     desc.waitKeyPressed = waitKey;
     desc.skipable = skipable;
+    desc.usePaletteForFont = usePalette;
     desc.evtList = events;
 
     fliList_.push_back(desc);
@@ -115,11 +117,18 @@ void FliMenu::handleTick(uint32_t elapsed)
         // There is a frame to display
         frameDelay_ += elapsed;
         if (frameDelay_ > desc.frameDelay) {
+            int nbColor;
             // time to change frame -> read frame
-            if (!fliPlayer_.decodeFrame()) {
+            if (!fliPlayer_.decodeFrame(nbColor)) {
                 // Frame is not good -> quit
                 menu_manager_->gotoMenu(nextMenu_);
                 return;
+            }
+
+            // number of color is different from zero
+            // so that means we load a palette
+            if (nbColor != 0 && desc.usePaletteForFont) {
+                menu_manager_->fonts().introFont()->setPalette(fliPlayer_.getPalette());
             }
 
             // Add a dirty rect just to start the render routine

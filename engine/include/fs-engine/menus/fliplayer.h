@@ -70,7 +70,7 @@ public:
     int width() const { return fliData_ ? fli_info_.width : 0; }
     int height() const { return fliData_ ? fli_info_.height : 0; }
 
-    bool decodeFrame();
+    bool decodeFrame(int &nbColor);
 
     /*!
      * Return true if this animation contains frames to display
@@ -82,6 +82,8 @@ public:
 
     void renderFrame();
 
+    fs_eng::Palette & getPalette() { return colorPalette_; }
+
 protected:
     bool isValidChunk(uint16_t type);
     ChunkHeader readChunkHeader(uint8_t *mem);
@@ -89,7 +91,7 @@ protected:
             uint8_t *&mem);
     void decodeByteRun(uint8_t *data);
     void decodeDeltaFLC(uint8_t *data);
-    void setPalette(uint8_t *mem);
+    void setPalette(uint8_t *mem, int &nbColor);
     void copyCurrentFrameToScreen();
 
 private:
@@ -100,7 +102,7 @@ private:
     //! this is the content of the frame
     const uint8_t *offscreen_;
     //! The palette for the fli using FSColor
-    fs_eng::FSColor colorPalette_[fs_eng::kPaletteMaxColor];
+    fs_eng::Palette colorPalette_;
     //! Info on the Fli to play
     FliHeader fli_info_;
     //! FSTexture to display a frame

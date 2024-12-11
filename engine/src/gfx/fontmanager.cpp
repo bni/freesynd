@@ -64,7 +64,7 @@ bool FontManager::loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPa
     }
 
     if (loadIntroFont) {
-        if (createIntroFont()) {
+        if (!createIntroFont()) {
             return false;
         }
     }

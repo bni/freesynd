@@ -363,11 +363,11 @@ void MenuManager::leaveCurrentMenu() {
             pTransitionFliMenu->clearFliDescList();
 
             if (pFactory_->hasLeaveAnimation(currentId)) {
-                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 66, false, false, transition_leave_event);
+                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 66, false, false, false, transition_leave_event);
             }
 
             if (pFactory_->hasShowAnimation(nextMenuId_)) {
-                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 66, false, false, transition_show_event);
+                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 66, false, false, false, transition_show_event);
             }
             // set next menu to be the transition menu
             nextMenuId_ = Menu::kMenuIdFliTransition;
