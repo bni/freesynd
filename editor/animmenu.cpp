@@ -26,7 +26,6 @@
 #include "animmenu.h"
 
 #include "fs-engine/menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/gfx/animationmanager.h"
 
@@ -39,7 +38,7 @@ AnimMenu::AnimMenu(MenuManager * m)
     animId_ = 416;
     frameId_ = 0;
 
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "ANIMATIONS", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "ANIMATIONS", FontManager::SIZE_4, false);
     // Accept button
     addOption(17, 347, 128, 25, "BACK", FontManager::SIZE_2, fs_edit_menus::kMenuIdMain);
 
@@ -54,7 +53,8 @@ AnimMenu::AnimMenu(MenuManager * m)
 
 void AnimMenu::handleRender(DirtyList &dirtyList)
 {
-    g_Screen.drawRect(150, 110, 350, 150);
+    //g_Screen.drawRect(150, 110, 350, 150);
+    g_System.drawRect({150, 110}, 350, 150, menu_manager_->kMenuColorBlack);
     Point2D pos = {310, 180};
     g_SpriteMgr.drawFrame(animId_, frameId_, pos);
 

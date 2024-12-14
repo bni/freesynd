@@ -117,7 +117,6 @@ void CliParam::printUsage() {
 
 BaseApp::BaseApp(MenuFactory *pMenuFactory)
     : context_(std::make_unique<AppContext>()),
-      screen_(std::make_unique<Screen>(Screen::kScreenWidth, Screen::kScreenHeight)),
       system_(System::createSystem()),
       animationManager_(),
       soundManager_(),

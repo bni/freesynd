@@ -26,7 +26,6 @@
 #include "fontmenu.h"
 
 #include "fs-engine/menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
 #include "editormenuid.h"
@@ -39,12 +38,12 @@ FontMenu::FontMenu(MenuManager * m):
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
 
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "MENUS SPRITES", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "MENUS SPRITES", FontManager::SIZE_4, false);
     idButtonSprites_ = addOption(510, 155, 120, 25, "SPRITES", FontManager::SIZE_2, -1, true, true);
     idButtonFonts_ = addOption(510, 185, 120, 25, "FONTS", FontManager::SIZE_2, -1, true, true);
     idButtonSpriteset_ = addOption(510, 225, 120, 25, "SPRSET", FontManager::SIZE_2, -1, true, true);
 
-    addStatic(0, 375, g_Screen.gameScreenWidth(), "MORE", FontManager::SIZE_1, false);
+    addStatic(0, 375, fs_eng::kScreenWidth, "MORE", FontManager::SIZE_1, false);
 }
 
 void FontMenu::handleShow()

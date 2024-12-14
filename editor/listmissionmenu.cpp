@@ -26,7 +26,6 @@
 #include "listmissionmenu.h"
 
 #include "fs-engine/menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
 #include "editormenuid.h"
@@ -38,7 +37,7 @@ ListMissionMenu::ListMissionMenu(MenuManager * m):
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "MISSIONS FOUND", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "MISSIONS FOUND", FontManager::SIZE_4, false);
 
     // Display list of missions found in search menu
     int nbRes = 0;

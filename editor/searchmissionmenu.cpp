@@ -27,7 +27,6 @@
 
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/mission.h"
@@ -66,7 +65,7 @@ SearchMissionMenu::SearchMissionMenu(MenuManager * m):
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "SEARCH MISSION", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "SEARCH MISSION", FontManager::SIZE_4, false);
 
     initPedTypeListAndWidget();
 

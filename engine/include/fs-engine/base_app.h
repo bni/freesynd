@@ -30,7 +30,6 @@
 #include <memory>
 
 #include "fs-engine/appcontext.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/sound/soundmanager.h"
@@ -127,7 +126,6 @@ protected:
 
     /*! A structure to hold general application information.*/
     std::unique_ptr<AppContext> context_;
-    std::unique_ptr<Screen> screen_;
     std::unique_ptr<System> system_;
 
 private:
