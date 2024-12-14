@@ -34,7 +34,6 @@
 
 #include "fs-utils/log/log.h"
 #include "fs-engine/sound/soundmanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
 #include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/shot.h"

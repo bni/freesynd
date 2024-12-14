@@ -35,7 +35,6 @@
 #include "fs-engine/sound/musicmanager.h"
 #include "menus/gamemenuid.h"
 #include "fs-engine/menus/fliplayer.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/shot.h"
@@ -1220,9 +1219,9 @@ void GameplayMenu::drawPausePanel() {
     std::string str_paused = getMessage("GAME_PAUSED");
     MenuFont *font_used = getMenuFont(FontManager::SIZE_1);
     int txt_width = font_used->textWidth(str_paused);
-    int txt_posx = Screen::kScreenWidth / 2 - txt_width / 2;
+    int txt_posx = fs_eng::kScreenWidth / 2 - txt_width / 2;
     int txt_height = font_used->textHeight(false);
-    int txt_posy = Screen::kScreenHeight / 2 - txt_height / 2;
+    int txt_posy = fs_eng::kScreenHeight / 2 - txt_height / 2;
 
     g_System.drawFillRect({txt_posx - 10, txt_posy - 5},
         txt_width + 20, txt_height + 10, menu_manager_->kMenuColorBlack);

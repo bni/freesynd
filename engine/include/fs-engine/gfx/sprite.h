@@ -111,7 +111,6 @@ public:
     uint8_t * loadSprite(const uint8_t * spritesData, SpriteTabEntry entry, bool rle);
     //! Copy the sprite data to the spritebuffer
     void copyToBuffer(const uint8_t * spritePixels, uint8_t * spriteBuffer, int bufferWidth, int bufferHeight);
-    void draw(int x, int y, int z, bool flipped = false, bool x2 = false);
 
     int width() const { return width_; }
     int height() const { return height_; }

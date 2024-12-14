@@ -28,7 +28,6 @@
 
 #include <stdlib.h>
 
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/cp437.h"
 #include "fs-utils/io/file.h"
 

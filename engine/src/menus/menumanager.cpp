@@ -34,7 +34,6 @@
 #include "fs-engine/enginecommon.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/menus/fliplayer.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/menus/logoutmenu.h"
 #include "fs-engine/menus/flimenu.h"
@@ -118,7 +117,7 @@ const char* MenuFactory::getLeaveAnimation(int menuId) {
  * @param pGameSounds 
  */
 MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
-        : dirtyList_(g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight()),
+        : dirtyList_(fs_eng::kScreenWidth, fs_eng::kScreenHeight),
           menuSprites_(true, SpriteManager::kMenuSpritesTextureWidth), fonts_(), logoManager_() {
     pFactory_ = pFactory;
     pFactory_->setMenuManager(this);
@@ -166,7 +165,7 @@ bool MenuManager::initialize(bool loadIntroFont) {
     }
 
     pBackgroundTexture_ = g_System.createTexture();
-    return pBackgroundTexture_->createRenderTargetTexture(Screen::kScreenWidth, Screen::kScreenHeight);
+    return pBackgroundTexture_->createRenderTargetTexture(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 }
 
 /*!
@@ -333,7 +332,7 @@ void MenuManager::showNextMenu() {
     }
 
     // Adds a dirty rect to force menu rendering
-    addRect(0, 0, g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight());
+    addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 
     // reopen the event processing
     drop_events_ = false;
@@ -404,7 +403,7 @@ void MenuManager::renderMenu() {
     addRect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
     if (current_ && !dirtyList_.isEmpty()) {
         if (current_->doNeedBackground()) {
-           pBackgroundTexture_->renderFullTextureStrech(Screen::kScreenWidth, Screen::kScreenHeight);
+           pBackgroundTexture_->renderFullTextureStrech(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
         }
         current_->render(dirtyList_);
         // flush dirty list

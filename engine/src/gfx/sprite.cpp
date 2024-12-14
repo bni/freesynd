@@ -30,7 +30,6 @@
 #include <png.h>
 
 #include "fs-utils/log/log.h"
-#include "fs-engine/gfx/screen.h"
 
 void unpackBlocks1(const uint8_t * data, uint8_t * pixels)
 {
@@ -343,15 +342,6 @@ void Sprite::copyToBuffer(const uint8_t * spritePixels, uint8_t * spriteBuffer, 
         int lineOffsetSrc = j * stride_;
         memcpy(spriteBuffer + spriteOffsetDest + lineOffsetDest, spritePixels + lineOffsetSrc, stride_);
     }
-}
-
-void Sprite::draw(int x, int y, int z, bool flipped, bool x2)
-{
-    if (x2)
-        g_Screen.scale2x(x, y, width_, height_, sprite_data_, stride_);
-    else
-        g_Screen.blit(x, y, width_, height_, sprite_data_, flipped,
-                      stride_);
 }
 
 void Sprite::data(uint8_t * spr_data) const

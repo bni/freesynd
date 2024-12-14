@@ -152,6 +152,9 @@ public:
     void render(const Point2D &worldPos);
 
 private:
+    //! The width of the left control panel in Gameplaymenu
+    static const int kGameplayPanelWidth;
+
     /**
      * Return a integer which is a hash for identifying easily
      * a tile instead of use the 3 usual coordinates.

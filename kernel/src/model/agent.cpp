@@ -30,8 +30,6 @@
 #include <string.h>
 #include <assert.h>
 
-#include "fs-engine/gfx/screen.h"
-
 int Agent::agentCnt = 1;
 
 /*!

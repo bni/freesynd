@@ -31,7 +31,6 @@
 
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
 /*!

@@ -255,7 +255,7 @@ public:
     void setSightRange(int new_sight_range) { sight_range_ = new_sight_range; }
     int sightRange() { return sight_range_; }
 
-    void showPath(int scrollX, int scrollY);
+    void showPath(int scrollX, int scrollY, fs_eng::FSColor color);
 
     bool switchActionStateTo(uint32 as);
     bool switchActionStateFrom(uint32 as);

@@ -26,7 +26,6 @@
 
 #include "loadingmenu.h"
 
-#include "fs-engine/gfx/screen.h"
 #include "fs-kernel/model/mission.h"
 #include "core/gamecontroller.h"
 #include "fs-engine/menus/menumanager.h"
@@ -37,7 +36,7 @@ LoadingMenu::LoadingMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLoading,
 {
     isCachable_ = false;
     do_load_ = true;
-    addStatic(0, 180, g_Screen.gameScreenWidth(), "#LDGAME_TITLE", FontManager::SIZE_4, true);
+    addStatic(0, 180, fs_eng::kScreenWidth, "#LDGAME_TITLE", FontManager::SIZE_4, true);
 }
 
 void LoadingMenu::handleTick(uint32_t elapsed)

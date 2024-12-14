@@ -37,7 +37,6 @@
 #include "utf8.h"
 
 #include "fs-engine/config.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
@@ -106,7 +105,7 @@ bool SystemSDL::initialize(bool fullscreen) {
     SDL_SetRenderDrawColor(pRenderer_, 0, 0, 0, 255);
     SDL_RenderClear(pRenderer_);
     // in case we are fullscreen and did not specify dimensions
-    SDL_RenderSetLogicalSize(pRenderer_, Screen::kScreenWidth, Screen::kScreenHeight);
+    SDL_RenderSetLogicalSize(pRenderer_, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 
     // Init SDL_Image library
     int sdlImgFlags = IMG_INIT_PNG;
@@ -154,7 +153,7 @@ SDL_Window * SystemSDL::createWindow(bool fullscreen) {
         sdlWindow = SDL_CreateWindow("Freesynd",
                           SDL_WINDOWPOS_UNDEFINED,
                           SDL_WINDOWPOS_UNDEFINED,
-                          Screen::kScreenWidth, Screen::kScreenHeight,
+                          fs_eng::kScreenWidth, fs_eng::kScreenHeight,
                           SDL_WINDOW_SHOWN
                           );
     }

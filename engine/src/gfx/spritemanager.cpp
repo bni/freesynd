@@ -291,22 +291,8 @@ Sprite *SpriteManager::sprite(int spriteNum)
 }
 
 
-bool SpriteManager::drawSpriteXYZ(int spriteNum, int x, int y, int z,
-                                  bool flipped, bool x2)
-{
-    if (spriteNum >= spriteCount_) {
-        FSERR(Log::k_FLG_IO, "SpriteManager", "drawSpriteXYZ", ("spriteNum %d is out of bound!", spriteNum))
-        return false;
-    }
-
-    sprites_[spriteNum].draw(x, y, z, flipped, x2);
-
-    return true;
-}
-
-
 /*!
- * TODO : Implement flipped parameter
+ * Draw the sprite with given Id at given position
  * @param spriteNum Id of the sprite
  * @param x Position on the screen
  * @param y Position on the screen

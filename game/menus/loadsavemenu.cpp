@@ -30,7 +30,6 @@
 #include <assert.h>
 
 #include "fs-utils/io/file.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/system/system.h"
 #include "core/gamecontroller.h"
@@ -45,7 +44,7 @@ LoadSaveMenu::LoadSaveMenu(MenuManager * m):
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
     // Title
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "#LS_TITLE", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "#LS_TITLE", FontManager::SIZE_4, false);
 
     // Load button
     loadButId_ = addOption(46, 346, 99, 25, "#LS_LOAD_BUT", FontManager::SIZE_2);

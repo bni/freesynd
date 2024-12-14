@@ -30,7 +30,6 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/menus/menu.h"
 #include "fs-engine/menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/appcontext.h"
 
 int Widget::widgetCnt = 0;
@@ -466,7 +465,8 @@ TeamListBox::~TeamListBox() {
 void TeamListBox::draw() {
 
     pTitle_->draw();
-    g_Screen.drawRect(xUnderline_, yUnderline_, lUnderline_, 2, 252);
+    //g_Screen.drawRect(xUnderline_, yUnderline_, lUnderline_, 2, 252);
+    g_System.drawFillRect({xUnderline_, yUnderline_}, lUnderline_, 2, getPeer()->getMenuManager()->kMenuColorLightGreen);
 
     int i=0;
     for (std::list < std::string >::iterator it = labels_.begin();

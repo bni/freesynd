@@ -79,8 +79,6 @@ public:
     //! Return the sprite at given index
     Sprite *sprite(int spriteNum);
 
-    bool drawSpriteXYZ(int spriteNum, int x, int y, int z, bool flipped = false,
-            bool x2 = false);
     //! Draw a sprite with given Id at given position on screen. Sprite can be flipped or stretched
     bool drawSprite(int spriteNum, int x, int y, bool flipped = false, bool x2 = false);
 

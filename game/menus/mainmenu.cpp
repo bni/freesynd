@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
@@ -37,7 +36,7 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "#MAIN_TITLE", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "#MAIN_TITLE", FontManager::SIZE_4, false);
 
     int id = addOption(201, 130, 300, 25, "#MAIN_CONF", FontManager::SIZE_3, fs_game_menus::kMenuIdConf, true, false);
     registerHotKey(kKeyCode_F1, id);

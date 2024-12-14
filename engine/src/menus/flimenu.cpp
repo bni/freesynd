@@ -22,7 +22,6 @@
 
 #include "fs-engine/menus/flimenu.h"
 
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/sound/musicmanager.h"
 
 

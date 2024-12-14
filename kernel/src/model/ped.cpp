@@ -28,8 +28,8 @@
 #include "fs-utils/common.h"
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/animationmanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/events/event.h"
+#include "fs-engine/system/system.h"
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/shot.h"
@@ -665,7 +665,7 @@ bool getOnScreen(int scrollX, int scrollY, Point2D &scPt, const Point2D &tScPt) 
     return off;
 }
 
-void PedInstance::showPath(int scrollX, int scrollY) {
+void PedInstance::showPath(int scrollX, int scrollY, fs_eng::FSColor color) {
     Point2D pedScPt;
     pMap_->tileToScreenPoint(pos_, &pedScPt);
     pedScPt.y = pedScPt.y - pos_.tz * Tile::kTileHeight/3 + Tile::kTileHeight/3;
@@ -689,15 +689,20 @@ void PedInstance::showPath(int scrollX, int scrollY) {
             continue;
         }
 
-        int cl = 11;
-        g_Screen.drawLine(pedScPt.x - scrollX + 129, pedScPt.y - scrollY,
-                pathSp.x - scrollX + 129, pathSp.y - scrollY, cl);
-        g_Screen.drawLine(pedScPt.x - scrollX + 129 - 1, pedScPt.y - scrollY,
-                pathSp.x - scrollX + 129 - 1, pathSp.y - scrollY, cl);
-        g_Screen.drawLine(pedScPt.x - scrollX + 129, pedScPt.y - scrollY - 1,
-                pathSp.x - scrollX + 129, pathSp.y - scrollY - 1, cl);
-        g_Screen.drawLine(pedScPt.x - scrollX + 129 - 1, pedScPt.y - scrollY - 1,
-                pathSp.x - scrollX + 129 - 1, pathSp.y - scrollY - 1, cl);
+        g_System.drawLine(pedScPt.add(-scrollX + 129, - scrollY),
+                            pathSp.add(- scrollX + 129, - scrollY), color);
+        g_System.drawLine(pedScPt.add(-scrollX + 129 -1, - scrollY),
+                            pathSp.add(- scrollX + 129 -1, - scrollY), color);
+        /* g_System.drawLine(pedScPt.x - scrollX + 129 - 1, pedScPt.y - scrollY,
+                pathSp.x - scrollX + 129 - 1, pathSp.y - scrollY, cl); */
+        g_System.drawLine(pedScPt.add(-scrollX + 129, - scrollY- 1),
+                            pathSp.add(- scrollX + 129, - scrollY -1), color);
+        /* g_Sg_System.drawLine(pedScPt.x - scrollX + 129, pedScPt.y - scrollY - 1,
+                pathSp.x - scrollX + 129, pathSp.y - scrollY - 1, cl); */
+        g_System.drawLine(pedScPt.add(-scrollX + 129 - 1, - scrollY- 1),
+                            pathSp.add(- scrollX + 129 - 1, - scrollY -1), color);
+        /* g_System.drawLine(pedScPt.x - scrollX + 129 - 1, pedScPt.y - scrollY - 1,
+                pathSp.x - scrollX + 129 - 1, pathSp.y - scrollY - 1, cl); */
 
         pedScPt.x = ox;
         pedScPt.y = oy;

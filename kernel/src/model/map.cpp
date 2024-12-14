@@ -32,7 +32,6 @@
 #include <cassert>
 
 #include "fs-utils/log/log.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/tilemanager.h"
 
 Map::Map(TileManager * tileManager, uint16 anId) : tileManager_(tileManager)

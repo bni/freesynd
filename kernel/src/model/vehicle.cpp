@@ -33,7 +33,6 @@
 
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-kernel/model/mission.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-kernel/model/shot.h"
 #include "fs-kernel/mgr/missionmanager.h"
 

@@ -28,7 +28,6 @@
 
 #include "menus/maprenderer.h"
 
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/gfx/tilemanager.h"
 #include "fs-engine/system/system.h"
 #include "fs-kernel/model/mission.h"
@@ -38,6 +37,8 @@
 
 #include "menus/squadselection.h"
 #include "fs-engine/config.h"
+
+const int MapRenderer::kGameplayPanelWidth = 129;
 
 void MapRenderer::init(Mission *pMission, SquadSelection *pSelection) {
     pMission_ = pMission;
@@ -53,8 +54,8 @@ void MapRenderer::render(const Point2D &viewport) {
     //  - Some advert panels lack a corner
     TilePoint mtp = pMap_->screenToTilePoint(viewport.x, viewport.y);
     int sw = mtp.tx;
-    int chk = Screen::kScreenWidth / (Tile::kTileWidth / 2) + 2
-        + Screen::kScreenHeight / (Tile::kTileHeight / 3) + pMap_->maxZ() * 2;
+    int chk = fs_eng::kScreenWidth / (Tile::kTileWidth / 2) + 2
+        + fs_eng::kScreenHeight / (Tile::kTileHeight / 3) + pMap_->maxZ() * 2;
     int sh = mtp.ty - 8;
 
     int shm = sh + chk;
@@ -63,10 +64,10 @@ void MapRenderer::render(const Point2D &viewport) {
 
     listObjectsToDraw(viewport);
 
-    int cmw = viewport.x + Screen::kScreenWidth -
-                Screen::kScreenPanelWidth + 128;
-    int cmh = viewport.y + Screen::kScreenHeight + 128;
-    int cmx = viewport.x - Screen::kScreenPanelWidth;
+    int cmw = viewport.x + fs_eng::kScreenWidth -
+                kGameplayPanelWidth + 128;
+    int cmh = viewport.y + fs_eng::kScreenHeight + 128;
+    int cmx = viewport.x - kGameplayPanelWidth;
      //  z = 0 - is minimap data and mapdata
     int chky = sh < 0 ? 0 : sh;
     int zr = shm + pMap_->maxZ() + 1;
@@ -129,9 +130,10 @@ void MapRenderer::render(const Point2D &viewport) {
 
 #ifdef _DEBUG
     if (g_System.getKeyModState() & KMD_LALT) {
+        fs_eng::FSColor yellow {227, 219, 40, 0xFF};
         for (SquadSelection::Iterator it = pSelection_->begin();
             it != pSelection_->end(); ++it) {
-            (*it)->showPath(viewport.x, viewport.y);
+            (*it)->showPath(viewport.x, viewport.y, yellow);
         }
     }
 #endif
@@ -210,8 +212,8 @@ bool MapRenderer::isObjectInsideDrawingArea(MapObject *pObject, const Point2D &v
     // of appearance/disappearance of objects on screen. Otherwise they popup when
     // entering the display screen.
     return  objectViewport.x > (viewport.x - Tile::kTileWidth / 2) && objectViewport.y > viewport.y &&
-            objectViewport.x <= (viewport.x + Screen::kScreenWidth - Screen::kScreenPanelWidth + 10) &&
-            objectViewport.y <= (viewport.y + Screen::kScreenHeight + pObject->position().tz * 48);
+            objectViewport.x <= (viewport.x + fs_eng::kScreenWidth - kGameplayPanelWidth + 10) &&
+            objectViewport.y <= (viewport.y + fs_eng::kScreenHeight + pObject->position().tz * 48);
 }
 
 /**

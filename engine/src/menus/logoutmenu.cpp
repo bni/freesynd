@@ -28,13 +28,13 @@
 
 #include "fs-engine/events/event.h"
 #include "fs-engine/events/default_events.h"
-#include "fs-engine/gfx/screen.h"
+#include "fs-engine/enginecommon.h"
 
 LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, MENU_NO_MENU, true),
 tick_count_(0)
 {
     isCachable_ = false;
-    addStatic(0, 180, g_Screen.gameScreenWidth(), "#LGOUT_TITLE", FontManager::SIZE_4, true);
+    addStatic(0, 180, fs_eng::kScreenWidth, "#LGOUT_TITLE", FontManager::SIZE_4, true);
 }
 
 void LogoutMenu::handleTick(uint32_t elapsed)

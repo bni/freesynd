@@ -32,7 +32,7 @@
 
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/appcontext.h"
-#include "fs-engine/gfx/screen.h"
+#include "fs-engine/enginecommon.h"
 
 const int Menu::MENU_NO_MENU = -1;
 const int Menu::kMenuIdLogout = 6;
@@ -63,7 +63,7 @@ SpriteManager & Menu::menuSprites() {
  * Adds a dirty rect the size of the screen.
  */
 void Menu::needRendering() {
-    menu_manager_->addRect(0, 0, g_Screen.gameScreenWidth(), g_Screen.gameScreenHeight());
+    menu_manager_->addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 }
 
 /*!

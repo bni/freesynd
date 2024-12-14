@@ -37,6 +37,10 @@ namespace fs_eng
     //! The maximum number of colors in a palette
     inline constexpr int kPaletteMaxColor { 256 };
 
+    /*! Width of the screen in pixels.*/
+    inline constexpr int kScreenWidth {640};
+    /*! Height of the screen in pixels.*/
+    inline constexpr int kScreenHeight {400};
 
     /*!
     * A structure to store color.

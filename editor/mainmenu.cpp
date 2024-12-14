@@ -26,7 +26,6 @@
 #include "mainmenu.h"
 
 #include "fs-engine/menus/menumanager.h"
-#include "fs-engine/gfx/screen.h"
 #include "fs-engine/system/system.h"
 
 #include "editormenuid.h"
@@ -35,7 +34,7 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
-    addStatic(0, 40, g_Screen.gameScreenWidth(), "GAME EDITOR", FontManager::SIZE_4, false);
+    addStatic(0, 40, fs_eng::kScreenWidth, "GAME EDITOR", FontManager::SIZE_4, false);
 
     addStatic(201, 130, 100, "GRAPHICS", FontManager::SIZE_3, false);
     addOption(201, 155, 130, 25, "- MENU SPRITES", FontManager::SIZE_2, fs_edit_menus::kMenuIdFont, true, false);
