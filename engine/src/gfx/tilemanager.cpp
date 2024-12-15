@@ -99,7 +99,7 @@ TileManager::~TileManager()
 void TileManager::loadTile(int id, const uint8_t * tilesData, uint8 *typesData, uint8_t *tilesetBuffer)
 {
     int offset = id * kTileIndexSize;
-    uint8_t tilePixels[Tile::kTileWidth * Tile::kTileHeight];
+    uint8_t *tilePixels = new uint8_t[Tile::kTileWidth * Tile::kTileHeight];
     memset(tilePixels, 255, Tile::kTileWidth * Tile::kTileHeight);
 
     for (int i = 0; i < kSubTilePerWidth; ++i) {
@@ -126,6 +126,8 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, uint8 *typesData, 
             }
         }
     }
+
+    delete [] tilePixels;
 
     Point2D textureLoc {
         (id % kNumOfTilesPerRow) * Tile::kTileWidth,
