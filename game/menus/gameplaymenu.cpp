@@ -28,8 +28,7 @@
 
 #include "gameplaymenu.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <cassert>
 
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/sound/musicmanager.h"
@@ -454,8 +453,8 @@ void GameplayMenu::handleRender(DirtyList &dirtyList) {
 #endif
 #endif
 
-#ifdef TRACK_FPS
-    char tmp[100];
+#ifdef FS_TRACK_FPS
+    std::stringstream fpsText;
     static int current_time = 0;
     static int last_time = 0;
     static float fps = 0;
@@ -471,8 +470,9 @@ void GameplayMenu::handleRender(DirtyList &dirtyList) {
         frame = 0;
         last_time = current_time;
     }
-    sprintf(tmp, "FPS : %.2f FRAMES PER SEC", fps);
-    gameFont()->drawText(10, Screen::kScreenHeight - 15, tmp, 14);
+
+    fpsText << "FPS: " << fps; 
+    gameFont()->drawText(10, fs_eng::kScreenHeight - 15, fpsText.str().c_str(), menu_manager_->kMenuColorYellow);
 #endif
 }
 

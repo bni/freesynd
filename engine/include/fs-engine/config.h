@@ -26,9 +26,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// Define this to display frame rate during gameplay
-//define TRACK_FPS  1
-
 // Set this to enable speed measurement of code execution
 // 0 > disable
 // 1 > map renderer

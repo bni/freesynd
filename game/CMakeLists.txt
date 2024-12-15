@@ -54,13 +54,19 @@ set(HEADERS
 
 source_group(Menus REGULAR_EXPRESSION menus/*)
 source_group(Core REGULAR_EXPRESSION core/*)
-source_group(Model REGULAR_EXPRESSION model/*)
-source_group(IA REGULAR_EXPRESSION ia/*)
 
 # When building for Mac, it will build as a Bundle
 add_executable (freesynd MACOSX_BUNDLE ${SOURCES} ${HEADERS})
 
 target_link_libraries (freesynd PRIVATE freesynd_warnings Freesynd::Utils Freesynd::Engine Freesynd::Kernel)
+
+# This option enables the calculation of the frame per second counter and
+# display
+option(FS_TRACK_FPS "Track FPS" OFF)
+
+if (FS_TRACK_FPS)
+    target_compile_definitions(freesynd PRIVATE "FS_TRACK_FPS")
+endif()
 
 # We only define an install target if we're doing a release build.
 if (APPLE)
