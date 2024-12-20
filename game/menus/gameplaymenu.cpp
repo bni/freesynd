@@ -391,7 +391,7 @@ void GameplayMenu::handleTick(uint32_t elapsed)
         updateMarkersPosition();
     }
 
-    updateMinimap(elapsed);
+    mm_renderer_.handleTick(elapsed);
 
     updateIPALevelMeters(elapsed);
 
@@ -1399,14 +1399,6 @@ void GameplayMenu::centerMinimapOnLeader() {
         PedInstance *pAgent = mission_->ped(selection_.getLeaderSlot());
         mm_renderer_.centerOn(pAgent);
     }
-}
-
-/*!
- * Updates the minimap.
- */
-void GameplayMenu::updateMinimap(int elapsed) {
-    centerMinimapOnLeader();
-    mm_renderer_.handleTick(elapsed);
 }
 
 /*!
