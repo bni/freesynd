@@ -109,8 +109,6 @@ protected:
     void stopShootingEvent();
     //! Centers the minimap on the selection leader
     void centerMinimapOnLeader();
-    //! Animate the minimap
-    void updateMinimap(int elapsed);
     //! Update the select all button state
     void updateSelectAll();
     //! Update the target value for adrenaline etc for an agent

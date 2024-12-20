@@ -76,10 +76,17 @@ class MinimapRenderer {
 
     /*! Number of pixel used to draw a map tile.*/
     int pixpertile_;
+    /*!
+     * Total number of tiles displayed in the minimap.
+     * same for width and height.
+     * The number of displayable tiles depends on the presence of a radar 
+     * in the inventory.
+     */
+    int mm_maxtile_;
     /*! Current zoom level.*/
     EZoom zoom_;
     /*! Tile coord on the map for the top left corner of the minimap.*/
-    Point2D world_;
+    TilePoint world_;
     //! Top left corner of the minimap on the screen
     Point2D topLeftCornerPos_;
 };
@@ -119,7 +126,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
  protected:
     //! Finds the minimap location
     void initMinimapLocation();
-    void updateRenderingInfos();
+    void updateRenderingInfos() override;
     //! If minimap is too far right or down, align with right or down border
     void clipMinimapToRightAndDown();
 
@@ -127,13 +134,8 @@ class BriefMinimapRenderer : public MinimapRenderer {
     /*! A timer to control the blinking on the minimap.*/
     fs_utils::BoolTimer timerMiniMapBlink_;
 
-    /*!
-     * Total number of tiles displayed in the minimap.
-     * same for width and height.
-     */
-    uint16 mm_maxtile_;
     /*! The scrolling step : depends on the zoom level.*/
-    uint8 scroll_step_;
+    int scroll_step_;
     /*! The MissionBriefing that contains the minimap.*/
     MissionBriefing *pBriefing_;
     /*! IF true, enemies are drawn on the minimap.*/
@@ -146,15 +148,19 @@ class BriefMinimapRenderer : public MinimapRenderer {
  * This class is used to display a minimap in the gameplay menu.
  */
 class GamePlayMinimapRenderer : public MinimapRenderer {
- public:
+public:
     //! Constructor for the class
     GamePlayMinimapRenderer(const Point2D &screenPos);
 
     //! Reset the class with a new mission
     void init(Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette);
 
-    //! Sets the minimap center on the given tile
-    void centerOn(MapObject *pObject);
+    /*!
+     * Sets the minimap center on the given object.
+     * This object should be the Agent leader.
+     * \param pObject The MapObject on which to center the minimap.
+     */
+    void centerOn(MapObject *pObject) { pCenter = pObject; }
 
     //! Tells whether scanner is on or off.
     void setScannerEnabled(bool b_enabled);
@@ -168,7 +174,7 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     //! Returns the map coordinates of the point on the minimap.
     TilePoint minimapToMapPoint(int mm_x, int mm_y);
 
- protected:
+protected:
 
     /*!
      * This enumeration lists the type of signal on the minimap.
@@ -182,17 +188,27 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
         kEvacuation
     };
     //! called when zoom changes
-    void updateRenderingInfos();
+    void updateRenderingInfos() override;
     //! Create the texture using the minimap information
     void initMinimapTexture(const fs_eng::Palette & palette);
     //! Create the texture for circle
     void initCircleTexture(const fs_eng::Palette & palette);
+
+    //! Update minimap position based on the object location that the minimap is tracking
+    void updateWorldPosition();
+
     //! Draw all visible cars
     void drawVehicles(const fs_eng::Palette & palette);
     //! Draw all visible dropped weapons
     void drawWeapons(const fs_eng::Palette & palette);
     //! Draw visible peds
     void drawPedestrians(const fs_eng::Palette & palette);
+    //! Draw a circle to represent agents, police and guards.
+    void drawPedCircle(const Point2D &screenPos, int type);
+    //! Draw a circle on the minimap for the signal
+    void drawSignalCircle(const Point2D &signalPos, const fs_eng::Palette & palette);
+    //! Draw a pixel on the minimap
+    void drawPixel (const Point2D &point, fs_eng::FSColor color);
 
     /*!
      * Returns true if object is visible on the minimap
@@ -200,10 +216,10 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
      */
     bool isVisible(MapObject *pObject) {
         const TilePoint pt = pObject->position();
-        return (pt.tx >= world_.x &&
-            pt.tx < (world_.x + mm_maxtile_) &&
-            pt.ty >= world_.y &&
-            pt.ty < (world_.y + mm_maxtile_));
+        return (pt.tx >= world_.tx &&
+            pt.tx < (world_.tx + mm_maxtile_) &&
+            pt.ty >= world_.ty &&
+            pt.ty < (world_.ty + mm_maxtile_));
     }
     /*!
      * Returns coord of the given tile relatively
@@ -217,16 +233,9 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
      */
     Point2D signalXYZToMiniMap() {
         return topLeftCornerPos_.add(
-            signalSourceLocW_.x * pixpertile_ / 256 - world_.x * pixpertile_ + pixpertile_,
-            signalSourceLocW_.y * pixpertile_ / 256 - world_.y * pixpertile_ + pixpertile_);
+            signalSourceLocW_.x * pixpertile_ / 256 - world_.tx * pixpertile_ + pixpertile_,
+            signalSourceLocW_.y * pixpertile_ / 256 - world_.ty * pixpertile_ + pixpertile_);
     }
-
-    //! Draw a circle to represent agents, police and guards.
-    void drawPedCircle(const Point2D &screenPos, int type);
-    //! Draw a circle on the minimap for the signal
-    void drawSignalCircle(const Point2D &signalPos, const fs_eng::Palette & palette);
-    //! Draw a pixel on the minimap
-    void drawPixel (const Point2D &point, fs_eng::FSColor color);
 
     /*!
      * Return true if the evacuation circle is completly on the minimap.
@@ -245,7 +254,7 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     void onEvacuateObjectiveStartedEvent(EvacuateObjectiveStartedEvent *pEvt);
     void onObjectiveEndedEvent(ObjectiveEndedEvent *pEvt);
     void onMissionEndedEvent(MissionEndedEvent *pEvt);
- private:
+private:
      /*! Radius of the red evacuation circle.*/
     static const int kEvacuationRadius;
     /*! size of the texture.*/
@@ -261,17 +270,8 @@ class GamePlayMinimapRenderer : public MinimapRenderer {
     Mission *p_mission_;
     /*! The minimap to display.*/
     MiniMap *p_minimap_;
-    /*!
-     * Total number of tiles displayed in the minimap.
-     * same for width and height.
-     * The number of displayable tiles depends on the presence of a radar 
-     * in the inventory.
-     */
-    int mm_maxtile_;
-    /*! Offset for the tile.*/
-    int offset_x_;
-    /*! Offset for the tile.*/
-    int offset_y_;
+    //! The minimap is always centered on the lead agent
+    MapObject *pCenter;
     /*! Coords in pixels of the cross.*/
     Point2D crossPos_;
     /*! Coords on the world map of the signal source.*/

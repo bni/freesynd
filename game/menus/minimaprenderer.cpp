@@ -74,16 +74,16 @@ void BriefMinimapRenderer::initMinimapLocation() {
             if (pBriefing_->getMinimapOverlay(x, y) == MiniMap::kOverlayOurAgent) {
                 // We found a tile with an agent on it
                 // stop searching and memorize position
-                world_.x = x;
-                world_.y = y;
+                world_.tx = x;
+                world_.ty = y;
                 found = true;
             }
         }
     }
 
-    uint16 halftiles = mm_maxtile_ / 2;
-    world_.x = (world_.x < halftiles) ? 0 : (world_.x - halftiles + 1);
-    world_.y = (world_.y < halftiles) ? 0 : (world_.y - halftiles + 1);
+    int halftiles = mm_maxtile_ / 2;
+    world_.tx = (world_.tx < halftiles) ? 0 : (world_.tx - halftiles + 1);
+    world_.ty = (world_.ty < halftiles) ? 0 : (world_.ty - halftiles + 1);
 
     clipMinimapToRightAndDown();
 }
@@ -92,16 +92,16 @@ void BriefMinimapRenderer::initMinimapLocation() {
  *
  */
 void BriefMinimapRenderer::clipMinimapToRightAndDown() {
-    if ((world_.x + mm_maxtile_) >= pBriefing_->minimap()->max_x()) {
+    if ((world_.tx + mm_maxtile_) >= pBriefing_->minimap()->max_x()) {
         // We assume that map size in tiles (p_mission_->mmax_x_)
         // is bigger than the minimap size (mm_maxtile_)
-        world_.x = pBriefing_->minimap()->max_x() - mm_maxtile_;
+        world_.tx = pBriefing_->minimap()->max_x() - mm_maxtile_;
     }
 
-    if ((world_.y + mm_maxtile_) >= pBriefing_->minimap()->max_y()) {
+    if ((world_.ty + mm_maxtile_) >= pBriefing_->minimap()->max_y()) {
         // We assume that map size in tiles (p_mission_->mmax_y_)
         // is bigger than the minimap size (mm_maxtile_)
-        world_.y = pBriefing_->minimap()->max_y() - mm_maxtile_;
+        world_.ty = pBriefing_->minimap()->max_y() - mm_maxtile_;
     }
 }
 
@@ -145,7 +145,7 @@ bool BriefMinimapRenderer::handleTick(uint32_t elapsed) {
  * clips scrolling to the map's right border.
  */
 void BriefMinimapRenderer::scrollRight() {
-    world_.x += scroll_step_;
+    world_.tx += scroll_step_;
     clipMinimapToRightAndDown();
 }
 
@@ -154,14 +154,14 @@ void BriefMinimapRenderer::scrollRight() {
  * clips scrolling to the map's left border.
  */
 void BriefMinimapRenderer::scrollLeft() {
-    // if scroll_step is bigger than world_.x
-    // then world_.x -= scroll_step_ would be negative
-    // but world_.x is usigned so it would be an error
-    if (world_.x < scroll_step_) {
-        world_.x = 0;
+    // if scroll_step is bigger than world_.tx
+    // then world_.tx -= scroll_step_ would be negative
+    // but world_.tx is usigned so it would be an error
+    if (world_.tx < scroll_step_) {
+        world_.tx = 0;
     } else {
-        // we know that world_.x >= scroll_step_
-        world_.x -= scroll_step_;
+        // we know that world_.tx >= scroll_step_
+        world_.tx -= scroll_step_;
     }
 }
 
@@ -170,11 +170,11 @@ void BriefMinimapRenderer::scrollLeft() {
  * clips scrolling to the map's top border.
  */
 void BriefMinimapRenderer::scrollUp() {
-    if (world_.y < scroll_step_) {
-        world_.y = 0;
+    if (world_.ty < scroll_step_) {
+        world_.ty = 0;
     } else {
-        // we know that world_.y >= scroll_step_
-        world_.y -= scroll_step_;
+        // we know that world_.ty >= scroll_step_
+        world_.ty -= scroll_step_;
     }
 }
 
@@ -183,7 +183,7 @@ void BriefMinimapRenderer::scrollUp() {
  * clips scrolling to the map's bottom border.
  */
 void BriefMinimapRenderer::scrollDown() {
-    world_.y += scroll_step_;
+    world_.ty += scroll_step_;
     clipMinimapToRightAndDown();
 }
 
@@ -192,9 +192,9 @@ void BriefMinimapRenderer::scrollDown() {
  * \param palette the palette for colors
  */
 void BriefMinimapRenderer::render(const fs_eng::Palette & palette) {
-    for (uint16_t tx = world_.x; tx < (world_.x + mm_maxtile_); tx++) {
-        uint16_t xc = topLeftCornerPos_.x + (tx - world_.x) * pixpertile_;
-        for (uint16_t ty = world_.y; ty < (world_.y + mm_maxtile_); ty++) {
+    for (int tx = world_.tx; tx < (world_.tx + mm_maxtile_); tx++) {
+        int xc = topLeftCornerPos_.x + (tx - world_.tx) * pixpertile_;
+        for (int ty = world_.ty; ty < (world_.ty + mm_maxtile_); ty++) {
             uint8_t c = pBriefing_->getMinimapOverlay(tx, ty);
             switch (c) {
                 case 0: // a basic tile
@@ -210,7 +210,7 @@ void BriefMinimapRenderer::render(const fs_eng::Palette & palette) {
                         c = pBriefing_->minimap()->getColourAt(tx, ty);
             }
 
-            Point2D pos {xc, topLeftCornerPos_.y + (ty - world_.y) * pixpertile_};
+            Point2D pos {xc, topLeftCornerPos_.y + (ty - world_.ty) * pixpertile_};
             g_System.drawFillRect(pos, pixpertile_, pixpertile_, palette[c]);
         }
     }
@@ -243,10 +243,7 @@ void GamePlayMinimapRenderer::init(Mission *pMission, bool b_scannerEnabled, con
     setScannerEnabled(b_scannerEnabled);
     initMinimapTexture(palette);
     initCircleTexture(palette);
-    world_.x = 0;
-    world_.y = 0;
-    offset_x_ = 0;
-    offset_y_ = 0;
+    world_.reset();
     crossPos_ = topLeftCornerPos_.add(kMiniMapSizePx / 2, kMiniMapSizePx / 2);
     mm_timer_weap.reset();
     mm_timer_signal.reset();
@@ -311,7 +308,7 @@ void GamePlayMinimapRenderer::initMinimapTexture(const fs_eng::Palette & palette
  * - 1 : use border color if buffer color is not the fillColor
  * - 2 : use the fillColor
  */
-uint8 g_ped_circle_mask_[] = {
+uint8_t g_ped_circle_mask_[] = {
     0,  0,  1,  1,  1,  0,  0,
     0,  1,  2,  2,  2,  1,  0,
     1,  2,  2,  2,  2,  2,  1,
@@ -388,37 +385,36 @@ void GamePlayMinimapRenderer::initCircleTexture(const fs_eng::Palette & palette)
 }
 
 /*!
- * Centers the minimap on the given object. Usually, the minimap is centered
- * on the selected agent. If the agent is too close from the border, the minimap
+ * Update the origin of the minimap based on the center position.
+ * If the agent is too close from the border, the minimap
  * does not move anymore.
- * \param pObject The MapObject on which to center the minimap.
  */
-void GamePlayMinimapRenderer::centerOn(MapObject *pObject) {
+void GamePlayMinimapRenderer::updateWorldPosition() {
     int halfSize = mm_maxtile_ / 2;
-    TilePoint tp = pObject->position();
+    TilePoint tp = pCenter->position();
 
     if (tp.tx < halfSize) {
         // we're too close of the top border -> stop moving along X axis
-        world_.x = 0;
-        offset_x_ = 0;
+        world_.tx = 0;
+        world_.ox = 0;
     } else if ((tp.tx + halfSize) >= p_mission_->mmax_x_) {
         // we're too close of the bottom border -> stop moving along X axis
-        world_.x = p_mission_->mmax_x_ - mm_maxtile_;
-        offset_x_ = 0;
+        world_.tx = p_mission_->mmax_x_ - mm_maxtile_;
+        world_.ox = 0;
     } else {
-        world_.x = tp.tx - halfSize;
-        offset_x_ = tp.ox / (256 / pixpertile_);
+        world_.tx = tp.tx - halfSize;
+        world_.ox = tp.ox / (256 / pixpertile_);
     }
 
     if (tp.ty < halfSize) {
-        world_.y = 0;
-        offset_y_ = 0;
+        world_.ty = 0;
+        world_.oy = 0;
     } else if ((tp.ty + halfSize) >= p_mission_->mmax_y_) {
-        world_.y = p_mission_->mmax_y_ - mm_maxtile_;
-        offset_y_ = 0;
+        world_.ty = p_mission_->mmax_y_ - mm_maxtile_;
+        world_.oy = 0;
     } else {
-        world_.y = tp.ty - halfSize;
-        offset_y_ = tp.oy / (256 / pixpertile_);
+        world_.ty = tp.ty - halfSize;
+        world_.oy = tp.oy / (256 / pixpertile_);
     }
 
     // get the cross coordinate
@@ -480,6 +476,8 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
     mm_timer_ped.update(elapsed);
     mm_timer_weap.update(elapsed);
 
+    updateWorldPosition();
+
     if (signalType_ != kNone &&mm_timer_signal.update(elapsed)) {
         // Time hit max -> update radar circle size
         signalRadius_ += 16;
@@ -522,8 +520,8 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
 Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPosition) {
     return 
         topLeftCornerPos_.add(
-            ((mapPosition.tx - world_.x) * pixpertile_) + (mapPosition.ox / (256 / pixpertile_)),
-            ((mapPosition.ty - world_.y) * pixpertile_) + (mapPosition.oy / (256 / pixpertile_)));
+            ((mapPosition.tx - world_.tx) * pixpertile_) + (mapPosition.ox / (256 / pixpertile_)),
+            ((mapPosition.ty - world_.ty) * pixpertile_) + (mapPosition.oy / (256 / pixpertile_)));
 }
 
 /*!
@@ -533,13 +531,13 @@ Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPositio
 TilePoint GamePlayMinimapRenderer::minimapToMapPoint(int mm_x, int mm_y) {
     TilePoint pt;
     // I'm not sure this code is correct
-    int tx = (mm_x + offset_x_) / pixpertile_;
-    int ty = (mm_y + offset_y_) / pixpertile_;
-    int ox = (mm_x + offset_x_) % pixpertile_;
-    int oy = (mm_y + offset_y_) % pixpertile_;
+    int tx = (mm_x + world_.ox) / pixpertile_;
+    int ty = (mm_y + world_.oy) / pixpertile_;
+    int ox = (mm_x + world_.ox) % pixpertile_;
+    int oy = (mm_y + world_.oy) % pixpertile_;
 
-    pt.tx = tx + world_.x;
-    pt.ty = ty + world_.y;
+    pt.tx = tx + world_.tx;
+    pt.ty = ty + world_.ty;
     pt.tz = 0;
     pt.ox = ox * (256 / pixpertile_);
     pt.oy = oy * (256 / pixpertile_);
@@ -553,7 +551,7 @@ TilePoint GamePlayMinimapRenderer::minimapToMapPoint(int mm_x, int mm_y) {
  */
 void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
     // First render the background with the tiles
-    minimapTexture_->renderStretch(world_, topLeftCornerPos_, mm_maxtile_, mm_maxtile_, pixpertile_);
+    minimapTexture_->renderStretch({world_.tx, world_.ty}, topLeftCornerPos_, mm_maxtile_, mm_maxtile_, pixpertile_);
 
     // Draw the minimap cross
     g_System.drawHLine({topLeftCornerPos_.x, crossPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
@@ -626,7 +624,7 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
 
         if (isVisible(p_ped))
         {
-            Point2D screenPos = mapToScreenPosition(p_ped->position());
+            Point2D screenPos = mapToScreenPosition(p_ped->position()).add(-3, -3);
 
             if (p_ped->isPersuaded()) {
                 drawPedCircle(screenPos, 0);
