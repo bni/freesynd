@@ -196,6 +196,37 @@ bool SystemSDL::resetRenderTarget() {
 }
 
 /*!
+ * Set the viewport
+ * @param x Origin of the viewport on the screen
+ * @param y Origin of the viewport on the screen
+ * @param width Width of the viewport
+ * @param height Height of the viewport
+ * @return True if setting the viewport is ok
+ */
+bool SystemSDL::setViewport(int x, int y, int width, int height) {
+    SDL_Rect rect {x, y, width, height};
+    if (SDL_RenderSetViewport(pRenderer_, &rect)) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "setViewport", ("Critical error, Could not set viewport! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
+
+    return true;
+}
+    
+/*!
+ * Reset the viewport to the default one
+ * @return True if ok
+ */
+bool SystemSDL::resetViewport() {
+    if (SDL_RenderSetViewport(pRenderer_, nullptr)) {
+        FSERR(Log::k_FLG_GFX, "SystemSDL", "resetViewport", ("Critical error, Could not reset viewport! SDL Error : %s", SDL_GetError()))
+        return false;
+    }
+
+    return true;
+}
+
+/*!
  * Using the keysym parameter, verify if the given key is a function key (ie
  * a not printable key) returns the corresponding entry in the KeyFunc enumeration.
  * \returns If key code is not a function key, returns KEY_UNKNOWN.

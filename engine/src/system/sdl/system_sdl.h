@@ -62,6 +62,10 @@ public:
     void updateScreen() override;
     //! @copydoc System::resetRenderTarget()
     bool resetRenderTarget() override;
+    //! @copydoc System::setViewport()
+    bool setViewport(int x, int y, int width, int height) override;
+    //! @copydoc System::resetViewport()
+    bool resetViewport() override;
     
     //! Pumps an event from the event queue
     bool pumpEvents(FS_Event &evtOut) override;

@@ -96,6 +96,10 @@ public:
     virtual void updateScreen() = 0;
     // Set the render target to be the default one
     virtual bool resetRenderTarget() = 0;
+    //! Set the viewport for the drawing area
+    virtual bool setViewport(int x, int y, int width, int height) = 0;
+    // Reset to default viewport
+    virtual bool resetViewport() = 0;
 
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event &evtOut) = 0;

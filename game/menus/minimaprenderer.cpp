@@ -512,22 +512,22 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
 
 Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPosition) {
     return 
-        topLeftCornerPos_.add(
-            ((mapPosition.tx - world_.tx) * pixpertile_) + ((mapPosition.ox - world_.ox) / (256 / pixpertile_)),
-            ((mapPosition.ty - world_.ty) * pixpertile_) + ((mapPosition.oy - world_.oy) / (256 / pixpertile_)));
+        {
+             ((mapPosition.tx - world_.tx) * pixpertile_) + ((mapPosition.ox - world_.ox) / (256 / pixpertile_)),
+             ((mapPosition.ty - world_.ty) * pixpertile_) + ((mapPosition.oy - world_.oy) / (256 / pixpertile_))};
 }
 
 /*!
  * \param mm_x coord on the minimap in pixels
  * \param mm_y coord on the minimap in pixels
  */
-TilePoint GamePlayMinimapRenderer::minimapToMapPoint(int mm_x, int mm_y) {
+TilePoint GamePlayMinimapRenderer::minimapToMapPoint(const Point2D & minimapPt) {
     TilePoint pt;
     // I'm not sure this code is correct
-    int tx = (mm_x + world_.ox) / pixpertile_;
-    int ty = (mm_y + world_.oy) / pixpertile_;
-    int ox = (mm_x + world_.ox) % pixpertile_;
-    int oy = (mm_y + world_.oy) % pixpertile_;
+    int tx = (minimapPt.x) / pixpertile_;
+    int ty = (minimapPt.y) / pixpertile_;
+    int ox = (minimapPt.x) % pixpertile_;
+    int oy = (minimapPt.y) % pixpertile_;
 
     pt.tx = tx + world_.tx;
     pt.ty = ty + world_.ty;
@@ -543,12 +543,19 @@ TilePoint GamePlayMinimapRenderer::minimapToMapPoint(int mm_x, int mm_y) {
  * \param palette the palette for colors
  */
 void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
+    // Setting the viewport to use clipboarding
+    g_System.setViewport(topLeftCornerPos_.x, topLeftCornerPos_.y, kMiniMapSizePx, kMiniMapSizePx);
     // First render the background with the tiles
-    minimapTexture_->renderStretch({world_.tx, world_.ty}, topLeftCornerPos_, mm_maxtile_, mm_maxtile_, pixpertile_);
+    // We display 1 tile more horizontaly and vertically to be sure to cover all the viewport
+    minimapTexture_->renderStretch({world_.tx, world_.ty}, 
+                                    {-world_.ox / (256 / pixpertile_), -world_.oy / (256 / pixpertile_)},
+                                    mm_maxtile_ + 1,
+                                    mm_maxtile_ + 1,
+                                    pixpertile_);
 
     // Draw the minimap cross
-    g_System.drawHLine({topLeftCornerPos_.x, crossPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
-    g_System.drawVLine({crossPos_.x, topLeftCornerPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
+    g_System.drawHLine({0, crossPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
+    g_System.drawVLine({crossPos_.x, 0}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
 
     // draw all visible elements on the minimap
     drawPedestrians(palette);
@@ -559,6 +566,8 @@ void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
         Point2D signal = signalXYZToMiniMap();
         drawSignalCircle(signal, palette);
     }
+
+    g_System.resetViewport();
 }
 
 void GamePlayMinimapRenderer::drawVehicles(const fs_eng::Palette & palette) {

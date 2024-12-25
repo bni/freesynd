@@ -172,7 +172,7 @@ public:
     void render(const fs_eng::Palette & palette) override;
 
     //! Returns the map coordinates of the point on the minimap.
-    TilePoint minimapToMapPoint(int mm_x, int mm_y);
+    TilePoint minimapToMapPoint(const Point2D & minimapPt);
 
 protected:
 

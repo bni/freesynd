@@ -827,7 +827,7 @@ void GameplayMenu::handleClickOnMap(Point2D point, int button) {
  */
 void GameplayMenu::handleClickOnMinimap(Point2D point) {
     // convert minimap coordinate in map coordinate
-    TilePoint pt = mm_renderer_.minimapToMapPoint(point.x - kMiniMapScreenPos.x, point.y - kMiniMapScreenPos.y);
+    TilePoint pt = mm_renderer_.minimapToMapPoint(point.add(-kMiniMapScreenPos.x, -kMiniMapScreenPos.y));
     // As minimap is flat, we can't see the height. So take the Z coordinate
     // of the leader as a reference
     pt.tz = selection_.leader()->tileZ();
