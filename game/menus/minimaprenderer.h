@@ -160,7 +160,7 @@ public:
      * This object should be the Agent leader.
      * \param pObject The MapObject on which to center the minimap.
      */
-    void centerOn(MapObject *pObject) { pCenter = pObject; }
+    void centerOn(MapObject *pObject) { pCenter_ = pObject; }
 
     //! Tells whether scanner is on or off.
     void setScannerEnabled(bool b_enabled);
@@ -271,7 +271,7 @@ private:
     /*! The minimap to display.*/
     MiniMap *p_minimap_;
     //! The minimap is always centered on the lead agent
-    MapObject *pCenter;
+    MapObject *pCenter_;
     /*! Coords in pixels of the cross.*/
     Point2D crossPos_;
     /*! Coords on the world map of the signal source.*/

@@ -391,7 +391,7 @@ void GamePlayMinimapRenderer::initCircleTexture(const fs_eng::Palette & palette)
  */
 void GamePlayMinimapRenderer::updateWorldPosition() {
     int halfSize = mm_maxtile_ / 2;
-    TilePoint tp = pCenter->position();
+    TilePoint tp = pCenter_->position();
 
     if (tp.tx < halfSize) {
         // we're too close of the top border -> stop moving along X axis
@@ -403,7 +403,7 @@ void GamePlayMinimapRenderer::updateWorldPosition() {
         world_.ox = 0;
     } else {
         world_.tx = tp.tx - halfSize;
-        world_.ox = tp.ox / (256 / pixpertile_);
+        world_.ox = tp.ox;
     }
 
     if (tp.ty < halfSize) {
@@ -414,15 +414,8 @@ void GamePlayMinimapRenderer::updateWorldPosition() {
         world_.oy = 0;
     } else {
         world_.ty = tp.ty - halfSize;
-        world_.oy = tp.oy / (256 / pixpertile_);
+        world_.oy = tp.oy;
     }
-
-    // get the cross coordinate
-    //
-    // TODO : see if we can remove + 1
-    /* cross_x_ = mapToMiniMapX(tileX + 1, offX);
-    cross_y_ = mapToMiniMapY(tileY + 1, offY); */
-    crossPos_ = mapToScreenPosition(tp);
 }
 
 void GamePlayMinimapRenderer::onObjectiveEndedEvent([[maybe_unused]] ObjectiveEndedEvent *pEvt) {
@@ -520,8 +513,8 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
 Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPosition) {
     return 
         topLeftCornerPos_.add(
-            ((mapPosition.tx - world_.tx) * pixpertile_) + (mapPosition.ox / (256 / pixpertile_)),
-            ((mapPosition.ty - world_.ty) * pixpertile_) + (mapPosition.oy / (256 / pixpertile_)));
+            ((mapPosition.tx - world_.tx) * pixpertile_) + ((mapPosition.ox - world_.ox) / (256 / pixpertile_)),
+            ((mapPosition.ty - world_.ty) * pixpertile_) + ((mapPosition.oy - world_.oy) / (256 / pixpertile_)));
 }
 
 /*!
@@ -624,7 +617,7 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
 
         if (isVisible(p_ped))
         {
-            Point2D screenPos = mapToScreenPosition(p_ped->position()).add(-3, -3);
+            Point2D screenPos = mapToScreenPosition(p_ped->position());
 
             if (p_ped->isPersuaded()) {
                 drawPedCircle(screenPos, 0);
@@ -648,6 +641,10 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
                     if (p_ped->isOurAgent())
                     {
                         drawPedCircle(screenPos, 0);
+                        if (p_ped == pCenter_) {
+                            // get the cross coordinate
+                            crossPos_ = screenPos;
+                        }
                     } else {
                         drawPedCircle(screenPos, 1);
                     }
@@ -681,7 +678,7 @@ void GamePlayMinimapRenderer::drawPedCircle(const Point2D &screenPos, int type) 
         if (mm_timer_ped.state()) {
             originTexture.y += kCircleSpriteSize + 1;
         }
-        circleTexture_->render(originTexture, screenPos, kCircleSpriteSize, kCircleSpriteSize);
+        circleTexture_->render(originTexture, screenPos.add(-3, -3), kCircleSpriteSize, kCircleSpriteSize);
     }
 }
 
