@@ -27,10 +27,11 @@
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/sound/sound.h"
 #include "fs-engine/sound/music.h"
+#include "fs-utils/misc/timer.h"
 
 struct FrameEvent {
     /*! frame Id.*/
-    uint16 frame;
+    int frame;
     /*! start music.*/
     msc::MusicTrack    music;
     /*! Game sound to play.*/
@@ -47,7 +48,7 @@ struct FliDesc {
     /*! Name of the file containing the animation.*/
     std::string name;
     /*! Speed of animation : delay between 2 frames.*/
-    uint8_t frameDelay;
+    uint32_t frameDelay;
     /*! True means user has to press key or mouse to go to
      * next animation or next menu after the end of animation.*/
     bool waitKeyPressed;
@@ -75,7 +76,7 @@ public:
     void handleLeave() override;
 
     //! Append a animation to play with its caracteristics
-    void addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events);
+    void addFliDesc(const char *anim, int frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events);
     //! Remove all FliDesc
     void clearFliDescList();
 
@@ -95,15 +96,15 @@ protected:
     std::vector<FliDesc> fliList_;
     /*! Index of the next animation to play.*/
     size_t fliIndex_;
-    uint16_t frameIndex_;
     /*! Timer to control animation speed.*/
-    uint32_t frameDelay_;
+    fs_utils::Timer frameTimer_;
     /*! A flag telling if an animation is being played.*/
     bool playingFli_;
     /*! Id of the menu to go after all animations have been played.*/
     int nextMenu_;
     /*! Content of a subtitle to draw during animation. Used in intro.*/
     std::string currSubTitle_;
+    bool isFrameLoaded_;
 };
 
 #endif

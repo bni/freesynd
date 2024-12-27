@@ -217,6 +217,7 @@ void FliPlayer::resetPlayer() {
 
     fli_info_.numFrames = 0;
     fli_info_.width = fli_info_.height = 0;
+    currentFrameIndex_ = -1;
 }
 
 /*!
@@ -404,9 +405,10 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
  * @param nbColor Set to non zero only for the first frame where palette is loaded
  * @return True if frame has been read
  */
-bool FliPlayer::decodeFrame(int &nbColor) {
+int FliPlayer::decodeFrame(int &nbColor) {
     FrameTypeChunkHeader frameHeader;
     ChunkHeader cHeader = readChunkHeader(pCurrentFrameOffset_);
+    currentFrameIndex_++;
     nbColor = 0;
     do {
         switch (cHeader.type) {
@@ -438,11 +440,11 @@ bool FliPlayer::decodeFrame(int &nbColor) {
 
     if (isValidChunk(cHeader.type)) {
         copyCurrentFrameToScreen();
-        return true;
     } else {
-        return false;
+        currentFrameIndex_ = -1;
     }
 
+    return currentFrameIndex_;
 }
 
 void FliPlayer::setPalette(uint8_t *mem, int &nbColor) {

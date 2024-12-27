@@ -77,7 +77,7 @@ const FrameEvent intro[] = {
     { 892, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
     { 904, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_18" },
     { 960, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
-    {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    {  -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the mission won animation
@@ -86,7 +86,7 @@ const FrameEvent mission_win[] = {
     { 1, msc::NO_TRACK, APPLAUSE_ZOOM,         0x0, NULL },
     { 10, msc::NO_TRACK, FIREWORKS,            0x1, NULL },
     { 30, msc::NO_TRACK, FIREWORKS_APPLAUSE,   0x1, NULL },
-    {(uint16)-1, msc::NO_TRACK, NO_SOUND,              0x0, NULL }
+    { -1, msc::NO_TRACK, NO_SOUND,              0x0, NULL }
 };
 
 //! This defines the list of event for the mission lost animation
@@ -97,7 +97,7 @@ const FrameEvent mission_failed[] = {
     { 80, msc::NO_TRACK, SPEECH_NO, 0x0, NULL },
     { 108, msc::NO_TRACK, MONITOR_IMPACT, 0x0, NULL },
     { 118, msc::NO_TRACK, GLASS_BREAKING_2, 0x0, NULL },
-    {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the game lost animation
@@ -105,18 +105,18 @@ const FrameEvent game_lost[] = {
     { 1, msc::NO_TRACK, NO_SOUND, 0x0, NULL },
     { 2, msc::NO_TRACK, FALLING_COMMAND_SHIP, 0x0, NULL },
     { 34, msc::NO_TRACK, EXPLOSION_BIG, 0x0, NULL },
-    {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the menu up animation
 const FrameEvent menu_up[] = {
     { 1, msc::NO_TRACK, MENU_UP,   0x1, NULL },
-    {(uint16)-1, msc::NO_TRACK, NO_SOUND,  0x0, NULL }
+    { -1, msc::NO_TRACK, NO_SOUND,  0x0, NULL }
 };
 
 //! This defines the list of no event
 const FrameEvent no_event[] = {
-    {(uint16)-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 /*!

@@ -31,12 +31,13 @@
  * @param menuId 
  * @param parentId 
  */
-FliMenu::FliMenu(MenuManager *m, int menuId, int parentId) : Menu(m, menuId, parentId), fliPlayer_()
+FliMenu::FliMenu(MenuManager *m, int menuId, int parentId) : Menu(m, menuId, parentId), fliPlayer_(), frameTimer_(0)
 {
     fliIndex_ = 0;
     playingFli_ = false;
     isCachable_ = (menuId == Menu::kMenuIdFliTransition);
     currSubTitle_ = "";
+    isFrameLoaded_ = false;
 }
 
 FliMenu::~FliMenu()
@@ -52,7 +53,7 @@ FliMenu::~FliMenu()
  * \param music
  * \param sound
  */
-void FliMenu::addFliDesc(const char *anim, uint8_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events) {
+void FliMenu::addFliDesc(const char *anim, int frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events) {
     FliDesc desc;
     desc.name = anim;
     desc.frameDelay = frameDelay;
@@ -79,6 +80,7 @@ bool FliMenu::loadNextFli() {
     // Stop all music if one was being played
     g_MusicMgr.stopPlayback();
     playingFli_ = false;
+    isFrameLoaded_ = false;
     // loads Fli
     if ( fliIndex_ < fliList_.size()) {
         // Gets the fli description
@@ -88,8 +90,8 @@ bool FliMenu::loadNextFli() {
             if (fliPlayer_.hasFrames()) {
                 // init frame delay counter with max value so first frame is
                 // drawn in the first pass
-                frameDelay_ = desc.frameDelay;
-                frameIndex_ = 0;
+                frameTimer_.reset(desc.frameDelay);
+                frameTimer_.setToMax();
                 currSubTitle_.erase();
                 fliIndex_++;
                 return true;
@@ -114,15 +116,16 @@ void FliMenu::handleTick(uint32_t elapsed)
     if (fliPlayer_.hasFrames()) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);
         // There is a frame to display
-        frameDelay_ += elapsed;
-        if (frameDelay_ > desc.frameDelay) {
-            int nbColor;
+        if (frameTimer_.update(elapsed)) {
+            int nbColor = 0;
+            int frameIndex;
             // time to change frame -> read frame
-            if (!fliPlayer_.decodeFrame(nbColor)) {
+            if ((frameIndex = fliPlayer_.decodeFrame(nbColor)) == -1) {
                 // Frame is not good -> quit
                 menu_manager_->gotoMenu(nextMenu_);
                 return;
             }
+            isFrameLoaded_ = true;
 
             // number of color is different from zero
             // so that means we load a palette
@@ -132,14 +135,12 @@ void FliMenu::handleTick(uint32_t elapsed)
 
             // Add a dirty rect just to start the render routine
             addDirtyRect(0, 0, 1, 1);
-            // Reset delay between frames
-            frameDelay_ = 0;
 
             // handle events
-            for (uint16_t i = 0; desc.evtList[i].frame != (uint16_t)-1; i++) {
-                if (desc.evtList[i].frame > frameIndex_)
+            for (uint16_t i = 0; desc.evtList[i].frame != -1; i++) {
+                if (desc.evtList[i].frame > frameIndex)
                     break;
-                else if (desc.evtList[i].frame == frameIndex_) {
+                else if (desc.evtList[i].frame == frameIndex) {
                     // Play music
                     if (desc.evtList[i].music != msc::NO_TRACK) {
                         g_MusicMgr.playTrack(desc.evtList[i].music);
@@ -156,7 +157,6 @@ void FliMenu::handleTick(uint32_t elapsed)
                     }
                 }
             }
-            frameIndex_++;
         }
 
         playingFli_ = true;
@@ -175,7 +175,9 @@ void FliMenu::handleTick(uint32_t elapsed)
 
 void FliMenu::handleRender(DirtyList &dirtyList)
 {
-    fliPlayer_.renderFrame();
+    if (isFrameLoaded_) {
+        fliPlayer_.renderFrame();
+    }
 
     if (currSubTitle_.size() != 0) {
         menu_manager_->fonts().introFont()->drawText(10, 360, currSubTitle_, true);

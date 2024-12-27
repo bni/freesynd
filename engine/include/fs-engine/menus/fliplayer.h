@@ -70,7 +70,7 @@ public:
     int width() const { return fliData_ ? fli_info_.width : 0; }
     int height() const { return fliData_ ? fli_info_.height : 0; }
 
-    bool decodeFrame(int &nbColor);
+    int decodeFrame(int &nbColor);
 
     /*!
      * Return true if this animation contains frames to display
@@ -99,6 +99,8 @@ private:
     uint8_t *fliData_;
     //! A pointer the frame to load in the fliData
     uint8_t *pCurrentFrameOffset_;
+    //! The number of the current frame
+    int currentFrameIndex_;
     //! this is the content of the frame
     const uint8_t *offscreen_;
     //! The palette for the fli using FSColor
