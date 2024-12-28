@@ -109,7 +109,7 @@ bool MissionBriefing::loadBriefing(uint8 * data, int size) {
             // We also remove single line feeds and keep when there are 2 or more
             int nbLF = 0;
             for (size_t cindx = 0; cindx < briefCp437.size(); cindx++) {
-                cp437char_t cp437char = briefCp437[cindx];
+                fs_cmn::cp437char_t cp437char = briefCp437[cindx];
                 utf8::utfchar32_t u8char = cp437ToUnicode[cp437char];
                 if (u8char == 0x000A) { //current character is a line feed
                     nbLF += 1;

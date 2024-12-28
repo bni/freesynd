@@ -131,6 +131,9 @@ public:
     void data(uint8_t *spr_data) const;
 
 private:
+    int ceil8(int v);
+    
+private:
     //! Id of the sprite. This is the order in the tab file
     size_t id_;
     //! Width of the sprite

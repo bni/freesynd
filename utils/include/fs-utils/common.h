@@ -52,16 +52,6 @@ typedef unsigned int uint32;
 typedef signed long long int64;
 typedef unsigned long long uint64;
 
-//! This type is used for characters in Code Page 437
-typedef unsigned char cp437char_t;
-
-inline int ceil8(int v) {
-    if (v <= 0)
-        return 0;
-
-    return (v % 8) ? ((v / 8) + 1) * 8: v;
-}
-
 inline uint16 READ_LE_UINT16(const uint8 *data) {
     return (data[1] << 8) | data[0];
 }
@@ -99,45 +89,47 @@ inline void WRITE_LE_UINT16(uint8 *data, uint16 num) {
     data[1] = (uint8)(num >> 8);
 }
 
-inline uint32 mirror(uint32 value, int count) {
-    uint32 top = 1 << (count - 1), bottom = 1;
-
-    while (top > bottom) {
-        uint32 mask = top | bottom;
-        uint32 masked = value & mask;
-
-        if (masked != 0 && masked != mask)
-            value ^= mask;
-
-        top >>= 1;
-        bottom <<= 1;
-    }
-
-    return value;
-}
-
-inline uint32 bitValue(const uint32 value, int index) {
-    return (value >> index) & 1;
-}
-
-inline bool bitSet(const uint32 value, int index) {
-    return bitValue(value, index) == 0 ? false : true;
-}
-
-inline bool bitClear(const uint32 value, int index) {
-    return !bitSet(value, index);
-}
-
 namespace fs_cmn {
+
+    //! This type is used for characters in Code Page 437
+    typedef unsigned char cp437char_t;
 
     inline constexpr double kPI { 3.141592653589793 };
 
+    /*!
+     * Return an integer where the bit at index is at the lowest bit
+     * @param value 
+     * @param index 
+     * @return 
+     */
+    inline uint32_t bitValue(const uint32_t value, int index) {
+        return (value >> index) & 1;
+    }
+    /*!
+     * Return true if the bit at given index is set.
+     * @param value 
+     * @param index 
+     * @return 
+     */
+    inline bool bitSet(const uint32_t value, int index) {
+        return bitValue(value, index) == 0 ? false : true;
+    }
+
+    /*!
+    * Unset the bit at given position.
+    * @param value 
+    * @param index 
+    * @return 
+    */
+    inline bool bitClear(const uint32_t value, int index) {
+        return !bitSet(value, index);
+    }
     /*!
      * Turn bits given by mask on in the given bitfield.
      * \param bitfield the bitfield to update
      * \param mask The bitmask to apply
      */
-    inline void setBitsWithMask(uint32 *bitfield, const uint32 mask) {
+    inline void setBitsWithMask(uint32_t *bitfield, const uint32_t mask) {
         *bitfield |= mask;
     }
 
@@ -146,7 +138,7 @@ namespace fs_cmn {
      * \param bitfield the bitfield to query
      * \param mask The bitmask to apply
      */
-    inline bool isBitsOnWithMask(const uint32 bitfield, const uint32 mask) {
+    inline bool isBitsOnWithMask(const uint32_t bitfield, const uint32_t mask) {
         return (bitfield & mask) != 0;
     }
 
@@ -155,7 +147,7 @@ namespace fs_cmn {
      * \param bitfield 8 bits bitfield to query
      * \param mask 8 bits bitmask to apply
      */
-    inline bool isBitsOnWithMask(const uint8 bitfield, const uint8 mask) {
+    inline bool isBitsOnWithMask(const uint8_t bitfield, const uint8_t mask) {
         return (bitfield & mask) != 0;
     }
 

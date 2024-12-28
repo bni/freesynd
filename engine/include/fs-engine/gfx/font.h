@@ -40,7 +40,7 @@ class FontRange {
 public:
     FontRange(const std::string& valid_chars);
 
-    inline bool in_range(cp437char_t c) {
+    inline bool in_range(fs_cmn::cp437char_t c) {
         return (char_present_[c / 32] & (1 << (c % 32))) != 0;
     }
 

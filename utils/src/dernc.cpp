@@ -58,6 +58,23 @@ namespace RNC_INTERNAL {
         } is_crc_setup = true;
     }
 
+    uint32_t mirror(uint32_t value, int count) {
+        uint32_t top = 1 << (count - 1), bottom = 1;
+
+        while (top > bottom) {
+            uint32_t mask = top | bottom;
+            uint32_t masked = value & mask;
+
+            if (masked != 0 && masked != mask)
+                value ^= mask;
+
+            top >>= 1;
+            bottom <<= 1;
+        }
+
+        return value;
+    }
+
     uint32 bitPeek(BitStream &bit_stream, uint32 mask) {
         return bit_stream.bit_buffer &mask;
     }
