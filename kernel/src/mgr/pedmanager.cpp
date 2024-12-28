@@ -164,10 +164,10 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 
     }
 
     Ped *pedanim = new Ped();
-    initAnimation(pedanim, READ_LE_UINT16(gamdata.index_base_anim));
+    initAnimation(pedanim, fs_cmn::READ_LE_UINT16(gamdata.index_base_anim));
     PedInstance *newped = new PedInstance(pedanim, ped_idx, pMap, isOurAgent);
 
-    int hp = READ_LE_INT16(gamdata.health);
+    int hp = fs_cmn::READ_LE_INT16(gamdata.health);
     if (isOurAgent) {
         // not in all missions our agents health is 16, this fixes it
         hp = PedInstance::kAgentMaxHealth;
@@ -189,7 +189,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16 
     // this is tile based Z we get, realword Z is in gamdata,
     // for correct calculations of viewpoint, target hit etc.
     // Zr = (Zt * 128) / 256
-    int z = READ_LE_UINT16(gamdata.mapposz) >> 7;
+    int z = fs_cmn::READ_LE_UINT16(gamdata.mapposz) >> 7;
     // some peds have z = 0 - map paraguay
     int oz = gamdata.mapposz[0] & 0x7F;
     newped->setSizeX(32);

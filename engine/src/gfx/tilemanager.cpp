@@ -105,7 +105,7 @@ void TileManager::loadTile(int id, const uint8_t * tilesData, uint8 *typesData, 
     for (int i = 0; i < kSubTilePerWidth; ++i) {
         for (int j = 0; j < kSubTilePerHeight; ++j) {
             int subTileOffset =
-                READ_LE_INT32(tilesData + offset +
+                fs_cmn::READ_LE_INT32(tilesData + offset +
                                (i * kSubTilePerHeight + j) * 4);
             loadSubTile(tilesData, subTileOffset,
                         (kSubTilePerHeight - 1 - j) * Tile::kSubTileHeight * Tile::kTileWidth + i * Tile::kSubTileWidth,

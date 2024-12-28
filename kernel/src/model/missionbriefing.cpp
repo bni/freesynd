@@ -156,7 +156,7 @@ void MissionBriefing::init_minimap(Map *p_map, LevelData::LevelDataAll &level_da
     // we can correctly use our minimap_overlay_;
     // our agent = 1, enemy agent = 2, tile doesn't have ped = 0
     for (uint32 i = 0; i < (128*128); i++) {
-        uint32 pin = READ_LE_UINT16(level_data.map.objs + i * 2);
+        uint32 pin = fs_cmn::READ_LE_UINT16(level_data.map.objs + i * 2);
         if (pin >= 0x0002 && pin < 0x5C02) {  // Pointing to the Pedestrian section
             if (pin >= 0x0002 && pin < 0x02e2) {  // Pointing to one of our agents
                 minimap_overlay_[i] = MiniMap::kOverlayOurAgent;
@@ -170,7 +170,7 @@ void MissionBriefing::init_minimap(Map *p_map, LevelData::LevelDataAll &level_da
             pin = (pin - 0x9562) / 36; // 36 = weapon data size
             LevelData::Weapons & wref = level_data.weapons[pin];
             if (wref.desc == 0x05) {
-                pin = READ_LE_UINT16(wref.offset_owner);
+                pin = fs_cmn::READ_LE_UINT16(wref.offset_owner);
                 if (pin != 0) {
                     pin = (pin - 2) / 92; // 92 = ped data size
                     if (pin > 7) {

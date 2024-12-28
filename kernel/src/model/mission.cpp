@@ -70,11 +70,11 @@ Mission::Mission(const LevelData::MapInfos & map_infos, Map *pMap)
     mtsurfaces_ = NULL;
     mdpoints_ = NULL;
     mdpoints_cp_ = NULL;
-    i_map_id_ = READ_LE_UINT16(map_infos.map);
-    min_x_= READ_LE_UINT16(map_infos.min_x) / 2;
-    min_y_ = READ_LE_UINT16(map_infos.min_y) / 2;
-    max_x_ = READ_LE_UINT16(map_infos.max_x) / 2;
-    max_y_ = READ_LE_UINT16(map_infos.max_y) / 2;
+    i_map_id_ = fs_cmn::READ_LE_UINT16(map_infos.map);
+    min_x_= fs_cmn::READ_LE_UINT16(map_infos.min_x) / 2;
+    min_y_ = fs_cmn::READ_LE_UINT16(map_infos.min_y) / 2;
+    max_x_ = fs_cmn::READ_LE_UINT16(map_infos.max_x) / 2;
+    max_y_ = fs_cmn::READ_LE_UINT16(map_infos.max_y) / 2;
     cur_objective_ = 0;
     p_minimap_ = NULL;
     set_map(pMap);

@@ -52,43 +52,6 @@ typedef unsigned int uint32;
 typedef signed long long int64;
 typedef unsigned long long uint64;
 
-inline uint16 READ_LE_UINT16(const uint8 *data) {
-    return (data[1] << 8) | data[0];
-}
-
-inline uint32 READ_LE_UINT32(const uint8 *data) {
-    return (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0];
-}
-
-inline uint16 READ_BE_UINT16(const uint8 *data) {
-    return (data[0] << 8) | data[1];
-}
-
-inline uint32 READ_BE_UINT32(const uint8 *data) {
-    return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-}
-
-inline int16 READ_LE_INT16(const uint8 *data) {
-    return (data[1] << 8) | data[0];
-}
-
-inline int32 READ_LE_INT32(const uint8 *data) {
-    return (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0];
-}
-
-inline int16 READ_BE_INT16(const uint8 *data) {
-    return (data[0] << 8) | data[1];
-}
-
-inline int32 READ_BE_INT32(const uint8 *data) {
-    return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-}
-
-inline void WRITE_LE_UINT16(uint8 *data, uint16 num) {
-    data[0] = (uint8)(num & 0xFF);
-    data[1] = (uint8)(num >> 8);
-}
-
 namespace fs_cmn {
 
     //! This type is used for characters in Code Page 437
@@ -96,6 +59,42 @@ namespace fs_cmn {
 
     inline constexpr double kPI { 3.141592653589793 };
 
+    inline uint16_t READ_LE_UINT16(const uint8_t *data) {
+        return (data[1] << 8) | data[0];
+    }
+
+    inline uint32_t READ_LE_UINT32(const uint8_t *data) {
+        return (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0];
+    }
+
+    inline uint16_t READ_BE_UINT16(const uint8_t *data) {
+        return (data[0] << 8) | data[1];
+    }
+
+    inline uint32_t READ_BE_UINT32(const uint8_t *data) {
+        return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+    }
+
+    inline int16_t READ_LE_INT16(const uint8_t *data) {
+        return (data[1] << 8) | data[0];
+    }
+
+    inline int32_t READ_LE_INT32(const uint8_t *data) {
+        return (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0];
+    }
+
+    inline int16_t READ_BE_INT16(const uint8_t *data) {
+        return (data[0] << 8) | data[1];
+    }
+
+    inline int32_t READ_BE_INT32(const uint8_t *data) {
+        return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+    }
+
+    inline void WRITE_LE_UINT16(uint8_t *data, uint16_t num) {
+        data[0] = (uint8_t)(num & 0xFF);
+        data[1] = (uint8_t)(num >> 8);
+    }
     /*!
      * Return an integer where the bit at index is at the lowest bit
      * @param value 

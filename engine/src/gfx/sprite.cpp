@@ -180,7 +180,7 @@ bool Sprite::loadSprite(uint8_t * tabData, uint8_t * spriteData, int offset,
 
     uint8_t *tabEntry = tabData + offset * kTabEntrySize;
 
-    uint32_t spriteOffset = READ_LE_UINT32(tabEntry);
+    uint32_t spriteOffset = fs_cmn::READ_LE_UINT32(tabEntry);
 
     tabEntry += 4;
     width_ = *tabEntry;

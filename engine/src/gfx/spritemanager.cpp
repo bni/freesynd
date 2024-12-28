@@ -175,7 +175,7 @@ void SpriteManager::readAndSortTabEntries(const uint8_t * tabData, std::list<Spr
         
         SpriteTabEntry entry {
             i,  // sprite id 
-            READ_LE_UINT32(tabData + spriteTabOffset),  // offset in the data file
+            fs_cmn::READ_LE_UINT32(tabData + spriteTabOffset),  // offset in the data file
             *(tabData + spriteTabOffset + 4),   // width
             *(tabData + spriteTabOffset + 5),   // height
         };

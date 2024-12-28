@@ -86,7 +86,7 @@ namespace RNC_INTERNAL {
         if (bit_stream.bit_count < 16) {
             packed_data += 2;
             bit_stream.bit_buffer |=
-                (((uint32_t) READ_LE_UINT16(packed_data)) << bit_stream.bit_count);
+                (((uint32_t) fs_cmn::READ_LE_UINT16(packed_data)) << bit_stream.bit_count);
             bit_stream.bit_count += 16;
         }
     }
@@ -189,7 +189,7 @@ namespace RNC_INTERNAL {
     }
 
     void bitReadInit(BitStream &bit_stream, uint8 *&packed_data) {
-        bit_stream.bit_buffer = READ_LE_UINT16(packed_data);
+        bit_stream.bit_buffer = fs_cmn::READ_LE_UINT16(packed_data);
         bit_stream.bit_count = 16;
     }
 
@@ -199,7 +199,7 @@ namespace RNC_INTERNAL {
         bit_stream.bit_buffer &= (1u << bit_stream.bit_count) - 1;
         // Replace with the data at the current input position
         bit_stream.bit_buffer |=
-            (((uint32_t) READ_LE_UINT16(packed_data)) << bit_stream.bit_count);
+            (((uint32_t) fs_cmn::READ_LE_UINT16(packed_data)) << bit_stream.bit_count);
         bit_stream.bit_count += 16;
     }
 
@@ -223,7 +223,7 @@ namespace RNC_INTERNAL {
  * \return bool
  */
 bool rnc::isRncCompressed(const uint8_t *data) {
-    return READ_BE_UINT32(data) == RNC_INTERNAL::kRncSignature;
+    return fs_cmn::READ_BE_UINT32(data) == RNC_INTERNAL::kRncSignature;
 }
 
 const char * rnc::errorString(RncRetCode retCode) {
@@ -251,7 +251,7 @@ rnc::RncRetCode rnc::unpackedLength(const uint8 *packed_data, size_t &length) {
     if (!isRncCompressed(packed_data))
         return kFileIsNotRNC;
 
-    length = READ_BE_UINT32(packed_data + 4);
+    length = fs_cmn::READ_BE_UINT32(packed_data + 4);
 
     return kOk;
 }
@@ -284,11 +284,11 @@ rnc::RncRetCode rnc::unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t
     if (!isRncCompressed(packed_data))
         return kFileIsNotRNC;
 
-    size_t output_length = READ_BE_UINT32(packed_data + 4);
-    size_t input_length = READ_BE_UINT32(packed_data + 8);
+    size_t output_length = fs_cmn::READ_BE_UINT32(packed_data + 4);
+    size_t input_length = fs_cmn::READ_BE_UINT32(packed_data + 8);
 
-    uint16_t unpacked_crc = READ_BE_UINT16(packed_data + 12);
-    uint16_t packed_crc = READ_BE_UINT16(packed_data + 14);
+    uint16_t unpacked_crc = fs_cmn::READ_BE_UINT16(packed_data + 12);
+    uint16_t packed_crc = fs_cmn::READ_BE_UINT16(packed_data + 14);
 
     uint8_t *input = packed_data + 18;    // Skip the header
     uint8_t *output = unpacked_data;

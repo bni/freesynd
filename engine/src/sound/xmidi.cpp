@@ -706,7 +706,7 @@ bool XMidi::handleChunkXDIR(XMidiFile* xmidi, const unsigned char* stream, uint3
     }
     // # of tracks (implies # of FORMs) is an IFF abomination, as
     // it's a little-endian 16-bit value.
-    xmidi->tracks = READ_LE_UINT16(stream);
+    xmidi->tracks = fs_cmn::READ_LE_UINT16(stream);
 
     xmidi->allocData();
 
@@ -760,7 +760,7 @@ bool XMidi::handleChunkTIMB(XMidiFile* xmidi, const unsigned char* stream, uint3
     // The TIMBre chunk contains a list of required timbres.
     // Believe it or not, but the size actually is little-endian
     // (how's that for IFF and compatibility)
-    const uint16 timbre_count = READ_LE_UINT16(stream);
+    const uint16 timbre_count = fs_cmn::READ_LE_UINT16(stream);
     stream += 2;
 
     // sanity check

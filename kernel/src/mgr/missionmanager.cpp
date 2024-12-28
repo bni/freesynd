@@ -112,7 +112,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
     // Loads the mission to get the minimap
     LevelData::LevelDataAll level_data;
     if (load_level_data(n, level_data)) {
-        uint16 map_id = READ_LE_UINT16(level_data.mapinfos.map);
+        uint16 map_id = fs_cmn::READ_LE_UINT16(level_data.mapinfos.map);
         Map *p_map = mapManager_.loadMap(map_id);
         if (p_map == NULL) {
             delete p_mb;
@@ -222,9 +222,9 @@ void MissionManager::hackMissions(int missionId, uint8 *data) {
         scen_start[5] = (scen_start[5] & 0xFE);
 
         scen_start = data + kScenarioOffset + 8 * 87;
-        WRITE_LE_UINT16(scen_start, 90 * 8);
+        fs_cmn::WRITE_LE_UINT16(scen_start, 90 * 8);
         scen_start = data + kScenarioOffset + 8 * 90;
-        WRITE_LE_UINT16(scen_start, 91 *8);
+        fs_cmn::WRITE_LE_UINT16(scen_start, 91 *8);
         scen_start += 4;
         // coords x = 72,ox = 128, y = 32, oy = 128, z = 2
         scen_start[0] = (72 << 1) | 1;
@@ -233,7 +233,7 @@ void MissionManager::hackMissions(int missionId, uint8 *data) {
         scen_start[3] = 1;
 
         scen_start += 4;
-        WRITE_LE_UINT16(scen_start, 92 *8);
+        fs_cmn::WRITE_LE_UINT16(scen_start, 92 *8);
         scen_start += 4;
         // coords x = 61,ox = 0, y = 32, oy = 0, z = 2
         scen_start[0] = (62 << 1) | 1;
@@ -242,7 +242,7 @@ void MissionManager::hackMissions(int missionId, uint8 *data) {
         scen_start[3] = 1;
 
         scen_start += 4;
-        WRITE_LE_UINT16(scen_start, 88 *8);
+        fs_cmn::WRITE_LE_UINT16(scen_start, 88 *8);
         scen_start += 4;
         // coords x = 42,ox = 0, y = 59, oy = 0, z = 2
         scen_start[0] = (42 << 1) | 1;
@@ -326,7 +326,7 @@ void MissionManager::exportMissionData(LevelData::LevelDataAll &level_data, Miss
  * Creates a Mission object from the LevelDataAll structure.
  */
 Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
-    Map *pMap = mapManager_.loadMap(READ_LE_UINT16(level_data.mapinfos.map));
+    Map *pMap = mapManager_.loadMap(fs_cmn::READ_LE_UINT16(level_data.mapinfos.map));
     if (pMap == NULL) {
         return NULL;
     }
@@ -413,7 +413,7 @@ void MissionManager::createWeapons(const LevelData::LevelDataAll &level_data, Da
         WeaponInstance *w = create_weapon_instance(wref, pMission->get_map());
         if (w) {
             if (wref.desc == 0x05) {
-                uint16 offset_owner = READ_LE_UINT16(wref.offset_owner);
+                uint16 offset_owner = fs_cmn::READ_LE_UINT16(wref.offset_owner);
                 if (offset_owner != 0) {
                     offset_owner = (offset_owner - 2) / 92; // 92 = ped data size
                     if (offset_owner > 7 && di.pindx[offset_owner] != 0xFFFF) {
@@ -495,7 +495,7 @@ WeaponInstance * MissionManager::create_weapon_instance(const LevelData::Weapons
         pNewWeapon = WeaponInstance::createInstance(pWeapon);
         pNewWeapon->setMap(pMap);
         pNewWeapon->setPosition(gamdata.mapposx[1], gamdata.mapposy[1],
-            READ_LE_UINT16(gamdata.mapposz) >> 7, gamdata.mapposx[0],
+            fs_cmn::READ_LE_UINT16(gamdata.mapposz) >> 7, gamdata.mapposx[0],
             gamdata.mapposy[0], gamdata.mapposz[0] & 0x7F);
     }
 
@@ -539,10 +539,10 @@ void MissionManager::createVehicles(const LevelData::LevelDataAll &level_data, D
  */
 Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, Map *pMap) {
 
-    int hp = READ_LE_INT16(gamdata.health);
+    int hp = fs_cmn::READ_LE_INT16(gamdata.health);
     int dir = gamdata.orientation >> 5;
 
-    int cur_anim = READ_LE_UINT16(gamdata.index_current_anim) - dir;
+    int cur_anim = fs_cmn::READ_LE_UINT16(gamdata.index_current_anim) - dir;
     VehicleAnimation *vehicleanim = new VehicleAnimation();
     vehicleanim->set_base_anims(cur_anim);
 
@@ -582,7 +582,7 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
         #if _DEBUG
                 printf("uknown vehicle type %02X , %02X, %X\n", gamdata.sub_type,
                     gamdata.orientation,
-                    READ_LE_UINT16(gamdata.index_current_frame));
+                    fs_cmn::READ_LE_UINT16(gamdata.index_current_frame));
                 printf("x = %i, xoff = %i, ", gamdata.mapposx[1],
                     gamdata.mapposx[0]);
                 printf("y = %i, yoff = %i, ", gamdata.mapposy[1],
@@ -596,7 +596,7 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
     }
 
     if (pVehicle) {
-        int z = READ_LE_UINT16(gamdata.mapposz) >> 7;
+        int z = fs_cmn::READ_LE_UINT16(gamdata.mapposz) >> 7;
 
         // TODO: the size should be adjusted on orientation/direction change
         // and it should be different per vehicle type
@@ -663,7 +663,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
                     setDriver = true;
                 } else {
                     // Current ped is just a passenger
-                    uint16 vin = READ_LE_UINT16(pedref.offset_of_vehicle);
+                    uint16 vin = fs_cmn::READ_LE_UINT16(pedref.offset_of_vehicle);
                     if (vin != 0) {
                         vin = (vin - 0x5C02) / 42; // 42 vehicle data size
                         vid = di.vindx[vin];
@@ -695,7 +695,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
 
 void MissionManager::createScriptedActionsForPed(Mission *pMission, DataIndex &di, const LevelData::LevelDataAll &level_data, PedInstance *pPed) {
     const LevelData::People & peopleData = level_data.people[pPed->id()];
-    uint16 offset_start = READ_LE_UINT16(peopleData.offset_scenario_start);
+    uint16 offset_start = fs_cmn::READ_LE_UINT16(peopleData.offset_scenario_start);
     uint16 offset_nxt = offset_start;
     Vehicle *v = pPed->inVehicle();
     bool isInVehicle = v != NULL;
@@ -721,7 +721,7 @@ void MissionManager::createScriptedActionsForPed(Mission *pMission, DataIndex &d
         LevelData::Scenarios sc = level_data.scenarios[offset_nxt / 8];
         LOG(Log::k_FLG_GAME, "MissionManager","createScriptedActionsForPed", ("At offset %d, type : %d", offset_nxt, sc.type))
 
-        offset_nxt = READ_LE_UINT16(sc.next);
+        offset_nxt = fs_cmn::READ_LE_UINT16(sc.next);
         if (offset_nxt == offset_start) {
             throw LoadMissionException("Bad scenario offset");
         }
@@ -756,7 +756,7 @@ void MissionManager::createScriptedActionsForPed(Mission *pMission, DataIndex &d
         } else if (sc.type == LevelData::kScenarioTypeUseVehicle) {
             if (!isInVehicle) {
                 LOG(Log::k_FLG_GAME, "MissionManager","createScriptedActionsForPed", (" - Enter vehicle"))
-                uint16 bindx = READ_LE_UINT16(sc.offset_object);
+                uint16 bindx = fs_cmn::READ_LE_UINT16(sc.offset_object);
                 // TODO: test all maps for objects other then vehicle
                 assert(bindx >= 0x5C02 && bindx < 0x6682);
                 bindx -= 0x5C02;
@@ -835,7 +835,7 @@ void MissionManager::createObjectives(const LevelData::LevelDataAll &level_data,
         ObjectiveDesc *objd = NULL;
 
         const LevelData::Objectives & obj = level_data.objectives[i];
-        unsigned int bindx = READ_LE_UINT16(obj.offset), cindx = 0;
+        unsigned int bindx = fs_cmn::READ_LE_UINT16(obj.offset), cindx = 0;
         // TODO: checking is implemented for correct offset, because
         // in game data objective description is not correctly defined
         // some offsets are wrong, objective type is missing somewhere
@@ -845,10 +845,10 @@ void MissionManager::createObjectives(const LevelData::LevelDataAll &level_data,
         // ped goes to car and moves to location, if reached mission is
         // failed, similar actions are in many missions(scenarios defines this)
 
-        switch (READ_LE_UINT16(obj.type)) {
+        switch (fs_cmn::READ_LE_UINT16(obj.type)) {
             case 0x00:
             {
-                int x = READ_LE_INT16(obj.mapposx);
+                int x = fs_cmn::READ_LE_INT16(obj.mapposx);
                 if (x != 0) {
 /*                    objd = new LocationObjective(objv_ReachLocation,
                        READ_LE_INT16(obj.mapposx),
@@ -953,15 +953,15 @@ void MissionManager::createObjectives(const LevelData::LevelDataAll &level_data,
                 break;
             case 0x10:
                 // realworld coordinates, not tile based
-                objd = new ObjEvacuate(READ_LE_INT16(obj.mapposx),
-                    READ_LE_INT16(obj.mapposy),
-                    READ_LE_INT16(obj.mapposz),
+                objd = new ObjEvacuate(fs_cmn::READ_LE_INT16(obj.mapposx),
+                    fs_cmn::READ_LE_INT16(obj.mapposy),
+                    fs_cmn::READ_LE_INT16(obj.mapposz),
                     peds_evacuate);
 
                 break;
 #ifdef _DEBUG
             default:
-                FSERR(Log::k_FLG_GAME, "Mission", "loadLevel", ("Unknown objective %X\n", READ_LE_UINT16(obj.type)));
+                FSERR(Log::k_FLG_GAME, "Mission", "loadLevel", ("Unknown objective %X\n", fs_cmn::READ_LE_UINT16(obj.type)));
                 break;
 #endif
         }

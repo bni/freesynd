@@ -47,9 +47,9 @@ Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
 
     // NOTE: objects states are usually mixed with type,
     // no separation between object type and its state
-    uint16 curanim = READ_LE_UINT16(gamdata->index_current_anim);
-    uint16 baseanim = READ_LE_UINT16(gamdata->index_base_anim);
-    uint16 curframe = READ_LE_UINT16(gamdata->index_current_frame);
+    uint16 curanim = fs_cmn::READ_LE_UINT16(gamdata->index_current_anim);
+    uint16 baseanim = fs_cmn::READ_LE_UINT16(gamdata->index_base_anim);
+    uint16 curframe = fs_cmn::READ_LE_UINT16(gamdata->index_current_frame);
     switch(gamdata->sub_type) {
         case 0x01:
             // phone booth
@@ -325,7 +325,7 @@ Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
         default:
             printf("uknown static object type %02X , %02X, %X\n",
                 gamdata->sub_type, gamdata->orientation,
-                READ_LE_UINT16(gamdata->index_current_frame));
+                fs_cmn::READ_LE_UINT16(gamdata->index_current_frame));
             printf("x = %i, xoff = %i, ", gamdata->mapposx[1],
                 gamdata->mapposx[0]);
             printf("y = %i, yoff = %i, ", gamdata->mapposy[1],
@@ -337,7 +337,7 @@ Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
     }
 
     if (s) {
-        int z = READ_LE_UINT16(gamdata->mapposz) >> 7;
+        int z = fs_cmn::READ_LE_UINT16(gamdata->mapposz) >> 7;
         int oz = gamdata->mapposz[0] & 0x7F;
         // trick to draw
         if (s->type() == Static::smt_Advertisement)
