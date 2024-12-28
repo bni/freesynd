@@ -27,12 +27,10 @@
 #include "fs-engine/appcontext.h"
 
 #include <locale>
-#ifdef __APPLE__
-#include <Carbon/Carbon.h>
-#endif
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+#include "fs-engine/system/system.h"
 
 AppContext::AppContext() {
     time_for_click_ = 80;
@@ -171,48 +169,50 @@ bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesyste
  */
 bool AppContext::readLanguage(const int languageId) {
     std::string filename;
-    int newLangId = languageId;
-
-    if (languageId == 0) { // In this case, we use the OS locale to define the language
+        
+    switch (languageId) {
+    case 1:
+        curr_language_ = fs_eng::FRENCH;
+        break;
+    case 2:
+        curr_language_ = fs_eng::ITALIAN;
+        break;
+    case 3:
+        curr_language_ = fs_eng::GERMAN;
+        break;
+    default: // In this case, we use the OS locale to define the language
+        {
 #ifdef __APPLE__
-        CFArrayRef languages = CFLocaleCopyPreferredLanguages();
-        CFStringRef sName = (CFStringRef) CFArrayGetValueAtIndex(languages, 0);
-        char buffer[100];
-        memset(buffer, 0, 100);
-        std::string lang;
-        if (CFStringGetCString(sName, buffer, 100, kCFStringEncodingUTF8)) {
-            std::string tmp(buffer);
-            lang = tmp.substr(0, 2);
-        }
-        CFRelease(languages);
+        curr_language_ = g_System.getLanguageFromSystem();
 #else
         setlocale(LC_ALL, "");
         std::string lang(setlocale(LC_CTYPE, NULL));
-#endif
+
         if (lang.starts_with("French") || lang.starts_with("fr")) {
-            newLangId = 1;
+            curr_language_ = fs_eng::FRENCH;
         } else if (lang.starts_with("Italian") || lang.starts_with("it")) {
-            newLangId = 2;
+            curr_language_ = fs_eng::ITALIAN;
         } else if (lang.starts_with("German") || lang.starts_with("de")) {
-            newLangId = 3;
+            curr_language_ = fs_eng::GERMAN;
+        } else {
+            curr_language_ = fs_eng::ENGLISH;
         }
+#endif
+        }
+        break;
     }
 
-    switch (newLangId) {
-        case 1:
-            curr_language_ = AppContext::FRENCH;
+    switch (curr_language_) {
+        case fs_eng::FRENCH:
             filename = "lang/french.lng";
             break;
-        case 2:
-            curr_language_ = AppContext::ITALIAN;
+        case fs_eng::ITALIAN:
             filename = "lang/italian.lng";
             break;
-        case 3:
-            curr_language_ = AppContext::GERMAN;
+        case fs_eng::GERMAN:
             filename = "lang/german.lng";
             break;
         default:
-            curr_language_ = AppContext::ENGLISH;
             filename = "lang/english.lng";
             break;
     }

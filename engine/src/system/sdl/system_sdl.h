@@ -109,6 +109,9 @@ public:
 
     std::unique_ptr<FSTexture> createTexture() override;
 
+    //! @copydoc System::getLanguageFromSystem()
+    fs_eng::FS_Lang getLanguageFromSystem() override;
+
 protected:
     //! Creates a SDL window either for fullscreen or not
     SDL_Window * createWindow(bool fullscreen);

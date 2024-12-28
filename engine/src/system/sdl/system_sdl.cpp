@@ -677,3 +677,36 @@ void SystemSDL::stopReceiveText() {
 std::unique_ptr<FSTexture> SystemSDL::createTexture() {
     return std::make_unique<FSTextureSDL>(pRenderer_);
 }
+
+/*!
+ * Call SDL_GetPreferredLocales() to get the locales for the system.
+ * If there is an error, return English silently.
+ * @return If no language matches the system locales, return English
+ */
+fs_eng::FS_Lang SystemSDL::getLanguageFromSystem() {
+    fs_eng::FS_Lang resLang = fs_eng::ENGLISH;
+    SDL_Locale * locales = SDL_GetPreferredLocales();
+    if (locales != NULL) {
+        SDL_Locale *pLocale = locales;
+        while (pLocale->language != NULL) {
+            std::string lang(pLocale->language);
+            if (lang.compare("en") == 0) {
+                resLang = fs_eng::ENGLISH;
+                break;
+            } else if (lang.compare("fr") == 0) {
+                resLang = fs_eng::FRENCH;
+                break;
+            } else if (lang.compare("it") == 0) {
+                resLang = fs_eng::ITALIAN;
+                break;
+            } if (lang.compare("de") == 0) {
+                resLang = fs_eng::GERMAN;
+                break;
+            }
+            pLocale++;
+        }
+    }
+
+    SDL_free(locales);
+    return resLang;
+}

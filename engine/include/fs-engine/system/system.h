@@ -166,6 +166,12 @@ public:
     //! Create a FSTexture with the current system
     virtual std::unique_ptr<FSTexture> createTexture() = 0;
 
+    /*!
+     * Return the language based on the system preferences.
+     * @return English is the default
+     */
+    virtual fs_eng::FS_Lang getLanguageFromSystem() = 0;
+
 protected:
     std::unique_ptr<Audio> audio_;
 };

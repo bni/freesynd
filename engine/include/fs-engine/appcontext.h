@@ -33,22 +33,13 @@
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
 #include "fs-utils/io/configfile.h"
+#include "fs-engine/enginecommon.h"
 
 /*!
  * This class stores application level parameters.
  */
 class AppContext : public Singleton < AppContext > {
 public:
-    /*!
-     * Available language in the game.
-     */
-    enum FS_Lang {
-        ENGLISH = 0,
-        FRENCH = 1,
-        ITALIAN = 2,
-        GERMAN = 3
-    };
-
     AppContext();
     ~AppContext();
 
@@ -68,7 +59,7 @@ public:
 
     uint32_t getTimeForClick() { return time_for_click_; }
 
-    FS_Lang currLanguage(void) {return curr_language_; }
+    fs_eng::FS_Lang currLanguage(void) {return curr_language_; }
     std::string getMessage(const std::string & id);
     void getMessage(const std::string & id, std::string & msg);
 
@@ -91,7 +82,7 @@ private:
     bool test_files_;
     /*! Language file. */
     ConfigFile  *language_;
-    FS_Lang curr_language_;
+    fs_eng::FS_Lang curr_language_;
 };
 
 #define g_Ctx   AppContext::singleton()

@@ -34,6 +34,14 @@
  */
 namespace fs_eng
 {
+    //! List of supported languages in the application
+    enum FS_Lang {
+        ENGLISH,
+        FRENCH,
+        ITALIAN,
+        GERMAN
+    };
+    
     //! The maximum number of colors in a palette
     inline constexpr int kPaletteMaxColor { 256 };
 

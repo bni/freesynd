@@ -54,7 +54,7 @@ public:
     //! Creates a surface initialized with the array of pixel
     bool create8bitsSurfaceFromData(const uint8_t *srcPixels, int width, int height, uint8_t colorKey) override;
     //! Create a texture from the surface (a palette should have been defined first)
-    bool loadTextureFromSurface();
+    bool loadTextureFromSurface() override;
     //! Return the color from the palette at given index
     bool getColorFromPalette(const int index, fs_eng::FSColor& color) override;
     //! @copydoc FSTexture::setPalette()
