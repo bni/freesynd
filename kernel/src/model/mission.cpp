@@ -2493,8 +2493,7 @@ MapObject * Mission::checkBlockedByObject(WorldPoint * pStartPt, WorldPoint * pE
         }
     }
 
-    for (size_t i = getSquad()->size(); i < peds_.size(); ++i) {
-        PedInstance * pPed = peds_[i];
+    for (PedInstance *pPed : peds_) {
         if (pPed->isAlive() && pPed != pOrigin && !pPed->isInVehicle()) {
             if (pPed->isBlocker(&copyStartPt, &copyEndPt, inc_xyz)) {
                 int cx = pStartPt->x - copyStartPt.x;

@@ -237,6 +237,16 @@ bool WalkAction::suspend(PedInstance *pPed) {
     return MovementAction::suspend(pPed);
 }
 
+/*!
+ * Resume action by reinitializing the path to destination.
+ * @param pMission 
+ * @param pPed 
+ */
+void WalkAction::resume(Mission *pMission, PedInstance *pPed) {
+    doStart(pMission, pPed);
+    MovementAction::resume(pMission, pPed);
+}
+
 void WalkAction::doStart(Mission *pMission, PedInstance *pPed) {
     // Go to given location at given speed
     if (!pPed->initMovementToDestination(pMission, destLocT_, newSpeed_)) {

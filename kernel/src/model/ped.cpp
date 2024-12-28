@@ -1212,7 +1212,7 @@ void PedInstance::handleHit(fs_dmg::DamageToInflict &d) {
     if (health_ > 0) {
         decreaseHealth(getRealDamage(d));
 
-        // Only add a hit if ped is not currently being hit
+        // Only add a hit if ped is not already being hit
         if (currentAction_ == NULL || currentAction_->type() != Action::kActTypeHit) {
             insertHitAction(d);
         }

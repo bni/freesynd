@@ -242,6 +242,8 @@ public:
     void setDestination(ShootableMapObject *smo);
     //! Suspend action
     bool suspend(PedInstance *pPed);
+    //! Resume action
+    void resume(Mission *pMission, PedInstance *pPed) override;
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
     bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
