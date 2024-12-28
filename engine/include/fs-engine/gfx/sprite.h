@@ -27,6 +27,7 @@
 #define ENGINE_SPRITE_H
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 
 /*!
  * This represent a record in the sprite Tab file

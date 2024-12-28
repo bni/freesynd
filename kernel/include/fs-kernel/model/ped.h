@@ -32,6 +32,7 @@
 #include <set>
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-engine/gfx/spritemanager.h"
 #include "fs-kernel/model/static.h"
 #include "fs-kernel/model/modowner.h"

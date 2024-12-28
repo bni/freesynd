@@ -34,6 +34,7 @@
 #include <map>
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-utils/log/log.h"
 #include "fs-kernel/model/position.h"
 

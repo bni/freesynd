@@ -128,35 +128,9 @@ inline bool bitClear(const uint32 value, int index) {
     return !bitSet(value, index);
 }
 
-const double PI = 3.141592653589793;
-
 namespace fs_cmn {
 
-    // Those values are the index of the color in the current pallette.
-    /*! Color constant : Black */
-    static const uint8 kColorBlack = 0;
-    /*! Color constant : Light Green */
-    static const uint8 kColorLightGreen = 3;
-    /*! Color constant : Light grey */
-    static const uint8 kColorLightGrey = 4;
-    /*! Color constant : Dark Brown */
-    static const uint8 kColorDarkBrown = 5;
-    /*! Color constant : Dark Red */
-    static const uint8 kColorDarkRed = 6;
-    /*! Color constant : Blue Grey */
-    static const uint8 kColorBlueGrey = 7;
-    /*! Color constant : Yellow */
-    static const uint8 kColorYellow = 11;
-    /*! Color constant : White */
-    static const uint8 kColorWhite = 12;
-    /*! Color constant : Light Brown */
-    static const uint8 kColorLightBrown = 13;
-    /*! Color constant : Light Red */
-    static const uint8 kColorLightRed = 14;
-    /*! Color constant : Blue */
-    static const uint8 kColorBlue = 15;
-    /*! Color constant : Dark Green */
-    static const uint8 kColorDarkGreen = 16;
+    inline constexpr double kPI { 3.141592653589793 };
 
     /*!
      * Turn bits given by mask on in the given bitfield.
@@ -184,27 +158,17 @@ namespace fs_cmn {
     inline bool isBitsOnWithMask(const uint8 bitfield, const uint8 mask) {
         return (bitfield & mask) != 0;
     }
-};
 
-inline void boxify(int &left, int &width, int x1, int x2)
-{
-    width = x1 < x2 ? x2 - x1 : x1 - x2;
-    left = (x1 < x2) ? x1 : x2;
-}
-
-/*!
- * A structure to store a point defined with 2 coordinates.
- */
-struct Point2D {
-    int x;
-    int y;
-
-    Point2D add(int offsetX, int offsetY) const {
-        Point2D res;
-        res.x = x + offsetX;
-        res.y = y + offsetY;
-
-        return res;
+    /*!
+     * 
+     * @param left 
+     * @param width 
+     * @param x1 
+     * @param x2 
+     */
+    inline void boxify(int &left, int &width, int x1, int x2) {
+        width = x1 < x2 ? x2 - x1 : x1 - x2;
+        left = (x1 < x2) ? x1 : x2;
     }
 };
 

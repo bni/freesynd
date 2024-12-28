@@ -27,6 +27,7 @@
 #define ENGINE_GFX_TILE_H
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 
 /*!
  * Tile class.

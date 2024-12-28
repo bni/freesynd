@@ -2537,20 +2537,20 @@ uint8 PedInstance::moveToDir(Mission* m, int elapsed, DirMoveType &dir_move,
         } else if (dir == 192) {
             diffx = -1.0;
         } else if (dir < 64) {
-            diffx = sin((dir / 128.0) * PI);
-            diffy = cos((dir / 128.0) * PI);
+            diffx = sin((dir / 128.0) * fs_cmn::kPI);
+            diffy = cos((dir / 128.0) * fs_cmn::kPI);
         } else if (dir < 128) {
             int dirn = dir % 64;
-            diffy = -sin((dirn / 128.0) * PI);
-            diffx = cos((dirn / 128.0) * PI);
+            diffy = -sin((dirn / 128.0) * fs_cmn::kPI);
+            diffx = cos((dirn / 128.0) * fs_cmn::kPI);
         } else if (dir < 192) {
             int dirn = dir % 64;
-            diffx = -sin((dirn / 128.0) * PI);
-            diffy = -cos((dirn / 128.0) * PI);
+            diffx = -sin((dirn / 128.0) * fs_cmn::kPI);
+            diffy = -cos((dirn / 128.0) * fs_cmn::kPI);
         } else if (dir < 256) {
             int dirn = dir % 64;
-            diffy = sin((dirn / 128.0) * PI);
-            diffx = -cos((dirn / 128.0) * PI);
+            diffy = sin((dirn / 128.0) * fs_cmn::kPI);
+            diffx = -cos((dirn / 128.0) * fs_cmn::kPI);
         }
 
         double posx = (double)(pos_.tx * 256 + pos_.ox);

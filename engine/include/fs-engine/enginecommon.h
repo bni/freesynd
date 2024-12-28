@@ -90,6 +90,47 @@ namespace fs_eng
         kMenuPaletteColorLightGreen = 252,
         kMenuPaletteColorWhite = 204
     };
+
+    enum PaletteGameColorIndex {
+         /*! Color constant : Black */
+        kPaletteGameColorBlack = 0,
+        /*! Color constant : Light Green */
+        kPaletteGameColorLightGreen = 3,
+        /*! Color constant : Light grey */
+        kPaletteGameColorLightGrey = 4,
+        /*! Color constant : Dark Brown */
+        kPaletteGameColorDarkBrown = 5,
+        /*! Color constant : Dark Red */
+        kPaletteGameColorDarkRed = 6,
+        /*! Color constant : Blue Grey */
+        kPaletteGameColorBlueGrey = 7,
+        /*! Color constant : Yellow */
+        kPaletteGameColorYellow = 11,
+        /*! Color constant : White */
+        kPaletteGameColorWhite = 12,
+        /*! Color constant : Light Brown */
+        kPaletteGameColorLightBrown = 13,
+        /*! Color constant : Light Red */
+        kPaletteGameColorLightRed = 14,
+        /*! Color constant : Blue */
+        kPaletteGameColorBlue = 15
+    };
 }
+
+/*!
+ * A structure to store a point defined with 2 coordinates.
+ */
+struct Point2D {
+    int x;
+    int y;
+
+    Point2D add(int offsetX, int offsetY) const {
+        Point2D res;
+        res.x = x + offsetX;
+        res.y = y + offsetY;
+
+        return res;
+    }
+};
 
 #endif // ENGINE_ENGINECOMMON_H

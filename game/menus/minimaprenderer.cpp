@@ -333,10 +333,10 @@ void GamePlayMinimapRenderer::initCircleTexture(const fs_eng::Palette & palette)
     // This array contains the colors used for each type of circle
     uint8_t colors[] {
         // First is the circle main color, second and third are use for blinking
-        fs_cmn::kColorYellow, fs_cmn::kColorBlack, fs_cmn::kColorLightGreen,     // 0 - our agent or persuaded
-        fs_cmn::kColorLightRed, fs_cmn::kColorBlack, fs_cmn::kColorDarkRed,      // 1 - enemy agent
-        fs_cmn::kColorBlue, fs_cmn::kColorBlack, fs_cmn::kColorBlueGrey,         // 2 - Police
-        fs_cmn::kColorLightGrey, fs_cmn::kColorWhite, fs_cmn::kColorBlack        // 3 - Guard
+        fs_eng::kPaletteGameColorYellow, fs_eng::kPaletteGameColorBlack, fs_eng::kPaletteGameColorLightGreen,     // 0 - our agent or persuaded
+        fs_eng::kPaletteGameColorLightRed, fs_eng::kPaletteGameColorBlack, fs_eng::kPaletteGameColorDarkRed,      // 1 - enemy agent
+        fs_eng::kPaletteGameColorBlue, fs_eng::kPaletteGameColorBlack, fs_eng::kPaletteGameColorBlueGrey,         // 2 - Police
+        fs_eng::kPaletteGameColorLightGrey, fs_eng::kPaletteGameColorWhite, fs_eng::kPaletteGameColorBlack        // 3 - Guard
     };
     const int kNumOfCirclePerRow = 4;
 
@@ -440,14 +440,14 @@ void GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent(EvacuateObjectiveS
     // in this case, we draw the circle in red
     Point2D signalPos = signalXYZToMiniMap();
     if (isEvacuationCircleOnMinimap(signalPos.x, signalPos.y)) {
-        signalColor_ = fs_cmn::kColorDarkRed;
+        signalColor_ = fs_eng::kPaletteGameColorDarkRed;
         signalRadius_ = kEvacuationRadius;
     }
 }
 
 void GamePlayMinimapRenderer::handleClearSignal() {
     signalRadius_ = 0;
-    signalColor_ = fs_cmn::kColorWhite;
+    signalColor_ = fs_eng::kPaletteGameColorWhite;
     signalType_ = kNone;
     signalSourceLocW_.x = 0;
     signalSourceLocW_.y = 0;
@@ -478,7 +478,7 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
 
         if (signalType_ == kEvacuation && isEvacuationCircleOnMinimap(signalPos.x, signalPos.y)) {
             // the evacuation circle is completely on the map, so it's a red circle with fixed size
-            signalColor_ = fs_cmn::kColorDarkRed;
+            signalColor_ = fs_eng::kPaletteGameColorDarkRed;
             signalRadius_ = kEvacuationRadius;
         } else {
             int maxPx = mm_maxtile_ * pixpertile_;
@@ -503,7 +503,7 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
                 //g_SoundMgr.play(snd::TRACKING_PONG);
             }
             // reset color to white in case the red circle was displayed
-            signalColor_ = fs_cmn::kColorWhite;
+            signalColor_ = fs_eng::kPaletteGameColorWhite;
         }
     }
 
@@ -554,8 +554,8 @@ void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
                                     pixpertile_);
 
     // Draw the minimap cross
-    g_System.drawHLine({0, crossPos_.y}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
-    g_System.drawVLine({crossPos_.x, 0}, kMiniMapSizePx, palette[fs_cmn::kColorBlack]);
+    g_System.drawHLine({0, crossPos_.y}, kMiniMapSizePx, palette[fs_eng::kPaletteGameColorBlack]);
+    g_System.drawVLine({crossPos_.x, 0}, kMiniMapSizePx, palette[fs_eng::kPaletteGameColorBlack]);
 
     // draw all visible elements on the minimap
     drawPedestrians(palette);
@@ -590,7 +590,7 @@ void GamePlayMinimapRenderer::drawVehicles(const fs_eng::Palette & palette) {
                 /* int px = mapToMiniMapX(tx + 1, p_vehicle->offX()) - vehicle_size / 2;
                 int py = mapToMiniMapY(ty + 1, p_vehicle->offY()) - vehicle_size / 2; */
 
-                g_System.drawFillRect(screenPos, vehicle_size, vehicle_size, palette[fs_cmn::kColorWhite]);
+                g_System.drawFillRect(screenPos, vehicle_size, vehicle_size, palette[fs_eng::kPaletteGameColorWhite]);
             }
         }
     }
@@ -610,7 +610,7 @@ void GamePlayMinimapRenderer::drawWeapons(const fs_eng::Palette & palette) {
             if (mm_timer_weap.state()) {
                 Point2D screenPos = mapToScreenPosition(w->position());
 
-                g_System.drawFillRect(screenPos, weapon_size, weapon_size, palette[fs_cmn::kColorLightGrey]);
+                g_System.drawFillRect(screenPos, weapon_size, weapon_size, palette[fs_eng::kPaletteGameColorLightGrey]);
             }
         }
     }
@@ -641,7 +641,7 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
                         int ped_height = 2;
                         if (mm_timer_ped.state()) {
                             // draw the square
-                            g_System.drawFillRect(screenPos, ped_width, ped_height, palette[fs_cmn::kColorWhite]);
+                            g_System.drawFillRect(screenPos, ped_width, ped_height, palette[fs_eng::kPaletteGameColorWhite]);
                         }
                     break;
                     }

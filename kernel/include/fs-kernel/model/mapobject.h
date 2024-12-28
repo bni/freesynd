@@ -32,6 +32,7 @@
 #include <list>
 
 #include "fs-utils/common.h"
+#include "fs-engine/enginecommon.h"
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/damage.h"
 
