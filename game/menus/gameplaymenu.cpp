@@ -250,8 +250,8 @@ void GameplayMenu::initWorldCoords()
     Point2D start;
     mission_->get_map()->tileToScreenPoint(p_leader->tileX(),
         p_leader->tileY(), mission_->mmax_z_ + 1, 0, 0, &start);
-    start.x -= (GAME_SCREEN_WIDTH - 129) / 2;
-    start.y -= GAME_SCREEN_HEIGHT / 2;
+    start.x -= (fs_eng::kScreenWidth - 129) / 2;
+    start.y -= fs_eng::kScreenHeight / 2;
 
     if (start.x < 0)
         start.x = 0;
@@ -406,7 +406,7 @@ void GameplayMenu::handleTick(uint32_t elapsed)
 
 void GameplayMenu::handleRender(DirtyList &dirtyList) {
     map_renderer_.render(displayOriginPt_);
-    g_System.drawRect({0,0}, 129, GAME_SCREEN_HEIGHT, menu_manager_->kMenuColorBlack);
+    g_System.drawRect({0,0}, 129, fs_eng::kScreenHeight, menu_manager_->kMenuColorBlack);
     agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);
     drawSelectAllButton();
     drawMissionHint(0);
@@ -535,13 +535,13 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
 
     if (last_motion_x_ < 5) {
         scroll_x_ = - SCROLL_STEP;
-    } else if (last_motion_x_ > GAME_SCREEN_WIDTH - 5) {
+    } else if (last_motion_x_ > fs_eng::kScreenWidth - 5) {
         scroll_x_ = SCROLL_STEP;
     }
 
     if (last_motion_y_ < 5) {
         scroll_y_ = - SCROLL_STEP;
-    } else if (last_motion_y_ > GAME_SCREEN_HEIGHT - 5) {
+    } else if (last_motion_y_ > fs_eng::kScreenHeight - 5) {
         scroll_y_ = SCROLL_STEP;
     }
 

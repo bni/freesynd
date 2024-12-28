@@ -644,8 +644,8 @@ void PedInstance::setEnergyActivated(bool isActivated) {
 
 bool isOnScreen(int scrollX, int scrollY, int x, int y) {
     return x >= scrollX && y >= scrollY
-            && x < scrollX + GAME_SCREEN_WIDTH - 129
-            && y < scrollY + GAME_SCREEN_HEIGHT;
+            && x < scrollX + fs_eng::kScreenWidth - 129
+            && y < scrollY + fs_eng::kScreenHeight;
 }
 
 bool getOnScreen(int scrollX, int scrollY, Point2D &scPt, const Point2D &tScPt) {

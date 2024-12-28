@@ -400,7 +400,7 @@ void MenuManager::copyFromBackground(Point2D pos, int width, int height) {
  */
 void MenuManager::renderMenu() {
     // TODO : refactor dirty rect management
-    addRect(0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+    addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
     if (current_ && !dirtyList_.isEmpty()) {
         if (current_->doNeedBackground()) {
            pBackgroundTexture_->renderFullTextureStrech(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
