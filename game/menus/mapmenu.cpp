@@ -113,8 +113,8 @@ const int MapMenu::kCountrySpritePerRow = 8;
  * Class constructor.
  * \param m The menu manager.
  */
-MapMenu::MapMenu(MenuManager * m)
-        : Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain, true),
+MapMenu::MapMenu(fs_eng::MenuManager * m)
+        : fs_eng::Menu(m, fs_game_menus::kMenuIdMap, fs_game_menus::kMenuIdMain, true),
           mapblk_data_(NULL), timerBlinkLine_(200), timerBlinkCountry_(500, true) {
     cursorOnShow_ = kMenuCursor;
     offsetLine_ = 0;
@@ -146,10 +146,10 @@ MapMenu::MapMenu(MenuManager * m)
     txtTaxPctId_ = addStatic(350, 346, "@   30%", FontManager::SIZE_1, true);
     decrTaxButId_ = addImageOption(375, 346, Sprite::MSPR_TAX_DECR,
         Sprite::MSPR_TAX_DECR, false);
-    registerHotKey(kKeyCode_Down, decrTaxButId_);
+    registerHotKey(fs_eng::kKeyCode_Down, decrTaxButId_);
     incrTaxButId_ = addImageOption(435, 346, Sprite::MSPR_TAX_INCR,
         Sprite::MSPR_TAX_INCR, false);
-    registerHotKey(kKeyCode_Up, incrTaxButId_);
+    registerHotKey(fs_eng::kKeyCode_Up, incrTaxButId_);
 }
 
 MapMenu::~MapMenu() {
@@ -426,13 +426,13 @@ bool MapMenu::handleMouseDown(Point2D point, int button) {
 void MapMenu::handleAction(const int actionId, void *ctx) {
     bool refresh = false;
     if ( actionId == incrTaxButId_ ) {
-        if (g_System.isKeyModStatePressed(KMD_CTRL)) {
+        if (g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
             refresh = g_Session.addToTaxRate(10);
         } else {
             refresh = g_Session.addToTaxRate(1);
         }
     } else if ( actionId == decrTaxButId_ ) {
-        if (g_System.isKeyModStatePressed(KMD_CTRL)) {
+        if (g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
             refresh = g_Session.addToTaxRate(-10);
         } else {
             refresh = g_Session.addToTaxRate(-1);
@@ -445,9 +445,9 @@ void MapMenu::handleAction(const int actionId, void *ctx) {
     }
 }
 
-bool MapMenu::handleUnMappedKey(const FS_Key key) {
+bool MapMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     bool consumed = false;
-    if (key.keyCode == kKeyCode_Left) {
+    if (key.keyCode == fs_eng::kKeyCode_Left) {
         // navigate among available missions by decreasing index
         int start = g_Session.getSelectedBlockId();
         for (int i = 1; i < GameSession::NB_MISSION; i++) {
@@ -462,7 +462,7 @@ bool MapMenu::handleUnMappedKey(const FS_Key key) {
                 break;
             }
         }
-    } else if (key.keyCode == kKeyCode_Right) {
+    } else if (key.keyCode == fs_eng::kKeyCode_Right) {
         // navigate among available missions by increasing index
         int start = g_Session.getSelectedBlockId();
         for (int i = 1; i < GameSession::NB_MISSION; i++) {
@@ -474,13 +474,13 @@ bool MapMenu::handleUnMappedKey(const FS_Key key) {
                 break;
             }
         }
-    } else if (key.keyCode == kKeyCode_PageUp) {
+    } else if (key.keyCode == fs_eng::kKeyCode_PageUp) {
         // Pressing PageUp increase tax of 10 percents
         Block blk = g_Session.getBlock(g_Session.getSelectedBlockId());
         if (blk.status == BLK_FINISHED) {
             consumed = g_Session.addToTaxRate(10);
         }
-    } else if ( key.keyCode == kKeyCode_PageDown ) {
+    } else if ( key.keyCode == fs_eng::kKeyCode_PageDown ) {
         // Pressing PageDown decrease tax of 10 percents
         Block blk = g_Session.getBlock(g_Session.getSelectedBlockId());
         if (blk.status == BLK_FINISHED) {

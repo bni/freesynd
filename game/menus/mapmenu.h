@@ -36,9 +36,9 @@
  * This menu displays a world map on which the player
  * selects the next mission to play.
  */
-class MapMenu : public Menu {
+class MapMenu : public fs_eng::Menu {
 public:
-    MapMenu(MenuManager *m);
+    MapMenu(fs_eng::MenuManager *m);
     ~MapMenu();
 
     void handleTick(uint32_t elapsed) override;
@@ -47,7 +47,7 @@ public:
 
 protected:
     void handleRender(DirtyList &dirtyList) override;
-    bool handleUnMappedKey(const FS_Key key) override;
+    bool handleUnMappedKey(const fs_eng::FS_Key key) override;
     bool handleMouseDown(Point2D point, int button) override;
     //! Utility method to draw the mission selector
     void drawSelector();

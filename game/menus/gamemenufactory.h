@@ -32,17 +32,17 @@
 /*!
  * Menu factory for the Game.
  */
-class GameMenuFactory : public MenuFactory {
+class GameMenuFactory : public fs_eng::MenuFactory {
 protected:
     /*!
      * Instanciate menus for the Game.
      * @param menuId A menu ID
      * @return null if menu ID is unknown
      */
-    Menu * createCustomMenu(const int menuId) override;
+    fs_eng::Menu * createCustomMenu(const int menuId) override;
 
     //! Create an instance of a FliMenu to display the intro and game title
-    Menu * createFliMenu(const int menuId);
+    fs_eng::Menu * createFliMenu(const int menuId);
 
     //! Return the name of the animation to play before showing a menu
     const char* getShowAnimation(int menuId) override;

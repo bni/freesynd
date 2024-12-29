@@ -28,6 +28,8 @@
 
 #include "fs-engine/menus/menu.h"
 
+namespace fs_eng {
+
 /*!
  * Logout Menu class.
  */
@@ -40,5 +42,7 @@ public:
 protected:
     int tick_count_;
 };
+
+}
 
 #endif

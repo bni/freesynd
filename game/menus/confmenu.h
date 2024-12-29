@@ -31,9 +31,9 @@
 /*!
  * Configuration Menu class.
  */
-class ConfMenu : public Menu {
+class ConfMenu : public fs_eng::Menu {
 public:
-    ConfMenu(MenuManager *m);
+    ConfMenu(fs_eng::MenuManager *m);
     ~ConfMenu();
 
     virtual void handleRender(DirtyList &dirtyList);
@@ -44,7 +44,7 @@ public:
 
 protected:
 
-    bool handleUnMappedKey(const FS_Key key) override;
+    bool handleUnMappedKey(const fs_eng::FS_Key key) override;
 
     void createPanels();
     void showLogoPanel();
@@ -94,8 +94,8 @@ protected:
     int colStaticId_;
 
     // Change names panel
-    TextField *pUserNameTF_;
-    TextField *pCompNameTF_;
+    fs_eng::TextField *pUserNameTF_;
+    fs_eng::TextField *pCompNameTF_;
 
     // Common buttons
     int okButId_;

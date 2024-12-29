@@ -29,6 +29,7 @@
 
 #include "fs-utils/common.h"
 
+namespace fs_eng {
 /*!
  * All usable key codes for the game. A key code is dependent on keyboard layout.
  * We have defined only the keys that used in the game (plus some more in case).
@@ -135,5 +136,7 @@ struct FS_Key {
      */
     utf8::utfchar32_t codePoint;
 };
+
+}
 
 #endif

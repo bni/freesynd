@@ -34,9 +34,9 @@ class Mission;
 /*!
  * Menu displaying statistics about the last mission played.
  */
-class DebriefMenu : public Menu {
+class DebriefMenu : public fs_eng::Menu {
 public:
-    DebriefMenu(MenuManager *m);
+    DebriefMenu(fs_eng::MenuManager *m);
 
     void handleShow();
     void handleRender(DirtyList &dirtyList);

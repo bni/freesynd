@@ -31,9 +31,9 @@
 /*!
  * Load/Save Menu class.
  */
-class LoadSaveMenu : public Menu {
+class LoadSaveMenu : public fs_eng::Menu {
 public:
-    LoadSaveMenu(MenuManager *m);
+    LoadSaveMenu(fs_eng::MenuManager *m);
 
     void handleShow();
     void handleLeave();
@@ -54,7 +54,7 @@ protected:
     /*! The id of the line currently being edited. -1 if no line selected.*/
     short editNameId_;
     /*! There are 10 text fields in the menu to enter file names.*/
-    TextField *pTextFields_[10];
+    fs_eng::TextField *pTextFields_[10];
 };
 
 #endif

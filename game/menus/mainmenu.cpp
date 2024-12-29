@@ -32,22 +32,22 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
-MainMenu::MainMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain, true)
+MainMenu::MainMenu(fs_eng::MenuManager * m):fs_eng::Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain, true)
 {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
     addStatic(0, 40, fs_eng::kScreenWidth, "#MAIN_TITLE", FontManager::SIZE_4, false);
 
     int id = addOption(201, 130, 300, 25, "#MAIN_CONF", FontManager::SIZE_3, fs_game_menus::kMenuIdConf, true, false);
-    registerHotKey(kKeyCode_F1, id);
+    registerHotKey(fs_eng::kKeyCode_F1, id);
     id = addOption(201, 164, 300, 25, "#MAIN_BEGIN", FontManager::SIZE_3, fs_game_menus::kMenuIdMap, true, false);
-    registerHotKey(kKeyCode_F2, id);
+    registerHotKey(fs_eng::kKeyCode_F2, id);
     id = addOption(201, 198, 300, 25, "#MAIN_LOAD_SAVE", FontManager::SIZE_3, fs_game_menus::kMenuIdLdSave, true, false);
-    registerHotKey(kKeyCode_F3, id);
+    registerHotKey(fs_eng::kKeyCode_F3, id);
     resetButId_ = addOption(201, 232, 300, 25, "#MAIN_RESET", FontManager::SIZE_3, fs_game_menus::kMenuIdMain, true, false);
-    registerHotKey(kKeyCode_F4, resetButId_);
+    registerHotKey(fs_eng::kKeyCode_F4, resetButId_);
     quitButId_ = addOption(201, 266, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
-    registerHotKey(kKeyCode_F5, quitButId_);
+    registerHotKey(fs_eng::kKeyCode_F5, quitButId_);
 }
 
 void MainMenu::handleAction(const int actionId, void *ctx)

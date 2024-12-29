@@ -31,6 +31,8 @@
 #include "fs-engine/gfx/fontmanager.h"
 #include "fs-utils/misc/seqmodel.h"
 
+namespace fs_eng {
+
 class Menu;
 
 /*!
@@ -183,8 +185,6 @@ protected:
     /*! Font used to draw the text. */
     MenuFont *pFont_;
 };
-
-class Sprite;
 
 /*!
  * A widget that responds to user interactions.
@@ -452,5 +452,7 @@ private:
     /*! Maximum size of the text.*/
     size_t maxSize_;
 };
+
+}
 
 #endif // WIDGET_H

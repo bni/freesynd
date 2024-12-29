@@ -30,9 +30,9 @@
 /*!
  * Main Menu class.
  */
-class MainMenu : public Menu {
+class MainMenu : public fs_eng::Menu {
 public:
-    MainMenu(MenuManager *m);
+    MainMenu(fs_eng::MenuManager *m);
 
     void handleAction(const int actionId, void *ctx) override;
 

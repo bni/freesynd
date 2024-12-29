@@ -24,8 +24,7 @@
 
 #include "fs-engine/sound/musicmanager.h"
 
-using fs_eng::Music;
-using fs_eng::NO_SOUND;
+namespace fs_eng {
 
 /*!
  * Constructor
@@ -240,3 +239,4 @@ void FliMenu::handleLeave()
     fliIndex_ = 0;
 }
 
+}

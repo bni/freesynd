@@ -30,6 +30,7 @@
 #include "fs-engine/events/default_events.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
 LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, MENU_NO_MENU, true),
 tick_count_(0)
 {
@@ -43,3 +44,6 @@ void LogoutMenu::handleTick(uint32_t elapsed)
     if (tick_count_ > 2000)
         EventManager::fire<QuitEvent>(0);
 }
+
+}
+

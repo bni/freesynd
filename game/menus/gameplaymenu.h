@@ -40,9 +40,9 @@ class IPAStim;
 /*!
  * Gameplay Menu class.
  */
-class GameplayMenu : public Menu {
+class GameplayMenu : public fs_eng::Menu {
 public:
-    GameplayMenu(MenuManager *m);
+    GameplayMenu(fs_eng::MenuManager *m);
     //! Update the menu state
     void handleTick(uint32_t elapsed) override;
     void handleShow() override;
@@ -54,7 +54,7 @@ protected:
      * @name Mouse/Key events handling
      */
     ///@{
-    bool handleUnMappedKey(const FS_Key key) override;
+    bool handleUnMappedKey(const fs_eng::FS_Key key) override;
 
     void handleMouseMotion(Point2D point, uint32_t state) override;
     bool handleMouseDown(Point2D point, int button) override;

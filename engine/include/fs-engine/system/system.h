@@ -37,6 +37,8 @@
 
 class Sprite;
 
+namespace fs_eng {
+
 enum FS_EventType {
     EVT_NONE = 0,        // No event in the queue
     EVT_QUIT = 1,        // Quit event
@@ -175,7 +177,8 @@ public:
 protected:
     std::unique_ptr<fs_eng::Audio> audio_;
 };
+}
 
-#define g_System    System::singleton()
+#define g_System    fs_eng::System::singleton()
 
 #endif

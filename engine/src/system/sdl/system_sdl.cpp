@@ -42,7 +42,7 @@
 #include "fs-utils/log/log.h"
 #include "fstexture_sdl.h"
 
-using fs_eng::SdlMixerAudio;
+namespace fs_eng {
 
 SDL_Joystick *joy = NULL;
 
@@ -711,4 +711,6 @@ fs_eng::FS_Lang SystemSDL::getLanguageFromSystem() {
 
     SDL_free(locales);
     return resLang;
+}
+
 }

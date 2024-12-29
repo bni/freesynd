@@ -36,8 +36,8 @@
 #include "fs-engine/system/system.h"
 
 
-ConfMenu::ConfMenu(MenuManager *m) :
-        Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain, true) {
+ConfMenu::ConfMenu(fs_eng::MenuManager *m) :
+        fs_eng::Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain, true) {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
     toAcceptLogo_ = 0;
@@ -170,12 +170,12 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
     }
 }
 
-bool ConfMenu::handleUnMappedKey(const FS_Key key) {
+bool ConfMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     if (currPanel_ != kConfPanelMain) {
-        if (key.keyCode == kKeyCode_Escape) {
+        if (key.keyCode == fs_eng::kKeyCode_Escape) {
             showMainPanel();
             return true;
-        } else if (key.keyCode == kKeyCode_Return) {
+        } else if (key.keyCode == fs_eng::kKeyCode_Return) {
             if (currPanel_ == kConfPanelLogo) {
                 toAcceptColourId_ = tempColourId_;
                 toAcceptLogo_ = tempLogo_;

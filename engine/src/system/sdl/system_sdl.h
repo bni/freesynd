@@ -32,6 +32,8 @@
 #include "fs-engine/system/system.h"
 #include "fs-engine/io/keys.h"
 
+namespace fs_eng {
+
 /*! \brief Implementation of the System interface for SDL.
  *
  * This class implements the System interface based on the SDL2 library.
@@ -157,5 +159,7 @@ protected:
      */
     int keyModState_;
 };
+
+}
 
 #endif

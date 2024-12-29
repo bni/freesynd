@@ -129,7 +129,7 @@ void MapRenderer::render(const Point2D &viewport) {
     freeUnreleasedResources();
 
 #ifdef _DEBUG
-    if (g_System.getKeyModState() & KMD_LALT) {
+    if (g_System.getKeyModState() & fs_eng::KMD_LALT) {
         fs_eng::FSColor yellow {227, 219, 40, 0xFF};
         for (SquadSelection::Iterator it = pSelection_->begin();
             it != pSelection_->end(); ++it) {

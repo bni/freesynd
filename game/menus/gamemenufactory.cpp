@@ -42,7 +42,7 @@ using fs_eng::Music;
 using fs_eng::NO_SOUND;
 
 //! This defines the list of event for the intro animation
-const FrameEvent intro[] = {
+const fs_eng::FrameEvent intro[] = {
     { 1,  Music::TRACK_INTRO, NO_SOUND, 0x0, NULL }, // Play track
     { 15, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_0" },
     { 39, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
@@ -84,7 +84,7 @@ const FrameEvent intro[] = {
 };
 
 //! This defines the list of event for the mission won animation
-const FrameEvent mission_win[] = {
+const fs_eng::FrameEvent mission_win[] = {
     { 1, Music::NO_TRACK, fs_eng::APPLAUSE,              0x1, NULL },
     { 1, Music::NO_TRACK, fs_eng::APPLAUSE_ZOOM,         0x0, NULL },
     { 10, Music::NO_TRACK, fs_eng::FIREWORKS,            0x1, NULL },
@@ -93,7 +93,7 @@ const FrameEvent mission_win[] = {
 };
 
 //! This defines the list of event for the mission lost animation
-const FrameEvent mission_failed[] = {
+const fs_eng::FrameEvent mission_failed[] = {
     { 1, Music::NO_TRACK, NO_SOUND, 0x0, NULL },
     { 35, Music::NO_TRACK, fs_eng::PRESS_BUTTON, 0x0, NULL },
     { 52, Music::NO_TRACK, fs_eng::MENU_AFTER_MISSION, 0x0, NULL },
@@ -104,7 +104,7 @@ const FrameEvent mission_failed[] = {
 };
 
 //! This defines the list of event for the game lost animation
-const FrameEvent game_lost[] = {
+const fs_eng::FrameEvent game_lost[] = {
     { 1, Music::NO_TRACK, NO_SOUND, 0x0, NULL },
     { 2, Music::NO_TRACK, fs_eng::FALLING_COMMAND_SHIP, 0x0, NULL },
     { 34, Music::NO_TRACK, fs_eng::EXPLOSION_BIG, 0x0, NULL },
@@ -112,13 +112,13 @@ const FrameEvent game_lost[] = {
 };
 
 //! This defines the list of event for the menu up animation
-const FrameEvent menu_up[] = {
+const fs_eng::FrameEvent menu_up[] = {
     { 1, Music::NO_TRACK, fs_eng::MENU_UP,   0x1, NULL },
     { -1, Music::NO_TRACK, NO_SOUND,  0x0, NULL }
 };
 
 //! This defines the list of no event
-const FrameEvent no_event[] = {
+const fs_eng::FrameEvent no_event[] = {
     { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
@@ -127,8 +127,8 @@ const FrameEvent no_event[] = {
  * @param menuId The id of the menu
  * @return Null of id is unknown
  */
-Menu * GameMenuFactory::createCustomMenu(const int menuId) {
-    Menu *pMenu = nullptr;
+fs_eng::Menu * GameMenuFactory::createCustomMenu(const int menuId) {
+    fs_eng::Menu *pMenu = nullptr;
 
     if (menuId == fs_game_menus::kMenuIdMain) {
         pMenu =  new MainMenu(pManager_);
@@ -170,8 +170,8 @@ Menu * GameMenuFactory::createCustomMenu(const int menuId) {
  * @param menuId The id for the menu
  * @return A new instance of FliMenu
  */
-Menu * GameMenuFactory::createFliMenu(const int menuId) {
-    FliMenu *pMenu = new FliMenu(pManager_, menuId, fs_game_menus::kMenuIdMain);
+fs_eng::Menu * GameMenuFactory::createFliMenu(const int menuId) {
+    fs_eng::FliMenu *pMenu = new fs_eng::FliMenu(pManager_, menuId, fs_game_menus::kMenuIdMain);
     if (pMenu->getId() == fs_game_menus::kMenuIdFliSuccess || menuId == fs_game_menus::kMenuIdFliFailedMission) {
         if (menuId == fs_game_menus::kMenuIdFliSuccess) {
             pMenu->addFliDesc("mgamewin.dat", 66, false, true, false, mission_win);

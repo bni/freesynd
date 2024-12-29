@@ -32,6 +32,8 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/appcontext.h"
 
+namespace fs_eng {
+
 int Widget::widgetCnt = 0;
 
 /*!
@@ -801,4 +803,6 @@ void TextField::drawCaret() {
 
     // Draw caret
     g_System.drawFillRect(caretScreenPos_, caretLength, 2, caretColor_);
+}
+
 }

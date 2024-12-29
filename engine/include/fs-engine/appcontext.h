@@ -35,6 +35,7 @@
 #include "fs-utils/io/configfile.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
 /*!
  * This class stores application level parameters.
  */
@@ -85,6 +86,8 @@ private:
     fs_eng::FS_Lang curr_language_;
 };
 
-#define g_Ctx   AppContext::singleton()
+}
+
+#define g_Ctx   fs_eng::AppContext::singleton()
 
 #endif // CORE_APPCONTEXT_H_

@@ -26,10 +26,13 @@
 
 #include "sdl/system_sdl.h"
 
+namespace fs_eng {
+
 std::unique_ptr<System> System::createSystem() {
 #ifdef SYSTEM_SDL
     return std::make_unique<SystemSDL>();
 #else
 #error A suitable System object has not been defined!
 #endif
+}
 }

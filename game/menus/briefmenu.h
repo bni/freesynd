@@ -36,9 +36,9 @@
 /*!
  * Brief Menu class.
  */
-class BriefMenu : public Menu {
+class BriefMenu : public fs_eng::Menu {
 public:
-    BriefMenu(MenuManager *m);
+    BriefMenu(fs_eng::MenuManager *m);
     ~BriefMenu();
 
     void handleTick(uint32_t elapsed) override;

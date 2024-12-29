@@ -39,7 +39,7 @@ const int LoadSaveMenu::X_ORIGIN = 165;
 const int LoadSaveMenu::Y_ORIGIN = 100;
 const size_t LoadSaveMenu::NAME_MAX_SIZE = 31;
 
-LoadSaveMenu::LoadSaveMenu(MenuManager * m):
+LoadSaveMenu::LoadSaveMenu(fs_eng::MenuManager * m):
         Menu(m, fs_game_menus::kMenuIdLdSave, fs_game_menus::kMenuIdMain, true) {
     isCachable_ = false;
     cursorOnShow_ = kMenuCursor;
@@ -55,7 +55,7 @@ LoadSaveMenu::LoadSaveMenu(MenuManager * m):
 
     std::string label;
     g_Ctx.getMessage("MENU_LB_EMPTY", label);
-    TextField::setEmptyLabel(label);
+    fs_eng::TextField::setEmptyLabel(label);
 
     int y = Y_ORIGIN;
     for (int i=0; i<10; i++) {

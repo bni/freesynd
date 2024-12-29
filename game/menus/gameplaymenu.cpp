@@ -51,7 +51,7 @@ const Point2D GameplayMenu::kMiniMapScreenPos = {0, 46 + 44 + 10 + 46 + 44 + 15 
 
 //#define ANIM_PLUS_FRAME_VIEW
 
-GameplayMenu::GameplayMenu(MenuManager *m) :
+GameplayMenu::GameplayMenu(fs_eng::MenuManager *m) :
 Menu(m, fs_game_menus::kMenuIdGameplay, fs_game_menus::kMenuIdDebrief),
 tick_count_(0), last_animate_tick_(0), last_motion_tick_(0),
 last_motion_x_(320), last_motion_y_(240), mission_hint_ticks_(0),
@@ -673,7 +673,7 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
 
     if (point.x < 129) {
         // Is control button pressed
-        bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
+        bool ctrl = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
 
         // First check if player has clicked on agent selectors
         SelectorEvent selEvt;
@@ -724,7 +724,7 @@ void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button)
             + point.x / 32;
     PedInstance *pLeader = selection_.leader();
     if (pLeader->isAlive()) {
-        bool is_ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
+        bool is_ctrl = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
         if (w_num < pLeader->numWeapons()) {
             if (button == kMouseLeftButton) {
                 // Button 1 : selection/deselection of weapon for all selection
@@ -777,7 +777,7 @@ void GameplayMenu::handleClickOnMap(Point2D point, int button) {
     TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + point.x - 129,
                     displayOriginPt_.y + point.y);
 #ifdef _DEBUG
-    if (g_System.isKeyModStatePressed(KMD_ALT)) {
+    if (g_System.isKeyModStatePressed(fs_eng::KMD_ALT)) {
         printf("Tile x:%d, y:%d, z:%d, ox:%d, oy:%d\n",
             mapPt.tx, mapPt.ty, mapPt.tz, mapPt.ox, mapPt.oy);
 
@@ -792,7 +792,7 @@ void GameplayMenu::handleClickOnMap(Point2D point, int button) {
     }
 #endif //_DEBUG
 
-    bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
+    bool ctrl = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
     if (button == kMouseLeftButton) {
         if (target_) {
             switch (target_->nature()) {
@@ -894,12 +894,12 @@ void GameplayMenu::handleMouseUp(Point2D point, int button)
 
 }
 
-bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
+bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     bool change = false;    // indicator whether menu should be redrawn 
     bool consumed = true;
 
     // Pause/unpause game
-    if (key.keyCode == kKeyCode_P) {
+    if (key.keyCode == fs_eng::kKeyCode_P) {
         paused_ = !paused_;
         if (paused_) {
             stopShootingEvent();
@@ -910,11 +910,11 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
     if (paused_)
         return true;
 
-    bool ctrl = g_System.isKeyModStatePressed(KMD_CTRL);
+    bool ctrl = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
 
     // SPACE is pressed when the mission failed or succeeded to return
     // to debrief menu
-    if (key.keyCode == kKeyCode_Space) {
+    if (key.keyCode == fs_eng::kKeyCode_Space) {
         if (mission_->completed() || mission_->failed()) {
             if (mission_->completed()) {
                 // Display success animation
@@ -926,7 +926,7 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
 
             return true;
         }
-    } else if (key.keyCode == kKeyCode_Escape) {
+    } else if (key.keyCode == fs_eng::kKeyCode_Escape) {
         // Abort mission
         mission_->endWithStatus(Mission::kMissionStatusAborted);
         // Display only the menu up animation
@@ -938,51 +938,51 @@ bool GameplayMenu::handleUnMappedKey(const FS_Key key) {
     // selection and all 4 agents.
     // Individual keys select the specified agent unless ctrl is pressed -
     // then they add/remove agent from current selection.
-    if (key.keyCode == kKeyCode_0) {
+    if (key.keyCode == fs_eng::kKeyCode_0) {
         // This code is exactly the same as for clicking on "group-button"
         // as you can see above.
         selectAllAgents();
     }
-    else if (key.keyCode == kKeyCode_1) {
+    else if (key.keyCode == fs_eng::kKeyCode_1) {
         selectAgent(0, ctrl);
     }
-    else if (key.keyCode == kKeyCode_2) {
+    else if (key.keyCode == fs_eng::kKeyCode_2) {
         selectAgent(1, ctrl);
     }
-    else if (key.keyCode == kKeyCode_3) {
+    else if (key.keyCode == fs_eng::kKeyCode_3) {
         selectAgent(2, ctrl);
     }
-    else if (key.keyCode == kKeyCode_4) {
+    else if (key.keyCode == fs_eng::kKeyCode_4) {
         selectAgent(3, ctrl);
-    } else if (key.keyCode == kKeyCode_Left) { // Scroll the map to the left
+    } else if (key.keyCode == fs_eng::kKeyCode_Left) { // Scroll the map to the left
         scroll_x_ = -SCROLL_STEP;
-    } else if (key.keyCode == kKeyCode_Right) { // Scroll the map to the right
+    } else if (key.keyCode == fs_eng::kKeyCode_Right) { // Scroll the map to the right
         scroll_x_ = SCROLL_STEP;
-    } else if (key.keyCode == kKeyCode_Up) { // Scroll the map to the top
+    } else if (key.keyCode == fs_eng::kKeyCode_Up) { // Scroll the map to the top
         scroll_y_ = -SCROLL_STEP;
-    } else if (key.keyCode == kKeyCode_Down) { // Scroll the map to the bottom
+    } else if (key.keyCode == fs_eng::kKeyCode_Down) { // Scroll the map to the bottom
         scroll_y_ = SCROLL_STEP;
-    } else if (key.keyCode == kKeyCode_F1) { // Music Control
+    } else if (key.keyCode == fs_eng::kKeyCode_F1) { // Music Control
         g_MusicMgr.toggleMusic();
-    } else if (key.keyCode == kKeyCode_F2) { // Sound Control
+    } else if (key.keyCode == fs_eng::kKeyCode_F2) { // Sound Control
         g_SoundMgr.toggleSound();
     }
 
 #ifdef _DEBUG
-    else if (key.keyCode == kKeyCode_F3) {
+    else if (key.keyCode == fs_eng::kKeyCode_F3) {
         mission_->endWithStatus(Mission::kMissionStatusCompleted);
         return true;
-    } else if (key.keyCode == kKeyCode_F4) {
+    } else if (key.keyCode == fs_eng::kKeyCode_F4) {
         mission_->endWithStatus(Mission::kMissionStatusFailed);
         return true;
     }
 #endif
-    else if (key.keyCode >= kKeyCode_F5 && key.keyCode <= kKeyCode_F12) {
+    else if (key.keyCode >= fs_eng::kKeyCode_F5 && key.keyCode <= fs_eng::kKeyCode_F12) {
         // Those keys are direct access to inventory
-        uint8 weapon_idx = (uint8) key.keyCode - (uint8) kKeyCode_F5;
+        uint8 weapon_idx = (uint8) key.keyCode - (uint8) fs_eng::kKeyCode_F5;
         handleWeaponSelection(weapon_idx, ctrl);
         return true;
-    } else if ((key.keyCode == kKeyCode_D) && ctrl) { // selected agents are killed with 'd'
+    } else if ((key.keyCode == fs_eng::kKeyCode_D) && ctrl) { // selected agents are killed with 'd'
         // save current selection as it will be modified when agents die
         std::vector<PedInstance *> agents_suicide;
         for (SquadSelection::Iterator it = selection_.begin();

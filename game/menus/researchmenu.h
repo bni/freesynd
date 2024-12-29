@@ -33,9 +33,9 @@
 /*!
  * Research class.
  */
-class ResearchMenu : public Menu {
+class ResearchMenu : public fs_eng::Menu {
 public:
-    ResearchMenu(MenuManager *m);
+    ResearchMenu(fs_eng::MenuManager *m);
     ~ResearchMenu();
 
     void handleTick(uint32_t elapsed) override;
@@ -108,13 +108,13 @@ protected:
     /*! Id of the text field displaying current search title.*/
     int searchTitleLblId_;
     /*! List box for all search on equips.*/
-    ListBox *pFieldEquipLBox_;
+    fs_eng::ListBox *pFieldEquipLBox_;
     /*! List box for all search on mods.*/
-    ListBox *pFieldModsLBox_;
+    fs_eng::ListBox *pFieldModsLBox_;
     /*! List box for all available mods.*/
-    ListBox *pModsLBox_;
+    fs_eng::ListBox *pModsLBox_;
     /*! List box for all available euips.*/
-    ListBox *pEquipsLBox_;
+    fs_eng::ListBox *pEquipsLBox_;
     /*! A handler for the event.*/
     ListenerHandle handleResearchEnd_;
 };

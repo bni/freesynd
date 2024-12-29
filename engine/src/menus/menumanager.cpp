@@ -38,10 +38,7 @@
 #include "fs-engine/menus/logoutmenu.h"
 #include "fs-engine/menus/flimenu.h"
 
-using fs_eng::Music;
-using fs_eng::SoundManager;
-using fs_eng::NO_SOUND;
-using fs_eng::MENU_CHANGE;
+namespace fs_eng {
 
 //! This defines the list of events for the transition show animation
 const FrameEvent transition_show_event[] = {
@@ -458,4 +455,6 @@ void MenuManager::handleEvent(const FS_Event& evt) {
 
 bool MenuManager::simpleMouseDown() {
     return g_Ctx.getTimeForClick() < since_mouse_down_;
+}
+
 }

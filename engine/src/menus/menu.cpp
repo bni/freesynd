@@ -34,6 +34,8 @@
 #include "fs-engine/appcontext.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
+
 const int Menu::MENU_NO_MENU = -1;
 const int Menu::kMenuIdLogout = 6;
 const int Menu::kMenuIdFliTransition = 99;
@@ -467,4 +469,6 @@ std::string Menu::getMessage(const std::string & id) {
 
 void Menu::getMessage(const std::string & id, std::string & msg) {
     g_Ctx.getMessage(id, msg);
+}
+
 }

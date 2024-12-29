@@ -42,6 +42,8 @@
 #include "fs-engine/gfx/logomanager.h"
 #include "fs-engine/sound/soundmanager.h"
 
+namespace fs_eng {
+
 class MenuManager;
 class FliMenu;
 
@@ -194,10 +196,10 @@ private:
     /*! Sprite manager for menu sprites.*/
     SpriteManager menuSprites_;
     //! This is the palette for menu sprites
-    fs_eng::Palette menuPalette_;
+    Palette menuPalette_;
     /*! Font manager.*/
     FontManager fonts_;
-    fs_eng::SoundManager *pGameSounds_;
+    SoundManager *pGameSounds_;
     LogoManager logoManager_;
 
     /*! Time since last mouse down event without mouseup*/
@@ -207,5 +209,6 @@ private:
     //! This texture is used to draw the background for menus
     std::unique_ptr<FSTexture> pBackgroundTexture_;
 };
+}
 
 #endif

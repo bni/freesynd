@@ -33,8 +33,8 @@
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
-ResearchMenu::ResearchMenu(MenuManager * m):
-        Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect, true) {
+ResearchMenu::ResearchMenu(fs_eng::MenuManager * m):
+        fs_eng::Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect, true) {
     cursorOnShow_ = kMenuCursor;
     
     tab_ = TAB_EQUIPS;
@@ -78,9 +78,9 @@ ResearchMenu::ResearchMenu(MenuManager * m):
     fundMaxTxtId_ = addStatic(20, 143, "", FontManager::SIZE_1, true);    // Search maximum
 
     incrFundId_ = addOption(16, 210, 129, 25,  "#RES_INC_FUND_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
-    registerHotKey(kKeyCode_Up, incrFundId_);
+    registerHotKey(fs_eng::kKeyCode_Up, incrFundId_);
     decrFundId_ = addOption(16, 260, 129, 25,  "#RES_DEC_FUND_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
-    registerHotKey(kKeyCode_Down, decrFundId_);
+    registerHotKey(fs_eng::kKeyCode_Down, decrFundId_);
     fundCurrLblId_ = addStatic(16, 242, 129, "", FontManager::SIZE_2, true);    // Current Funding label
     searchTitleLblId_ = addStatic(158, 86, "", FontManager::SIZE_2, true);    // Current search title
 
@@ -162,7 +162,7 @@ void ResearchMenu::hideFieldList() {
  */
 void ResearchMenu::showResInfo() {
     if (pSelectedRes_) {
-        MenuText * pTxt = getStatic(fundMinTxtId_);
+        fs_eng::MenuText * pTxt = getStatic(fundMinTxtId_);
         pTxt->setVisible(true);
         pTxt->setTextFormated("%d", pSelectedRes_->getMinFunding());
 
@@ -195,7 +195,7 @@ void ResearchMenu::showResGraph(Research *pRes) {
     getOption(researchId_)->setVisible(false);
     getOption(incrFundId_)->setVisible(true);
     getOption(decrFundId_)->setVisible(true);
-    MenuText *pTxt = getStatic(fundCurrLblId_);
+    fs_eng::MenuText *pTxt = getStatic(fundCurrLblId_);
     pTxt->setVisible(true);
     pTxt->setTextFormated("%d", pResForGraph_->getCurrFunding());
     getStatic(searchTitleLblId_)->setTextFormated("#RES_GRAP_TITLE", pResForGraph_->getName().c_str());

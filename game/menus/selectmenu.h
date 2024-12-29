@@ -39,9 +39,9 @@ class Mod;
 /*!
  * Select Menu class.
  */
-class SelectMenu : public Menu {
+class SelectMenu : public fs_eng::Menu {
 public:
-    SelectMenu(MenuManager *m);
+    SelectMenu(fs_eng::MenuManager *m);
     ~SelectMenu();
 
     void handleTick(uint32_t elapsed) override;
@@ -122,11 +122,11 @@ protected:
     /*! Id of the accept button.*/
     int acceptButId_;
     /*! The team list box.*/
-    TeamListBox *pTeamLBox_;
+    fs_eng::TeamListBox *pTeamLBox_;
     /*! The weapons list.*/
-    ListBox *pWeaponsLBox_;
+    fs_eng::ListBox *pWeaponsLBox_;
     /*! The mods list.*/
-    ListBox *pModsLBox_;
+    fs_eng::ListBox *pModsLBox_;
 
     WeaponInstance *weapon_dragged_;
     Point2D weapon_pos_;

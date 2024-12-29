@@ -31,7 +31,7 @@
 #include "fs-engine/menus/menumanager.h"
 #include "menus/gamemenuid.h"
 
-LoadingMenu::LoadingMenu(MenuManager * m):Menu(m, fs_game_menus::kMenuIdLoading, fs_game_menus::kMenuIdMain, true),
+LoadingMenu::LoadingMenu(fs_eng::MenuManager * m):fs_eng::Menu(m, fs_game_menus::kMenuIdLoading, fs_game_menus::kMenuIdMain, true),
     timer_(2000)
 {
     isCachable_ = false;

@@ -32,6 +32,8 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/system/system.h"
 
+namespace fs_eng {
+
 AppContext::AppContext() {
     time_for_click_ = 80;
     fullscreen_ = false;
@@ -261,4 +263,6 @@ void AppContext::deactivateTestFlag() {
     conf.add("test_data", false);
 
     updateUserConf(conf, userConfPath);
+}
+
 }

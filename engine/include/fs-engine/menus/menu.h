@@ -36,6 +36,7 @@
 #include "fs-engine/menus/widget.h"
 #include "fs-engine/gfx/dirtylist.h"
 
+namespace fs_eng {
 
 class MenuManager;
 
@@ -228,5 +229,7 @@ private:
      */
     bool needBackground_;
 };
+
+}
 
 #endif

@@ -39,8 +39,8 @@
 
 const int SelectMenu::kSegmentSize = 8;
 
-SelectMenu::SelectMenu(MenuManager * m):
-        Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, true),
+SelectMenu::SelectMenu(fs_eng::MenuManager * m):
+        fs_eng::Menu(m, fs_game_menus::kMenuIdSelect, fs_game_menus::kMenuIdBrief, true),
         cur_agent_(0), timerSelector_(250), dashOffset_(0), sel_all_(false) {
     cursorOnShow_ = kMenuCursor;
     

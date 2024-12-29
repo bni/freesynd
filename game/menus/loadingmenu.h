@@ -31,9 +31,9 @@
 /*!
  * This menu is in charge of loading the mission.
  */
-class LoadingMenu : public Menu {
+class LoadingMenu : public fs_eng::Menu {
 public:
-    LoadingMenu(MenuManager *m);
+    LoadingMenu(fs_eng::MenuManager *m);
 
     void handleTick(uint32_t elapsed) override;
 

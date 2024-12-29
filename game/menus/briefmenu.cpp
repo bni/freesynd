@@ -33,6 +33,9 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
+using fs_eng::Menu;
+using fs_eng::MenuManager;
+
 const Point2D BriefMenu::kMiniMapScreenPos = {504, 220};
 const int BriefMenu::kMiniMapWidth = 120;
 const int BriefMenu::kMiniMapHeight = 120;
@@ -51,9 +54,9 @@ BriefMenu::BriefMenu(MenuManager * m)
 
     // Briefing scroll button
     nextButId_ = addImageOption(461, 316, Sprite::MSPR_RIGHT_ARROW2_D, Sprite::MSPR_RIGHT_ARROW2_L);
-    registerHotKey(kKeyCode_Right, nextButId_);
+    registerHotKey(fs_eng::kKeyCode_Right, nextButId_);
     prevButId_ = addImageOption(427, 316, Sprite::MSPR_LEFT_ARROW2_D, Sprite::MSPR_LEFT_ARROW2_L);
-    registerHotKey(kKeyCode_Left, prevButId_);
+    registerHotKey(fs_eng::kKeyCode_Left, prevButId_);
 
     // Accept button
     addOption(17, 347, 128, 25, "#MENU_ACC_BUT", FontManager::SIZE_2, fs_game_menus::kMenuIdSelect);

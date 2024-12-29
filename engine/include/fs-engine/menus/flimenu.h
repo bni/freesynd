@@ -29,13 +29,15 @@
 #include "fs-engine/sound/music.h"
 #include "fs-utils/misc/timer.h"
 
+namespace fs_eng {
+
 struct FrameEvent {
     /*! frame Id.*/
     int frame;
     /*! start music.*/
-    fs_eng::Music::MusicTrack    music;
+    Music::MusicTrack    music;
     /*! Game sound to play.*/
-    fs_eng::InGameSample    sound;
+    InGameSample    sound;
     uint8_t    sndChan;
     /*! Operation on subtitle.*/
     const char* subtitle;
@@ -106,5 +108,7 @@ protected:
     std::string currSubTitle_;
     bool isFrameLoaded_;
 };
+
+}
 
 #endif
