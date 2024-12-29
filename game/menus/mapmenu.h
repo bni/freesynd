@@ -83,7 +83,7 @@ protected:
     /*! Contains the images of the differents blocks.*/
     uint8_t *mapblk_data_;
     //! A texture that stores the masks for drawing each country
-    std::unique_ptr<FSTexture> countriesTexture_;
+    std::unique_ptr<fs_eng::FSTexture> countriesTexture_;
     //! An array of positions for each country in the texture
     Point2D **countrySpritePositions_;
     /*! A counter for the blinking line of the selector.*/

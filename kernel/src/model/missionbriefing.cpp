@@ -110,7 +110,7 @@ bool MissionBriefing::loadBriefing(uint8 * data, int size) {
             int nbLF = 0;
             for (size_t cindx = 0; cindx < briefCp437.size(); cindx++) {
                 fs_utl::cp437char_t cp437char = briefCp437[cindx];
-                utf8::utfchar32_t u8char = cp437ToUnicode[cp437char];
+                utf8::utfchar32_t u8char = fs_eng::cp437ToUnicode[cp437char];
                 if (u8char == 0x000A) { //current character is a line feed
                     nbLF += 1;
                 } else { // another type of character

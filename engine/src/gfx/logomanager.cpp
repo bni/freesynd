@@ -31,6 +31,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-engine/system/system.h"
 
+namespace fs_eng {
+
 fs_eng::PaletteMenuColorIndex g_Colours[8] = { 
     fs_eng::kMenuPaletteColorRed,
     fs_eng::kMenuPaletteColorBlueGrey,
@@ -188,4 +190,6 @@ void LogoManager::draw(Point2D pos, int logoId, int colorId, bool big) {
         g_System.drawFillRect(pos, kLogoBigWidth, kLogoBigWidth, color);
         logosTexture_->render(*logoPositions_[logoId], pos, kLogoBigWidth, kLogoBigWidth);
     }
+}
+
 }

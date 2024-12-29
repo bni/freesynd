@@ -26,6 +26,8 @@
 #include "fs-utils/common.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
+
 /*! \brief An abstract representing a texture used to render on screen using material acceleration.
  *
  */
@@ -62,5 +64,7 @@ public:
     //! Set the color for color modulation
     virtual void setColorModulation( fs_eng::FSColor color ) = 0;
 };
+
+}
 
 #endif

@@ -20,7 +20,7 @@
  *                                                                      *
  ************************************************************************/
 
-
+namespace fs_eng {
 /*!
  * The first 1600 unicode code-points mapped to cp437.
  * For character from 'a' to 'z', the corresponding cp437
@@ -267,3 +267,4 @@ const utf8::utfchar32_t cp437ToUnicode[] = {
     0x00, 0xB1, 0x00, 0x00, 0x00, 0x00, 0xF7, 0x00, // 240
     0xB0, 0x00, 0xB7, 0x00, 0x00, 0xB2, 0x00, 0xA0, // 248
 };
+}

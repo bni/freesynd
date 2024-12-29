@@ -32,6 +32,7 @@
 
 #define XMIDI_CONTROLLER_NEXT_BREAK     117
 
+namespace fs_eng {
 
 struct IFFchunk
 {
@@ -875,3 +876,4 @@ void XMidi::XMidiFile::deleteEventList (midi_event *mlist)
     }
 }
 
+}

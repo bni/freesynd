@@ -27,6 +27,8 @@
 
 #include "fs-engine/gfx/fstexture.h"
 
+namespace fs_eng {
+
 /*! \brief
  *
  */
@@ -84,5 +86,7 @@ private:
     int width_;
     int height_;
 };
+
+}
 
 #endif

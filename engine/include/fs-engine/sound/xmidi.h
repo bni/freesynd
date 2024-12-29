@@ -29,6 +29,8 @@
 #include "fs-utils/common.h"
 #include <vector>
 
+namespace fs_eng {
+
 /*!
  * XMidi class.
  */
@@ -154,5 +156,7 @@ private:
         META_KEYSIG       = 0x59
     };
 };
+
+}
 
 #endif

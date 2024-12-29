@@ -24,6 +24,8 @@
 
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 /*!
  * @brief 
  * @param pRenderer 
@@ -333,4 +335,6 @@ bool FSTextureSDL::getColorFromPalette(const int index, fs_eng::FSColor& color) 
 void FSTextureSDL::setColorModulation( fs_eng::FSColor color ) {
     //Modulate texture
     SDL_SetTextureColorMod( pTexture_, color.r, color.g, color.b );
+}
+
 }

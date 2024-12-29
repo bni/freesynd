@@ -292,11 +292,11 @@ private:
      * A texture that store the minimap but only floor tiles.
      * The texture is draw at different size depending on the zoom.
      */
-    std::unique_ptr<FSTexture> minimapTexture_;
+    std::unique_ptr<fs_eng::FSTexture> minimapTexture_;
     /*!
      * This texture holds circles that represent peds on the minimap.
      */
-    std::unique_ptr<FSTexture> circleTexture_;
+    std::unique_ptr<fs_eng::FSTexture> circleTexture_;
 };
 
 #endif  // MENUS_MINIMAPRENDERER_H_

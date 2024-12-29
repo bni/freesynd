@@ -33,6 +33,8 @@
 #include "fs-utils/misc/singleton.h"
 #include "fs-engine/gfx/fstexture.h"
 
+namespace fs_eng {
+
 /*!
  * This class manages the logo sprites and proposes a method to display a logo.
  * Logos are uploaded from original game files.
@@ -78,6 +80,8 @@ private:
     Point2D **logoPositions_;
 };
 
-#define g_LogoMgr    LogoManager::singleton()
+}
+
+#define g_LogoMgr    fs_eng::LogoManager::singleton()
 
 #endif //ENGINE_LOGOMANAGER_H
