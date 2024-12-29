@@ -112,8 +112,8 @@ private:
 
     // A one second timer, IPA's seem to adjust themselves
     // about once a second
-    fs_utils::Timer effect_timer_; // every second
-    fs_utils::Timer dependency_timer_; // once every 4.5 seconds
+    fs_utl::Timer effect_timer_; // every second
+    fs_utl::Timer dependency_timer_; // once every 4.5 seconds
 };
 
 #endif

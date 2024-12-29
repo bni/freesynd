@@ -43,7 +43,7 @@ protected:
     /*! This timer is used to be sure we can see the loading screen.
      * We don't want the application to be too fast!
      */
-    fs_utils::Timer timer_;
+    fs_utl::Timer timer_;
 };
 
 #endif

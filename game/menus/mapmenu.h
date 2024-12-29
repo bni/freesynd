@@ -87,11 +87,11 @@ protected:
     //! An array of positions for each country in the texture
     Point2D **countrySpritePositions_;
     /*! A counter for the blinking line of the selector.*/
-    fs_utils::Timer timerBlinkLine_;
+    fs_utl::Timer timerBlinkLine_;
     //! Used for blinking of the line of the selector.
     int offsetLine_;
     /*! A counter for the blinking available blocks. */
-    fs_utils::BoolTimer timerBlinkCountry_;
+    fs_utl::BoolTimer timerBlinkCountry_;
 
     /*! Id of the text widget for time.*/
     int txtTimeId_;

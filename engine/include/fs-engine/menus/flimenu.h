@@ -97,7 +97,7 @@ protected:
     /*! Index of the next animation to play.*/
     size_t fliIndex_;
     /*! Timer to control animation speed.*/
-    fs_utils::Timer frameTimer_;
+    fs_utl::Timer frameTimer_;
     /*! A flag telling if an animation is being played.*/
     bool playingFli_;
     /*! Id of the menu to go after all animations have been played.*/

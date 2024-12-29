@@ -132,7 +132,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
 
  protected:
     /*! A timer to control the blinking on the minimap.*/
-    fs_utils::BoolTimer timerMiniMapBlink_;
+    fs_utl::BoolTimer timerMiniMapBlink_;
 
     /*! The scrolling step : depends on the zoom level.*/
     int scroll_step_;
@@ -283,11 +283,11 @@ private:
     /*! Current signal color.*/
     uint8_t signalColor_;
     /*! A timer to control the blinking of weapons.*/
-    fs_utils::BoolTimer mm_timer_weap;
+    fs_utl::BoolTimer mm_timer_weap;
     /*! A timer to control the blinking of pedestrians.*/
-    fs_utils::BoolTimer mm_timer_ped;
+    fs_utl::BoolTimer mm_timer_ped;
     /*! Timer for the signal.*/
-    fs_utils::Timer mm_timer_signal;
+    fs_utl::Timer mm_timer_signal;
     /*!
      * A texture that store the minimap but only floor tiles.
      * The texture is draw at different size depending on the zoom.

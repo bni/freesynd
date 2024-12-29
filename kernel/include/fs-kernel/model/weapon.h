@@ -359,11 +359,11 @@ protected:
     PedInstance *pOwner_;
     int ammo_remaining_;
     /*! used for timebomb sound effect.*/
-    fs_utils::Timer bombSoundTimer;
+    fs_utl::Timer bombSoundTimer;
     /*! Timer used for bomb explosion.*/
-    fs_utils::Timer bombExplosionTimer;
+    fs_utl::Timer bombExplosionTimer;
     /*! Timer used for rotating flamer direction.*/
-    fs_utils::Timer flamerTimer_;
+    fs_utl::Timer flamerTimer_;
     /*! counter for tracking time for ammo consumption for shields.*/
     int shieldTimeUsed_;
     /*! TimeBomb, Shield are activated on specific events.*/

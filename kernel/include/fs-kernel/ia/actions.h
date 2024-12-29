@@ -513,7 +513,7 @@ protected:
 protected:
     WaitEnum waitType_;
     /*! Duration of waiting.*/
-    fs_utils::Timer waitTimer_;
+    fs_utl::Timer waitTimer_;
 };
 
 /*!
@@ -535,7 +535,7 @@ protected:
     /*! The ped watched by this ped.*/
     PedInstance *pTarget_;
     /*! Duration of waiting.*/
-    fs_utils::Timer waitTimer_;
+    fs_utl::Timer waitTimer_;
 };
 
 /*!
@@ -638,7 +638,7 @@ protected:
     /*! The direction he will walked towards.*/
     int moveDirection_;
     /*! Duration of burning.*/
-    fs_utils::Timer burnTimer_;
+    fs_utl::Timer burnTimer_;
 };
 
 /*!
@@ -713,7 +713,7 @@ public:
     void stop();
 protected:
     /*! Fire rate.*/
-    fs_utils::Timer fireRateTimer_;
+    fs_utl::Timer fireRateTimer_;
 };
 
 /*!

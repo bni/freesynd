@@ -24,7 +24,7 @@
 #define UTILS_TIMER_H_
 
 #include "fs-utils/common.h"
-namespace fs_utils {
+namespace fs_utl {
 
 /*!
  * A simple timer implementation. Create the timer with

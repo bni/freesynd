@@ -124,7 +124,7 @@ private:
     /*! Flag to indicate whether ped can regenerate his health.*/
     bool doRegenerates_;
     //! used for health regeneration
-    fs_utils::Timer healthTimer_;
+    fs_utl::Timer healthTimer_;
 };
 
 /*!
@@ -182,7 +182,7 @@ private:
     PersuadedStatus status_;
 
     //! used for delaying checking of nearby weapon search
-    fs_utils::Timer checkWeaponTimer_;
+    fs_utl::Timer checkWeaponTimer_;
 };
 
 /*!
@@ -222,7 +222,7 @@ private:
     PanicStatus status_;
     /*! This timer is used to delay checking by the ped in order to
      * not consume too much CPU.*/
-    fs_utils::Timer scoutTimer_;
+    fs_utl::Timer scoutTimer_;
     /*! Use to detect if ped is getting from panic to not panic.*/
     bool backFromPanic_;
     /*! The ped that frightened this civilian.*/
@@ -268,7 +268,7 @@ private:
     PoliceStatus status_;
     /*! This timer is used to delay checking by the ped in order to
      * not consume too much CPU.*/
-    fs_utils::Timer scoutTimer_;
+    fs_utl::Timer scoutTimer_;
     /*! The ped that the police officer is watching and eventually shooting at.*/
     PedInstance *pTarget_;
 };

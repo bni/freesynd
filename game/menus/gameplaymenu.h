@@ -151,7 +151,7 @@ protected:
     /*! Flag to play the sound of police warning an agent.*/
     bool canPlayPoliceWarnSound_;
     /*! Delay between 2 police warnings.*/
-    fs_utils::Timer warningTimer_;
+    fs_utl::Timer warningTimer_;
 
     ListenerHandle handleAgentDied_;
     ListenerHandle handleWeaponSelected_;

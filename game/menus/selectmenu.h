@@ -87,7 +87,7 @@ protected:
     /*! Id of the currently selected agent.*/
     int cur_agent_;
     /*! Counter to update the rnd_ field.*/
-    fs_utils::Timer timerSelector_;
+    fs_utl::Timer timerSelector_;
     /*! This offset is used to draw the dash line for the selector.
      * It's incremented each time the timer is updated.
      */
