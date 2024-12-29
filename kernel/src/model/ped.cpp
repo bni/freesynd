@@ -349,7 +349,7 @@ void PedInstance::synchDrawnAnimWithActionState(void) {
         setDrawnAnim(PedInstance::ad_HitAnim);
     } else if ((state_ & pa_smHitByLaser) != 0) {
         setDrawnAnim(PedInstance::ad_VaporizeAnim);
-    } else if (fs_cmn::isBitsOnWithMask(state_, pa_smHitByPersuadotron)) {
+    } else if (fs_utl::isBitsOnWithMask(state_, pa_smHitByPersuadotron)) {
         setDrawnAnim(PedInstance::ad_PersuadedAnim);
     }
 #ifdef _DEBUG
@@ -636,7 +636,7 @@ void PedInstance::commitSuicide() {
 
 void PedInstance::setEnergyActivated(bool isActivated) {
     if (isActivated) {
-        fs_cmn::setBitsWithMask(&desc_state_, pd_smShieldProtected);
+        fs_utl::setBitsWithMask(&desc_state_, pd_smShieldProtected);
     } else {
         desc_state_ &= pd_smAll ^ pd_smShieldProtected;
     }
@@ -1615,7 +1615,7 @@ bool PedInstance::canPersuade(PedInstance *pOtherPed, const int persuadotronRang
  */
 void PedInstance::handlePersuadedBy(PedInstance *pAgent) {
     pAgent->addPersuaded(this);
-    fs_cmn::setBitsWithMask(&desc_state_, pd_smControlled);
+    fs_utl::setBitsWithMask(&desc_state_, pd_smControlled);
     setObjGroupID(pAgent->objGroupID());
     owner_ = pAgent;
     setPanicImmuned();

@@ -57,15 +57,15 @@
         unsigned short lvl;
 
         bool isDirectionUpContains(uint8 bmDirection) {
-            return fs_cmn::isBitsOnWithMask(dirh, bmDirection);
+            return fs_utl::isBitsOnWithMask(dirh, bmDirection);
         }
 
         bool isDirectionGroundContains(uint8 bmDirection) {
-            return fs_cmn::isBitsOnWithMask(dirm, bmDirection);
+            return fs_utl::isBitsOnWithMask(dirm, bmDirection);
         }
 
         bool isDirectionDownContains(uint8 bmDirection) {
-            return fs_cmn::isBitsOnWithMask(dirl, bmDirection);
+            return fs_utl::isBitsOnWithMask(dirl, bmDirection);
         }
 
         //! In path finding, identify the direction to North

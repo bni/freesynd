@@ -25,7 +25,7 @@
 #include <limits>
 
 // runtime endianness test
-static const uint32 endianness_one = 1;
+static const uint32_t endianness_one = 1;
 static const unsigned char * const endianness_test_ptr = (unsigned char *)&endianness_one;
 #define system_big_endian (endianness_test_ptr[0] == 0)
 
@@ -37,32 +37,32 @@ static const unsigned char * const endianness_test_ptr = (unsigned char *)&endia
 #undef swap64
 #endif
 #define swap64(x) ( \
-                     ((uint64)(x) << 56) | \
-                    (((uint64)(x) << 40) & 0x00ff000000000000ULL) | \
-                    (((uint64)(x) << 24) & 0x0000ff0000000000ULL) | \
-                    (((uint64)(x) <<  8) & 0x000000ff00000000ULL) | \
-                    (((uint64)(x) >>  8) & 0x00000000ff000000ULL) | \
-                    (((uint64)(x) >> 24) & 0x0000000000ff0000ULL) | \
-                    (((uint64)(x) >> 40) & 0x000000000000ff00ULL) | \
-                     ((uint64)(x) >> 56) \
+                     ((uint64_t)(x) << 56) | \
+                    (((uint64_t)(x) << 40) & 0x00ff000000000000ULL) | \
+                    (((uint64_t)(x) << 24) & 0x0000ff0000000000ULL) | \
+                    (((uint64_t)(x) <<  8) & 0x000000ff00000000ULL) | \
+                    (((uint64_t)(x) >>  8) & 0x00000000ff000000ULL) | \
+                    (((uint64_t)(x) >> 24) & 0x0000000000ff0000ULL) | \
+                    (((uint64_t)(x) >> 40) & 0x000000000000ff00ULL) | \
+                     ((uint64_t)(x) >> 56) \
                   )
 
 #ifdef swap32
 #undef swap32
 #endif
 #define swap32(x) ( \
-                     ((uint32)(x) << 24) | \
-                    (((uint32)(x) <<  8) & 0x00ff0000) | \
-                    (((uint32)(x) >>  8) & 0x0000ff00) | \
-                     ((uint32)(x) >> 24) \
+                     ((uint32_t)(x) << 24) | \
+                    (((uint32_t)(x) <<  8) & 0x00ff0000) | \
+                    (((uint32_t)(x) >>  8) & 0x0000ff00) | \
+                     ((uint32_t)(x) >> 24) \
                   )
 
 #ifdef swap16
 #undef swap16
 #endif
 #define swap16(x) ( \
-                     ((uint16)(x) <<  8) | \
-                     ((uint16)(x) >>  8) \
+                     ((uint16_t)(x) <<  8) | \
+                     ((uint16_t)(x) >>  8) \
                   )
 
 PortableFile::PortableFile()
@@ -110,27 +110,27 @@ PortableFile::operator bool() const
     return f_.good();
 }
 
-void PortableFile::skip(int64 bytes_forward)
+void PortableFile::skip(int64_t bytes_forward)
 {
     f_.seekg(bytes_forward, std::ios::cur);
 }
 
-void PortableFile::seek(int64 byte_position)
+void PortableFile::seek(int64_t byte_position)
 {
     f_.seekg(byte_position, std::ios::beg);
 }
 
-void PortableFile::rewind(int64 bytes_backward)
+void PortableFile::rewind(int64_t bytes_backward)
 {
     f_.seekg(-bytes_backward, std::ios::cur);
 }
 
-int64 PortableFile::offset()
+int64_t PortableFile::offset()
 {
     return f_.tellg();
 }
 
-void PortableFile::write64(uint64 value)
+void PortableFile::write64(uint64_t value)
 {
     if (system_big_endian != big_endian_) {
         value = swap64(value);
@@ -138,7 +138,7 @@ void PortableFile::write64(uint64 value)
     f_.write((const char *)&value, 8);
 }
 
-void PortableFile::write32(uint32 value)
+void PortableFile::write32(uint32_t value)
 {
     if (system_big_endian != big_endian_) {
         value = swap32(value);
@@ -146,7 +146,7 @@ void PortableFile::write32(uint32 value)
     f_.write((const char *)&value, 4);
 }
 
-void PortableFile::write16(uint16 value)
+void PortableFile::write16(uint16_t value)
 {
     if (system_big_endian != big_endian_) {
         value = swap16(value);
@@ -154,26 +154,26 @@ void PortableFile::write16(uint16 value)
     f_.write((const char *)&value, 2);
 }
 
-void PortableFile::write8(uint8 value)
+void PortableFile::write8(uint8_t value)
 {
     f_.write((const char *)&value, 1);
 }
 
 void PortableFile::write8b(bool value)
 {
-    uint8 u8 = value ? 1 : 0;
+    uint8_t u8 = value ? 1 : 0;
     f_.write((const char *)&u8, 1);
 }
 
 void PortableFile::write_float(float value)
 {
-    uint32 *u32 = (uint32 *)&value;
+    uint32_t *u32 = (uint32_t *)&value;
     write32(*u32);
 }
 
 void PortableFile::write_double(double value)
 {
-    uint64 *u64 = (uint64 *)&value;
+    uint64_t *u64 = (uint64_t *)&value;
     write64(*u64);
 }
 
@@ -202,9 +202,9 @@ void PortableFile::write_zeros(size_t length)
     }
 }
 
-uint64 PortableFile::read64()
+uint64_t PortableFile::read64()
 {
-    uint64 value = 0;
+    uint64_t value = 0;
     f_.read((char *)&value, 8);
     if (system_big_endian != big_endian_) {
         value = swap64(value);
@@ -212,9 +212,9 @@ uint64 PortableFile::read64()
     return value;
 }
 
-uint32 PortableFile::read32()
+uint32_t PortableFile::read32()
 {
-    uint32 value = 0;
+    uint32_t value = 0;
     f_.read((char *)&value, 4);
     if (system_big_endian != big_endian_) {
         value = swap32(value);
@@ -233,9 +233,9 @@ int32_t PortableFile::reads32() {
         return std::numeric_limits<int>::min();
 }
 
-uint16 PortableFile::read16()
+uint16_t PortableFile::read16()
 {
-    uint16 value = 0;
+    uint16_t value = 0;
     f_.read((char *)&value, 2);
     if (system_big_endian != big_endian_) {
         value = swap16(value);
@@ -243,16 +243,16 @@ uint16 PortableFile::read16()
     return value;
 }
 
-uint8 PortableFile::read8()
+uint8_t PortableFile::read8()
 {
-    uint8 value = 0;
+    uint8_t value = 0;
     f_.read((char *)&value, 1);
     return value;
 }
 
 bool PortableFile::read8b()
 {
-    uint8 u8 = 0;
+    uint8_t u8 = 0;
     f_.read((char *)&u8, 1);
     return (u8 != 0);
 }
@@ -260,7 +260,7 @@ bool PortableFile::read8b()
 float PortableFile::read_float()
 {
     float value = 0.0;
-    uint32 *u32 = (uint32 *)&value;
+    uint32_t *u32 = (uint32_t *)&value;
     *u32 = read32();
     return value;
 }
@@ -268,7 +268,7 @@ float PortableFile::read_float()
 double PortableFile::read_double()
 {
     double value = 0.0;
-    uint64 *u64 = (uint64 *)&value;
+    uint64_t *u64 = (uint64_t *)&value;
     *u64 = read64();
     return value;
 }
@@ -298,7 +298,7 @@ std::string PortableFile::read_string(int length, bool strip_nul)
         int n = (length < 256) ? length : 256;
         f_.read(buf, n);
         length -= n;
-        value.append(buf, (uint32)f_.gcount());
+        value.append(buf, (uint32_t)f_.gcount());
         if (f_.fail()) break;
     }
 

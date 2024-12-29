@@ -113,7 +113,7 @@ void SoundManager::loadSounds(const std::string &tabFile, const std::string &dat
     for (int i = 0; i < int(tabSize) - tabentry_offset_;
         i += tabentry_offset_)
     {
-        uint32 soundsize = fs_cmn::READ_LE_UINT32(tabData);
+        uint32 soundsize = fs_utl::READ_LE_UINT32(tabData);
 
         // Samples with size < 144 are bogus
         if (soundsize > 144) {

@@ -239,15 +239,15 @@ bool FliPlayer::loadFliData(const std::string &filename) {
     }
 
     // Read the fli Header
-    fli_info_.size = fs_cmn::READ_LE_UINT32(pData);
+    fli_info_.size = fs_utl::READ_LE_UINT32(pData);
     pData += 4;
-    fli_info_.type = fs_cmn::READ_LE_UINT16(pData);
+    fli_info_.type = fs_utl::READ_LE_UINT16(pData);
     pData += 2;
-    fli_info_.numFrames = fs_cmn::READ_LE_UINT16(pData);
+    fli_info_.numFrames = fs_utl::READ_LE_UINT16(pData);
     pData += 2;
-    fli_info_.width = fs_cmn::READ_LE_UINT16(pData);
+    fli_info_.width = fs_utl::READ_LE_UINT16(pData);
     pData += 2;
-    fli_info_.height = fs_cmn::READ_LE_UINT16(pData);
+    fli_info_.height = fs_utl::READ_LE_UINT16(pData);
     // Move to the first frame
     pCurrentFrameOffset_ = pData + 2;
 
@@ -281,8 +281,8 @@ bool FliPlayer::isValidChunk(uint16_t type) {
 
 ChunkHeader FliPlayer::readChunkHeader(uint8_t * mem) {
     ChunkHeader head;
-    head.size = fs_cmn::READ_LE_UINT32(mem + 0);
-    head.type = fs_cmn::READ_LE_UINT16(mem + 4);
+    head.size = fs_utl::READ_LE_UINT32(mem + 0);
+    head.type = fs_utl::READ_LE_UINT16(mem + 4);
     return head;
 }
 
@@ -292,15 +292,15 @@ FrameTypeChunkHeader FliPlayer::readFrameTypeChunkHeader(ChunkHeader chunkHead,
 
     head.header = chunkHead;
     mem += 6;
-    head.numChunks = fs_cmn::READ_LE_UINT16(mem);
+    head.numChunks = fs_utl::READ_LE_UINT16(mem);
     mem += 2;
-    head.delay = fs_cmn::READ_LE_UINT16(mem);
+    head.delay = fs_utl::READ_LE_UINT16(mem);
     mem += 2;
-    head.reserved = fs_cmn::READ_LE_UINT16(mem);
+    head.reserved = fs_utl::READ_LE_UINT16(mem);
     mem += 2;
-    head.widthOverride = fs_cmn::READ_LE_UINT16(mem);
+    head.widthOverride = fs_utl::READ_LE_UINT16(mem);
     mem += 2;
-    head.heightOverride = fs_cmn::READ_LE_UINT16(mem);
+    head.heightOverride = fs_utl::READ_LE_UINT16(mem);
     mem += 2;
 
     return head;
@@ -333,7 +333,7 @@ void FliPlayer::decodeByteRun(uint8_t *data) {
 #define OP_LINESKIPCOUNT    3
 
 void FliPlayer::decodeDeltaFLC(uint8_t *data) {
-    uint16_t linesInChunk = fs_cmn::READ_LE_UINT16(data);
+    uint16_t linesInChunk = fs_utl::READ_LE_UINT16(data);
     data += 2;
     uint16_t currentLine = 0;
     uint16_t packetCount = 0;
@@ -343,7 +343,7 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
 
         // First process all the opcodes.
         do {
-            opcode = fs_cmn::READ_LE_UINT16(data);
+            opcode = fs_utl::READ_LE_UINT16(data);
             data += 2;
 
             switch ((opcode >> 14) & 3) {
@@ -449,10 +449,10 @@ int FliPlayer::decodeFrame(int &nbColor) {
 
 void FliPlayer::setPalette(uint8_t *mem, int &nbColor) {
     // The number of packets to define the palette changes
-    uint16_t numPackets = fs_cmn::READ_LE_UINT16(mem);
+    uint16_t numPackets = fs_utl::READ_LE_UINT16(mem);
     mem += 2;
 
-    if (0 == fs_cmn::READ_LE_UINT16(mem)) {     //set the whole palette
+    if (0 == fs_utl::READ_LE_UINT16(mem)) {     //set the whole palette
         nbColor = 256;
         mem += 2;
         for (int i = 0; i < 256; ++i) {

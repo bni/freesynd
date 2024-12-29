@@ -144,7 +144,7 @@ void AgentSelectorRenderer::drawIPABar(size_t agent, IPAStim *stim, const fs_eng
     // Draw a bar between the current level and the dependency marker
     // x needs to be leftmost...
     int left, width;
-    fs_cmn::boxify(left, width, amount_x, dependency_x);
+    fs_utl::boxify(left, width, amount_x, dependency_x);
     if(width > 0) {
         g_System.drawFillRect({getIpaBarLeftForAgent(agent) + left,
                           getIpaBarTop(agent, type)},
@@ -154,7 +154,7 @@ void AgentSelectorRenderer::drawIPABar(size_t agent, IPAStim *stim, const fs_eng
     // NB: this bar stops rendering when it's neck-a-neck with 'amount'
     if(amount_x != effect_x)
     {
-        fs_cmn::boxify(left, width, effect_x, dependency_x);
+        fs_utl::boxify(left, width, effect_x, dependency_x);
         if(width > 0) {
             g_System.drawFillRect({getIpaBarLeftForAgent(agent) + left,
                               getIpaBarTop(agent, type)},

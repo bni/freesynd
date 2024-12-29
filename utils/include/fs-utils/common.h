@@ -42,10 +42,7 @@ typedef unsigned short uint16;
 typedef signed int int32;
 typedef unsigned int uint32;
 
-typedef signed long long int64;
-typedef unsigned long long uint64;
-
-namespace fs_cmn {
+namespace fs_utl {
 
     //! This type is used for characters in Code Page 437
     typedef unsigned char cp437char_t;

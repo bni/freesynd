@@ -152,24 +152,24 @@ void MapObject::setDirection(int posx, int posy, int * dir) {
         if (posy > 0) {
             posx = -posx;
             newDirection = (int)((128.0
-                * atan((double)posy / (double)posx)) / fs_cmn::kPI + 192.0);
+                * atan((double)posy / (double)posx)) / fs_utl::kPI + 192.0);
         } else { // posy < 0
             int swapx = -posx;
             posx = -posy;
             posy = swapx;
             newDirection = (int)((128.0
-                * atan((double)posy / (double)posx)) / fs_cmn::kPI + 128.0);
+                * atan((double)posy / (double)posx)) / fs_utl::kPI + 128.0);
         }
     } else if (posx > 0 && posy < 0) {
         posy = -posy;
         newDirection = (int)((128.0
-            * atan((double)posy / (double)posx)) / fs_cmn::kPI + 64.0);
+            * atan((double)posy / (double)posx)) / fs_utl::kPI + 64.0);
     } else { // posx > 0 && posy > 0
         int swapx = posx;
         posx = posy;
         posy = swapx;
         newDirection = (int)((128.0
-            * atan((double)posy / (double)posx)) / fs_cmn::kPI);
+            * atan((double)posy / (double)posx)) / fs_utl::kPI);
     }
     if (newDirection != -1) {
         if (dir == NULL)

@@ -49,9 +49,9 @@ Map::~Map()
 bool Map::loadMap(uint8 * mapData)
 {
     LOG(Log::k_FLG_GFX, "Map", "loadMap", ("Loading Map %d.", id_));
-    max_x_ = fs_cmn::READ_LE_UINT32(mapData + 0);
-    max_y_ = fs_cmn::READ_LE_UINT32(mapData + 4);
-    max_z_ = fs_cmn::READ_LE_UINT32(mapData + 8);
+    max_x_ = fs_utl::READ_LE_UINT32(mapData + 0);
+    max_y_ = fs_utl::READ_LE_UINT32(mapData + 4);
+    max_z_ = fs_utl::READ_LE_UINT32(mapData + 8);
 
     LOG(Log::k_FLG_GFX, "Map", "loadMap",
         ("Map size in tiles: max_x = %d, max_y = %d, max_z = %d.", max_x_, max_y_, max_z_));
@@ -61,7 +61,7 @@ bool Map::loadMap(uint8 * mapData)
     a_tiles_ = new Tile*[max_x_ * max_y_ * (max_z_ + 1)];
 
     for (int i = 0; i < max_x_ * max_y_; i++)
-        lookup[i] = fs_cmn::READ_LE_UINT32(mapData + 12 + i * 4);
+        lookup[i] = fs_utl::READ_LE_UINT32(mapData + 12 + i * 4);
     for (int h = 0, z_real = max_z_ + 1; h < max_y_; h++)
         for (int w = 0; w < max_x_; w++) {
             int idx = h * max_x_ + w;

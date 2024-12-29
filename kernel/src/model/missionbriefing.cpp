@@ -109,7 +109,7 @@ bool MissionBriefing::loadBriefing(uint8 * data, int size) {
             // We also remove single line feeds and keep when there are 2 or more
             int nbLF = 0;
             for (size_t cindx = 0; cindx < briefCp437.size(); cindx++) {
-                fs_cmn::cp437char_t cp437char = briefCp437[cindx];
+                fs_utl::cp437char_t cp437char = briefCp437[cindx];
                 utf8::utfchar32_t u8char = cp437ToUnicode[cp437char];
                 if (u8char == 0x000A) { //current character is a line feed
                     nbLF += 1;
@@ -156,7 +156,7 @@ void MissionBriefing::init_minimap(Map *p_map, LevelData::LevelDataAll &level_da
     // we can correctly use our minimap_overlay_;
     // our agent = 1, enemy agent = 2, tile doesn't have ped = 0
     for (uint32 i = 0; i < (128*128); i++) {
-        uint32 pin = fs_cmn::READ_LE_UINT16(level_data.map.objs + i * 2);
+        uint32 pin = fs_utl::READ_LE_UINT16(level_data.map.objs + i * 2);
         if (pin >= 0x0002 && pin < 0x5C02) {  // Pointing to the Pedestrian section
             if (pin >= 0x0002 && pin < 0x02e2) {  // Pointing to one of our agents
                 minimap_overlay_[i] = MiniMap::kOverlayOurAgent;
@@ -170,7 +170,7 @@ void MissionBriefing::init_minimap(Map *p_map, LevelData::LevelDataAll &level_da
             pin = (pin - 0x9562) / 36; // 36 = weapon data size
             LevelData::Weapons & wref = level_data.weapons[pin];
             if (wref.desc == 0x05) {
-                pin = fs_cmn::READ_LE_UINT16(wref.offset_owner);
+                pin = fs_utl::READ_LE_UINT16(wref.offset_owner);
                 if (pin != 0) {
                     pin = (pin - 2) / 92; // 92 = ped data size
                     if (pin > 7) {

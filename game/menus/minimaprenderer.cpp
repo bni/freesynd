@@ -582,7 +582,7 @@ void GamePlayMinimapRenderer::drawVehicles(const fs_eng::Palette & palette) {
             if (p_vehicle->containsOurAgents()) {
                 /* int px = mapToMiniMapX(tx + 1, p_vehicle->offX());
                 int py = mapToMiniMapY(ty + 1, p_vehicle->offY());
-                uint8 borderColor = (mm_timer_ped.state()) ? fs_cmn::kColorBlack : fs_cmn::kColorLightGreen; */
+                uint8 borderColor = (mm_timer_ped.state()) ? fs_utl::kColorBlack : fs_utl::kColorLightGreen; */
                 drawPedCircle(screenPos, 0);
 
             } else {

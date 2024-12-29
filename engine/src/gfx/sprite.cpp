@@ -34,18 +34,18 @@
 void unpackBlocks1(const uint8_t * data, uint8_t * pixels)
 {
     for (int i = 0; i < 8; ++i) {
-        if (fs_cmn::bitSet(data[0], 7 - i)) {
+        if (fs_utl::bitSet(data[0], 7 - i)) {
             pixels[i] = 255;    // transparent
         } else {
             pixels[i] =
                 static_cast < uint8_t >
-                ((fs_cmn::bitValue(data[1], 7 - i) << 0) & 0xff)
+                ((fs_utl::bitValue(data[1], 7 - i) << 0) & 0xff)
                 | static_cast < uint8_t >
-                ((fs_cmn::bitValue(data[2], 7 - i) << 1) & 0xff)
+                ((fs_utl::bitValue(data[2], 7 - i) << 1) & 0xff)
                 | static_cast < uint8_t >
-                ((fs_cmn::bitValue(data[3], 7 - i) << 2) & 0xff)
+                ((fs_utl::bitValue(data[3], 7 - i) << 2) & 0xff)
                 | static_cast < uint8_t >
-                ((fs_cmn::bitValue(data[4], 7 - i) << 3) & 0xff);
+                ((fs_utl::bitValue(data[4], 7 - i) << 3) & 0xff);
         }
     }
 }
@@ -180,7 +180,7 @@ bool Sprite::loadSprite(uint8_t * tabData, uint8_t * spriteData, int offset,
 
     uint8_t *tabEntry = tabData + offset * kTabEntrySize;
 
-    uint32_t spriteOffset = fs_cmn::READ_LE_UINT32(tabEntry);
+    uint32_t spriteOffset = fs_utl::READ_LE_UINT32(tabEntry);
 
     tabEntry += 4;
     width_ = *tabEntry;

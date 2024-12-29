@@ -47,15 +47,15 @@ public:
     void set_big_endian(bool value); // false sets little-endian
     void set_system_endian(); // use the native endian-ness of the system
 
-    void skip(int64 bytes_forward);
-    void seek(int64 byte_position);
-    void rewind(int64 bytes_backward);
-    int64 offset();
+    void skip(int64_t bytes_forward);
+    void seek(int64_t byte_position);
+    void rewind(int64_t bytes_backward);
+    int64_t offset();
 
-    void write64(uint64 value);
-    void write32(uint32 value);
-    void write16(uint16 value);
-    void write8(uint8 value);
+    void write64(uint64_t value);
+    void write32(uint32_t value);
+    void write16(uint16_t value);
+    void write8(uint8_t value);
     void write8b(bool value);
 
     void write_float(float value);
@@ -66,11 +66,11 @@ public:
 
     void write_zeros(size_t length);
 
-    uint64 read64();
-    uint32 read32();
+    uint64_t read64();
+    uint32_t read32();
     int32_t reads32();
-    uint16 read16();
-    uint8 read8();
+    uint16_t read16();
+    uint8_t read8();
     bool read8b();
 
     float read_float();

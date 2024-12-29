@@ -130,7 +130,7 @@ Sprite * Font::getSpriteForCodepoint(utf8::utfchar32_t codePoint) {
         return nullptr; // out-of-range
     }
 
-    fs_cmn::cp437char_t charCp437 = unicodeToCp437[codePoint];
+    fs_utl::cp437char_t charCp437 = unicodeToCp437[codePoint];
 
     if (!range_.in_range(charCp437)) {
         // use '?' as default character.
@@ -244,7 +244,7 @@ bool Font::isPrintable(utf8::utfchar32_t codePoint) {
         return false; // out-of-range
     }
 
-    fs_cmn::cp437char_t charCp437 = unicodeToCp437[codePoint];
+    fs_utl::cp437char_t charCp437 = unicodeToCp437[codePoint];
 
     return range_.in_range(charCp437);
 }
@@ -268,7 +268,7 @@ Sprite *MenuFont::getSpriteForCodepoint(utf8::utfchar32_t codePoint, bool highli
         return nullptr; // out-of-range
     }
 
-    fs_cmn::cp437char_t charCp437 = unicodeToCp437[codePoint];
+    fs_utl::cp437char_t charCp437 = unicodeToCp437[codePoint];
 
     if (!range_.in_range(charCp437)) {
         // use '?' as default character.

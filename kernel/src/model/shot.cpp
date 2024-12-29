@@ -103,7 +103,7 @@ void InstantImpactShot::diffuseImpact(Mission *pMission, const WorldPoint &origi
     if (dist_cur == 0.0)
         return;
 
-    angle /= (180.0 / fs_cmn::kPI);
+    angle /= (180.0 / fs_utl::kPI);
     double angx = acos(dtx/dist_cur);
     double angy = acos(dty/dist_cur);
     double angz = acos(dtz/dist_cur);
@@ -319,7 +319,7 @@ void Explosion::generateFlameWaves(Mission *pMission, WorldPoint *pOrigin, doubl
         pOrigin->z = (pMission->mmax_z_ - 1) * 128;
     // TODO: exclude flames on water, put these flames to the ground,
     // don't draw in air(, stairs problem?)
-    double angle_inc = fs_cmn::kPI;
+    double angle_inc = fs_utl::kPI;
     const uint8 waves = (int)dmg_rng / 144 + 1;
 
     for (uint8 i = 0; i < waves; i++) {

@@ -2537,20 +2537,20 @@ uint8 PedInstance::moveToDir(Mission* m, int elapsed, DirMoveType &dir_move,
         } else if (dir == 192) {
             diffx = -1.0;
         } else if (dir < 64) {
-            diffx = sin((dir / 128.0) * fs_cmn::kPI);
-            diffy = cos((dir / 128.0) * fs_cmn::kPI);
+            diffx = sin((dir / 128.0) * fs_utl::kPI);
+            diffy = cos((dir / 128.0) * fs_utl::kPI);
         } else if (dir < 128) {
             int dirn = dir % 64;
-            diffy = -sin((dirn / 128.0) * fs_cmn::kPI);
-            diffx = cos((dirn / 128.0) * fs_cmn::kPI);
+            diffy = -sin((dirn / 128.0) * fs_utl::kPI);
+            diffx = cos((dirn / 128.0) * fs_utl::kPI);
         } else if (dir < 192) {
             int dirn = dir % 64;
-            diffx = -sin((dirn / 128.0) * fs_cmn::kPI);
-            diffy = -cos((dirn / 128.0) * fs_cmn::kPI);
+            diffx = -sin((dirn / 128.0) * fs_utl::kPI);
+            diffy = -cos((dirn / 128.0) * fs_utl::kPI);
         } else if (dir < 256) {
             int dirn = dir % 64;
-            diffy = sin((dirn / 128.0) * fs_cmn::kPI);
-            diffx = -cos((dirn / 128.0) * fs_cmn::kPI);
+            diffy = sin((dirn / 128.0) * fs_utl::kPI);
+            diffx = -cos((dirn / 128.0) * fs_utl::kPI);
         }
 
         double posx = (double)(pos_.tx * 256 + pos_.ox);
