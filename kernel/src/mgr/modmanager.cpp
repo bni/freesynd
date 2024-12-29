@@ -238,7 +238,7 @@ Mod *ModManager::loadMod(Mod::EModType mt, Mod::EModVersion ver) {
     return NULL;
 }
 
-bool ModManager::saveToFile(PortableFile &file) {
+bool ModManager::saveToFile(fs_utl::PortableFile &file) {
     file.write32(mods_.size());
 
     for(unsigned int i=0; i<mods_.size(); i++) {
@@ -249,7 +249,7 @@ bool ModManager::saveToFile(PortableFile &file) {
     return true;
 }
 
-bool ModManager::loadFromFile(PortableFile &infile, const FormatVersion& v) {
+bool ModManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
 
     int nbMods = infile.read32();
 

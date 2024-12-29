@@ -28,6 +28,8 @@
 #include <fstream>
 #include "fs-utils/common.h"
 
+namespace fs_utl {
+
 /*!
  * Portable file class.  Simplifies implementation of portable file formats.
  *
@@ -82,6 +84,8 @@ public:
 private:
     std::fstream f_;
     bool big_endian_;
+};
+
 };
 
 #endif

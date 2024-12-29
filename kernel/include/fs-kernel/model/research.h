@@ -94,9 +94,9 @@ public:
     void improve(Weapon *pWeapon);
 
     //! Save instance to file
-    bool saveToFile(PortableFile &file);
+    bool saveToFile(fs_utl::PortableFile &file);
     //! Load instance from file
-    bool loadFromFile(PortableFile &infile, EResType type, const FormatVersion& v);
+    bool loadFromFile(fs_utl::PortableFile &infile, EResType type, const fs_utl::FormatVersion& v);
 protected:
     void init(std::string name, int min);
     void updateProjection();

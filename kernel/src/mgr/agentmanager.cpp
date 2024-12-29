@@ -165,7 +165,7 @@ void AgentManager::destroyAgentSlot(size_t squadSlot) {
     }
 }
 
-bool AgentManager::saveToFile(PortableFile &file) {
+bool AgentManager::saveToFile(fs_utl::PortableFile &file) {
     file.write32(nextName_);
     for (int i=0; i<AgentManager::MAX_AGENT; i++) {
         Agent *pAgent = agents_.get(i);
@@ -185,7 +185,7 @@ bool AgentManager::saveToFile(PortableFile &file) {
     return true;
 }
 
-bool AgentManager::loadFromFile(PortableFile &infile, const FormatVersion& v) {
+bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
     nextName_ = infile.read32();
     for (int i=0; i<AgentManager::MAX_AGENT; i++) {
         bool isAgent = infile.read8b();

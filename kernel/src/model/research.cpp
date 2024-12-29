@@ -196,7 +196,7 @@ void Research::improve(Weapon *pWeapon) {
 /*!
  * Saves Research structure to the given file.
  */
-bool Research::saveToFile(PortableFile &file) {
+bool Research::saveToFile(fs_utl::PortableFile &file) {
     if (type_ == EQUIPS) {
         // Weapons specific infos
         file.write32(weapon_);
@@ -233,7 +233,7 @@ bool Research::saveToFile(PortableFile &file) {
     return true;
 }
 
-bool Research::loadFromFile(PortableFile &infile, EResType type, const FormatVersion& v) {
+bool Research::loadFromFile(fs_utl::PortableFile &infile, EResType type, const fs_utl::FormatVersion& v) {
     // id
     id_ = infile.read32();
 

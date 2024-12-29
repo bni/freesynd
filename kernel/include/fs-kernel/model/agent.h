@@ -54,9 +54,9 @@ public:
     void set_dead() { is_alive_ = false; }
 
     //! Save instance to file
-    bool saveToFile(PortableFile &file);
+    bool saveToFile(fs_utl::PortableFile &file);
     //! Load instance from file
-    bool loadFromFile(PortableFile &infile, const FormatVersion& v);
+    bool loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v);
 
 protected:
     /*! A counter to have unique IDs.*/

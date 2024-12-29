@@ -324,7 +324,7 @@ int GameController::get_nb_mvt_for_active_synds(int nb_active_synds) {
 bool GameController::saveGameToFile(int fileSlot, std::string name) {
     LOG(Log::k_FLG_IO, "GameController", "saveGameToFile", ("Saving %s in slot %d", name.c_str(), fileSlot))
 
-    PortableFile outfile;
+    fs_utl::PortableFile outfile;
     std::string path;
 
     File::getFullPathForSaveSlot(fileSlot, path);
@@ -366,7 +366,7 @@ bool GameController::saveGameToFile(int fileSlot, std::string name) {
 bool GameController::loadGameFromFile(int fileSlot) {
 
     std::string path;
-    PortableFile infile;
+    fs_utl::PortableFile infile;
 
     File::getFullPathForSaveSlot(fileSlot, path);
 
@@ -378,7 +378,7 @@ bool GameController::loadGameFromFile(int fileSlot) {
         // Read version
         unsigned char vMaj = infile.read8();
         unsigned char vMin = infile.read8();
-        FormatVersion v(vMaj, vMin);
+        fs_utl::FormatVersion v(vMaj, vMin);
 
         // validate that this is a supported version.
         if (v.gt(1,3)) {

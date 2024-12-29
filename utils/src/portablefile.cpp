@@ -65,6 +65,8 @@ static const unsigned char * const endianness_test_ptr = (unsigned char *)&endia
                      ((uint16_t)(x) >>  8) \
                   )
 
+namespace fs_utl {
+
 PortableFile::PortableFile()
     : big_endian_(true)
 {
@@ -314,3 +316,4 @@ std::string PortableFile::read_string(int length, bool strip_nul)
     return value;
 }
 
+};

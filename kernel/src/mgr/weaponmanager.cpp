@@ -210,7 +210,7 @@ Weapon * WeaponManager::loadWeapon(Weapon::WeaponType wt) {
     }
 }
 
-bool WeaponManager::saveToFile(PortableFile &file) {
+bool WeaponManager::saveToFile(fs_utl::PortableFile &file) {
     file.write32(availableWeapons_.size());
 
     for(unsigned int i=0; i<availableWeapons_.size(); i++) {
@@ -221,7 +221,7 @@ bool WeaponManager::saveToFile(PortableFile &file) {
     return true;
 }
 
-bool WeaponManager::loadFromFile(PortableFile &infile, const FormatVersion& v) {
+bool WeaponManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
     int nbWeap = infile.read32();
 
     for (int i = 0; i < nbWeap; i++) {

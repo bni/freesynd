@@ -311,7 +311,7 @@ bool ResearchManager::handleWeaponDiscovered(Weapon *pWeapon) {
     return false;
 }
 
-bool ResearchManager::saveToFile(PortableFile &file) {
+bool ResearchManager::saveToFile(fs_utl::PortableFile &file) {
     // Search on mods
     file.write32(availableModsSearch_.size());
 
@@ -334,7 +334,7 @@ bool ResearchManager::saveToFile(PortableFile &file) {
     return true;
 }
 
-bool ResearchManager::loadFromFile(PortableFile &infile, const FormatVersion& v) {
+bool ResearchManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
     // Destroy existing researchs
     destroy();
 

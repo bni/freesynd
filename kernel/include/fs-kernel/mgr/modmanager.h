@@ -60,9 +60,9 @@ public:
     SequenceModel * getAvalaibleMods() { return &mods_; }
 
     //! Save instance to file
-    bool saveToFile(PortableFile &file);
+    bool saveToFile(fs_utl::PortableFile &file);
     //! Load instance from file
-    bool loadFromFile(PortableFile &infile, const FormatVersion& v);
+    bool loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v);
     Mod *getHighestVersion(Mod::EModType mt);
 
 protected:

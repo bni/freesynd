@@ -44,7 +44,7 @@ male_(male), active_(true) {
     is_alive_ = true;
 }
 
-bool Agent::saveToFile(PortableFile &file) {
+bool Agent::saveToFile(fs_utl::PortableFile &file) {
     // id
     file.write32(id_);
     // Agent name : 13 characters max, nul-padded
@@ -81,7 +81,7 @@ bool Agent::saveToFile(PortableFile &file) {
     return true;
 }
 
-bool Agent::loadFromFile(PortableFile &infile, const FormatVersion& v) {
+bool Agent::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
     // if this instance has already been populated reset it
     clearSlots();
     destroyAllWeapons();

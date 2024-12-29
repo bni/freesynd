@@ -253,9 +253,9 @@ public:
     int getTaxRevenue(int population, int rate);
 
     //! Save instance to file
-    bool saveToFile(PortableFile &file);
+    bool saveToFile(fs_utl::PortableFile &file);
     //! Load instance from file
-    bool loadFromFile(PortableFile &infile, const FormatVersion& v);
+    bool loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v);
 
 private:
     //! Destroy GameSession resources

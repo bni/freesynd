@@ -498,7 +498,7 @@ int GameSession::updateCountries() {
 }
 
 //! Save instance to file
-bool GameSession::saveToFile(PortableFile &file) {
+bool GameSession::saveToFile(fs_utl::PortableFile &file) {
     // Company name
     file.write_string(company_name_, kNameMaxSize);
     // User name
@@ -533,7 +533,7 @@ bool GameSession::saveToFile(PortableFile &file) {
 }
 
 //! Load instance from file
-bool GameSession::loadFromFile(PortableFile &infile, const FormatVersion& v) {
+bool GameSession::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
     // Read company name
     company_name_ = infile.read_string((v == 0x0100) ? 17 : kNameMaxSize, true);
     // Read user name

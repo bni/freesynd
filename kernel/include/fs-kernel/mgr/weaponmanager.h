@@ -68,9 +68,9 @@ public:
     void getAvailable(uint32 dmg_type, std::vector <Weapon *> &wpns);
 
     //! Save instance to file
-    bool saveToFile(PortableFile &file);
+    bool saveToFile(fs_utl::PortableFile &file);
     //! Load instance from file
-    bool loadFromFile(PortableFile &infile, const FormatVersion& v);
+    bool loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v);
 
     //! checks existing weapons that can do such damage and sets whether they can shoot
     //! strict check

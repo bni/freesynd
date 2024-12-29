@@ -454,7 +454,7 @@ void File::addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::str
         size_t index;
         iss >> index;
         if (index < 10) {
-            PortableFile infile;
+            fs_utl::PortableFile infile;
             infile.open_to_read(filename.string().c_str());
 
             if (infile) {
@@ -462,7 +462,7 @@ void File::addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::str
                 // Read version first
                 unsigned char vMaj = infile.read8();
                 unsigned char vMin = infile.read8();
-                FormatVersion v(vMaj, vMin);
+                fs_utl::FormatVersion v(vMaj, vMin);
                 // Read slot name
                 if (v == 0x0100) {
                     files[index] = infile.read_string(25, true);
