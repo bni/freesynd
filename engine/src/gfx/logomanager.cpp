@@ -72,7 +72,7 @@ bool LogoManager::loadLogos(const fs_eng::Palette &palette) {
 
     LOG(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Loading logos..."))
 
-    data_all_logos_ = File::loadOriginalFile("mlogos.dat", fileSize);
+    data_all_logos_ = fs_utl::File::loadOriginalFile("mlogos.dat", fileSize);
     if (data_all_logos_ == nullptr) {
         FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not read mlogos.dat"))
         return false;

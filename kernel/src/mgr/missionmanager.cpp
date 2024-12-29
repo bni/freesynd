@@ -94,7 +94,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
             break;
     }
     size_t size;
-    uint8 *data = File::loadOriginalFile(tmp, size);
+    uint8 *data = fs_utl::File::loadOriginalFile(tmp, size);
     if (data == NULL) {
         return NULL;
     }
@@ -169,7 +169,7 @@ bool MissionManager::load_level_data(int n, LevelData::LevelDataAll &level_data)
     size_t size;
 
     sprintf(tmp, GAME_PATTERN, n);
-    uint8 *data = File::loadOriginalFile(tmp, size);
+    uint8 *data = fs_utl::File::loadOriginalFile(tmp, size);
     if (data == NULL) {
         return false;
     }

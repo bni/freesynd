@@ -240,13 +240,13 @@ bool TileManager::loadTiles()
     uint8 *typesData;
 
     // first reads tile types
-    typesData = File::loadOriginalFile("col01.dat", size);
+    typesData = fs_utl::File::loadOriginalFile("col01.dat", size);
     if (!typesData) {
         return false;
     }
 
     // then reads tiles
-    uint8 *tilesData = File::loadOriginalFile("hblk01.dat", size);
+    uint8 *tilesData = fs_utl::File::loadOriginalFile("hblk01.dat", size);
 
     if (!tilesData) {
         FSERR(Log::k_FLG_IO, "TileManager", "loadTiles", ("Failed to load tiles data\n"));
@@ -287,7 +287,7 @@ bool TileManager::setPalette(int paletteId) {
 
     LOG(Log::k_FLG_GFX, "TileManager", "setPalette", ("Setting palette : %s", fname.c_str()))
     size_t size;
-    uint8_t *paletteData = File::loadOriginalFile(fname, size);
+    uint8_t *paletteData = fs_utl::File::loadOriginalFile(fname, size);
 
     if (!paletteData) {
         FSERR(Log::k_FLG_GFX, "TileManager", "setPalette", ("Could not read file %s", fname.c_str()))

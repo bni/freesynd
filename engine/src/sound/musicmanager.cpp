@@ -81,7 +81,7 @@ void MusicManager::initialize(bool disabled, Audio* audio)
     delete[] data;
 #endif
 
-    data = File::loadOriginalFile("SYNGAME.XMI", size);
+    data = fs_utl::File::loadOriginalFile("SYNGAME.XMI", size);
     tracks = xmidi.convertXMidi(data, size);
     for (unsigned int i = 0; i < tracks.size(); ++i) {
         LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music for game : %i", i))

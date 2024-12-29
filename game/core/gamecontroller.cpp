@@ -327,7 +327,7 @@ bool GameController::saveGameToFile(int fileSlot, std::string name) {
     fs_utl::PortableFile outfile;
     std::string path;
 
-    File::getFullPathForSaveSlot(fileSlot, path);
+    fs_utl::File::getFullPathForSaveSlot(fileSlot, path);
     LOG(Log::k_FLG_IO, "GameController", "saveGameToFile", ("Saving to file %s", path.c_str()))
 
     outfile.open_to_overwrite(path.c_str());
@@ -368,7 +368,7 @@ bool GameController::loadGameFromFile(int fileSlot) {
     std::string path;
     fs_utl::PortableFile infile;
 
-    File::getFullPathForSaveSlot(fileSlot, path);
+    fs_utl::File::getFullPathForSaveSlot(fileSlot, path);
 
     infile.open_to_read(path.c_str());
 

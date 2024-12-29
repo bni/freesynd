@@ -101,8 +101,8 @@ void SoundManager::loadSounds(const std::string &tabFile, const std::string &dat
 {
     size_t tabSize, datSize;
 
-    uint8 *tabDataOri = File::loadOriginalFile(tabFile, tabSize);
-    uint8 *soundDataOri = File::loadOriginalFile(datFile, datSize);
+    uint8 *tabDataOri = fs_utl::File::loadOriginalFile(tabFile, tabSize);
+    uint8 *soundDataOri = fs_utl::File::loadOriginalFile(datFile, datSize);
 
     uint8 *tabData = tabDataOri;
     uint8 *soundData = soundDataOri;

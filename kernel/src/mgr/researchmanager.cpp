@@ -64,7 +64,7 @@ void ResearchManager::destroy() {
  * \return NULL if a problem has happened
  */
 Research *ResearchManager::loadResearch(Weapon::WeaponType wt) {
-    std::string filename(File::getFreesyndDataFullPath("ref/research.dat"));
+    std::string filename(fs_utl::File::getFreesyndDataFullPath("ref/research.dat"));
     try {
         // Loads configuration file
         ConfigFile conf(filename);
@@ -126,7 +126,7 @@ Research *ResearchManager::loadResearch(Weapon::WeaponType wt) {
 }
 
 Research *ResearchManager::loadResearch(Mod::EModType mt, Mod::EModVersion version) {
-    std::string filename(File::getFreesyndDataFullPath("ref/research.dat"));
+    std::string filename(fs_utl::File::getFreesyndDataFullPath("ref/research.dat"));
     try {
         // Loads configuration file
         ConfigFile conf(filename);

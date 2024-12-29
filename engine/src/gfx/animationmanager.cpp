@@ -66,7 +66,7 @@ bool AnimationManager::load()
  * @return true if loading is ok
  */
 bool AnimationManager::loadElementsFromCustomFiles() {
-    FILE *fp = File::openOriginalFile("HELE-0.TXT");
+    FILE *fp = fs_utl::File::openOriginalFile("HELE-0.TXT");
     if (!fp) {
         return false;
     }
@@ -95,7 +95,7 @@ bool AnimationManager::loadElementsFromCustomFiles() {
         }
     }
 
-    fp = File::openOriginalFile("HFRA-0.TXT");
+    fp = fs_utl::File::openOriginalFile("HFRA-0.TXT");
     if (fp) {
         while (fgets(line, 1024, fp)) {
             GameSpriteFrame f;
@@ -111,7 +111,7 @@ bool AnimationManager::loadElementsFromCustomFiles() {
         fclose(fp);
     }
 
-    fp = File::openOriginalFile("HSTA-0.TXT");
+    fp = fs_utl::File::openOriginalFile("HSTA-0.TXT");
     if (fp) {
         while (fgets(line, 1024, fp)) {
             size_t index;
@@ -136,7 +136,7 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
     uint8 *data;
 
     // Load Sprite Frame Element
-    data = File::loadOriginalFile("HELE-0.ANI", size);
+    data = fs_utl::File::loadOriginalFile("HELE-0.ANI", size);
     assert(size % 10 == 0);
     for (unsigned int i = 0; i < size / 10; i++) {
         GameSpriteFrameElement e;
@@ -161,7 +161,7 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
     LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frame elements", (int)elements_.size()))
 
     // Load sprite frame
-    data = File::loadOriginalFile("HFRA-0.ANI", size);
+    data = fs_utl::File::loadOriginalFile("HFRA-0.ANI", size);
     assert(size % 8 == 0);
     for (unsigned int i = 0; i < size / 8; i++) {
         GameSpriteFrame f;
@@ -179,7 +179,7 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
     LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frames", (int)frames_.size()))
 
     // Load index
-    data = File::loadOriginalFile("HSTA-0.ANI", size);
+    data = fs_utl::File::loadOriginalFile("HSTA-0.ANI", size);
     assert(size % 2 == 0);
     for (unsigned int i = 0; i < size / 2; i++) {
         index_.push_back(data[i * 2] | (data[i * 2 + 1] << 8));

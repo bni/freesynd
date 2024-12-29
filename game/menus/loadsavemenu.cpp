@@ -77,7 +77,7 @@ void LoadSaveMenu::handleShow()
         files.push_back("");
     }
 
-    File::getGameSavedNames(files);
+    fs_utl::File::getGameSavedNames(files);
 
     for (int i=0; i<10; i++) {
         pTextFields_[i]->setText(files[i].c_str());

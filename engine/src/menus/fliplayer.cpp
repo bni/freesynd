@@ -230,7 +230,7 @@ bool FliPlayer::loadFliData(const std::string &filename) {
     size_t size = 0;
 
     resetPlayer();
-    fliData_ = File::loadOriginalFile(filename, size);
+    fliData_ = fs_utl::File::loadOriginalFile(filename, size);
     uint8_t *pData = fliData_;
 
     if (fliData_ == nullptr) {

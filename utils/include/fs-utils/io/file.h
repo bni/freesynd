@@ -36,66 +36,68 @@
 
 namespace fs = std::filesystem;
 
-/*!
- * File class gives a list of convenient methods to retrieve
- * files and directories important for the application.
- */
-class File {
-public:
-    static bool getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni);
-    //! Return the path for the user config file
-    static bool getUserConfFullPath(fs::path& confFullPath);
-    //! Return the path for the user folder
-    //static bool getUserConfFolderPath(const std::string& confFolder, std::string& confFolderPath);
-    static bool getOrCreateUserConfFolder(const std::string& userConfFolder);
-    //! Sets the path to the original data files.*/
-    static void setOriginalDataFolder(const std::string& path);
-    //! Sets the path to our data files.*/
-    static void setFreesyndDataFolder(const std::string& path);
-    //! Sets the path where to save all files.*/
-    static void upsertSaveDataFolder(const std::string& path);
-    static void getDefaultSaveFolder(std::string& confFolderPath);
+namespace fs_utl {
+    /*!
+    * File class gives a list of convenient methods to retrieve
+    * files and directories important for the application.
+    */
+    class File {
+    public:
+        static bool getFreesyndConf(const std::string& iniFolder, ConfigFile &freesyndIni);
+        //! Return the path for the user config file
+        static bool getUserConfFullPath(fs::path& confFullPath);
+        //! Return the path for the user folder
+        //static bool getUserConfFolderPath(const std::string& confFolder, std::string& confFolderPath);
+        static bool getOrCreateUserConfFolder(const std::string& userConfFolder);
+        //! Sets the path to the original data files.*/
+        static void setOriginalDataFolder(const std::string& path);
+        //! Sets the path to our data files.*/
+        static void setFreesyndDataFolder(const std::string& path);
+        //! Sets the path where to save all files.*/
+        static void upsertSaveDataFolder(const std::string& path);
+        static void getDefaultSaveFolder(std::string& confFolderPath);
 
-    //*************************************
-    // Original files apis
-    //*************************************
-    static uint8 *loadOriginalFile(const std::string& filename, size_t &filesize);
-    static FILE *openOriginalFile(const std::string& filename);
+        //*************************************
+        // Original files apis
+        //*************************************
+        static uint8 *loadOriginalFile(const std::string& filename, size_t &filesize);
+        static FILE *openOriginalFile(const std::string& filename);
 
-    //! Tests Syndicate original data for existence and correctness
-    static bool testOriginalData();
+        //! Tests Syndicate original data for existence and correctness
+        static bool testOriginalData();
 
-    //*************************************
-    // Freesynd files apis
-    //*************************************
-    //! Returns the full path of the given resource using the current root path.
-    static std::string getFreesyndDataFullPath(const std::string& filename);
+        //*************************************
+        // Freesynd files apis
+        //*************************************
+        //! Returns the full path of the given resource using the current root path.
+        static std::string getFreesyndDataFullPath(const std::string& filename);
 
-    //! Sets the filename fullpath for the given slot (from 0 to 9)
-    static void getFullPathForSaveSlot(int slot, std::string &path);
-    //! Returns the list of game saved names
-    static void getGameSavedNames(std::vector<std::string> &files);
-    static uint8 *loadOriginalFileToMem(const std::string& filename, size_t &filesize);
+        //! Sets the filename fullpath for the given slot (from 0 to 9)
+        static void getFullPathForSaveSlot(int slot, std::string &path);
+        //! Returns the list of game saved names
+        static void getGameSavedNames(std::vector<std::string> &files);
+        static uint8 *loadOriginalFileToMem(const std::string& filename, size_t &filesize);
 
-private:
-    //! Return the path to ini file base on iniFolder
-    static void getIniFullPath(const std::string& iniFolder, fs::path&  iniFullPath);
+    private:
+        //! Return the path to ini file base on iniFolder
+        static void getIniFullPath(const std::string& iniFolder, fs::path&  iniFullPath);
 
-    static void addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files);
-    //! Adds a trailing slash to the string
-    static void addMissingSlash(std::string& str);
-    //! Returns the full path of the given original game resource using the current root path.
-    static std::string getOriginalDataFullPath(const std::string& filename, bool uppercase);
+        static void addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files);
+        //! Adds a trailing slash to the string
+        static void addMissingSlash(std::string& str);
+        //! Returns the full path of the given original game resource using the current root path.
+        static std::string getOriginalDataFullPath(const std::string& filename, bool uppercase);
 
-private:
-    /*! The path to the original game data.*/
-    static fs::path dataPath_;
-    /*! The path to our data files.*/
-    static fs::path ourDataPath_;
-    //! The path to the folder containing the user conf file
-    static fs::path userConfFolderPath_;
-    /*! The path to the freesynd.ini file and save directory.*/
-    static fs::path savePath_;
+    private:
+        /*! The path to the original game data.*/
+        static fs::path dataPath_;
+        /*! The path to our data files.*/
+        static fs::path ourDataPath_;
+        //! The path to the folder containing the user conf file
+        static fs::path userConfFolderPath_;
+        /*! The path to the freesynd.ini file and save directory.*/
+        static fs::path savePath_;
+    };
 };
 
 #endif

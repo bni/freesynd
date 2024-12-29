@@ -86,12 +86,12 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
 
     // First load tab file
     LOG(Log::k_FLG_GFX, "SpriteManager", "loadSprites", ("Loading sprites from files %s", tabFile.c_str()))
-    tabData = File::loadOriginalFile(tabFile, tabSize);
+    tabData = fs_utl::File::loadOriginalFile(tabFile, tabSize);
     if (!tabData) {
         FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed reading file %s", tabFile.c_str()));
         return false;
     }
-    data = File::loadOriginalFile(datFile, size);
+    data = fs_utl::File::loadOriginalFile(datFile, size);
     if (!data) {
         FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed reading file %s", datFile.c_str()));
         delete[] tabData;

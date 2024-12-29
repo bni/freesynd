@@ -62,7 +62,7 @@ bool AppContext::readConfiguration(const std::string& iniFolder, const std::stri
 bool AppContext::readFreesyndIni(const std::string& iniFolder) {
     ConfigFile freesyndIni;
 
-    if (!File::getFreesyndConf(iniFolder, freesyndIni)) {
+    if (!fs_utl::File::getFreesyndConf(iniFolder, freesyndIni)) {
         return false;
     }
 
@@ -70,7 +70,7 @@ bool AppContext::readFreesyndIni(const std::string& iniFolder) {
 
     std::string freesynDataDir;
     if (freesyndIni.readInto(freesynDataDir, "freesynd_data_dir")) {
-        File::setFreesyndDataFolder(freesynDataDir);
+        fs_utl::File::setFreesyndDataFolder(freesynDataDir);
     } else {
         FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot find key freesynd_data_dir\n"));
         return false;
@@ -79,7 +79,7 @@ bool AppContext::readFreesyndIni(const std::string& iniFolder) {
 
     std::string originalDataDir;
     if (freesyndIni.readInto(originalDataDir, "data_dir")) {
-        File::setOriginalDataFolder(originalDataDir);
+        fs_utl::File::setOriginalDataFolder(originalDataDir);
     } else {
         FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot find key data_dir\n"));
         return false;
@@ -98,11 +98,11 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     ConfigFile userConf;
     fs::path userConfFullpath;
 
-    if(!File::getOrCreateUserConfFolder(userConfFolder)) {
+    if(!fs_utl::File::getOrCreateUserConfFolder(userConfFolder)) {
         return false;
     }
 
-    bool confExist = File::getUserConfFullPath(userConfFullpath);
+    bool confExist = fs_utl::File::getUserConfFullPath(userConfFullpath);
 
     if (confExist) {
         // Load file
@@ -121,9 +121,9 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     test_files_ = userConf.read("test_data", true);
     const int languageID = userConf.read("language", 0);
     std::string defaultDir;
-    File::getDefaultSaveFolder(defaultDir);
+    fs_utl::File::getDefaultSaveFolder(defaultDir);
     std::string saveDataDir(userConf.read("save_data_dir", defaultDir));
-    File::upsertSaveDataFolder(saveDataDir);
+    fs_utl::File::upsertSaveDataFolder(saveDataDir);
 
     if (!confExist) {
         // Save first ini file with default parameters
@@ -218,7 +218,7 @@ bool AppContext::readLanguage(const int languageId) {
     }
 
     try {
-        language_ = new ConfigFile(File::getFreesyndDataFullPath(filename));
+        language_ = new ConfigFile(fs_utl::File::getFreesyndDataFullPath(filename));
         return true;
     } catch (...) {
         FSERR(Log::k_FLG_IO, "AppContext", "setLanguage", ("Unable to load language file %s!\n", filename.c_str()));
@@ -245,7 +245,7 @@ void AppContext::getMessage(const std::string & id, std::string & msg) {
  */
 void AppContext::updateIntroFlag() {
     std::filesystem::path userConfPath;
-    File::getUserConfFullPath(userConfPath);
+    fs_utl::File::getUserConfFullPath(userConfPath);
     LOG(Log::k_FLG_IO, "AppContext", "updateIntroFlag", ("Setting play_intro to false in %s", userConfPath.c_str()))
     ConfigFile conf(userConfPath.string());
     conf.add("play_intro", false);
@@ -255,7 +255,7 @@ void AppContext::updateIntroFlag() {
 
 void AppContext::deactivateTestFlag() {
     std::filesystem::path userConfPath;
-    File::getUserConfFullPath(userConfPath);
+    fs_utl::File::getUserConfFullPath(userConfPath);
     LOG(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Setting test_data to false in %s", userConfPath.c_str()))
     ConfigFile conf(userConfPath.string());
     conf.add("test_data", false);

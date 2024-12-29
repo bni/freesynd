@@ -568,7 +568,7 @@ bool SystemSDL::loadCursorSprites() {
     LOG(Log::k_FLG_GFX, "SystemSDL", "loadCursorSprites", ("loading cursor sprites from file cursors/cursors.png"))
     cursor_rect_.w = cursor_rect_.h = kCursorWidth;
 
-    SDL_Surface* pLoadedSurface = IMG_Load(File::getFreesyndDataFullPath("cursors/cursors.png").c_str());
+    SDL_Surface* pLoadedSurface = IMG_Load(fs_utl::File::getFreesyndDataFullPath("cursors/cursors.png").c_str());
 
     if (!pLoadedSurface) {
         FSERR(Log::k_FLG_GFX, "SystemSDL", "loadCursorSprites", ("Cannot load cursors image : %s", IMG_GetError()))

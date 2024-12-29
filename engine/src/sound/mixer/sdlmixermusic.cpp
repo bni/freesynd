@@ -136,7 +136,7 @@ bool SdlMixerMusic::loadMusic(uint8 * musicData, size_t size)
  */
 bool SdlMixerMusic::loadMusicFile(const char *fname)
 {
-    std::string fullpathName = File::getFreesyndDataFullPath(fname);
+    std::string fullpathName = fs_utl::File::getFreesyndDataFullPath(fname);
     LOG(Log::k_FLG_SND, "SdlMixerMusic", "loadMusicFile", ("Load music from file %s", fullpathName.c_str()));
     Mix_Music *newmusic = Mix_LoadMUS(fullpathName.c_str());
 

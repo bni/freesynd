@@ -198,7 +198,7 @@ Weapon * WeaponManager::loadWeapon(Weapon::WeaponType wt) {
        weapon here but it got scrapped early on and they used the large
        icon space to implement the all button.
      */
-    std::string filename(File::getFreesyndDataFullPath("ref/weapons.dat"));
+    std::string filename(fs_utl::File::getFreesyndDataFullPath("ref/weapons.dat"));
     try {
         // Loads configuration file
         ConfigFile conf(filename);

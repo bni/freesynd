@@ -508,7 +508,7 @@ void MapMenu::initCountriesTexture() {
     // 64 x 44 x 50
     // Load map block informations
     size_t mapblk_size;
-    mapblk_data_ = File::loadOriginalFile("mmapblk.dat", mapblk_size);
+    mapblk_data_ = fs_utl::File::loadOriginalFile("mmapblk.dat", mapblk_size);
     if (mapblk_data_ == nullptr) {
         FSERR(Log::k_FLG_GFX, "MapMenu", "initCountriesTexture", ("Could not read file: mmapblk.dat"))
         return;

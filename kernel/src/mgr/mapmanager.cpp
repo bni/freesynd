@@ -59,7 +59,7 @@ Map * MapManager::loadMap(uint16 i_mapNum)
     LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("Load new map"));
     std::string filename = std::format("map{:02}.dat", i_mapNum);
     size_t size;
-    uint8 *mapData = File::loadOriginalFile(filename, size);
+    uint8 *mapData = fs_utl::File::loadOriginalFile(filename, size);
     if (mapData == NULL) {
         return NULL;
     }

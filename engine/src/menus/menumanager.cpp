@@ -202,7 +202,7 @@ bool MenuManager::loadMenuPalette() {
 
     LOG(Log::k_FLG_GFX, "MenuManager", "loadMenuPalette", ("Loading menu palette"))
 
-    uint8 *paletteData = File::loadOriginalFile("mselect.pal", size);
+    uint8 *paletteData = fs_utl::File::loadOriginalFile("mselect.pal", size);
 
     if (!paletteData) {
         FSERR(Log::k_FLG_GFX, "MenuManager", "loadMenuPalette", ("Could not read mselect.pal"))

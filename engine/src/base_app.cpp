@@ -135,7 +135,7 @@ bool BaseApp::initialize(const CliParam& param) {
     }
 
     if (context_->isTestFiles()) {
-        if (!File::testOriginalData()) {
+        if (!fs_utl::File::testOriginalData()) {
             return false;
         }
         // do not tests files from now
