@@ -38,15 +38,20 @@
 #include "fs-engine/menus/logoutmenu.h"
 #include "fs-engine/menus/flimenu.h"
 
+using fs_eng::Music;
+using fs_eng::SoundManager;
+using fs_eng::NO_SOUND;
+using fs_eng::MENU_CHANGE;
+
 //! This defines the list of events for the transition show animation
 const FrameEvent transition_show_event[] = {
-    {-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    {-1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of events for the transition leave animation
 const FrameEvent transition_leave_event[] = {
-    { 1, msc::NO_TRACK, MENU_CHANGE,   0x1, NULL },
-    {-1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1, Music::NO_TRACK, MENU_CHANGE,   0x1, NULL },
+    {-1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 /*!

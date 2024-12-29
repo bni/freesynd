@@ -33,6 +33,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 /*!
  * Class constructor.
  */
@@ -156,4 +158,4 @@ bool SdlMixerMusic::loadMusicFile(const char *fname)
 
     return true;
 }
-
+}

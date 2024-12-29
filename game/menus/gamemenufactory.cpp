@@ -38,85 +38,88 @@
 #include "fs-engine/menus/flimenu.h"
 #include "fs-utils/log/log.h"
 
+using fs_eng::Music;
+using fs_eng::NO_SOUND;
+
 //! This defines the list of event for the intro animation
 const FrameEvent intro[] = {
-    { 1,  msc::TRACK_INTRO, NO_SOUND, 0x0, NULL }, // Play track
-    { 15, msc::NO_TRACK, NO_SOUND,        0x0, "INTRO_0" },
-    { 39, msc::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
-    { 44, msc::NO_TRACK, NO_SOUND,        0x0, "INTRO_1" },
-    { 62, msc::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
-    { 67, msc::NO_TRACK, NO_SOUND,        0x0, "INTRO_2" },
-    { 85, msc::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear
-    { 90, msc::NO_TRACK, NO_SOUND,        0x0, "INTRO_3" },
-    { 117, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 121, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_4" },
-    { 135, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 138, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_5" },
-    { 153, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_6" },
-    { 165, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_7" },
-    { 178, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // Clear
-    { 180, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_8" },
-    { 200, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 234, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_9" },
-    { 271, msc::NO_TRACK, NO_SOUND,    0x0, NULL },//clear
-    { 291, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_10" },
-    { 333, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // Clear
-    { 359, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_11" },
-    { 406, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 442, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_12" },
-    { 467, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 473, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_13" },
-    { 502, msc::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 548, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_14" },
-    { 562, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 569, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_15" },
-    { 610, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 639, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_16" },
-    { 673, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 848, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_17" },
-    { 892, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 904, msc::NO_TRACK, NO_SOUND,    0x0, "INTRO_18" },
-    { 960, msc::NO_TRACK, NO_SOUND,    0x0, NULL },
-    {  -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1,  Music::TRACK_INTRO, NO_SOUND, 0x0, NULL }, // Play track
+    { 15, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_0" },
+    { 39, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
+    { 44, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_1" },
+    { 62, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
+    { 67, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_2" },
+    { 85, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear
+    { 90, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_3" },
+    { 117, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
+    { 121, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_4" },
+    { 135, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
+    { 138, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_5" },
+    { 153, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_6" },
+    { 165, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_7" },
+    { 178, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // Clear
+    { 180, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_8" },
+    { 200, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
+    { 234, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_9" },
+    { 271, Music::NO_TRACK, NO_SOUND,    0x0, NULL },//clear
+    { 291, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_10" },
+    { 333, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // Clear
+    { 359, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_11" },
+    { 406, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
+    { 442, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_12" },
+    { 467, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
+    { 473, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_13" },
+    { 502, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
+    { 548, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_14" },
+    { 562, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
+    { 569, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_15" },
+    { 610, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
+    { 639, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_16" },
+    { 673, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
+    { 848, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_17" },
+    { 892, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
+    { 904, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_18" },
+    { 960, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
+    {  -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the mission won animation
 const FrameEvent mission_win[] = {
-    { 1, msc::NO_TRACK, APPLAUSE,              0x1, NULL },
-    { 1, msc::NO_TRACK, APPLAUSE_ZOOM,         0x0, NULL },
-    { 10, msc::NO_TRACK, FIREWORKS,            0x1, NULL },
-    { 30, msc::NO_TRACK, FIREWORKS_APPLAUSE,   0x1, NULL },
-    { -1, msc::NO_TRACK, NO_SOUND,              0x0, NULL }
+    { 1, Music::NO_TRACK, fs_eng::APPLAUSE,              0x1, NULL },
+    { 1, Music::NO_TRACK, fs_eng::APPLAUSE_ZOOM,         0x0, NULL },
+    { 10, Music::NO_TRACK, fs_eng::FIREWORKS,            0x1, NULL },
+    { 30, Music::NO_TRACK, fs_eng::FIREWORKS_APPLAUSE,   0x1, NULL },
+    { -1, Music::NO_TRACK, NO_SOUND,              0x0, NULL }
 };
 
 //! This defines the list of event for the mission lost animation
 const FrameEvent mission_failed[] = {
-    { 1, msc::NO_TRACK, NO_SOUND, 0x0, NULL },
-    { 35, msc::NO_TRACK, PRESS_BUTTON, 0x0, NULL },
-    { 52, msc::NO_TRACK, MENU_AFTER_MISSION, 0x0, NULL },
-    { 80, msc::NO_TRACK, SPEECH_NO, 0x0, NULL },
-    { 108, msc::NO_TRACK, MONITOR_IMPACT, 0x0, NULL },
-    { 118, msc::NO_TRACK, GLASS_BREAKING_2, 0x0, NULL },
-    { -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1, Music::NO_TRACK, NO_SOUND, 0x0, NULL },
+    { 35, Music::NO_TRACK, fs_eng::PRESS_BUTTON, 0x0, NULL },
+    { 52, Music::NO_TRACK, fs_eng::MENU_AFTER_MISSION, 0x0, NULL },
+    { 80, Music::NO_TRACK, fs_eng::SPEECH_NO, 0x0, NULL },
+    { 108, Music::NO_TRACK, fs_eng::MONITOR_IMPACT, 0x0, NULL },
+    { 118, Music::NO_TRACK, fs_eng::GLASS_BREAKING_2, 0x0, NULL },
+    { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the game lost animation
 const FrameEvent game_lost[] = {
-    { 1, msc::NO_TRACK, NO_SOUND, 0x0, NULL },
-    { 2, msc::NO_TRACK, FALLING_COMMAND_SHIP, 0x0, NULL },
-    { 34, msc::NO_TRACK, EXPLOSION_BIG, 0x0, NULL },
-    { -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1, Music::NO_TRACK, NO_SOUND, 0x0, NULL },
+    { 2, Music::NO_TRACK, fs_eng::FALLING_COMMAND_SHIP, 0x0, NULL },
+    { 34, Music::NO_TRACK, fs_eng::EXPLOSION_BIG, 0x0, NULL },
+    { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the menu up animation
 const FrameEvent menu_up[] = {
-    { 1, msc::NO_TRACK, MENU_UP,   0x1, NULL },
-    { -1, msc::NO_TRACK, NO_SOUND,  0x0, NULL }
+    { 1, Music::NO_TRACK, fs_eng::MENU_UP,   0x1, NULL },
+    { -1, Music::NO_TRACK, NO_SOUND,  0x0, NULL }
 };
 
 //! This defines the list of no event
 const FrameEvent no_event[] = {
-    { -1, msc::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
 };
 
 /*!

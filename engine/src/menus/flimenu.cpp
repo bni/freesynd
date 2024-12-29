@@ -24,6 +24,8 @@
 
 #include "fs-engine/sound/musicmanager.h"
 
+using fs_eng::Music;
+using fs_eng::NO_SOUND;
 
 /*!
  * Constructor
@@ -142,7 +144,7 @@ void FliMenu::handleTick(uint32_t elapsed)
                     break;
                 else if (desc.evtList[i].frame == frameIndex) {
                     // Play music
-                    if (desc.evtList[i].music != msc::NO_TRACK) {
+                    if (desc.evtList[i].music != Music::NO_TRACK) {
                         g_MusicMgr.playTrack(desc.evtList[i].music);
                     }
                     // Play sound

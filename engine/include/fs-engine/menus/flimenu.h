@@ -33,9 +33,9 @@ struct FrameEvent {
     /*! frame Id.*/
     int frame;
     /*! start music.*/
-    msc::MusicTrack    music;
+    fs_eng::Music::MusicTrack    music;
     /*! Game sound to play.*/
-    InGameSample    sound;
+    fs_eng::InGameSample    sound;
     uint8_t    sndChan;
     /*! Operation on subtitle.*/
     const char* subtitle;

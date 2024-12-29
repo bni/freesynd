@@ -42,6 +42,8 @@
 #include "fs-utils/log/log.h"
 #include "fstexture_sdl.h"
 
+using fs_eng::SdlMixerAudio;
+
 SDL_Joystick *joy = NULL;
 
 const int SystemSDL::kCursorWidth = 24;

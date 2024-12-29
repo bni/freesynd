@@ -35,9 +35,11 @@
 #include "fs-engine/sound/music.h"
 #include "fs-engine/sound/audio.h"
 
+namespace fs_eng {
+
 /*!
- * Music manager class.
- */
+* Music manager class.
+*/
 class MusicManager : public Singleton < MusicManager > {
 public:
     MusicManager();
@@ -45,7 +47,7 @@ public:
 
     void initialize(bool disabled, Audio* audio);
 
-    void playTrack(msc::MusicTrack track, int loops = -1);
+    void playTrack(Music::MusicTrack track, int loops = -1);
     void stopPlayback();
     //! Sets the music volume to the given level
     void setVolume(int volume);
@@ -59,17 +61,19 @@ protected:
 
 protected:
     std::vector<std::unique_ptr<Music>> tracks_;
-    msc::MusicTrack current_track_;
+    Music::MusicTrack current_track_;
     bool is_playing_;
     /*!
-     * Saves the volume level before a mute so
-     * we can restore it after a unmute.
-     */
+    * Saves the volume level before a mute so
+    * we can restore it after a unmute.
+    */
     int volumeBeforeMute_;
     bool disabled_;
     Audio* audio_;
 };
 
-#define g_MusicMgr   MusicManager::singleton()
+};
+
+#define g_MusicMgr   fs_eng::MusicManager::singleton()
 
 #endif

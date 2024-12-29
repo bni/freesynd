@@ -31,6 +31,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 MusicManager::MusicManager()
 {
     // -1 means music is not mute
@@ -103,7 +105,7 @@ void MusicManager::initialize(bool disabled, Audio* audio)
     LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Music initialized"))
 }
 
-void MusicManager::playTrack(msc::MusicTrack track, int loops)
+void MusicManager::playTrack(Music::MusicTrack track, int loops)
 {
     if (!disabled_ && isAudioInitialized()) {
         if (is_playing_) {
@@ -137,13 +139,13 @@ int MusicManager::getVolume() {
 }
 
 /*!
- * Turns the music on/off.
- * The method watches for the value of field volumeBeforeMute_ :
- *  - if it's value is -1 : then music volume is on. So the method
- *    saves the level into volumeBeforeMute_ and sets the volume to zero
- *  - else it means volume is mute so the methods restores the original
- *    volume level.
- */
+* Turns the music on/off.
+* The method watches for the value of field volumeBeforeMute_ :
+*  - if it's value is -1 : then music volume is on. So the method
+*    saves the level into volumeBeforeMute_ and sets the volume to zero
+*  - else it means volume is mute so the methods restores the original
+*    volume level.
+*/
 void MusicManager::toggleMusic() {
     if (isAudioInitialized()) {
         if (volumeBeforeMute_ == -1) {
@@ -156,4 +158,5 @@ void MusicManager::toggleMusic() {
             volumeBeforeMute_ = -1;
         }
     }
+}
 }

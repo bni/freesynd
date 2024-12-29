@@ -34,6 +34,7 @@
 #include "fs-engine/sound/sound.h"
 #include "fs-engine/sound/music.h"
 
+namespace fs_eng {
 
 //! Abstraction of the sound subsystem.
 /*!
@@ -148,5 +149,7 @@ public:
 };
 
 #endif //HAVE_SDL_MIXER
+
+}
 
 #endif

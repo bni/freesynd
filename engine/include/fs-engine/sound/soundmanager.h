@@ -35,6 +35,8 @@
 #include "fs-engine/sound/sound.h"
 #include "fs-engine/sound/audio.h"
 
+namespace fs_eng {
+
 /*!
  * Sound manager class.
  */
@@ -92,6 +94,8 @@ protected:
     Audio *audio_;
 };
 
-#define g_SoundMgr   SoundManager::singleton()
+}
+
+#define g_SoundMgr   fs_eng::SoundManager::singleton()
 
 #endif

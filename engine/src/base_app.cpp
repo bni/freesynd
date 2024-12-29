@@ -33,6 +33,8 @@
 #include "mixer/sdlmixeraudio.h"
 #endif // HAVE_SDL_MIXER
 
+namespace fs_eng {
+
 CliParam::CliParam() {
     startMission_ = -1;
     disableSound_ = false;
@@ -253,4 +255,4 @@ void BaseApp::onQuitHandler([[maybe_unused]] QuitEvent *evt) {
     running_ = false;
 }
 
-
+}

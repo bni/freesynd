@@ -315,7 +315,7 @@ void GameplayMenu::handleShow() {
     handleAgentWarned_ = EventManager::listen<PoliceWarningEmittedEvent>(this, &GameplayMenu::onPoliceWarningEmittedEvent);
 
     // play game track
-    g_MusicMgr.playTrack(msc::TRACK_ASSASSINATE);
+    g_MusicMgr.playTrack(fs_eng::Music::TRACK_ASSASSINATE);
     menu_manager_->resetSinceMouseDown();
 }
 
@@ -1309,7 +1309,7 @@ void GameplayMenu::selectAgent(size_t agentNo, bool addToGroup) {
         updateSelectAll();
         centerMinimapOnLeader();
         highlightLeaderMarker();
-        g_SoundMgr.play(SPEECH_SELECTED);
+        g_SoundMgr.play(fs_eng::SPEECH_SELECTED);
 
         // redraw agent selectors
         addDirtyRect((agentNo % 2) * 65, (agentNo / 2) * 90 , 64, 46);
@@ -1327,7 +1327,7 @@ void GameplayMenu::selectAllAgents() {
     selection_.selectAllAgents(isButtonSelectAllPressed_);
     updateSelectAll();
     if (isButtonSelectAllPressed_ != prv_state) {
-        g_SoundMgr.play(SPEECH_SELECTED);
+        g_SoundMgr.play(fs_eng::SPEECH_SELECTED);
         // redraw all agent selectors
         addDirtyRect(0, 0, 128, 180);
     }
@@ -1435,7 +1435,7 @@ void GameplayMenu::handleWeaponSelection(uint8 selectorIndex, bool ctrl) {
             selection_.selectWeaponFromLeader(selectorIndex, ctrl);
         }
     }
-    g_SoundMgr.play(SPEECH_SELECTED);
+    g_SoundMgr.play(fs_eng::SPEECH_SELECTED);
 }
 
 /**
@@ -1444,7 +1444,7 @@ void GameplayMenu::handleWeaponSelection(uint8 selectorIndex, bool ctrl) {
 void GameplayMenu::onPoliceWarningEmittedEvent(PoliceWarningEmittedEvent *pEvt) {
     if (canPlayPoliceWarnSound_) {
         // warn
-        g_SoundMgr.play(PUTDOWN_WEAPON);
+        g_SoundMgr.play(fs_eng::PUTDOWN_WEAPON);
         canPlayPoliceWarnSound_ = false;
     }
 }

@@ -303,7 +303,7 @@ void Explosion::inflictDamage(Mission *pMission) {
     // create the ring of fire around the origin of explosion
     generateFlameWaves(pMission, &(dmg_.originLocW), dmg_.range);
 
-    g_SoundMgr.play(EXPLOSION_BIG);
+    g_SoundMgr.play(fs_eng::EXPLOSION_BIG);
 }
 
 /*! Draws animation of impact/explosion

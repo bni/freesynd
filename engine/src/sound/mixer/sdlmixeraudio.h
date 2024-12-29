@@ -25,6 +25,8 @@
 
 #include "fs-engine/sound/audio.h"
 
+namespace fs_eng {
+
 class SdlMixerAudio : public Audio {
 public:
     SdlMixerAudio();
@@ -64,5 +66,7 @@ private:
     bool initialized_;
 
 };
+
+}
 
 #endif //FS_SDLMIXER_AUDIO_H

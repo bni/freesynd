@@ -32,6 +32,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 SoundManager::SoundManager():tabentry_startoffset_(58), tabentry_offset_(32)
 {
     volumeBeforeMute_ = -1;
@@ -254,4 +256,5 @@ void SoundManager::toggleSound() {
             volumeBeforeMute_ = -1;
         }
     }
+}
 }

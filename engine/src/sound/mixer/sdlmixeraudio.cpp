@@ -29,6 +29,8 @@
 #include "sdlmixersound.h"
 #include "sdlmixermusic.h"
 
+namespace fs_eng {
+
 SdlMixerAudio::SdlMixerAudio() {
     initialized_ = false;
 }
@@ -196,3 +198,4 @@ std::unique_ptr<Music> SdlMixerAudio::createMusic() {
     return std::make_unique<SdlMixerMusic>();
 }
 
+}

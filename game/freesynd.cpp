@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
 #else
     srand((unsigned) time(NULL));
 #endif
-    CliParam param;
+    fs_eng::CliParam param;
 
     if (param.parseCommandLine(argc, argv)) {
         return 1;

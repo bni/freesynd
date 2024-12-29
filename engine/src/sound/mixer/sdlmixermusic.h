@@ -27,6 +27,8 @@
 
 #include <SDL_mixer.h>
 
+namespace fs_eng {
+
 /*!
  * Implementation of music using SDL_Mixer.
  */
@@ -46,5 +48,7 @@ class SdlMixerMusic : public Music {
     Mix_Music *music_data_;
     SDL_RWops *rw_;
 };
+
+}
 
 #endif  //SDLMIXERMUSIC_H

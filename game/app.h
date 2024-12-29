@@ -40,7 +40,7 @@
  * Application class.
  * Used for managing game settings and workflows.
  */
-class App : public BaseApp {
+class App : public fs_eng::BaseApp {
   public:
     App();
     virtual ~App();
@@ -54,11 +54,11 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const CliParam& param);
+    bool doInitialize(const fs_eng::CliParam& param);
     //! Destroy all components
     void doDestroy();
     //! Define the menuid that will be displayed at the application's start
-    int getStartMenuId(const CliParam& param);
+    int getStartMenuId(const fs_eng::CliParam& param);
 
 private:
     /*! Controls the game logic. */

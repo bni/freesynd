@@ -78,7 +78,7 @@ protected:
  */
 class MenuManager {
 public:
-    MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds);
+    MenuManager(MenuFactory *pFactory, fs_eng::SoundManager *pGameSounds);
     ~MenuManager();
 
     bool initialize(bool loadIntroFont);
@@ -197,7 +197,7 @@ private:
     fs_eng::Palette menuPalette_;
     /*! Font manager.*/
     FontManager fonts_;
-    SoundManager *pGameSounds_;
+    fs_eng::SoundManager *pGameSounds_;
     LogoManager logoManager_;
 
     /*! Time since last mouse down event without mouseup*/

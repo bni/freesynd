@@ -161,7 +161,7 @@ public:
     virtual void stopReceiveText() = 0;
 
     //! Return a pointer to the Audio system instance
-    Audio* getAudio() {return audio_.get();}
+    fs_eng::Audio* getAudio() {return audio_.get();}
 
     //! Create a FSTexture with the current system
     virtual std::unique_ptr<FSTexture> createTexture() = 0;
@@ -173,7 +173,7 @@ public:
     virtual fs_eng::FS_Lang getLanguageFromSystem() = 0;
 
 protected:
-    std::unique_ptr<Audio> audio_;
+    std::unique_ptr<fs_eng::Audio> audio_;
 };
 
 #define g_System    System::singleton()

@@ -35,6 +35,8 @@
 
 #ifndef HAVE_SDL_MIXER
 
+namespace fs_eng {
+
 DefaultAudio::DefaultAudio() {}
 
 DefaultAudio::~DefaultAudio() {}
@@ -92,6 +94,7 @@ std::unique_ptr<Sound> DefaultAudio::createSound() {
 
 std::unique_ptr<Music> DefaultAudio::createMusic() {
     return std::make_unique<DefaultMusic>();
+}
 }
 
 #endif // HAVE_SDL_MIXER

@@ -118,7 +118,7 @@ public:
     int rank() { return rank_; }
     int weight() {return weight_; }
 
-    InGameSample getSound() { return sample_; }
+    fs_eng::InGameSample getSound() { return sample_; }
 
     int selector() {
         return small_icon_ == 28 ? 1618 : small_icon_ - 14 + 1602;
@@ -270,7 +270,7 @@ protected:
     //! Set of ids of impacts animation
     ImpactAnims impactAnims_;
     //! Sound of weapon
-    InGameSample sample_;
+    fs_eng::InGameSample sample_;
 };
 
 /*!

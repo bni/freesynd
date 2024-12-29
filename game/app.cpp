@@ -69,7 +69,7 @@ App::~App() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool App::doInitialize([[maybe_unused]] const CliParam& param) {
+bool App::doInitialize([[maybe_unused]] const fs_eng::CliParam& param) {
     return game_ctlr_->initialize();
 }
 
@@ -97,7 +97,7 @@ void App::doDestroy() {
 /*!
  * This method returns the menu Id used to start the app.
  */
-int App::getStartMenuId(const CliParam& param) {
+int App::getStartMenuId(const fs_eng::CliParam& param) {
     if (param.getStartingMission() == -1) {
         if (context_->isPlayIntro()) {
             // Update intro flag so intro won't be played next time

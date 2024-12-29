@@ -28,6 +28,8 @@
 #include "fs-utils/common.h"
 #include "fs-engine/sound/sound.h"
 
+namespace fs_eng {
+
 //! Sound implementation using Sdl_Mixer.
 /*!
  * This class is an implementation of the sound system
@@ -53,5 +55,7 @@ protected:
     /*! The sdl structure that stores sound data.*/
     Mix_Chunk *sound_data_;
 };
+
+}
 
 #endif  // SDLMIXERSOUND_H_

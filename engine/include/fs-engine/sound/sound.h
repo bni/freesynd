@@ -29,6 +29,8 @@
 
 #include "fs-utils/common.h"
 
+namespace fs_eng {
+
 enum IntroSample {
     kSound1 = 0,
     kNoSound = -1
@@ -104,5 +106,7 @@ public:
 };
 
 #endif  // HAVE_SDL_MIXER
+
+}
 
 #endif  // SOUND_H

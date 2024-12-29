@@ -37,6 +37,8 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/events/default_events.h"
 
+namespace fs_eng {
+
 class CliParam {
 
 public:
@@ -135,5 +137,7 @@ private:
     MusicManager music_;
     MenuManager menus_;
 };
+
+}
 
 #endif // ENGINE_BASEAPP_H

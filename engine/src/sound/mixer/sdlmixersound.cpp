@@ -27,6 +27,8 @@
 
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 /*!
  * Class constructor. Initialize date with NULL.
  */
@@ -111,4 +113,4 @@ bool SdlMixerSound::loadSound(uint8 * soundData, uint32 size)
     sound_data_ = newsound;
     return true;
 }
-
+}

@@ -29,7 +29,10 @@
 
 #include "fs-utils/common.h"
 
-namespace msc {
+namespace fs_eng {
+
+class Music {
+  public:
     enum MusicTrack {
         TRACK_INTRO,
         TRACK_ASSASSINATE,
@@ -39,10 +42,7 @@ namespace msc {
         TRACK_MISSION_COMPLETED,
         NO_TRACK = -1
     };
-};
 
-class Music {
-  public:
     virtual ~Music() {}
 
     //! Play the music
@@ -121,5 +121,7 @@ class DefaultMusic : public Music {
 };
 
 #endif  // HAVE_SDL_MIXER
+
+}
 
 #endif  // MUSIC_H

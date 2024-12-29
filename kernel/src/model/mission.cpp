@@ -260,11 +260,11 @@ void Mission::endWithStatus(Status status) {
     switch (status) {
     case kMissionStatusCompleted:
         LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission succeeded"));
-        g_SoundMgr.play(SPEECH_MISSION_COMPLETED);
+        g_SoundMgr.play(fs_eng::SPEECH_MISSION_COMPLETED);
         break;
     case kMissionStatusFailed:
         LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission failed"));
-        g_SoundMgr.play(SPEECH_MISSION_FAILED);
+        g_SoundMgr.play(fs_eng::SPEECH_MISSION_FAILED);
         break;
     case kMissionStatusAborted:
         LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission aborted"));
