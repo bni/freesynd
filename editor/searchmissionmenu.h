@@ -61,9 +61,9 @@ private:
 /*!
  * Search mission menu.
  */
-class SearchMissionMenu : public Menu {
+class SearchMissionMenu : public fs_eng::Menu {
 public:
-    SearchMissionMenu(MenuManager *m);
+    SearchMissionMenu(fs_eng::MenuManager *m);
     ~SearchMissionMenu();
 
     void handleShow() override;
@@ -79,8 +79,8 @@ protected:
 
 protected:
     int searchButId_;
-    ListBox *pPedTypeListBox_;
-    ListBox *pVehicleTypeListBox_;
+    fs_eng::ListBox *pPedTypeListBox_;
+    fs_eng::ListBox *pVehicleTypeListBox_;
 
     VectorModel<PedTypeAdapter *> pedTypeList_;
     VectorModel<VehicleTypeAdapter *> vehicleTypeList_;

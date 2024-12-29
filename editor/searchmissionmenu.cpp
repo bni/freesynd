@@ -35,6 +35,10 @@
 #include "editorapp.h"
 #include "editormenuid.h"
 
+using fs_eng::MenuManager;
+using fs_eng::Menu;
+using fs_eng::FontManager;
+
 std::string PedTypeAdapter::getName() {
     switch (type_) {
     case PedInstance::kPedTypeAgent:

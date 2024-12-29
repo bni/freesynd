@@ -31,9 +31,9 @@
 /*!
  * Search mission menu.
  */
-class ListMissionMenu : public Menu {
+class ListMissionMenu : public fs_eng::Menu {
 public:
-    ListMissionMenu(MenuManager *m);
+    ListMissionMenu(fs_eng::MenuManager *m);
 
     void handleAction(const int actionId, void *ctx) override;
 

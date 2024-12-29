@@ -30,6 +30,10 @@
 
 #include "editormenuid.h"
 
+using fs_eng::MenuManager;
+using fs_eng::Menu;
+using fs_eng::FontManager;
+
 const size_t FontMenu::kSpriteMaxObjects = 84;
 
 FontMenu::FontMenu(MenuManager * m):

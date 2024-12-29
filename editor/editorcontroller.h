@@ -81,7 +81,7 @@ private:
     /*! Manager of mods.*/
     ModManager mods_;
     //! For loading tiles
-    TileManager tileMgr_;
+    fs_eng::TileManager tileMgr_;
     /*! Manager of missions.*/
     MissionManager missions_;
 

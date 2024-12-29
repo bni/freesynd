@@ -31,6 +31,9 @@
 #include "editormenuid.h"
 #include "editorapp.h"
 
+using fs_eng::MenuManager;
+using fs_eng::Menu;
+using fs_eng::FontManager;
 
 ListMissionMenu::ListMissionMenu(MenuManager * m):
     Menu(m, fs_edit_menus::kMenuIdListMis, fs_edit_menus::kMenuIdSrchMis)

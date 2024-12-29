@@ -30,15 +30,15 @@
 /*!
  * Animation menu.
  */
-class AnimMenu : public Menu {
+class AnimMenu : public fs_eng::Menu {
 public:
-    AnimMenu(MenuManager *m);
+    AnimMenu(fs_eng::MenuManager *m);
 
     void handleRender(DirtyList &dirtyList) override;
     void handleLeave() override;
 
 protected:
-    bool handleUnMappedKey(const FS_Key key) override;
+    bool handleUnMappedKey(const fs_eng::FS_Key key) override;
 
     void displayFont();
 

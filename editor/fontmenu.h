@@ -30,9 +30,9 @@
 /*!
  * Font menu.
  */
-class FontMenu : public Menu {
+class FontMenu : public fs_eng::Menu {
 public:
-    FontMenu(MenuManager *m);
+    FontMenu(fs_eng::MenuManager *m);
 
     void handleShow();
     void handleRender(DirtyList &dirtyList) override;

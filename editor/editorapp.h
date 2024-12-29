@@ -38,7 +38,7 @@
 /*!
  * Editor Application class.
  */
-class EditorApp : public BaseApp {
+class EditorApp : public fs_eng::BaseApp {
   public:
     EditorApp();
     virtual ~EditorApp();
@@ -50,11 +50,11 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const CliParam& param);
+    bool doInitialize(const fs_eng::CliParam& param);
     //! Destroy all components
     void doDestroy() {}
     //! Define the menuid that will be displayed at the application's start
-    int getStartMenuId(const CliParam& param);
+    int getStartMenuId(const fs_eng::CliParam& param);
 
 private:
     /*! Controls the editor logic. */

@@ -32,14 +32,14 @@
 /*!
  * Creates menus for the editor application.
  */
-class EditorMenuFactory : public MenuFactory {
+class EditorMenuFactory : public fs_eng::MenuFactory {
 protected:
     /*!
      * Instanciate menus for the Editor.
      * @param menuId A menu ID
      * @return null if menu ID is unknown
      */
-    Menu * createCustomMenu(const int menuId);
+    fs_eng::Menu * createCustomMenu(const int menuId);
 
     //! Return the name of the animation to play before showing a menu
     const char* getShowAnimation(int menuId) override;

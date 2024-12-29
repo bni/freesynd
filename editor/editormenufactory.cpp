@@ -34,8 +34,8 @@
 #include "searchmissionmenu.h"
 #include "listmissionmenu.h"
 
-Menu * EditorMenuFactory::createCustomMenu(const int menuId) {
-    Menu *pMenu = NULL;
+fs_eng::Menu * EditorMenuFactory::createCustomMenu(const int menuId) {
+    fs_eng::Menu *pMenu = NULL;
 
     if (menuId == fs_edit_menus::kMenuIdMain) {
         pMenu =  new MainMenu(pManager_);

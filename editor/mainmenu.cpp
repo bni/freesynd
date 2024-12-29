@@ -30,6 +30,10 @@
 
 #include "editormenuid.h"
 
+using fs_eng::MenuManager;
+using fs_eng::Menu;
+using fs_eng::FontManager;
+
 MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_menus::kMenuIdMain)
 {
     isCachable_ = false;

@@ -31,6 +31,10 @@
 
 #include "editormenuid.h"
 
+using fs_eng::MenuManager;
+using fs_eng::Menu;
+using fs_eng::FontManager;
+
 AnimMenu::AnimMenu(MenuManager * m)
         : Menu(m, fs_edit_menus::kMenuIdFont, fs_edit_menus::kMenuIdMain, true) {
     isCachable_ = false;
@@ -69,27 +73,27 @@ void AnimMenu::displayFont() {
 
 }
 
-bool AnimMenu::handleUnMappedKey(const FS_Key key) {
+bool AnimMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     bool change = false;
-    if (key.keyCode == kKeyCode_Up) {
+    if (key.keyCode == fs_eng::kKeyCode_Up) {
         if (animId_ < g_SpriteMgr.numAnims() - 1) {
             animId_++;
             frameId_ = 0;
             change = true;
         }
-    } else if (key.keyCode == kKeyCode_Down) {
+    } else if (key.keyCode == fs_eng::kKeyCode_Down) {
         if (animId_ > 0) {
             animId_--;
             frameId_ = 0;
             change = true;
         }
-    } else if (key.keyCode == kKeyCode_Right) {
+    } else if (key.keyCode == fs_eng::kKeyCode_Right) {
         frameId_++;
         if (frameId_ > g_SpriteMgr.lastFrame(animId_)) {
             frameId_ = 0;
         }
         change = true;
-    } else if (key.keyCode == kKeyCode_Left) {
+    } else if (key.keyCode == fs_eng::kKeyCode_Left) {
         frameId_--;
         if (frameId_ < 0) {
             frameId_ = g_SpriteMgr.lastFrame(animId_);
