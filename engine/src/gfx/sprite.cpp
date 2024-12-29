@@ -31,6 +31,8 @@
 
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 void unpackBlocks1(const uint8_t * data, uint8_t * pixels)
 {
     for (int i = 0; i < 8; ++i) {
@@ -356,4 +358,5 @@ void Sprite::data(uint8_t * spr_data) const
     for (int j = 0; j < height_; j++) {
         memcpy(spr_data + j * width_, sprite_data_ + j * stride_, (size_t) width_);
     }
+}
 }

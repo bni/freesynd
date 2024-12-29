@@ -33,6 +33,8 @@
 #include "fs-utils/common.h"
 #include "spritemanager.h"
 
+namespace fs_eng {
+
 /*!
  * Font range description for 8-bit character sets.
  */
@@ -118,5 +120,7 @@ public:
     //! draw a UTF-8 text at the given position with the given color
     void drawText(int x, int y, const std::string& text, fs_eng::FSColor toColor);
 };
+
+}
 
 #endif

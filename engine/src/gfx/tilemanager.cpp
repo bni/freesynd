@@ -33,6 +33,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-engine/system/system.h"
 
+namespace fs_eng {
+
 /*!
  *
  */
@@ -332,4 +334,6 @@ bool TileManager::drawTile(const Tile *tile, int x, int y) {
     tilesTexture_->render(tile->textureLocation(), {x, y}, Tile::kTileWidth, Tile::kTileHeight);
 
     return true;
+}
+
 }

@@ -29,6 +29,8 @@
 #include "fs-utils/common.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
+
 /*!
  * This represent a record in the sprite Tab file
  */
@@ -150,5 +152,8 @@ private:
     // TODO : remove
     uint8_t *sprite_data_;
 };
+
+}
+
 
 #endif

@@ -35,6 +35,8 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
+using fs_eng::FontManager;
+
 const int LoadSaveMenu::X_ORIGIN = 165;
 const int LoadSaveMenu::Y_ORIGIN = 100;
 const size_t LoadSaveMenu::NAME_MAX_SIZE = 31;

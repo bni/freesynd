@@ -33,6 +33,8 @@
 #include "core/gamesession.h"
 #include "core/gamecontroller.h"
 
+using fs_eng::FontManager;
+
 ResearchMenu::ResearchMenu(fs_eng::MenuManager * m):
         fs_eng::Menu(m, fs_game_menus::kMenuIdResearch, fs_game_menus::kMenuIdSelect, true) {
     cursorOnShow_ = kMenuCursor;

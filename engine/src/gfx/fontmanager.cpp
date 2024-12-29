@@ -31,6 +31,8 @@
 
 #include "fs-utils/log/log.h"
 
+namespace fs_eng {
+
 FontManager::FontManager()
 {
     for (int i = 0; i < 4; i++)
@@ -117,3 +119,4 @@ MenuFont *FontManager::createMenuFontForSize(SpriteManager *sprites,
     return pFont;
 }
 
+}

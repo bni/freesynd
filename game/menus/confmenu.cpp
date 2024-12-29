@@ -35,6 +35,7 @@
 #include "core/gamesession.h"
 #include "fs-engine/system/system.h"
 
+using fs_eng::FontManager;
 
 ConfMenu::ConfMenu(fs_eng::MenuManager *m) :
         fs_eng::Menu(m, fs_game_menus::kMenuIdConf, fs_game_menus::kMenuIdMain, true) {
@@ -47,9 +48,9 @@ ConfMenu::ConfMenu(fs_eng::MenuManager *m) :
 
     panelMsgId_ = addStatic(280, 32, 330, "#CONF_MAIN_MSG", FontManager::SIZE_2, true);
 
-    logoButId_ = addOption(325, 65, 240, 20, "#CONF_COL_LOGO_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, Sprite::MSPR_BULLET_D, Sprite::MSPR_BULLET_L);
-    compNameButId_ = addOption(325, 90, 240, 20, "#CONF_COM_NAME_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, Sprite::MSPR_BULLET_D, Sprite::MSPR_BULLET_L);
-    userNameButId_ = addOption(325, 115, 240, 20, "#CONF_YOUR_NAME_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, Sprite::MSPR_BULLET_D, Sprite::MSPR_BULLET_L);
+    logoButId_ = addOption(325, 65, 240, 20, "#CONF_COL_LOGO_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
+    compNameButId_ = addOption(325, 90, 240, 20, "#CONF_COM_NAME_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
+    userNameButId_ = addOption(325, 115, 240, 20, "#CONF_YOUR_NAME_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
     // Accept button
     acceptButId_ = addOption(17, 347, 128, 25, "#MENU_ACC_BUT", FontManager::SIZE_2, fs_game_menus::kMenuIdMain);
     // Main menu button
@@ -74,12 +75,12 @@ void ConfMenu::createPanels() {
     // Color picker
     colStaticId_ = addStatic(475, 60, "#CONF_COL_TITLE", FontManager::SIZE_2, true);
     getStatic(colStaticId_)->setVisible(false);
-    leftColButId_ = addImageOption(405, 58, Sprite::MSPR_LEFT_ARROW_D, Sprite::MSPR_LEFT_ARROW_L, false);
-    rightColButId_ = addImageOption(435, 58, Sprite::MSPR_RIGHT_ARROW_D, Sprite::MSPR_RIGHT_ARROW_L, false);
+    leftColButId_ = addImageOption(405, 58, fs_eng::Sprite::MSPR_LEFT_ARROW_D, fs_eng::Sprite::MSPR_LEFT_ARROW_L, false);
+    rightColButId_ = addImageOption(435, 58, fs_eng::Sprite::MSPR_RIGHT_ARROW_D, fs_eng::Sprite::MSPR_RIGHT_ARROW_L, false);
 
     // Logo picker
-    leftLogoButId_ = addImageOption(405, 94, Sprite::MSPR_LEFT_ARROW_D, Sprite::MSPR_LEFT_ARROW_L, false);
-    rightLogoButId_ = addImageOption(435, 94, Sprite::MSPR_RIGHT_ARROW_D, Sprite::MSPR_RIGHT_ARROW_L, false);
+    leftLogoButId_ = addImageOption(405, 94, fs_eng::Sprite::MSPR_LEFT_ARROW_D, fs_eng::Sprite::MSPR_LEFT_ARROW_L, false);
+    rightLogoButId_ = addImageOption(435, 94, fs_eng::Sprite::MSPR_RIGHT_ARROW_D, fs_eng::Sprite::MSPR_RIGHT_ARROW_L, false);
     logoStaticId_ = addStatic(475, 96, "#CONF_LOGO_TITLE", FontManager::SIZE_2, true);
     getStatic(logoStaticId_)->setVisible(false);
 

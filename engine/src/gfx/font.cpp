@@ -31,6 +31,7 @@
 #include "fs-engine/gfx/cp437.h"
 #include "fs-utils/io/file.h"
 
+namespace fs_eng {
 
 /*! \brief
  *
@@ -400,4 +401,6 @@ void GameFont::drawText(int x, int y, const std::string& text, fs_eng::FSColor t
             continue;
         }
     } //end of while
+}
+
 }

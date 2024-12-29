@@ -29,6 +29,8 @@
 #include "fs-utils/common.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
+
 /*!
  * Tile class.
  */
@@ -103,5 +105,7 @@ protected:
     //! Position of tile in the tileset texture
     Point2D textureLocation_;
 };
+
+}
 
 #endif

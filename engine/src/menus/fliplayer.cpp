@@ -194,6 +194,8 @@ const sample_timings g_rg_sample_offsets_and_timings[] = {
 
 #endif
 
+namespace fs_eng {
+
 FliPlayer::FliPlayer(): 
     fliData_(nullptr), 
     offscreen_(nullptr),
@@ -506,3 +508,4 @@ void FliPlayer::renderFrame() {
     texture_->renderStretch({0, 0}, {0, 0}, fli_info_.width, fli_info_.height, 2);
 }
 
+}

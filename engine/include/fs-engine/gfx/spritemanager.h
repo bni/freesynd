@@ -34,6 +34,7 @@
 #include "fs-utils/misc/singleton.h"
 #include "fs-engine/gfx/fstexture.h"
 
+namespace fs_eng {
 /*!
  * This class is used to track the position of a Sprite in
  * the Spriteset texture.
@@ -107,5 +108,6 @@ protected:
     //! Size of the texture that holds the spriteset
     size_t textureWidth_;
 };
+}
 
 #endif

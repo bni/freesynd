@@ -29,14 +29,13 @@
 #include <map>
 #include "fs-utils/common.h"
 #include "fs-kernel/model/map.h"
-#include "fs-engine/gfx/tilemanager.h"
 
 /*!
  * Map manager class.
  */
 class MapManager {
 public:
-    MapManager(TileManager *pTileManager);
+    MapManager(fs_eng::TileManager *pTileManager);
     ~MapManager();
 
     //! Load the map with the given id if not in cache
@@ -47,7 +46,7 @@ public:
 protected:
     //! a cache of the latest maps
     std::map<int, Map *> maps_;
-    TileManager *pTileManager_;
+    fs_eng::TileManager *pTileManager_;
 };
 
 #endif

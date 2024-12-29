@@ -27,18 +27,17 @@
 
 #include "fs-utils/common.h"
 #include "fs-engine/enginecommon.h"
+#include "fs-engine/gfx/tilemanager.h"
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/mapobject.h"
 
-class TileManager;
-class Tile;
 
 /*!
  * Map class.
  */
 class Map {
 public:
-    Map(TileManager *tileManager, uint16 anId);
+    Map(fs_eng::TileManager *tileManager, uint16 anId);
     ~Map();
 
     bool loadMap(uint8 *mapData);
@@ -65,8 +64,8 @@ public:
     int maxZ() { return max_z_; }
     int maxZAt(int x, int y);
 
-    TileManager * getTileManager() { return tileManager_; }
-    Tile * getTileAt(int x, int y, int z);
+    fs_eng::TileManager * getTileManager() { return tileManager_; }
+    fs_eng::Tile * getTileAt(int x, int y, int z);
     int tileAt(int x, int y, int z);
     void patchMap(int x, int y, int z, uint8 tileNum);
     //! Return true if tile at given position is traversable by car
@@ -77,8 +76,8 @@ protected:
     name of the file containing map data.*/
     uint16 id_;
     int max_x_, max_y_, max_z_;
-    Tile **a_tiles_;
-    TileManager *tileManager_;
+    fs_eng::Tile **a_tiles_;
+    fs_eng::TileManager *tileManager_;
     int map_width_, map_height_;
 };
 

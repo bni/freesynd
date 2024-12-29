@@ -555,8 +555,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(p->position(), &scPt);
                 int px = scPt.x - 10;
-                int py = scPt.y - (1 + p->tileZ()) * Tile::kTileHeight/3
-                    - (p->offZ() * Tile::kTileHeight/3) / 128;
+                int py = scPt.y - (1 + p->tileZ()) * fs_eng::Tile::kTileHeight/3
+                    - (p->offZ() * fs_eng::Tile::kTileHeight/3) / 128;
 
                 if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
                     point.x - 129 + displayOriginPt_.x < px + 21 && point.y + displayOriginPt_.y < py + 34)
@@ -576,7 +576,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(v->position(), &scPt);
                 int px = scPt.x - 20;
-                int py = scPt.y - 10 - v->tileZ() * Tile::kTileHeight/3;
+                int py = scPt.y - 10 - v->tileZ() * fs_eng::Tile::kTileHeight/3;
 
                 if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
                     point.x - 129 + displayOriginPt_.x < px + 40 && point.y + displayOriginPt_.y < py + 32)
@@ -595,8 +595,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
                 Point2D scPt;
                 mission_->get_map()->tileToScreenPoint(w->position(), &scPt);
                 int px = scPt.x - 10;
-                int py = scPt.y + 4 - w->tileZ() * Tile::kTileHeight/3
-                    - (w->offZ() * Tile::kTileHeight/3) / 128;
+                int py = scPt.y + 4 - w->tileZ() * fs_eng::Tile::kTileHeight/3
+                    - (w->offZ() * fs_eng::Tile::kTileHeight/3) / 128;
 
                 if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
                     point.x - 129 + displayOriginPt_.x < px + 20 && point.y + displayOriginPt_.y < py + 15)
@@ -1217,7 +1217,7 @@ void GameplayMenu::drawMissionHint(uint32_t elapsed) {
 
 void GameplayMenu::drawPausePanel() {
     std::string str_paused = getMessage("GAME_PAUSED");
-    MenuFont *font_used = getMenuFont(FontManager::SIZE_1);
+    fs_eng::MenuFont *font_used = getMenuFont(fs_eng::FontManager::SIZE_1);
     int txt_width = font_used->textWidth(str_paused);
     int txt_posx = fs_eng::kScreenWidth / 2 - txt_width / 2;
     int txt_height = font_used->textHeight(false);

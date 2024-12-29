@@ -29,7 +29,7 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
-MapManager::MapManager(TileManager *pTileManager) : pTileManager_(pTileManager)
+MapManager::MapManager(fs_eng::TileManager *pTileManager) : pTileManager_(pTileManager)
 {
 }
 

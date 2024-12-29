@@ -31,6 +31,8 @@
 #include "fs-engine/enginecommon.h"
 #include "fs-engine/gfx/fstexture.h"
 
+namespace fs_eng {
+
 typedef struct FliHeader {
     uint32_t size;
     uint16_t type;                //0xAF12
@@ -110,5 +112,6 @@ private:
     //! FSTexture to display a frame
     std::unique_ptr<FSTexture> texture_;
 };
+}
 
 #endif

@@ -32,6 +32,8 @@
 #include "fs-engine/gfx/tile.h"
 #include "fs-engine/gfx/fstexture.h"
 
+namespace fs_eng {
+
 /*!
  * Tile manager loads and holds all the game tiles.
  * Tiles are loaded from the original file and the color palette
@@ -101,5 +103,7 @@ protected:
     //! The palette used for the texture of tiles
     fs_eng::Palette palette_;
 };
+
+}
 
 #endif

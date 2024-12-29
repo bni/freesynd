@@ -33,8 +33,7 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
-using fs_eng::Menu;
-using fs_eng::MenuManager;
+using fs_eng::FontManager;
 
 const Point2D BriefMenu::kMiniMapScreenPos = {504, 220};
 const int BriefMenu::kMiniMapWidth = 120;
@@ -44,8 +43,8 @@ const int BriefMenu::kMaxLinePerPage = 14;
 #if 0
 #define EXECUTION_SPEED_TIME
 #endif
-BriefMenu::BriefMenu(MenuManager * m)
-        : Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap, true),
+BriefMenu::BriefMenu(fs_eng::MenuManager * m)
+        : fs_eng::Menu(m, fs_game_menus::kMenuIdBrief, fs_game_menus::kMenuIdMap, true),
           start_line_(0), p_briefing_(NULL), mm_renderer_(kMiniMapScreenPos) {
     cursorOnShow_ = kMenuCursor;
     
@@ -53,9 +52,9 @@ BriefMenu::BriefMenu(MenuManager * m)
     txtTimeId_ = addStatic(500, 9, "", FontManager::SIZE_2, true);       // Time
 
     // Briefing scroll button
-    nextButId_ = addImageOption(461, 316, Sprite::MSPR_RIGHT_ARROW2_D, Sprite::MSPR_RIGHT_ARROW2_L);
+    nextButId_ = addImageOption(461, 316, fs_eng::Sprite::MSPR_RIGHT_ARROW2_D, fs_eng::Sprite::MSPR_RIGHT_ARROW2_L);
     registerHotKey(fs_eng::kKeyCode_Right, nextButId_);
-    prevButId_ = addImageOption(427, 316, Sprite::MSPR_LEFT_ARROW2_D, Sprite::MSPR_LEFT_ARROW2_L);
+    prevButId_ = addImageOption(427, 316, fs_eng::Sprite::MSPR_LEFT_ARROW2_D, fs_eng::Sprite::MSPR_LEFT_ARROW2_L);
     registerHotKey(fs_eng::kKeyCode_Left, prevButId_);
 
     // Accept button

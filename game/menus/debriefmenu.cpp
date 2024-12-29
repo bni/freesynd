@@ -38,6 +38,7 @@
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
 
+using fs_eng::FontManager;
 
 DebriefMenu::DebriefMenu(fs_eng::MenuManager *m) : fs_eng::Menu(m, fs_game_menus::kMenuIdDebrief, fs_game_menus::kMenuIdMain, true) {
     cursorOnShow_ = kMenuCursor;

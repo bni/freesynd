@@ -32,6 +32,8 @@
 #include "core/gamecontroller.h"
 #include "menus/gamemenuid.h"
 
+using fs_eng::FontManager;
+
 MainMenu::MainMenu(fs_eng::MenuManager * m):fs_eng::Menu(m, fs_game_menus::kMenuIdMain, fs_game_menus::kMenuIdMain, true)
 {
     isCachable_ = false;

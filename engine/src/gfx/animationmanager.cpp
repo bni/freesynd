@@ -29,6 +29,8 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/enginecommon.h"
 
+namespace fs_eng {
+
 const size_t AnimationManager::kAnimSpritesTextureWidth = 1024;
 
 AnimationManager::AnimationManager() : spritesManager_(false, kAnimSpritesTextureWidth)
@@ -298,4 +300,6 @@ int AnimationManager::getFrameNum(unsigned int animNum)
         f = &frames_[f->next_frame_];
         frameNum++;
     }
+}
+
 }

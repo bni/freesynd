@@ -34,7 +34,7 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/tilemanager.h"
 
-Map::Map(TileManager * tileManager, uint16 anId) : tileManager_(tileManager)
+Map::Map(fs_eng::TileManager * tileManager, uint16 anId) : tileManager_(tileManager)
 {
     id_ = anId;
     a_tiles_ = NULL;
@@ -58,7 +58,7 @@ bool Map::loadMap(uint8 * mapData)
 
     uint32 *lookup = new uint32[max_x_ * max_y_];
     // NOTE : increased map height by 1 to enable range check on higher tiles
-    a_tiles_ = new Tile*[max_x_ * max_y_ * (max_z_ + 1)];
+    a_tiles_ = new fs_eng::Tile*[max_x_ * max_y_ * (max_z_ + 1)];
 
     for (int i = 0; i < max_x_ * max_y_; i++)
         lookup[i] = fs_utl::READ_LE_UINT32(mapData + 12 + i * 4);
@@ -81,8 +81,8 @@ bool Map::loadMap(uint8 * mapData)
         }
     }
 
-    map_width_ = (max_x_ + max_y_) * (Tile::kTileWidth / 2);
-    map_height_ = (max_x_ + max_y_ + max_z_) * Tile::kTileHeight / 3;
+    map_width_ = (max_x_ + max_y_) * (fs_eng::Tile::kTileWidth / 2);
+    map_height_ = (max_x_ + max_y_ + max_z_) * fs_eng::Tile::kTileHeight / 3;
     LOG(Log::k_FLG_GFX, "Map", "loadMap",
         ("Map size in pixels: width = %d, height = %d.", map_width_, map_height_));
 
@@ -157,10 +157,10 @@ void Map::tileToScreenPoint(int x, int y, int z, int pX, int pY, Point2D *pScp)
     float fx = x + pX / scalexPx;
     float fy = y + pY / scalexPy;
 
-    pScp->x = (int) ((max_x_ * Tile::kTileWidth / 2) + (fx - fy) * Tile::kTileWidth / 2
-                  + Tile::kTileWidth / 2);
+    pScp->x = (int) ((max_x_ * fs_eng::Tile::kTileWidth / 2) + (fx - fy) * fs_eng::Tile::kTileWidth / 2
+                  + fs_eng::Tile::kTileWidth / 2);
 
-    pScp->y = (int) ((max_z_ + 1) * Tile::kTileHeight / 3 + (fx + fy) * Tile::kTileHeight / 3);
+    pScp->y = (int) ((max_z_ + 1) * fs_eng::Tile::kTileHeight / 3 + (fx + fy) * fs_eng::Tile::kTileHeight / 3);
 }
 
 void Map::tileToScreenPoint(const TilePoint &tPt, Point2D *pScp) {
@@ -178,13 +178,13 @@ TilePoint Map::screenToTilePoint(int x, int y)
 {
     TilePoint mtp;
 
-    x -= (max_x_ + 1) * (Tile::kTileWidth / 2);
+    x -= (max_x_ + 1) * (fs_eng::Tile::kTileWidth / 2);
     // x now equals fx * Tile::kTileWidth / 2 - fy * Tile::kTileWidth / 2
     // which equals Tile::kTileWidth/2 * (fx - fy)
-    y -= (max_z_ + 1) * (Tile::kTileHeight / 3);
+    y -= (max_z_ + 1) * (fs_eng::Tile::kTileHeight / 3);
     // y now equals (fx + fy) * Tile::kTileHeight / 3
-    float dx = (float) x / (Tile::kTileWidth / 2);
-    float dy = (float) y / (Tile::kTileHeight / 3);
+    float dx = (float) x / (fs_eng::Tile::kTileWidth / 2);
+    float dy = (float) y / (fs_eng::Tile::kTileHeight / 3);
 
     // dx equals fx - fy
     // dy equals fx + fy
@@ -219,7 +219,7 @@ int Map::maxZAt(int x, int y)
     return max_z_ - 1;
 }
 
-Tile * Map::getTileAt(int x, int y, int z)
+fs_eng::Tile * Map::getTileAt(int x, int y, int z)
 {
     if (x < 0 || x >= max_x_ || y < 0 || y >= max_y_) {
         return tileManager_->getTile(z < 2 ? 6 : 0);
@@ -263,33 +263,33 @@ void Map::patchMap(int x, int y, int z, uint8 tileNum)
  */
 bool Map::isTileWalkableByCar(int x, int y, int z)
 {
-    Tile *pTile = getTileAt(x, y, z);
+    fs_eng::Tile *pTile = getTileAt(x, y, z);
     uint8 tileId = pTile->id();
 
     if(tileId == 80) {
-        Tile::EType near_type = getTileAt(x, y - 1, z)->type();
-        if((near_type < Tile::kRoadSideEW || near_type > Tile::kRoadSideNS)
-            && near_type != Tile::kRoadPedCross) {
+        fs_eng::Tile::EType near_type = getTileAt(x, y - 1, z)->type();
+        if((near_type < fs_eng::Tile::kRoadSideEW || near_type > fs_eng::Tile::kRoadSideNS)
+            && near_type != fs_eng::Tile::kRoadPedCross) {
             return false;
         }
         near_type = getTileAt(x, y + 1, z)->type();
-         if((near_type < Tile::kRoadSideEW || near_type > Tile::kRoadSideNS)
-             && near_type != Tile::kRoadPedCross)
+         if((near_type < fs_eng::Tile::kRoadSideEW || near_type > fs_eng::Tile::kRoadSideNS)
+             && near_type != fs_eng::Tile::kRoadPedCross)
          {
             return false;
          }
         return true;
     }
     if(tileId == 81) {
-        Tile::EType near_type = getTileAt(x - 1, y, z)->type();
-         if((near_type < Tile::kRoadSideEW || near_type > Tile::kRoadSideNS)
-             && near_type != Tile::kRoadPedCross)
+        fs_eng::Tile::EType near_type = getTileAt(x - 1, y, z)->type();
+         if((near_type < fs_eng::Tile::kRoadSideEW || near_type > fs_eng::Tile::kRoadSideNS)
+             && near_type != fs_eng::Tile::kRoadPedCross)
          {
             return false;
          }
         near_type = getTileAt(x + 1, y, z)->type();
-         if((near_type < Tile::kRoadSideEW || near_type > Tile::kRoadSideNS)
-             && near_type != Tile::kRoadPedCross)
+         if((near_type < fs_eng::Tile::kRoadSideEW || near_type > fs_eng::Tile::kRoadSideNS)
+             && near_type != fs_eng::Tile::kRoadPedCross)
          {
             return false;
          }
@@ -334,7 +334,7 @@ MiniMap::MiniMap(Map *p_map) {
     for (unsigned short y = 0; y < mmax_y_; y++) {
         unsigned short yadd = y * mmax_x_;
         for (unsigned short x = 0; x < mmax_x_; x++) {
-            Tile::EType type = p_map->getTileAt(x, y, 0)->type();
+            fs_eng::Tile::EType type = p_map->getTileAt(x, y, 0)->type();
             a_minimap_[x + yadd] = minimap_colours_[type];
         }
     }

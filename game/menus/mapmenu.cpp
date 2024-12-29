@@ -33,6 +33,7 @@
 #include "fs-engine/system/system.h"
 #include "fs-engine/menus/menumanager.h"
 
+using fs_eng::FontManager;
 
 /*!
  * This structure holds the position of the various
@@ -144,11 +145,11 @@ MapMenu::MapMenu(fs_eng::MenuManager * m)
 
     // Tax cursors
     txtTaxPctId_ = addStatic(350, 346, "@   30%", FontManager::SIZE_1, true);
-    decrTaxButId_ = addImageOption(375, 346, Sprite::MSPR_TAX_DECR,
-        Sprite::MSPR_TAX_DECR, false);
+    decrTaxButId_ = addImageOption(375, 346, fs_eng::Sprite::MSPR_TAX_DECR,
+        fs_eng::Sprite::MSPR_TAX_DECR, false);
     registerHotKey(fs_eng::kKeyCode_Down, decrTaxButId_);
-    incrTaxButId_ = addImageOption(435, 346, Sprite::MSPR_TAX_INCR,
-        Sprite::MSPR_TAX_INCR, false);
+    incrTaxButId_ = addImageOption(435, 346, fs_eng::Sprite::MSPR_TAX_INCR,
+        fs_eng::Sprite::MSPR_TAX_INCR, false);
     registerHotKey(fs_eng::kKeyCode_Up, incrTaxButId_);
 }
 

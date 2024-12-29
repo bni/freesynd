@@ -32,6 +32,8 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/system/system.h"
 
+namespace fs_eng {
+
 void unpackBlocks1b(const uint8_t * data, uint8_t * pixels)
 {
     for (int i = 0; i < 8; ++i) {
@@ -323,4 +325,6 @@ bool SpriteManager::drawTexture(Point2D src, Point2D dst, int width, int height)
     spritesetTexture_->render(src, dst, width, height);
     
     return true;
+}
+
 }

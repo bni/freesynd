@@ -41,7 +41,7 @@
  */
 class MissionManager : public Singleton < MissionManager > {
 public:
-    MissionManager(TileManager *pTileManager);
+    MissionManager(fs_eng::TileManager *pTileManager);
     //! Loads mission for the given mission id
     Mission *loadMission(int missionId, int paletteId);
     //! Loads briefing for the given mission id

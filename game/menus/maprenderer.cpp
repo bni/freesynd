@@ -54,8 +54,8 @@ void MapRenderer::render(const Point2D &viewport) {
     //  - Some advert panels lack a corner
     TilePoint mtp = pMap_->screenToTilePoint(viewport.x, viewport.y);
     int sw = mtp.tx;
-    int chk = fs_eng::kScreenWidth / (Tile::kTileWidth / 2) + 2
-        + fs_eng::kScreenHeight / (Tile::kTileHeight / 3) + pMap_->maxZ() * 2;
+    int chk = fs_eng::kScreenWidth / (fs_eng::Tile::kTileWidth / 2) + 2
+        + fs_eng::kScreenHeight / (fs_eng::Tile::kTileHeight / 3) + pMap_->maxZ() * 2;
     int sh = mtp.ty - 8;
 
     int shm = sh + chk;
@@ -86,26 +86,26 @@ void MapRenderer::render(const Point2D &viewport) {
                     --tile_y;
                     continue;
                 }
-                int screen_w = (pMap_->maxX() + (tile_x - tile_y)) * (Tile::kTileWidth / 2);
-                int coord_h = ((pMap_->maxZ() + tile_x + tile_y) - (tile_z - 1)) * (Tile::kTileHeight / 3);
-                if (screen_w >= viewport.x - Tile::kTileWidth * 2
-                    && screen_w + Tile::kTileWidth * 2 < cmw
-                    && coord_h >= viewport.y - Tile::kTileHeight * 2
-                    && coord_h + Tile::kTileHeight * 2 < cmh) {
+                int screen_w = (pMap_->maxX() + (tile_x - tile_y)) * (fs_eng::Tile::kTileWidth / 2);
+                int coord_h = ((pMap_->maxZ() + tile_x + tile_y) - (tile_z - 1)) * (fs_eng::Tile::kTileHeight / 3);
+                if (screen_w >= viewport.x - fs_eng::Tile::kTileWidth * 2
+                    && screen_w + fs_eng::Tile::kTileWidth * 2 < cmw
+                    && coord_h >= viewport.y - fs_eng::Tile::kTileHeight * 2
+                    && coord_h + fs_eng::Tile::kTileHeight * 2 < cmh) {
 #if 0
                     if (z > 2)
                         continue;
 #endif
                     // draw a tile
                     if (tile_z < pMap_->maxZ()) {
-                        Tile *pTile = pMap_->getTileAt(tile_x, tile_y, tile_z);
+                        fs_eng::Tile *pTile = pMap_->getTileAt(tile_x, tile_y, tile_z);
                         if (pTile->notTransparent()) {
                             int dx = 0, dy = 0;
                             if (screen_w - viewport.x < 0)
                                 dx = -(screen_w - viewport.x);
                             if (coord_h - viewport.y < 0)
                                 dy = -(coord_h - viewport.y);
-                            if (dx < Tile::kTileWidth && dy < Tile::kTileHeight) {
+                            if (dx < fs_eng::Tile::kTileWidth && dy < fs_eng::Tile::kTileHeight) {
                                 pMap_->getTileManager()->drawTile(pTile, screen_w - cmx, coord_h - viewport.y);
                             }
                         }
@@ -114,8 +114,8 @@ void MapRenderer::render(const Point2D &viewport) {
                     // draw everything that's on the tile
                     if (tile_z - 1 >= 0) {
                         TilePoint currentTile(tile_x, tile_y, tile_z - 1);
-                        Point2D screenPos = {screen_w - cmx + Tile::kTileWidth / 2,
-                            coord_h - viewport.y + Tile::kTileHeight / 3 * 2};
+                        Point2D screenPos = {screen_w - cmx + fs_eng::Tile::kTileWidth / 2,
+                            coord_h - viewport.y + fs_eng::Tile::kTileHeight / 3 * 2};
 
                         drawObjectsOnTile(currentTile, screenPos);
                     }
@@ -211,7 +211,7 @@ bool MapRenderer::isObjectInsideDrawingArea(MapObject *pObject, const Point2D &v
     // Limits are larger than screen size in order to have a smooth display
     // of appearance/disappearance of objects on screen. Otherwise they popup when
     // entering the display screen.
-    return  objectViewport.x > (viewport.x - Tile::kTileWidth / 2) && objectViewport.y > viewport.y &&
+    return  objectViewport.x > (viewport.x - fs_eng::Tile::kTileWidth / 2) && objectViewport.y > viewport.y &&
             objectViewport.x <= (viewport.x + fs_eng::kScreenWidth - kGameplayPanelWidth + 10) &&
             objectViewport.y <= (viewport.y + fs_eng::kScreenHeight + pObject->position().tz * 48);
 }

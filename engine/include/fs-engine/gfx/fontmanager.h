@@ -30,6 +30,8 @@
 #include "fs-utils/common.h"
 #include "fs-engine/gfx/font.h"
 
+namespace fs_eng {
+
 class SpriteManager;
 
 /*!
@@ -91,5 +93,7 @@ private:
     /*! Sprite manager for intro font. */
     std::unique_ptr<SpriteManager> pIntroFontSprites_;
 };
+
+}
 
 #endif

@@ -29,6 +29,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace fs_eng {
+
 const int Tile::kTileWidth = 64;
 const int Tile::kTileHeight = 48;
 const int Tile::kSubTileWidth = 32;
@@ -108,3 +110,6 @@ uint8 Tile::getWalkData() {
         return type_;
     }
 }
+
+}
+

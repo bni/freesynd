@@ -1827,7 +1827,7 @@ void PedInstance::buildFinalDestinationPath(Mission *m, std::vector<TilePoint> &
                     dest_path_.push_back(*it);
                 } else {
                     switch (twd) {
-                        case Tile::kSlopeSN:
+                        case fs_eng::Tile::kSlopeSN:
                             if (zf == -1) {
                                 if (xf == 0) {
                                     dest_path_.push_back(*it);

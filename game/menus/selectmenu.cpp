@@ -37,6 +37,8 @@
 #include "fs-engine/system/system.h"
 #include "fs-kernel/model/mod.h"
 
+using fs_eng::FontManager;
+
 const int SelectMenu::kSegmentSize = 8;
 
 SelectMenu::SelectMenu(fs_eng::MenuManager * m):
@@ -371,7 +373,7 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     Agent *t4 = g_gameCtrl.agents().squadMember(AgentManager::kSlot4);
     if (t1) {
         if (t1->isActive()) {
-            menuSprites().drawSprite(Sprite::MSPR_SELECT_1, 20, 84, false, true);
+            menuSprites().drawSprite(fs_eng::Sprite::MSPR_SELECT_1, 20, 84, false, true);
             g_System.drawFillRect({68, 88}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
             g_System.drawFillRect({68, 88}, 6, 36, menu_manager_->kMenuColorGrey);
@@ -379,7 +381,7 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     }
     if (t2) {
         if (t2->isActive()) {
-            menuSprites().drawSprite(Sprite::MSPR_SELECT_2, 82, 84, false, true);
+            menuSprites().drawSprite(fs_eng::Sprite::MSPR_SELECT_2, 82, 84, false, true);
             g_System.drawFillRect({132, 88}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
             g_System.drawFillRect({132, 88}, 6, 36, menu_manager_->kMenuColorGrey);
@@ -387,7 +389,7 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     }
     if (t3) {
         if (t3->isActive()) {
-            menuSprites().drawSprite(Sprite::MSPR_SELECT_3, 20, 162, false, true);
+            menuSprites().drawSprite(fs_eng::Sprite::MSPR_SELECT_3, 20, 162, false, true);
             g_System.drawFillRect({68, 166}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
             g_System.drawFillRect({68, 166}, 6, 36, menu_manager_->kMenuColorGrey);
@@ -395,7 +397,7 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     }
     if (t4) {
         if (t4->isActive()) {
-            menuSprites().drawSprite(Sprite::MSPR_SELECT_4, 82, 162, false, true);
+            menuSprites().drawSprite(fs_eng::Sprite::MSPR_SELECT_4, 82, 162, false, true);
             g_System.drawFillRect({132, 166}, 6, 36, menu_manager_->kMenuColorWhite);
         } else {
             g_System.drawFillRect({132, 166}, 6, 36, menu_manager_->kMenuColorGrey);

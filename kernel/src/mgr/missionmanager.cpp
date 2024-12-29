@@ -67,7 +67,7 @@ private:
     std::string msg;
 };
 
-MissionManager::MissionManager(TileManager *pTileManager) : mapManager_(pTileManager) {
+MissionManager::MissionManager(fs_eng::TileManager *pTileManager) : mapManager_(pTileManager) {
     pMission_ = nullptr;
 }
 

@@ -28,6 +28,7 @@
 
 #include "fs-engine/gfx/spritemanager.h"
 
+namespace fs_eng {
 /*!
  * Game sprite frame class.
  */
@@ -92,6 +93,8 @@ protected:
     std::vector<GameSpriteFrameElement> elements_;
 };
 
-#define g_SpriteMgr   AnimationManager::singleton()
+}
+
+#define g_SpriteMgr   fs_eng::AnimationManager::singleton()
 
 #endif //GFX_ANIMATIONMANAGER_H
