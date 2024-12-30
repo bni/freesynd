@@ -1,8 +1,8 @@
 {
-    "version": 3,
+    "version": 8,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 22,
+        "minor": 28,
         "patch": 0
     },
     "configurePresets": [
@@ -69,22 +69,6 @@
             }
         },
         {
-            "name": "cb_ninja-x86-debug",
-            "displayName": "cb_ninja-x86-debug",
-            "description": "Code::Blocks with Ninja with Debug configuration",
-            "hidden": false,
-            "generator": "CodeBlocks - Ninja",
-            "inherits": "x86-debug"
-        },
-        {
-            "name": "cb_unix_makefile-x86-release",
-            "displayName": "Code::Blocks with Makefile with Release configuration",
-            "description": "Code::Blocks with Makefile with Release configuration",
-            "hidden": false,
-            "generator": "CodeBlocks - Unix Makefiles",
-            "inherits": "x86-release"
-        },
-        {
             "name": "ninja-linux-x86-debug",
             "displayName": "ninja-linux-x86-debug",
             "description": "Ninja with Debug configuration",
@@ -97,6 +81,21 @@
             "description": "Single configuration Release",
             "hidden": false,
             "inherits": "x86-release",
+            "installDir": "/usr/local"
+        },
+        {
+            "name": "ninja-linux-x64-debug",
+            "displayName": "ninja-linux-x64-debug",
+            "description": "Ninja with Debug configuration",
+            "hidden": false,
+            "inherits": "x64-debug"
+        },
+        {
+            "name": "ninja-linux-x64-release",
+            "displayName": "ninja-linux-x64-release",
+            "description": "Single configuration Release",
+            "hidden": false,
+            "inherits": "x64-release",
             "installDir": "/usr/local"
         },
         {
@@ -160,6 +159,26 @@
         }
     ],
     "buildPresets": [
+        {
+            "name": "build-gcc-x86-debug",
+            "displayName": "Build GCC x86 Debug",
+            "configurePreset": "ninja-linux-x86-debug"
+        },
+        {
+            "name": "build-gcc-x86-release",
+            "displayName": "Build GCC x86 Release",
+            "configurePreset": "ninja-linux-x86-release"
+        },
+        {
+            "name": "build-gcc-x64-debug",
+            "displayName": "Build GCC x64 Debug",
+            "configurePreset": "ninja-linux-x64-debug"
+        },
+        {
+            "name": "build-gcc-x64-release",
+            "displayName": "Build GCC x64 Release",
+            "configurePreset": "ninja-linux-x64-release"
+        },
         {
             "name": "build-ninja-msvc-x86-debug",
             "displayName": "Build MSVC x86 Debug",
