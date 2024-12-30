@@ -40,7 +40,6 @@
 #include "fs-engine/gfx/dirtylist.h"
 #include "fs-engine/gfx/spritemanager.h"
 #include "fs-engine/gfx/logomanager.h"
-#include "fs-engine/sound/soundmanager.h"
 
 namespace fs_eng {
 
@@ -80,7 +79,7 @@ protected:
  */
 class MenuManager {
 public:
-    MenuManager(MenuFactory *pFactory, fs_eng::SoundManager *pGameSounds);
+    MenuManager(MenuFactory *pFactory);
     ~MenuManager();
 
     bool initialize(bool loadIntroFont);
@@ -199,7 +198,7 @@ private:
     Palette menuPalette_;
     /*! Font manager.*/
     FontManager fonts_;
-    SoundManager *pGameSounds_;
+    //SoundManager *pGameSounds_;
     LogoManager logoManager_;
 
     /*! Time since last mouse down event without mouseup*/

@@ -123,7 +123,7 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
       animationManager_(),
       soundManager_(),
       music_(),
-      menus_(pMenuFactory, &soundManager_) {
+      menus_(pMenuFactory) {
     running_ = false;
 }
 

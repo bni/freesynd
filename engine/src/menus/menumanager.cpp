@@ -34,7 +34,6 @@
 #include "fs-engine/enginecommon.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/menus/fliplayer.h"
-#include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/menus/logoutmenu.h"
 #include "fs-engine/menus/flimenu.h"
 
@@ -118,12 +117,11 @@ const char* MenuFactory::getLeaveAnimation(int menuId) {
  * @param pFactory 
  * @param pGameSounds 
  */
-MenuManager::MenuManager(MenuFactory *pFactory, SoundManager *pGameSounds)
-        : dirtyList_(fs_eng::kScreenWidth, fs_eng::kScreenHeight),
+MenuManager::MenuManager(MenuFactory *pFactory)
+        : pFactory_(pFactory),
+          dirtyList_(fs_eng::kScreenWidth, fs_eng::kScreenHeight),
           menuSprites_(true, SpriteManager::kMenuSpritesTextureWidth), fonts_(), logoManager_() {
-    pFactory_ = pFactory;
     pFactory_->setMenuManager(this);
-    pGameSounds_ = pGameSounds;
     drop_events_ = false;
 
     current_ = NULL;

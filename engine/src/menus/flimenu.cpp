@@ -23,6 +23,7 @@
 #include "fs-engine/menus/flimenu.h"
 
 #include "fs-engine/sound/musicmanager.h"
+#include "fs-engine/sound/soundmanager.h"
 
 namespace fs_eng {
 

@@ -32,6 +32,7 @@
 
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/sound/musicmanager.h"
+#include "fs-engine/sound/soundmanager.h"
 #include "menus/gamemenuid.h"
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-kernel/model/vehicle.h"
