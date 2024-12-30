@@ -183,24 +183,7 @@ bool AppContext::readLanguage(const int languageId) {
         curr_language_ = fs_eng::GERMAN;
         break;
     default: // In this case, we use the OS locale to define the language
-        {
-#ifdef __APPLE__
         curr_language_ = g_System.getLanguageFromSystem();
-#else
-        setlocale(LC_ALL, "");
-        std::string lang(setlocale(LC_CTYPE, NULL));
-
-        if (lang.starts_with("French") || lang.starts_with("fr")) {
-            curr_language_ = fs_eng::FRENCH;
-        } else if (lang.starts_with("Italian") || lang.starts_with("it")) {
-            curr_language_ = fs_eng::ITALIAN;
-        } else if (lang.starts_with("German") || lang.starts_with("de")) {
-            curr_language_ = fs_eng::GERMAN;
-        } else {
-            curr_language_ = fs_eng::ENGLISH;
-        }
-#endif
-        }
         break;
     }
 
