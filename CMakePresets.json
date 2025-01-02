@@ -15,7 +15,8 @@
             "installDir": "${sourceDir}/inst/${presetName}",
             "cacheVariables": {
                 "USE_SYSTEM_SDL": "ON",
-                "USE_SDL_MIXER": "ON"
+                "USE_SDL_MIXER": "ON",
+                "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "cmake/conan_provider.cmake"
             }
         },
         {
