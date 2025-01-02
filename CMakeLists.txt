@@ -29,11 +29,9 @@ if (WIN32)
 		${CMAKE_SOURCE_DIR}/extern/sdl2/lib/${FREESYND_ARCH}
         ${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/${FREESYND_ARCH}
         ${CMAKE_SOURCE_DIR}/extern/SDL2_image/lib/${FREESYND_ARCH}
-        ${CMAKE_SOURCE_DIR}/extern/png/lib
 	)
 	set (CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH}
 		${CMAKE_SOURCE_DIR}/extern/sdl2/include
-        ${CMAKE_SOURCE_DIR}/extern/png/include
         ${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/include
         ${CMAKE_SOURCE_DIR}/extern/SDL2_image/include
 	)
