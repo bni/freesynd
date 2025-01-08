@@ -43,28 +43,39 @@ The root directory containing the source code will be called *FS_ROOT* in the fo
 **Note**: For more information on how to setup those prerequisites for your plateform, please consult this [Wiki Page](https://sourceforge.net/p/freesynd/wiki/Dev_Env_Install/#requirements).
 
 To build Freesynd, you will need to install :
+
     1/ [Cmake 3.28](https://cmake.org/) with preferrably Ninja build
-    2/ A C++ compiler
-	3/ The following required Libraries (for build and run) :
+    2/ [Conan 2](https://conan.io/) : you will need Python 3 to run Conan
+    3/ A C++ compiler
+	4/ The following required Libraries (for build and run) :
     - SDL-2
     - SDL_mixer
     - SDL_image
-    - Png
+    - libpng
 
 **Note** : On Windows, required librairies (for development and run) are available with the source code (in the /extern/ directory)
 
 #### Build the source
 On any platform, from the command line :
+- Create a default profile for Conan with the following command
+```
+$ conan profile detect --force
+```
+
+- Then run cmake using a existing preset
+```
+$ cd FS_ROOT
+$ cmake -S . --list-presets  # To list available presets
+$ cmake -S . --preset <preset> # To configure using a given preset
+$ cmake --build --preset <preset> # To build using a given preset
+```
+Or you can use cmake without presets
 
 	$ cd FS_ROOT
-	$ cmake -S . -B <build_dir> [-G"<generator>"]
-	$ cmake --build <build_dir>
-
-Or you can use an existing CMake preset :
-    $ cd FS_ROOT
-    $ cmake -S . --list-presets  # To list available presets
-    $ cmake -S . --preset <preset> # To configure using a given preset
-    $ cmake --build --preset <preset> # To build using a given preset
+    $ mkdir build
+	$ cmake -S . -B build/<build_dir> [-G"<generator>"]
+	$ cmake --build build/<build_dir>
+    
 
 - Use optionally `-G"<generator>"` to specify a particular build system. See CMake documentation for a list of options.
 - It is a best practice to specify a build directory inside the source code directory. Put your build directory below the "build" directory so that Git ignores it automatically.
@@ -81,14 +92,17 @@ Or you can use an existing CMake preset :
         - `USE_SYSTEM_SDL`: Use SDL library
 
 **Windows**
+
 Then you need to copy all dll files that are in FS_ROOT/extern/ to the directory where the freesynd.exe file has been installed
 
 **Linux**
+
 Install the application :
 
     $ sudo cmake --install <build_dir>
 
 **Mac**
+
 TBC
 
 ## Configuring FreeSynd

@@ -7,6 +7,7 @@ freesynd (0.9) unstable; urgency=low
   * New option in freesynd/CMakeLists for defining the FS_TRACK_FPS macro
   * Cmake 3.28 is required for building the app
   * Setting language to zero in user.conf selects language based on system locale. Closes: #36
+  * Use of Conan 2 to manage some project's dependencies
   [ Bugs ]
   * Option to disable friendly fire. Closes: #69
 
