@@ -32,7 +32,6 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
-#include "fs-engine/sound/music.h"
 #include "fs-engine/sound/audio.h"
 
 namespace fs_eng {

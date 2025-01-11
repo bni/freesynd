@@ -32,7 +32,6 @@
 
 #include "fs-utils/common.h"
 #include "fs-engine/sound/sound.h"
-#include "fs-engine/sound/music.h"
 
 namespace fs_eng {
 
@@ -102,9 +101,6 @@ public:
     //! Instanciate an implementation of Sound based on the implementation of Audio
     virtual std::unique_ptr<Sound> createSound() = 0;
 
-    //! Instanciate an implementation of Music based on the implementation of Audio
-    virtual std::unique_ptr<Music> createMusic() = 0;
-
     //! Open the music file at given path
     virtual bool openFile(std::string path) = 0;
     //! Play a given song in the loaded file
@@ -154,9 +150,6 @@ public:
 
     //! Returns a basic implementation of Sound
     std::unique_ptr<Sound> createSound();
-
-    //! Returns a basic implementation of Sound
-    std::unique_ptr<Music> createMusic();
 };
 
 #endif //HAVE_SDL_MIXER

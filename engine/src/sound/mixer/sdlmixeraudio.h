@@ -59,8 +59,6 @@ public:
 
     //! @copydoc Audio::createSound()
     std::unique_ptr<Sound> createSound() override;
-    //! @copydoc Audio::createMusic()
-    std::unique_ptr<Music> createMusic() override;
 
     //! @copydoc Audio::openFile()
     bool openFile(std::string path) override;

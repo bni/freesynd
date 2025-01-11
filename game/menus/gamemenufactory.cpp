@@ -38,7 +38,6 @@
 #include "fs-engine/menus/flimenu.h"
 #include "fs-utils/log/log.h"
 
-using fs_eng::Music;
 using fs_eng::NO_SOUND;
 
 //! This defines the list of event for the intro animation
