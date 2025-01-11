@@ -43,83 +43,83 @@ using fs_eng::NO_SOUND;
 
 //! This defines the list of event for the intro animation
 const fs_eng::FrameEvent intro[] = {
-    { 1,  Music::TRACK_INTRO, NO_SOUND, 0x0, NULL }, // Play track
-    { 15, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_0" },
-    { 39, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
-    { 44, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_1" },
-    { 62, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear subtitle
-    { 67, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_2" },
-    { 85, Music::NO_TRACK, NO_SOUND,        0x0, NULL }, // clear
-    { 90, Music::NO_TRACK, NO_SOUND,        0x0, "INTRO_3" },
-    { 117, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 121, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_4" },
-    { 135, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 138, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_5" },
-    { 153, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_6" },
-    { 165, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_7" },
-    { 178, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // Clear
-    { 180, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_8" },
-    { 200, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 234, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_9" },
-    { 271, Music::NO_TRACK, NO_SOUND,    0x0, NULL },//clear
-    { 291, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_10" },
-    { 333, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // Clear
-    { 359, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_11" },
-    { 406, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 442, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_12" },
-    { 467, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 473, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_13" },
-    { 502, Music::NO_TRACK, NO_SOUND,    0x0, NULL }, // clear
-    { 548, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_14" },
-    { 562, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 569, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_15" },
-    { 610, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 639, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_16" },
-    { 673, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 848, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_17" },
-    { 892, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
-    { 904, Music::NO_TRACK, NO_SOUND,    0x0, "INTRO_18" },
-    { 960, Music::NO_TRACK, NO_SOUND,    0x0, NULL },
-    {  -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1,  fs_eng::MusicManager::kMusicSongIntro, NO_SOUND, 0x0, NULL }, // Play track
+    { 15, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, "INTRO_0" },
+    { 39, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, NULL }, // clear subtitle
+    { 44, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, "INTRO_1" },
+    { 62, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, NULL }, // clear subtitle
+    { 67, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, "INTRO_2" },
+    { 85, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, NULL }, // clear
+    { 90, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,        0x0, "INTRO_3" },
+    { 117, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // clear
+    { 121, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_4" },
+    { 135, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // clear
+    { 138, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_5" },
+    { 153, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_6" },
+    { 165, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_7" },
+    { 178, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // Clear
+    { 180, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_8" },
+    { 200, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // clear
+    { 234, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_9" },
+    { 271, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL },//clear
+    { 291, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_10" },
+    { 333, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // Clear
+    { 359, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_11" },
+    { 406, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // clear
+    { 442, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_12" },
+    { 467, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // clear
+    { 473, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_13" },
+    { 502, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL }, // clear
+    { 548, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_14" },
+    { 562, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL },
+    { 569, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_15" },
+    { 610, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL },
+    { 639, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_16" },
+    { 673, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL },
+    { 848, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_17" },
+    { 892, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL },
+    { 904, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, "INTRO_18" },
+    { 960, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,    0x0, NULL },
+    {  -1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the mission won animation
 const fs_eng::FrameEvent mission_win[] = {
-    { 1, Music::NO_TRACK, fs_eng::APPLAUSE,              0x1, NULL },
-    { 1, Music::NO_TRACK, fs_eng::APPLAUSE_ZOOM,         0x0, NULL },
-    { 10, Music::NO_TRACK, fs_eng::FIREWORKS,            0x1, NULL },
-    { 30, Music::NO_TRACK, fs_eng::FIREWORKS_APPLAUSE,   0x1, NULL },
-    { -1, Music::NO_TRACK, NO_SOUND,              0x0, NULL }
+    { 1, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::APPLAUSE,              0x1, NULL },
+    { 1, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::APPLAUSE_ZOOM,         0x0, NULL },
+    { 10, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::FIREWORKS,            0x1, NULL },
+    { 30, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::FIREWORKS_APPLAUSE,   0x1, NULL },
+    { -1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,              0x0, NULL }
 };
 
 //! This defines the list of event for the mission lost animation
 const fs_eng::FrameEvent mission_failed[] = {
-    { 1, Music::NO_TRACK, NO_SOUND, 0x0, NULL },
-    { 35, Music::NO_TRACK, fs_eng::PRESS_BUTTON, 0x0, NULL },
-    { 52, Music::NO_TRACK, fs_eng::MENU_AFTER_MISSION, 0x0, NULL },
-    { 80, Music::NO_TRACK, fs_eng::SPEECH_NO, 0x0, NULL },
-    { 108, Music::NO_TRACK, fs_eng::MONITOR_IMPACT, 0x0, NULL },
-    { 118, Music::NO_TRACK, fs_eng::GLASS_BREAKING_2, 0x0, NULL },
-    { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL },
+    { 35, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::PRESS_BUTTON, 0x0, NULL },
+    { 52, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::MENU_AFTER_MISSION, 0x0, NULL },
+    { 80, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::SPEECH_NO, 0x0, NULL },
+    { 108, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::MONITOR_IMPACT, 0x0, NULL },
+    { 118, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::GLASS_BREAKING_2, 0x0, NULL },
+    { -1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the game lost animation
 const fs_eng::FrameEvent game_lost[] = {
-    { 1, Music::NO_TRACK, NO_SOUND, 0x0, NULL },
-    { 2, Music::NO_TRACK, fs_eng::FALLING_COMMAND_SHIP, 0x0, NULL },
-    { 34, Music::NO_TRACK, fs_eng::EXPLOSION_BIG, 0x0, NULL },
-    { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { 1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL },
+    { 2, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::FALLING_COMMAND_SHIP, 0x0, NULL },
+    { 34, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::EXPLOSION_BIG, 0x0, NULL },
+    { -1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL }
 };
 
 //! This defines the list of event for the menu up animation
 const fs_eng::FrameEvent menu_up[] = {
-    { 1, Music::NO_TRACK, fs_eng::MENU_UP,   0x1, NULL },
-    { -1, Music::NO_TRACK, NO_SOUND,  0x0, NULL }
+    { 1, fs_eng::MusicManager::kMusicSongNoSong, fs_eng::MENU_UP,   0x1, NULL },
+    { -1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND,  0x0, NULL }
 };
 
 //! This defines the list of no event
 const fs_eng::FrameEvent no_event[] = {
-    { -1, Music::NO_TRACK, NO_SOUND, 0x0, NULL }
+    { -1, fs_eng::MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL }
 };
 
 /*!

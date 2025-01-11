@@ -144,10 +144,8 @@ void FliMenu::handleTick(uint32_t elapsed)
                     break;
                 else if (desc.evtList[i].frame == frameIndex) {
                     // Play music
-                    if (desc.evtList[i].music != Music::NO_TRACK) {
-                        //g_MusicMgr.playTrack(desc.evtList[i].music);
-                        // TODO : adapt this code
-                        g_MusicMgr.playSong(MusicManager::kMusicSongIntro);
+                    if (desc.evtList[i].music != MusicManager::kMusicSongNoSong) {
+                        g_MusicMgr.playSong(desc.evtList[i].music);
                     }
                     // Play sound
                     if (desc.evtList[i].sound != NO_SOUND) {

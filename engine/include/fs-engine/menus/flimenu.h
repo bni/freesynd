@@ -26,7 +26,7 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/menus/fliplayer.h"
 #include "fs-engine/sound/sound.h"
-#include "fs-engine/sound/music.h"
+#include "fs-engine/sound/musicmanager.h"
 #include "fs-utils/misc/timer.h"
 
 namespace fs_eng {
@@ -35,7 +35,7 @@ struct FrameEvent {
     /*! frame Id.*/
     int frame;
     /*! start music.*/
-    Music::MusicTrack    music;
+    MusicManager::MusicSong    music;
     /*! Game sound to play.*/
     InGameSample    sound;
     uint8_t    sndChan;
