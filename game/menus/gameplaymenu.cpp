@@ -967,24 +967,20 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
         scroll_y_ = -SCROLL_STEP;
     } else if (key.keyCode == fs_eng::kKeyCode_Down) { // Scroll the map to the bottom
         scroll_y_ = SCROLL_STEP;
-    } else if (key.keyCode == fs_eng::kKeyCode_F1) { // Music Control
-        g_MusicMgr.toggleMusic();
-    } else if (key.keyCode == fs_eng::kKeyCode_F2) { // Sound Control
-        g_SoundMgr.toggleSound();
     }
 
 #ifdef _DEBUG
-    else if (key.keyCode == fs_eng::kKeyCode_F3) {
+    else if (key.keyCode == fs_eng::kKeyCode_F11) {
         mission_->endWithStatus(Mission::kMissionStatusCompleted);
         return true;
-    } else if (key.keyCode == fs_eng::kKeyCode_F4) {
+    } else if (key.keyCode == fs_eng::kKeyCode_F12) {
         mission_->endWithStatus(Mission::kMissionStatusFailed);
         return true;
     }
 #endif
-    else if (key.keyCode >= fs_eng::kKeyCode_F5 && key.keyCode <= fs_eng::kKeyCode_F12) {
+    else if (key.keyCode >= fs_eng::kKeyCode_F1 && key.keyCode <= fs_eng::kKeyCode_F8) {
         // Those keys are direct access to inventory
-        uint8 weapon_idx = (uint8) key.keyCode - (uint8) fs_eng::kKeyCode_F5;
+        uint8_t weapon_idx = (uint8_t) key.keyCode - (uint8_t) fs_eng::kKeyCode_F5;
         handleWeaponSelection(weapon_idx, ctrl);
         return true;
     } else if ((key.keyCode == fs_eng::kKeyCode_D) && ctrl) { // selected agents are killed with 'd'

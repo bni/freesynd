@@ -33,6 +33,8 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/enginecommon.h"
+#include "fs-engine/sound/musicmanager.h"
+#include "fs-engine/sound/soundmanager.h"
 
 namespace fs_eng {
 
@@ -367,7 +369,10 @@ void Menu::keyEvent(FS_Key key)
         // Pressing Escape changes the current menu to its parent(like a back)
         if (key.keyCode == kKeyCode_Escape) {
             menu_manager_->gotoMenu(parentId_);
-            return;
+        } else if (key.keyCode == fs_eng::kKeyCode_F9) { // Music Control
+            g_MusicMgr.toggleMusic();
+        } else if (key.keyCode == fs_eng::kKeyCode_F10) { // Sound Control
+            g_SoundMgr.toggleSound();
         }
     }
 }

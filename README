@@ -57,13 +57,13 @@ Type "freesynd -h" to display the list of available arguments when starting the 
  * Right Click and drag selected weapon to required agent number to exchange
  
 ### In game
- * F1  : Turns music on/off.
- * F2  : Turns game sounds on/off.
- * F5 - F12 : each key selects/deselects one item in the inventory.
+ * F1 - F8 : each key selects/deselects one item in the inventory.
 	Pressing CTRL-Fx to select a Medikit will apply Medikit on all selected agents
 	that own one.
 	Pressing CTRL-Fx to select an EnergyShield will select an Energy Shield on all selected agents
 	that own one.
+ * F9  : Turns music on/off.
+ * F10  : Turns game sounds on/off.
  * 1-4 : Numeric key selects the corresponding agent.
  * 0   : Key 0 selects all agents or selects only the leader.
  * Left,Right,Up,Down : Scrolls the map.
@@ -85,8 +85,7 @@ Type "freesynd -h" to display the list of available arguments when starting the 
  
  
 ### Debug Mode
- * Alt  : shows agents walk path, if over an object shows its id and
-major type
+ * Alt  : shows agents walk path, if over an object shows its id and major type
  * Shift : mouse coordinates are printed
 
 ## Contact

@@ -8,6 +8,8 @@ freesynd (0.9) unstable; urgency=low
   * Cmake 3.28 is required for building the app
   * Setting language to zero in user.conf selects language based on system locale. Closes: #36
   * Use of Conan 2 to manage some project's dependencies
+  * Toggling music/sound is now available through all the application not just in gameplay
+  * Toggling music/sound hotkeys are F9 and F10 and assigning weapons in mission is F1 to F8
   [ Bugs ]
   * Option to disable friendly fire. Closes: #69
 
