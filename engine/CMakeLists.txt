@@ -115,6 +115,8 @@ if (USE_SDL_MIXER)
 
     find_package (SDL2_mixer REQUIRED)
 
+    add_subdirectory(extern)
+
     add_library(fs_engine_sdlmixer STATIC
                   "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixeraudio.cpp"
                   "${Freesynd_SOURCE_DIR}/engine/src/sound/mixer/sdlmixersound.cpp"
@@ -128,7 +130,7 @@ if (USE_SDL_MIXER)
 
     target_include_directories(fs_engine_sdlmixer PUBLIC src/sound)
     target_include_directories(fs_engine_sdlmixer PRIVATE include)
-    target_link_libraries(fs_engine_sdlmixer PRIVATE freesynd_warnings Freesynd::Utils SDL2::Main SDL2::Mixer)
+    target_link_libraries(fs_engine_sdlmixer PRIVATE freesynd_warnings Freesynd::Utils SDL2::Main SDL2::Mixer ADLMIDI)
 
     target_compile_definitions(fs_engine_sdl PRIVATE "HAVE_SDL_MIXER")
 

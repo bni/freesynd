@@ -104,6 +104,17 @@ public:
 
     //! Instanciate an implementation of Music based on the implementation of Audio
     virtual std::unique_ptr<Music> createMusic() = 0;
+
+    //! Open the music file at given path
+    virtual bool openFile(std::string path) = 0;
+    //! Play a given song in the loaded file
+    virtual void playMusic(int songNb, bool loop) = 0;
+    //! Stop play the song
+    virtual void stopMusic() = 0;
+    //! Pause the music
+    virtual void pauseMusic() = 0;
+    //! Unpause the music
+    virtual void resumeMusic() = 0;
 };
 
 #ifndef HAVE_SDL_MIXER

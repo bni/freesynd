@@ -316,7 +316,8 @@ void GameplayMenu::handleShow() {
     handleAgentWarned_ = EventManager::listen<PoliceWarningEmittedEvent>(this, &GameplayMenu::onPoliceWarningEmittedEvent);
 
     // play game track
-    g_MusicMgr.playTrack(fs_eng::Music::TRACK_ASSASSINATE);
+    g_MusicMgr.playSong(fs_eng::MusicManager::kMusicSongAssassinate, true);
+    
     menu_manager_->resetSinceMouseDown();
 }
 
@@ -479,7 +480,7 @@ void GameplayMenu::handleRender(DirtyList &dirtyList) {
 
 void GameplayMenu::handleLeave()
 {
-    g_MusicMgr.stopPlayback();
+    g_MusicMgr.stopCurrentSong();
 
     // Remove handlers to prevent events coming after the end of mission
     EventManager::remove_listener(handleAgentDied_);
@@ -904,6 +905,9 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
         paused_ = !paused_;
         if (paused_) {
             stopShootingEvent();
+            g_MusicMgr.pause();
+        } else {
+            g_MusicMgr.resume();
         }
         return true;
     }

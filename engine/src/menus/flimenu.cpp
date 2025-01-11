@@ -80,7 +80,7 @@ void FliMenu::clearFliDescList() {
  */
 bool FliMenu::loadNextFli() {
     // Stop all music if one was being played
-    g_MusicMgr.stopPlayback();
+    g_MusicMgr.stopCurrentSong();
     playingFli_ = false;
     isFrameLoaded_ = false;
     // loads Fli
@@ -145,7 +145,9 @@ void FliMenu::handleTick(uint32_t elapsed)
                 else if (desc.evtList[i].frame == frameIndex) {
                     // Play music
                     if (desc.evtList[i].music != Music::NO_TRACK) {
-                        g_MusicMgr.playTrack(desc.evtList[i].music);
+                        //g_MusicMgr.playTrack(desc.evtList[i].music);
+                        // TODO : adapt this code
+                        g_MusicMgr.playSong(MusicManager::kMusicSongIntro);
                     }
                     // Play sound
                     if (desc.evtList[i].sound != NO_SOUND) {

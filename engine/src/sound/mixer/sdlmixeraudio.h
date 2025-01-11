@@ -37,29 +37,44 @@ public:
     bool init(EFrequency frequency = FRQ_DEFAULT,
                      EFormat format = FMT_DEFAULT,
                      EChannel channels = CHN_DEFAULT,
-                     int chunksize = 1024);
+                     int chunksize = 1024) override;
 
     //! Returns true if the audio system has been initialized with success
-    bool isInitialized() { return initialized_; }
+    bool isInitialized() override { return initialized_; }
     //! Terminates the audio system
-    bool quit();
+    bool quit() override;
 
     //! Returns the maximum volume possible
-    int getMaxVolume();
+    int getMaxVolume() override;
 
     //! Sets the music volume to the given level
-    void setMusicVolume(int volume);
+    void setMusicVolume(int volume) override;
     //! Returns the music volume
-    int getMusicVolume();
+    int getMusicVolume() override;
 
     //! Sets the sound volume on the given channel to the given level
-    void setSoundVolume(int volume, int channel = 0);
+    void setSoundVolume(int volume, int channel = 0) override;
     //! Returns the sound volume of the given channel
-    int getSoundVolume(int channel = 0);
+    int getSoundVolume(int channel = 0) override;
 
-    std::unique_ptr<Sound> createSound();
+    //! @copydoc Audio::createSound()
+    std::unique_ptr<Sound> createSound() override;
+    //! @copydoc Audio::createMusic()
+    std::unique_ptr<Music> createMusic() override;
 
-    std::unique_ptr<Music> createMusic();
+    //! @copydoc Audio::openFile()
+    bool openFile(std::string path) override;
+    //! @copydoc Audio::playMusic()
+    void playMusic(int songNb, bool loop) override;
+    //! @copydoc Audio::stopMusic()
+    void stopMusic() override;
+    //! @copydoc Audio::pauseMusic()
+    void pauseMusic() override;
+    //! @copydoc Audio::resumeMusic()
+    void resumeMusic() override;
+
+private:
+    void initObtainedAudioFormat();
 
 private:
     /*! True if the audio system has been initialized with success.*/

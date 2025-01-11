@@ -77,6 +77,8 @@ namespace fs_utl {
         //! Returns the list of game saved names
         static void getGameSavedNames(std::vector<std::string> &files);
         static uint8 *loadOriginalFileToMem(const std::string& filename, size_t &filesize);
+        //! Returns the full path of the given original game resource using the current root path.
+        static std::string getOriginalDataFullPath(const std::string& filename, bool uppercase);
 
     private:
         //! Return the path to ini file base on iniFolder
@@ -85,8 +87,7 @@ namespace fs_utl {
         static void addSaveFilenameAtIndex(const fs::path& filename, std::vector<std::string> &files);
         //! Adds a trailing slash to the string
         static void addMissingSlash(std::string& str);
-        //! Returns the full path of the given original game resource using the current root path.
-        static std::string getOriginalDataFullPath(const std::string& filename, bool uppercase);
+        
 
     private:
         /*! The path to the original game data.*/

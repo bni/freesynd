@@ -42,13 +42,43 @@ namespace fs_eng {
 */
 class MusicManager : public Singleton < MusicManager > {
 public:
+
+    /*!
+     * The different files used for music
+     */
+    enum MusicFile {
+        kMusicFileIntro,
+        kMusicFileGame,
+        kMusicFileNoFile
+    };
+
+    /*!
+     * This is the list of tracks throughout the game.
+     */
+    enum MusicSong {
+        kMusicSongIntro,
+        kMusicSongAssassinate,
+        kMusicSongDanger,
+        kMusicSongGameCompleted,
+        kMusicSongMissionFailed,
+        kMusicSongMissionCompleted,
+        kMusicSongNoSong = -1
+    };
+
     MusicManager();
     ~MusicManager();
 
     void initialize(bool disabled, Audio* audio);
 
-    void playTrack(Music::MusicTrack track, int loops = -1);
-    void stopPlayback();
+    //! Plays the given song with possibility to loop
+    void playSong(MusicSong song, bool loopForEver = false);
+    //! Stop playing the current song
+    void stopCurrentSong();
+    //! Pause the current song
+    void pause();
+    //! Resume the song
+    void resume();
+
     //! Sets the music volume to the given level
     void setVolume(int volume);
     //! Returns the current volume
@@ -60,9 +90,8 @@ protected:
     bool isAudioInitialized();
 
 protected:
-    std::vector<std::unique_ptr<Music>> tracks_;
-    Music::MusicTrack current_track_;
-    bool is_playing_;
+    //! store the current loaded file
+    MusicFile currentFile_;
     /*!
     * Saves the volume level before a mute so
     * we can restore it after a unmute.

@@ -40,7 +40,7 @@ MusicManager::MusicManager()
     volumeBeforeMute_ = -1;
     audio_ = NULL;
     disabled_ = false;
-    is_playing_ = false;
+    currentFile_ = kMusicFileNoFile;
 }
 
 MusicManager::~MusicManager()
@@ -53,7 +53,7 @@ bool MusicManager::isAudioInitialized() {
 
 void MusicManager::initialize(bool disabled, Audio* audio)
 {
-    LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music..."))
+    LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Initialize MusicManager..."))
     audio_ = audio;
     disabled_ = disabled;
     if (disabled_) {
@@ -64,64 +64,76 @@ void MusicManager::initialize(bool disabled, Audio* audio)
         return;
     }
 
-    XMidi xmidi;
-    std::vector < XMidi::Midi > tracks;
-    size_t size;
-    uint8 *data;
-
-    LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music for intro"))
-#if USE_INTRO_OGG
-    tracks_.push_back(audio->createMusic());
-    tracks_.back()->loadMusicFile("music/intro.ogg");
-#else
-    data = File::loadOriginalFile("INTRO.XMI", size);
-    tracks = xmidi.convertXMidi(data, size);
-    for (unsigned int i = 0; i < tracks.size(); ++i) {
-        tracks_.push_back(audio->createMusic());
-        tracks_.back()->loadMusic(tracks[i].data_, tracks[i].size_);
-    }
-    delete[] data;
-#endif
-
-    data = fs_utl::File::loadOriginalFile("SYNGAME.XMI", size);
-    tracks = xmidi.convertXMidi(data, size);
-    for (unsigned int i = 0; i < tracks.size(); ++i) {
-        LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Loading music for game : %i", i))
-        if (i == 0) {
-#if USE_ASSASSINATE_OGG
-            tracks_.push_back(audio->createMusic());
-            tracks_.back()->loadMusicFile("music/assassinate.ogg");
-#else
-            tracks_.push_back(audio->createMusic());
-            tracks_.back()->loadMusic(tracks[i].data_, tracks[i].size_);
-#endif
-        } else {
-            tracks_.push_back(audio->createMusic());
-            tracks_.back()->loadMusic(tracks[i].data_, tracks[i].size_);
-        }
-    }
-    delete[] data;
-
     LOG(Log::k_FLG_SND, "MusicManager", "initialize", ("Music initialized"))
 }
 
-void MusicManager::playTrack(Music::MusicTrack track, int loops)
-{
-    if (!disabled_ && isAudioInitialized()) {
-        if (is_playing_) {
-            tracks_.at(current_track_)->stopFadeOut();
+/*!
+ * Play the given track.
+ * @param song 
+ * @param loops True to loop indefinetly
+ */
+void MusicManager::playSong(MusicSong song, bool loopForEver) {
+    if (!disabled_) {
+        int songNb;
+
+        MusicFile fileToOpen = (song == kMusicSongIntro) ? kMusicFileIntro : kMusicFileGame;
+        std::string fullFilename = fs_utl::File::getOriginalDataFullPath(
+                                                    (song == kMusicSongIntro) ? "INTRO.XMI" : "SYNGAME.XMI", 
+                                                    true);
+
+        if (currentFile_ != fileToOpen && !audio_->openFile(fullFilename)) {
+            FSERR(Log::k_FLG_SND, "MusicManager", "playSong", ("Cannot open file %s\n", fullFilename.c_str()))
+            return;
         }
-        tracks_.at(track)->play(loops);
-        current_track_ = track;
-        is_playing_ = true;
+        
+        switch (song)
+        {
+        case kMusicSongIntro:
+            songNb = 0;
+            break;
+        case kMusicSongAssassinate:
+            songNb = 0;
+            break;
+        case kMusicSongDanger:
+            songNb = 1;
+            break;
+        case kMusicSongGameCompleted:
+            songNb = 2;
+            break;
+        case kMusicSongMissionCompleted:
+            songNb = 3;
+            break;
+        case kMusicSongMissionFailed:
+            songNb = 4;
+            break;
+        default:
+            songNb = 0;
+            break;
+        }
+        
+        audio_->playMusic(songNb, loopForEver);
     }
 }
 
-void MusicManager::stopPlayback() {
-    if (!disabled_ && isAudioInitialized() && is_playing_) {
-        tracks_.at(current_track_)->stop();
-        is_playing_ = false;
-    }
+/*!
+ * Stop the track that is playing
+ */
+void MusicManager::stopCurrentSong() {
+    audio_->stopMusic();
+}
+
+/*!
+ * @brief 
+ */
+void MusicManager::pause() {
+    audio_->pauseMusic();
+}
+
+/*!
+ * @brief 
+ */
+void MusicManager::resume() {
+    audio_->resumeMusic();
 }
 
 void MusicManager::setVolume(int volume) {
