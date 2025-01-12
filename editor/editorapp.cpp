@@ -72,15 +72,19 @@ EditorApp::~EditorApp() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool EditorApp::doInitialize(const fs_eng::CliParam& param) {
+bool EditorApp::doInitialize([[maybe_unused]] const fs_eng::CliParam& param) {
     return editorCtlr_->initialize();
 }
 
 /*!
  * This method returns the menu Id used to start the app.
  */
-int EditorApp::getStartMenuId(const fs_eng::CliParam& param) {
+int EditorApp::getStartMenuId([[maybe_unused]] const fs_eng::CliParam& param) {
     // Go directly to the main menu
     return fs_edit_menus::kMenuIdMain;
 }
 
+bool EditorApp::isLoadIntroResources() {
+    // For the editor we always load intro resources to edit them
+    return true;
+}

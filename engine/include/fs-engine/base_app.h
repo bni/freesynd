@@ -120,6 +120,8 @@ protected:
     virtual void doDestroy();
     //! Define the menuid that will be displayed at the application's start
     virtual int getStartMenuId(const CliParam& param) = 0;
+    //! Return true is intro resources must be loaded
+    virtual bool isLoadIntroResources();
 
     void waitForKeyPress();
 

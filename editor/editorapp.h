@@ -50,11 +50,11 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const fs_eng::CliParam& param);
-    //! Destroy all components
-    void doDestroy() {}
+    bool doInitialize(const fs_eng::CliParam& param) override;
     //! Define the menuid that will be displayed at the application's start
-    int getStartMenuId(const fs_eng::CliParam& param);
+    int getStartMenuId(const fs_eng::CliParam& param) override;
+
+    bool isLoadIntroResources() override;
 
 private:
     /*! Controls the editor logic. */

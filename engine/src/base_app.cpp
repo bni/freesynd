@@ -148,7 +148,7 @@ bool BaseApp::initialize(const CliParam& param) {
         return false;
     }
 
-    if (!menus_.initialize(context_->isPlayIntro())) {
+    if (!menus_.initialize(isLoadIntroResources())) {
         return false;
     }
 
@@ -156,7 +156,7 @@ bool BaseApp::initialize(const CliParam& param) {
         animationManager_.load();
     }
 
-    soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), context_->isPlayIntro());
+    soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), isLoadIntroResources());
 
     music_.initialize(param.isSoundDisabled(), system_->getAudio());
 
@@ -172,6 +172,14 @@ bool BaseApp::initialize(const CliParam& param) {
 
 bool BaseApp::doInitialize([[maybe_unused]] const CliParam& param) {
    return true;
+}
+
+/*!
+ * By default we load intro resources 
+ * @return 
+ */
+bool BaseApp::isLoadIntroResources() {
+    return context_->isPlayIntro();
 }
 
 void BaseApp::destroy() {
