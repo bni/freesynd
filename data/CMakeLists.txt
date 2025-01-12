@@ -9,8 +9,6 @@ if (APPLE)
         "${CMAKE_CURRENT_SOURCE_DIR}/lang/french.lng"
         "${CMAKE_CURRENT_SOURCE_DIR}/lang/german.lng"
         "${CMAKE_CURRENT_SOURCE_DIR}/lang/italian.lng"
-        "${CMAKE_CURRENT_SOURCE_DIR}/music/assassinate.ogg"
-        "${CMAKE_CURRENT_SOURCE_DIR}/music/intro.ogg"
         "${CMAKE_CURRENT_SOURCE_DIR}/ref/original_data.crc"
         "${CMAKE_CURRENT_SOURCE_DIR}/ref/research.dat"
         "${CMAKE_CURRENT_SOURCE_DIR}/ref/weapons.dat"
