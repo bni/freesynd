@@ -53,12 +53,21 @@ public:
     //! Loads the sounds for the game and possibly for the intro
     void initialize(Audio* audio, bool disabled, bool doLoadIntroSounds);
 
+    //! Return the number of sounds loaded for the intro
+    size_t getNumberOfIntroSounds() { return introSounds_.size(); }
+    //! Return the number of sounds loaded for the game
+    size_t getNumberOfGameSounds() { return sounds_.size(); }
+
     //! Plays the sound a number a time on the given channel
-    void play(InGameSample sample, int channel = 0, int loops = 0);
+    void play(InGameSample sample, int channel = -1, int loops = 0);
+    //! Plays the sound a number a time on the given channel
+    void play(size_t sample, int channel = -1, int loops = 0);
     //! Stops the sound
     void stop(InGameSample sample);
     //! Plays the sound a number a time on the given channel
-    void playIntro(IntroSample sample, int channel = 0, int loops = 0);
+    void playIntro(IntroSample sample, int channel = -1, int loops = 0);
+    //! Plays the sound a number a time on the given channel
+    void playIntro(size_t sample, int channel = -1, int loops = 0);
     //! Stops the sound
     void stopIntro(IntroSample sample);
 
@@ -70,8 +79,8 @@ public:
     void toggleSound();
 
 protected:
-    Sound *soundFromInGame(InGameSample sample);
-    Sound *soundFromIntro(IntroSample sample);
+    Sound *soundFromInGame(size_t sample);
+    Sound *soundFromIntro(size_t sample);
 
     void loadSounds(SampleSet set);
 

@@ -99,10 +99,10 @@ void MusicManager::playSong(MusicSong song, bool loopForEver) {
             songNb = 2;
             break;
         case kMusicSongMissionCompleted:
-            songNb = 3;
+            songNb = 4;
             break;
         case kMusicSongMissionFailed:
-            songNb = 4;
+            songNb = 3;
             break;
         default:
             songNb = 0;

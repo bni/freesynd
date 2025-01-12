@@ -42,17 +42,17 @@ SoundManager::SoundManager():tabentry_startoffset_(58), tabentry_offset_(32)
 
 SoundManager::~SoundManager() {}
 
-Sound *SoundManager::soundFromInGame(InGameSample sample)
+Sound *SoundManager::soundFromInGame(size_t sample)
 {
-    if (sample == NO_SOUND)
-        return NULL;
+    if (sample >= sounds_.size() )
+        return nullptr;
     return sounds_.at(sample).get();
 }
 
-Sound *SoundManager::soundFromIntro(IntroSample sample)
+Sound *SoundManager::soundFromIntro(size_t sample)
 {
-    if (sample == kNoSound)
-        return NULL;
+    if (sample >= introSounds_.size())
+        return nullptr;
     return introSounds_.at(sample).get();
 }
 
@@ -159,13 +159,32 @@ bool SoundManager::canUseAudio() {
  * \return void
  *
  */
-void SoundManager::play(InGameSample sample, [[maybe_unused]] int channel, int loops) {
+void SoundManager::play(InGameSample sample, int channel, int loops) {
     if (canUseAudio()) {
         Sound *pSound = soundFromInGame(sample);
 
         if (pSound) {
             // Sound is played on first available channel (value -1)
-            pSound->play(loops, -1);
+            pSound->play(loops, channel);
+        }
+    }
+}
+
+/** \brief Play a sound from in game library
+ *
+ * \param sample InGameSample
+ * \param channel int
+ * \param loops int
+ * \return void
+ *
+ */
+void SoundManager::play(size_t sample, int channel, int loops) {
+    if (canUseAudio()) {
+        Sound *pSound = soundFromInGame(sample);
+
+        if (pSound) {
+            // Sound is played on first available channel (value -1)
+            pSound->play(loops, channel);
         }
     }
 }
@@ -178,13 +197,24 @@ void SoundManager::play(InGameSample sample, [[maybe_unused]] int channel, int l
  * \return void
  *
  */
-void SoundManager::playIntro(IntroSample sample, [[maybe_unused]] int channel, int loops) {
+void SoundManager::playIntro(IntroSample sample, int channel, int loops) {
     if (canUseAudio()) {
         Sound *pSound = soundFromIntro(sample);
 
         if (pSound) {
             // Sound is played on first available channel (value -1)
-            pSound->play(loops, -1);
+            pSound->play(loops, channel);
+        }
+    }
+}
+
+void SoundManager::playIntro(size_t sample, int channel, int loops) {
+    if (canUseAudio()) {
+        Sound *pSound = soundFromIntro(sample);
+
+        if (pSound) {
+            // Sound is played on first available channel (value -1)
+            pSound->play(loops, channel);
         }
     }
 }

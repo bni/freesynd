@@ -2,10 +2,7 @@
  *                                                                      *
  *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".       *
  *                                                                      *
- *   Copyright (C) 2005  Stuart Binge  <skbinge@gmail.com>              *
- *   Copyright (C) 2005  Joost Peters  <joostp@users.sourceforge.net>   *
- *   Copyright (C) 2006  Trent Waddington <qg@biodome.org>              *
- *   Copyright (C) 2013  Benoit Blancard <benblan@users.sourceforge.net>*
+ *   Copyright (C) 2025  Benoit Blancard <benblan@users.sourceforge.net>*
  *                                                                      *
  *    This program is free software;  you can redistribute it and / or  *
  *  modify it  under the  terms of the  GNU General  Public License as  *
@@ -23,16 +20,39 @@
  *                                                                      *
  ************************************************************************/
 
-#ifndef EDITOR_EDITORMENUID_H_
-#define EDITOR_EDITORMENUID_H_
+#ifndef EDITOR_AUDIOMENU_H_
+#define EDITOR_AUDIOMENU_H_
 
-namespace fs_edit_menus {
-    static const int kMenuIdMain = 0;
-    static const int kMenuIdFont = 2;
-    static const int kMenuIdAnim = 3;
-    static const int kMenuIdSrchMis = 4;
-    static const int kMenuIdListMis = 5;
-    static const int kMenuIdAudio = 7;
+#include "fs-engine/menus/menu.h"
+
+/*!
+ * Audio menu to play all sounds and music.
+ */
+class AudioMenu : public fs_eng::Menu {
+public:
+    AudioMenu(fs_eng::MenuManager *m);
+
+    void handleShow() override;
+
+    void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;
+
+private:
+    void updateSoundIntroLabel();
+    void updateSoundGameLabel();
+
+private:
+    int idStaticSoundIntroLabel_;
+    int idStaticSoundGameLabel_;
+    int idButtonSoundIntroUp_;
+    int idButtonSoundIntroDown_;
+    int idButtonSoundGameUp_;
+    int idButtonSoundGameDown_;
+    int idButtonSoundIntroPlay_;
+    int idButtonSoundGamePlay_;
+    size_t maxNbSoundIntro_;
+    size_t currentSoundIntro_;
+    size_t currentSoundGame_;
+    size_t maxNbSoundGame_;
 };
 
-#endif // EDITOR_EDITORMENUID_H_
+#endif // EDITOR_AUDIOMENU_H_

@@ -31,6 +31,7 @@
 #include "mainmenu.h"
 #include "fontmenu.h"
 #include "animmenu.h"
+#include "audiomenu.h"
 #include "searchmissionmenu.h"
 #include "listmissionmenu.h"
 
@@ -47,6 +48,8 @@ fs_eng::Menu * EditorMenuFactory::createCustomMenu(const int menuId) {
         pMenu = new SearchMissionMenu(pManager_);
     } else if (menuId == fs_edit_menus::kMenuIdListMis) {
         pMenu = new ListMissionMenu(pManager_);
+    } else if (menuId == fs_edit_menus::kMenuIdAudio) {
+        pMenu = new AudioMenu(pManager_);
     } else {
         FSERR(Log::k_FLG_UI, "EditorMenuFactory", "createMenu", ("Cannot create Menu : unknown id (%d)", menuId));
     }
@@ -66,6 +69,8 @@ const char* EditorMenuFactory::getShowAnimation(int menuId) {
         return "mscrenup.dat";
     } else if (menuId == fs_edit_menus::kMenuIdListMis) {
         return "mscrenup.dat";
+    } else if (menuId == fs_edit_menus::kMenuIdAudio) {
+        return "";
     } else {
         return MenuFactory::getShowAnimation(menuId);
     }
@@ -73,17 +78,5 @@ const char* EditorMenuFactory::getShowAnimation(int menuId) {
 
 //! Return the name of the animation to play after leaving a menu
 const char* EditorMenuFactory::getLeaveAnimation(int menuId) {
-    if (menuId == fs_edit_menus::kMenuIdMain) {
-        return "";
-    } else if (menuId == fs_edit_menus::kMenuIdFont) {
-        return "";
-    } else if (menuId == fs_edit_menus::kMenuIdAnim) {
-        return "";
-    } else if (menuId == fs_edit_menus::kMenuIdSrchMis) {
-        return "";
-    } else if (menuId == fs_edit_menus::kMenuIdListMis) {
-        return "";
-    } else {
-        return MenuFactory::getLeaveAnimation(menuId);
-    }
+    return MenuFactory::getLeaveAnimation(menuId);
 }

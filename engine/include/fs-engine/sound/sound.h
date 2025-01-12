@@ -33,7 +33,7 @@ namespace fs_eng {
 
 enum IntroSample {
     kSound1 = 0,
-    kNoSound = -1
+    kNoSound = 9999
 };
 /*!
  * These enum values match the indices in the vector containing the samples

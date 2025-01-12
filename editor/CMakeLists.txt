@@ -5,6 +5,7 @@ set(DEV_TOOLS_HEADERS
 	editormenuid.h
 	mainmenu.h
 	fontmenu.h
+	audiomenu.h
 	animmenu.h
 	searchmissionmenu.h
 	listmissionmenu.h)
@@ -16,6 +17,7 @@ add_executable (fs-editor
 	editormenufactory.cpp
 	mainmenu.cpp
 	fontmenu.cpp
+	audiomenu.cpp
 	animmenu.cpp
 	searchmissionmenu.cpp
 	listmissionmenu.cpp

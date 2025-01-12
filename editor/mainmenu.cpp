@@ -43,9 +43,10 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_
     addStatic(201, 130, 100, "GRAPHICS", FontManager::SIZE_3, false);
     addOption(201, 155, 130, 25, "- MENU SPRITES", FontManager::SIZE_2, fs_edit_menus::kMenuIdFont, true, false);
     addOption(201, 180, 130, 25, "- ANIMATIONS", FontManager::SIZE_2, fs_edit_menus::kMenuIdAnim, true, false);
+    addOption(201, 205, 130, 25, "- AUDIO", FontManager::SIZE_2, fs_edit_menus::kMenuIdAudio, true, false);
 
-    addStatic(201, 210, 100, "MISSIONS", FontManager::SIZE_3, false);
-    addOption(210, 235, 130, 25, "- SEARCH", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis, true, false);
+    addStatic(201, 235, 100, "MISSIONS", FontManager::SIZE_3, false);
+    addOption(210, 260, 130, 25, "- SEARCH", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis, true, false);
     quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
 }
 
