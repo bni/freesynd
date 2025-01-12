@@ -26,6 +26,7 @@
 #include "core/gamecontroller.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/events/event.h"
+#include "fs-engine/sound/soundmanager.h"
 #include "fs-kernel/model/missionbriefing.h"
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/ped.h"
@@ -499,8 +500,7 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
                 if (signalType_ == kTarget) {
                     signalSourceLocW_.convertFromTilePoint(p_minimap_->target()->position());
                 }
-                // TODO : uncomment when assassinate.ogg doesn't have the pong sound in it
-                //g_SoundMgr.play(snd::TRACKING_PONG);
+                g_SoundMgr.play(fs_eng::TRACKING_PONG);
             }
             // reset color to white in case the red circle was displayed
             signalColor_ = fs_eng::kPaletteGameColorWhite;
