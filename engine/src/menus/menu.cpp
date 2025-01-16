@@ -373,6 +373,18 @@ void Menu::keyEvent(FS_Key key)
             g_MusicMgr.toggleMusic();
         } else if (key.keyCode == fs_eng::kKeyCode_F10) { // Sound Control
             g_SoundMgr.toggleSound();
+        } else if (key.keyCode == fs_eng::kKeyCode_Plus) {
+            if (g_System.isKeyModStatePressed(fs_eng::KMD_SHIFT)) {
+                g_MusicMgr.setVolume(g_MusicMgr.getVolume() + 10);
+            } else {
+                g_SoundMgr.increaseVolume();
+            }
+        } else if (key.keyCode == fs_eng::kKeyCode_Minus) {
+            if (g_System.isKeyModStatePressed(fs_eng::KMD_SHIFT)) {
+                g_MusicMgr.setVolume(g_MusicMgr.getVolume() - 10);
+            } else {
+                g_SoundMgr.decreaseVolume();
+            }
         }
     }
 }

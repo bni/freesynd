@@ -53,9 +53,9 @@ public:
     int getMusicVolume() override;
 
     //! Sets the sound volume on the given channel to the given level
-    void setSoundVolume(int volume, int channel = 0) override;
+    void setSoundVolume(int volume, int channel) override;
     //! Returns the sound volume of the given channel
-    int getSoundVolume(int channel = 0) override;
+    int getSoundVolume(int channel) override;
 
     //! @copydoc Audio::createSound()
     std::unique_ptr<Sound> createSound() override;

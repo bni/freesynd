@@ -94,9 +94,9 @@ public:
     virtual int getMusicVolume() = 0;
 
     //! Sets the sound volume on the given channel to the given level
-    virtual void setSoundVolume(int volume, int channel = 0) = 0;
+    virtual void setSoundVolume(int volume, int channel = -1) = 0;
     //! Returns the sound volume of the given channel
-    virtual int getSoundVolume(int channel = 0) = 0;
+    virtual int getSoundVolume(int channel = -1) = 0;
 
     //! Instanciate an implementation of Sound based on the implementation of Audio
     virtual std::unique_ptr<Sound> createSound() = 0;
@@ -144,9 +144,9 @@ public:
     int getMusicVolume();
 
     //! Sets the sound volume on the given channel to the given level
-    void setSoundVolume(int volume, int channel = 0);
+    void setSoundVolume(int volume, int channel);
     //! Returns the sound volume of the given channel
-    int getSoundVolume(int channel = 0);
+    int getSoundVolume(int channel);
 
     //! Returns a basic implementation of Sound
     std::unique_ptr<Sound> createSound();

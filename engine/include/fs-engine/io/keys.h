@@ -101,7 +101,10 @@ enum FS_KeyCode {
     kKeyCode_1 = 60,
     kKeyCode_2 = 61,
     kKeyCode_3 = 62,
-    kKeyCode_4 = 63
+    kKeyCode_4 = 63,
+
+    kKeyCode_Plus,
+    kKeyCode_Minus
 };
 
 //! Valid key modifiers

@@ -262,7 +262,7 @@ int SdlMixerAudio::getMusicVolume() {
  * Sets the music volume.
  * \param volume The volume level. If greater than the maximum
  * volume, then the maximum is set.
- * \param channel The channel on which the volume is set.
+ * \param channel The channel on which the volume is set. if -1, then it's all channels
  */
 void SdlMixerAudio::setSoundVolume(int volume, int channel)
 {
