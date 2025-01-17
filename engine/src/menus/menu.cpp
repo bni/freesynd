@@ -374,14 +374,16 @@ void Menu::keyEvent(FS_Key key)
         } else if (key.keyCode == fs_eng::kKeyCode_F10) { // Sound Control
             g_SoundMgr.toggleSound();
         } else if (key.keyCode == fs_eng::kKeyCode_Plus) {
+            // Shift + '+' is for music, '+' is for sound
             if (g_System.isKeyModStatePressed(fs_eng::KMD_SHIFT)) {
-                g_MusicMgr.setVolume(g_MusicMgr.getVolume() + 10);
+                g_MusicMgr.increaseVolume();
             } else {
                 g_SoundMgr.increaseVolume();
             }
         } else if (key.keyCode == fs_eng::kKeyCode_Minus) {
+            // Shift + '-' is for music, '-' is for sound
             if (g_System.isKeyModStatePressed(fs_eng::KMD_SHIFT)) {
-                g_MusicMgr.setVolume(g_MusicMgr.getVolume() - 10);
+                g_MusicMgr.decreaseVolume();
             } else {
                 g_SoundMgr.decreaseVolume();
             }

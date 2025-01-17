@@ -32,6 +32,7 @@ See the file "ChangeLog".
 - PathFinding requires improvement (path smoothing)
 - Trains that moves North/South have a buggy display (it flickers)
 - Not all weapons correctly function.
+- Music volume is not modifiable
 
 ## Installing & running the game
 See the file "INSTALL" for information on how to install the game.
@@ -40,6 +41,10 @@ See the file "INSTALL" for information on how to install the game.
 Type "freesynd -h" to display the list of available arguments when starting the application.
  
 ## Commands
+
+### All menus
+ * +/- : Increase/decrease sound volume
+ * Shift '+' / Shift '-' : Increase/decrease music volume
 
 ### Mission Selection
  * 0     : Puts the selector on first mission.

@@ -147,6 +147,7 @@ Here is a description of the parameters contained in this file:
  - `play_intro`: (true/false) If true, the introduction will be played.
  - `language`: 0:english, 1:français, 2:italiano, 3:deutsch 
  - `save_data_dir`: Directory to save file. By default, it is a save directory near the user.conf file.
+ - `sound_volume` : (0 to 128) Set the volume for the sounds in the game
 
 After launch, `play_intro` and `test_data` will be turned off automatically.
 

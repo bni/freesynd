@@ -31,6 +31,7 @@
 #include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
+#include "fs-engine/appcontext.h"
 
 namespace fs_eng {
 
@@ -71,6 +72,8 @@ void SoundManager::initialize(Audio* audio, bool disabled, bool doLoadIntroSound
             loadSounds(SAMPLES_INTRO);
         }
     }
+
+    audio_->setSoundVolume(g_Ctx.getSoundVolume());
 }
 
 void SoundManager::loadSounds(SampleSet set)

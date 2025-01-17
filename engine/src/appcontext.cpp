@@ -39,6 +39,7 @@ AppContext::AppContext() {
     fullscreen_ = false;
     playIntro_ = true;
     language_ = NULL;
+    soundVolume_ = 0;
 }
 
 AppContext::~AppContext() {
@@ -121,6 +122,7 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     fullscreen_ = userConf.read("fullscreen", false);
     playIntro_ = userConf.read("play_intro", true);
     test_files_ = userConf.read("test_data", true);
+    soundVolume_ = userConf.read("sound_volume", 100);
     const int languageID = userConf.read("language", 0);
     std::string defaultDir;
     fs_utl::File::getDefaultSaveFolder(defaultDir);
@@ -135,6 +137,7 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
         userConf.add("test_data", test_files_);
         userConf.add("language", languageID);
         userConf.add("save_data_dir", saveDataDir);
+        userConf.add("sound_volume", soundVolume_);
 
         if (!updateUserConf(userConf, userConfFullpath)) {
             return false;
@@ -244,6 +247,23 @@ void AppContext::deactivateTestFlag() {
     LOG(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Setting test_data to false in %s", userConfPath.c_str()))
     ConfigFile conf(userConfPath.string());
     conf.add("test_data", false);
+
+    updateUserConf(conf, userConfPath);
+}
+
+/*!
+ * Update hte sound_volume parameter in the config file 
+ * @param volume new volume. Must greater or equal zero
+ */
+void AppContext::updateSoundVolume(int volume) {
+    if (volume < 0) {
+        return;
+    }
+    std::filesystem::path userConfPath;
+    fs_utl::File::getUserConfFullPath(userConfPath);
+    LOG(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Setting sound_volume to false in %s", userConfPath.c_str()))
+    ConfigFile conf(userConfPath.string());
+    conf.add("sound_volume", volume);
 
     updateUserConf(conf, userConfPath);
 }

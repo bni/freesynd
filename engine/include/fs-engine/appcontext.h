@@ -52,11 +52,15 @@ public:
     bool isPlayIntro() { return playIntro_; }
 
     bool isTestFiles() { return test_files_; }
+    //! Return the sound volume parameter
+    int getSoundVolume() { return soundVolume_; }
 
     //! Sets the intro flag to false in the config file
     void updateIntroFlag();
     //! Sets the test files flag to false in the config file
     void deactivateTestFlag();
+    //! Sets the sound volume parameter to the given value in the config file
+    void updateSoundVolume(int volume);
 
     uint32_t getTimeForClick() { return time_for_click_; }
 
@@ -84,6 +88,8 @@ private:
     /*! Language file. */
     ConfigFile  *language_;
     fs_eng::FS_Lang curr_language_;
+    //! Volume of sound : from 0 to 128
+    int soundVolume_;
 };
 
 }

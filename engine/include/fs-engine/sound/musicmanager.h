@@ -82,6 +82,10 @@ public:
     void setVolume(int volume);
     //! Returns the current volume
     int getVolume();
+    //! Increase volume with the given percentage (0-100)
+    int increaseVolume(int percentage = 10);
+    //! Decrease volume with the given percentage (0-100)
+    int decreaseVolume(int percentage = 10);
     //! Mute / unmute the music
     void toggleMusic();
 

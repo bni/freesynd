@@ -149,6 +149,36 @@ int MusicManager::getVolume() {
 }
 
 /*!
+ * Increase volume with the given percentage (0-100).
+ * Cannot be higher the max volume.
+ * @param percentage 
+ * @return the new volume
+ */
+int MusicManager::increaseVolume(int percentage) {
+    int incr = percentage * audio_->getMaxVolume() / 100;
+    setVolume(getVolume() + incr);
+    return getVolume();
+}
+
+
+/*!
+ * Decrease volume with the given percentage (0-100).
+ * Cannot be lower than zero
+ * @param percentage 
+ * @return the new volume
+ */
+int MusicManager::decreaseVolume(int percentage) {
+    int decr = percentage * audio_->getMaxVolume() / 100;
+    if (decr > getVolume()) {
+        setVolume(0);
+    } else {
+        setVolume(getVolume() - decr);
+    }
+    
+    return getVolume();
+}
+
+/*!
 * Turns the music on/off.
 * The method watches for the value of field volumeBeforeMute_ :
 *  - if it's value is -1 : then music volume is on. So the method

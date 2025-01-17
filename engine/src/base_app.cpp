@@ -260,6 +260,7 @@ void BaseApp::waitForKeyPress() {
 
 void BaseApp::onQuitHandler([[maybe_unused]] QuitEvent *evt) {
     LOG(Log::k_FLG_INFO, "BaseApp", "onQuitHandler", ("Received Quit Evt : quitting"))
+    context_->updateSoundVolume(soundManager_.getVolume());
     running_ = false;
 }
 
