@@ -36,8 +36,8 @@ struct FrameEvent {
     int frame;
     /*! start music.*/
     MusicManager::MusicSong    music;
-    /*! Game sound to play.*/
-    InGameSample    sound;
+    /*! sound to play.*/
+    size_t    sound;
     uint8_t    sndChan;
     /*! Operation on subtitle.*/
     const char* subtitle;
@@ -47,6 +47,8 @@ struct FrameEvent {
  * A description of the fli animation to be played.
  */
 struct FliDesc {
+    //! Is it a sound for intro or
+    SampleType type;
     /*! Name of the file containing the animation.*/
     std::string name;
     /*! Speed of animation : delay between 2 frames.*/
@@ -78,7 +80,7 @@ public:
     void handleLeave() override;
 
     //! Append a animation to play with its caracteristics
-    void addFliDesc(const char *anim, int frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events);
+    void addFliDesc(const char *anim, uint32_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events, SampleType type=kSampleGame);
     //! Remove all FliDesc
     void clearFliDescList();
 

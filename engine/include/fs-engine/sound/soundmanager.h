@@ -59,17 +59,13 @@ public:
     size_t getNumberOfGameSounds() { return sounds_.size(); }
 
     //! Plays the sound a number a time on the given channel
-    void play(InGameSample sample, int channel = -1, int loops = 0);
-    //! Plays the sound a number a time on the given channel
     void play(size_t sample, int channel = -1, int loops = 0);
     //! Stops the sound
     void stop(InGameSample sample);
     //! Plays the sound a number a time on the given channel
-    void playIntro(IntroSample sample, int channel = -1, int loops = 0);
-    //! Plays the sound a number a time on the given channel
     void playIntro(size_t sample, int channel = -1, int loops = 0);
     //! Stops the sound
-    void stopIntro(IntroSample sample);
+    void stopIntro(size_t sample);
 
     //! Sets the music volume to the given level
     void setVolume(int volume);

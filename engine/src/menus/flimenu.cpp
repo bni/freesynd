@@ -46,23 +46,25 @@ FliMenu::~FliMenu()
 {}
 
 /*!
- * Adds a new description.
+ * Adds a new description for the FLI animation.
  * \param anim animation file name.
  * \param frameDelay animation speed.
  * \param waitKey True to wait for the user input
  * \param skipable True means user can skip animation
- * \param usePalette True with reload the sprite texture for intro font with the palette in the fli
- * \param music
- * \param sound
+ * \param usePalette True will reload the sprite texture for intro font with the palette in the fli
+ * \param events The events to handle during the animation play
+ * \param type Which bank of sound to use
  */
-void FliMenu::addFliDesc(const char *anim, int frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events) {
+void FliMenu::addFliDesc(const char *anim, uint32_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events, SampleType type) {
     FliDesc desc;
+    desc.type = kSampleGame;
     desc.name = anim;
     desc.frameDelay = frameDelay;
     desc.waitKeyPressed = waitKey;
     desc.skipable = skipable;
     desc.usePaletteForFont = usePalette;
     desc.evtList = events;
+    desc.type = type;
 
     fliList_.push_back(desc);
 }
@@ -148,14 +150,20 @@ void FliMenu::handleTick(uint32_t elapsed)
                         g_MusicMgr.playSong(desc.evtList[i].music);
                     }
                     // Play sound
-                    if (desc.evtList[i].sound != NO_SOUND) {
-                        g_SoundMgr.play(desc.evtList[i].sound, desc.evtList[i].sndChan);
+                    if (desc.evtList[i].sound != kNoSound) {
+                        if (desc.type == kSampleGame) {
+                            g_SoundMgr.play(desc.evtList[i].sound, desc.evtList[i].sndChan);
+                        } else {
+                            g_SoundMgr.playIntro(desc.evtList[i].sound, desc.evtList[i].sndChan);
+                        }
                     }
                     // Draw subtitle
                     if (desc.evtList[i].subtitle != NULL) {
-                        getMessage(desc.evtList[i].subtitle, currSubTitle_);
-                    } else {
-                        currSubTitle_ = "";
+                        if (strlen(desc.evtList[i].subtitle)) {
+                            getMessage(desc.evtList[i].subtitle, currSubTitle_);
+                        } else {
+                            currSubTitle_ = "";
+                        }   
                     }
                 }
             }

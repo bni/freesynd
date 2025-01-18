@@ -55,7 +55,7 @@ SdlMixerSound::~SdlMixerSound()
  * plays the sound indefinitly until the sound is stopped.
  * \param channel
  */
-void SdlMixerSound::play(int loops, int channel) const
+void SdlMixerSound::play(int channel, int loops) const
 {
     int ret = Mix_PlayChannel(channel, sound_data_, loops);
     if (ret < 0) {

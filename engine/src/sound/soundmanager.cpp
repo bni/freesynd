@@ -153,26 +153,6 @@ bool SoundManager::canUseAudio() {
             audio_->isInitialized();
 }
 
-
-/** \brief Play a sound from in game library
- *
- * \param sample InGameSample
- * \param channel int
- * \param loops int
- * \return void
- *
- */
-void SoundManager::play(InGameSample sample, int channel, int loops) {
-    if (canUseAudio()) {
-        Sound *pSound = soundFromInGame(sample);
-
-        if (pSound) {
-            // Sound is played on first available channel (value -1)
-            pSound->play(loops, channel);
-        }
-    }
-}
-
 /** \brief Play a sound from in game library
  *
  * \param sample InGameSample
@@ -187,37 +167,26 @@ void SoundManager::play(size_t sample, int channel, int loops) {
 
         if (pSound) {
             // Sound is played on first available channel (value -1)
-            pSound->play(loops, channel);
+            pSound->play(channel, loops);
         }
     }
 }
 
 /** \brief Play a sound from in intro library
  *
- * \param sample IntroSample
+ * \param sample sample to play
  * \param channel int
  * \param loops int
  * \return void
  *
  */
-void SoundManager::playIntro(IntroSample sample, int channel, int loops) {
-    if (canUseAudio()) {
-        Sound *pSound = soundFromIntro(sample);
-
-        if (pSound) {
-            // Sound is played on first available channel (value -1)
-            pSound->play(loops, channel);
-        }
-    }
-}
-
 void SoundManager::playIntro(size_t sample, int channel, int loops) {
     if (canUseAudio()) {
         Sound *pSound = soundFromIntro(sample);
 
         if (pSound) {
             // Sound is played on first available channel (value -1)
-            pSound->play(loops, channel);
+            pSound->play(channel, loops);
         }
     }
 }
@@ -245,7 +214,7 @@ void SoundManager::stop(InGameSample sample) {
  * \return void
  *
  */
-void SoundManager::stopIntro(IntroSample sample) {
+void SoundManager::stopIntro(size_t sample) {
     if (canUseAudio()) {
         Sound *pSound = soundFromIntro(sample);
 

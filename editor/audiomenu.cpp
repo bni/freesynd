@@ -91,7 +91,7 @@ void AudioMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
             updateSoundGameLabel();
         }
     } else if (actionId == idButtonSoundGameUp_) {
-        if (currentSoundGame_ < (maxNbSoundGame_ - 1)) {
+        if (currentSoundGame_ < (maxNbSoundGame_)) {
             ++currentSoundGame_;
             updateSoundGameLabel();
         }
@@ -101,7 +101,7 @@ void AudioMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
             updateSoundIntroLabel();
         }
     } else if (actionId == idButtonSoundIntroUp_) {
-        if (currentSoundIntro_ < (maxNbSoundGame_ - 1)) {
+        if (currentSoundIntro_ < (maxNbSoundGame_)) {
             ++currentSoundIntro_;
             updateSoundIntroLabel();
         }
@@ -113,12 +113,12 @@ void AudioMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
 }
 
 void AudioMenu::updateSoundIntroLabel() {
-    std::string label = std::format("{:02d}/{}", currentSoundIntro_+1, maxNbSoundIntro_);
+    std::string label = std::format("{:02d}/{}", currentSoundIntro_, maxNbSoundIntro_ -1);
     
     getStatic(idStaticSoundIntroLabel_)->setText(label.c_str(), false);
 }
 
 void AudioMenu::updateSoundGameLabel() {
-    std::string label = std::format("{:02d}/{}", currentSoundGame_+1, maxNbSoundGame_);
+    std::string label = std::format("{:02d}/{}", currentSoundGame_, maxNbSoundGame_ -1);
     getStatic(idStaticSoundGameLabel_)->setText(label.c_str(), false);
 }

@@ -31,10 +31,17 @@
 
 namespace fs_eng {
 
-enum IntroSample {
-    kSound1 = 0,
-    kNoSound = 9999
+/*!
+ * @brief To select the library of sounds
+ */
+enum SampleType {
+    kSampleIntro,
+    kSampleGame
 };
+
+//! When no sound is needed
+inline constexpr size_t kNoSound {9999};
+
 /*!
  * These enum values match the indices in the vector containing the samples
  * so don't mess up the order in which they are in.
@@ -85,8 +92,8 @@ enum InGameSample {
 class Sound {
 public:
     virtual ~Sound() {}
-    virtual void play(int loops = 0, int channel = 0) const = 0;
-    virtual void stop(int channel = 0) const  = 0;
+    virtual void play(int channel, int loops = 0) const = 0;
+    virtual void stop(int channel) const  = 0;
     virtual bool setVolume(int volume)  = 0;
     virtual bool loadSound(uint8 *soundData, uint32 size)  = 0;
 };
@@ -99,8 +106,8 @@ public:
  */
 class DefaultSound : public Sound {
 public:
-    void play([[maybe_unused]] int loops = 0, [[maybe_unused]] int channel = 0) const {;}
-    void stop([[maybe_unused]] int channel = 0) const {;}
+    void play([[maybe_unused]] int channel, [[maybe_unused]] int loops = 0) const {;}
+    void stop([[maybe_unused]] int channel) const {;}
     bool setVolume([[maybe_unused]] int volume) { return true; }
     bool loadSound([[maybe_unused]] uint8 *soundData, [[maybe_unused]] uint32 size) { return true; }
 };

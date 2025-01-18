@@ -43,9 +43,9 @@ public:
     ~SdlMixerSound();
 
     //! Plays the sound a number a time
-    void play(int loops = 0, int channel = 0) const;
+    void play(int channel, int loops) const;
     //! Stops the sound
-    void stop(int channel = 0) const;
+    void stop(int channel) const;
     //! Sets the sample volume
     bool setVolume(int volume);
     //! Loads the sample from memory

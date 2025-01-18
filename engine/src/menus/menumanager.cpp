@@ -41,13 +41,13 @@ namespace fs_eng {
 
 //! This defines the list of events for the transition show animation
 const FrameEvent transition_show_event[] = {
-    {-1, MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL }
+    {-1, MusicManager::kMusicSongNoSong, kNoSound, 0x0, NULL }
 };
 
 //! This defines the list of events for the transition leave animation
 const FrameEvent transition_leave_event[] = {
     { 1, MusicManager::kMusicSongNoSong, MENU_CHANGE,   0x1, NULL },
-    {-1, MusicManager::kMusicSongNoSong, NO_SOUND, 0x0, NULL }
+    {-1, MusicManager::kMusicSongNoSong, kNoSound, 0x0, NULL }
 };
 
 /*!
