@@ -34,12 +34,11 @@ namespace fs_eng {
 struct FrameEvent {
     /*! frame Id.*/
     int frame;
-    /*! start music.*/
-    MusicManager::MusicSong    music;
     /*! sound to play.*/
     size_t    sound;
+    //! channel for the sound
     uint8_t    sndChan;
-    /*! Operation on subtitle.*/
+    /*! Operation on subtitle. If NULL, do nothing.*/
     const char* subtitle;
 };
 
@@ -61,6 +60,8 @@ struct FliDesc {
     //! True means the intro font uses the palette from FLI
     bool usePaletteForFont;
     const FrameEvent *evtList;
+    //! Song to play during the fli animation
+    MusicManager::MusicSong song;
 };
 
 /*!
@@ -80,7 +81,14 @@ public:
     void handleLeave() override;
 
     //! Append a animation to play with its caracteristics
-    void addFliDesc(const char *anim, uint32_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events, SampleType type=kSampleGame);
+    void addFliDesc(const char *anim, 
+                    uint32_t frameDelay,
+                    bool waitKey,
+                    bool skipable,
+                    bool usePalette,
+                    const FrameEvent *events,
+                    SampleType type=kSampleGame,
+                    MusicManager::MusicSong song = MusicManager::kMusicSongNoSong);
     //! Remove all FliDesc
     void clearFliDescList();
 

@@ -405,7 +405,7 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
 /*!
  * Read the current frame content from loaded FLI file.
  * @param nbColor Set to non zero only for the first frame where palette is loaded
- * @return True if frame has been read
+ * @return index of the decoded frame or -1 if any error
  */
 int FliPlayer::decodeFrame(int &nbColor) {
     FrameTypeChunkHeader frameHeader;

@@ -55,7 +55,14 @@ FliMenu::~FliMenu()
  * \param events The events to handle during the animation play
  * \param type Which bank of sound to use
  */
-void FliMenu::addFliDesc(const char *anim, uint32_t frameDelay, bool waitKey, bool skipable, bool usePalette, const FrameEvent *events, SampleType type) {
+void FliMenu::addFliDesc(const char *anim,
+                            uint32_t frameDelay,
+                            bool waitKey,
+                            bool skipable,
+                            bool usePalette,
+                            const FrameEvent *events,
+                            SampleType type,
+                            MusicManager::MusicSong song) {
     FliDesc desc;
     desc.type = kSampleGame;
     desc.name = anim;
@@ -65,6 +72,7 @@ void FliMenu::addFliDesc(const char *anim, uint32_t frameDelay, bool waitKey, bo
     desc.usePaletteForFont = usePalette;
     desc.evtList = events;
     desc.type = type;
+    desc.song = song;
 
     fliList_.push_back(desc);
 }
@@ -139,16 +147,16 @@ void FliMenu::handleTick(uint32_t elapsed)
 
             // Add a dirty rect just to start the render routine
             addDirtyRect(0, 0, 1, 1);
+            // If we're at the first frame, then play music if defined
+            if (frameIndex == 1 && desc.song != MusicManager::kMusicSongNoSong) {
+                g_MusicMgr.playSong(desc.song);
+            }
 
             // handle events
             for (uint16_t i = 0; desc.evtList[i].frame != -1; i++) {
                 if (desc.evtList[i].frame > frameIndex)
                     break;
                 else if (desc.evtList[i].frame == frameIndex) {
-                    // Play music
-                    if (desc.evtList[i].music != MusicManager::kMusicSongNoSong) {
-                        g_MusicMgr.playSong(desc.evtList[i].music);
-                    }
                     // Play sound
                     if (desc.evtList[i].sound != kNoSound) {
                         if (desc.type == kSampleGame) {
