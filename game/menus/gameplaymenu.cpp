@@ -314,6 +314,7 @@ void GameplayMenu::handleShow() {
     handleAgentDied_ = EventManager::listen<AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
     handleWeaponSelected_ = EventManager::listen<ShootingWeaponSelectedEvent>(this, &GameplayMenu::onShootingWeaponSelectedEvent);
     handleAgentWarned_ = EventManager::listen<PoliceWarningEmittedEvent>(this, &GameplayMenu::onPoliceWarningEmittedEvent);
+    handleMissionEnded_ = EventManager::listen<MissionEndedEvent>(this, &GameplayMenu::onMissionEndedEvent);
 
     // play game track
     g_MusicMgr.playSong(fs_eng::MusicManager::kMusicSongAssassinate, true);
@@ -332,13 +333,7 @@ void GameplayMenu::handleTick(uint32_t elapsed)
     bool change = false;
     tick_count_ += elapsed;
 
-    if (!mission_->completed() && !mission_->failed()) {
-        // Update stats
-        mission_->stats()->incrMissionDuration(elapsed);
-
-        // Checks mission objectives
-        mission_->checkObjectives();
-    }
+    mission_->handleTick(elapsed);
 
     if (!canPlayPoliceWarnSound_ && warningTimer_.update(elapsed)) {
         // wait an amount of time before allowing another warning
@@ -486,6 +481,7 @@ void GameplayMenu::handleLeave()
     EventManager::remove_listener(handleAgentDied_);
     EventManager::remove_listener(handleWeaponSelected_);
     EventManager::remove_listener(handleAgentWarned_);
+    EventManager::remove_listener(handleMissionEnded_);
 
     selection_.clear();
 
@@ -932,8 +928,10 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
             return true;
         }
     } else if (key.keyCode == fs_eng::kKeyCode_Escape) {
-        // Abort mission
-        mission_->endWithStatus(Mission::kMissionStatusAborted);
+        if (mission_->isRunning()) {
+            // Abort mission
+            mission_->endWithStatus(Mission::kMissionStatusAborted);
+        }
         // Display only the menu up animation
         menu_manager_->gotoMenu(fs_game_menus::kMenuIdFliMissionAborted);
         return true;
@@ -983,7 +981,7 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
         uint8_t weapon_idx = (uint8_t) key.keyCode - (uint8_t) fs_eng::kKeyCode_F5;
         handleWeaponSelection(weapon_idx, ctrl);
         return true;
-    } else if ((key.keyCode == fs_eng::kKeyCode_D) && ctrl) { // selected agents are killed with 'd'
+    } else if ((key.keyCode == fs_eng::kKeyCode_D) && ctrl && mission_->isRunning()) { // selected agents are killed with 'd'
         // save current selection as it will be modified when agents die
         std::vector<PedInstance *> agents_suicide;
         for (SquadSelection::Iterator it = selection_.begin();
@@ -1482,5 +1480,21 @@ void GameplayMenu::onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pE
                 pPed->behaviour().handleBehaviourEvent(Behaviour::kBehvEvtWeaponCleared, pPedSource);
             }
         }
+    }
+}
+
+/*!
+ * Call when receiving the event that tells the mission has ended.
+ * @param pEvt MissionEndedEvent
+ */
+void GameplayMenu::onMissionEndedEvent(MissionEndedEvent *pEvt) {
+    if (pEvt->status == Mission::kMissionStatusCompleted) {
+        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission succeeded"));
+        g_SoundMgr.play(fs_eng::SPEECH_MISSION_COMPLETED);
+        g_MusicMgr.playSong(fs_eng::MusicManager::kMusicSongMissionCompleted);
+    } else if (pEvt->status == Mission::kMissionStatusFailed) {
+        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission failed"));
+        g_SoundMgr.play(fs_eng::SPEECH_MISSION_FAILED);
+        g_MusicMgr.playSong(fs_eng::MusicManager::kMusicSongMissionFailed);
     }
 }

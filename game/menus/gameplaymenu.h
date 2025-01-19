@@ -79,6 +79,8 @@ protected:
     void onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pEvt);
     //!
     void onPoliceWarningEmittedEvent(PoliceWarningEmittedEvent *pEvt);
+    //! When mission ends
+    void onMissionEndedEvent(MissionEndedEvent *pEvt);
     ///@}
 
     //!
@@ -153,9 +155,11 @@ protected:
     /*! Delay between 2 police warnings.*/
     fs_utl::Timer warningTimer_;
 
+    //! Handles used for removing listener
     ListenerHandle handleAgentDied_;
     ListenerHandle handleWeaponSelected_;
     ListenerHandle handleAgentWarned_;
+    ListenerHandle handleMissionEnded_;
 
     // when ipa is manipulated this represents
     struct IPA_manipulation {

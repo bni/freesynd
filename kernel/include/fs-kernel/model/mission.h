@@ -82,12 +82,12 @@ public:
     //!
     void incrConvinced() { convinced_++; }
     //!
-    void incrMissionDuration(int elapsed) { missionDuration_ += elapsed; }
+    void incrMissionDuration(uint32_t elapsed) { missionDuration_ += elapsed; }
 private:
     /*! How many agents participated in the mission. */
     int agents_;
     /*! How many time did the mission last. */
-    int missionDuration_;
+    uint32_t missionDuration_;
     /*! How many opposing agents where captured.*/
     int agentCaptured_;
     /*! How many opposing agents where killed.*/
@@ -135,19 +135,23 @@ public:
     Mission(const LevelData::MapInfos & map_infos, Map *pMap);
     virtual ~Mission();
 
-    //*************************************
-    // Mission life cycle and objectives
-    //*************************************
-
+    /**
+     * @name Mission life cycle and objectives
+     */
+    ///@{
     //! Init mission data
     void start(WeaponManager& weaponMgr);
     //! Ends mission with the given status
     void endWithStatus(Status status);
+    //! Update mission state
+    void handleTick(uint32_t elapsed);
 
     //! Returns true if mission status is failed
     bool failed() { return status_ == kMissionStatusFailed; }
     //! Returns true if mission status is completed
     bool completed() { return status_ == kMissionStatusCompleted; }
+    //! Returns true if mission is ongoing
+    bool isRunning() { return status_ == kMissionStatusRunning; }
     //! Returns mission status
     Status getStatus() { return status_; }
 
@@ -156,6 +160,7 @@ public:
     //! Check if objectives are completed or failed
     void checkObjectives();
     void objectiveMsg(std::string& msg);
+    ///@}
 
     //*************************************
     // Map

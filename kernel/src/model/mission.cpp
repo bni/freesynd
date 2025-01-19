@@ -33,7 +33,6 @@
 #include <string>
 
 #include "fs-utils/log/log.h"
-#include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/events/event.h"
 #include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/shot.h"
@@ -218,6 +217,20 @@ void Mission::start(WeaponManager& weaponMgr)
 }
 
 /*!
+ * Update mission state.
+ * @param elapsed 
+ */
+void Mission::handleTick(uint32_t elapsed) {
+    if (status_ == kMissionStatusRunning) {
+        // Update stats
+        stats_.incrMissionDuration(elapsed);
+
+        // Checks mission objectives
+        checkObjectives();
+    }
+}
+
+/*!
  * Checks if objectives are completed or failed and updates
  * mission status.
  */
@@ -257,23 +270,6 @@ void Mission::checkObjectives() {
  * \param status The ending status
  */
 void Mission::endWithStatus(Status status) {
-    switch (status) {
-    case kMissionStatusCompleted:
-        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission succeeded"));
-        g_SoundMgr.play(fs_eng::SPEECH_MISSION_COMPLETED);
-        break;
-    case kMissionStatusFailed:
-        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission failed"));
-        g_SoundMgr.play(fs_eng::SPEECH_MISSION_FAILED);
-        break;
-    case kMissionStatusAborted:
-        LOG(Log::k_FLG_GAME, "Mission", "endWithStatus()", ("Mission aborted"));
-        break;
-    default:
-        // leave without changing status
-        return;
-    }
-
     status_ = status;
     EventManager::fire<MissionEndedEvent>(status);
 
