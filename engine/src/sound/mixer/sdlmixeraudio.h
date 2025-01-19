@@ -56,6 +56,8 @@ public:
     void setSoundVolume(int volume, int channel) override;
     //! Returns the sound volume of the given channel
     int getSoundVolume(int channel) override;
+    //! @copydoc Audio::stopSound()
+    void stopSound(int channel) override;
 
     //! @copydoc Audio::createSound()
     std::unique_ptr<Sound> createSound() override;

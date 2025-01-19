@@ -192,36 +192,15 @@ void SoundManager::playIntro(size_t sample, int channel, int loops) {
 }
 
 
-/** \brief
+/**
  *
- * \param sample InGameSample
+ * \param channel channel to stop
  * \return void
  *
  */
-void SoundManager::stop(InGameSample sample) {
+void SoundManager::stop(int channel) {
     if (canUseAudio()) {
-        Sound *pSound = soundFromInGame(sample);
-
-        if (pSound) {
-            pSound->stop(sample >= MENU_UP ? 1 : 0);
-        }
-    }
-}
-
-/** \brief
- *
- * \param sample IntroSample
- * \return void
- *
- */
-void SoundManager::stopIntro(size_t sample) {
-    if (canUseAudio()) {
-        Sound *pSound = soundFromIntro(sample);
-
-        if (pSound) {
-            // TODO (benblan): understand what channel to use
-            pSound->stop(0);
-        }
+        audio_->stopSound(channel);
     }
 }
 

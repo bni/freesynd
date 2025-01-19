@@ -122,12 +122,7 @@ bool SdlMixerAudio::init(EFrequency freq, EFormat fmt, EChannel chan, int chunks
     }
 
     // Choosing the format
-    Uint16 format;
-    switch (fmt) {
-        default:
-            format = MIX_DEFAULT_FORMAT;
-            break;
-    }
+    Uint16 format = MIX_DEFAULT_FORMAT;
 
     // Choosing the channel
     int channel;
@@ -280,6 +275,12 @@ int SdlMixerAudio::getSoundVolume(int channel) {
         return Mix_Volume(channel, -1);
     } else {
         return -1;
+    }
+}
+
+void SdlMixerAudio::stopSound(int channel) {
+    if (initialized_){
+        Mix_HaltChannel(channel);
     }
 }
 

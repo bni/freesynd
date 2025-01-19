@@ -60,12 +60,10 @@ public:
 
     //! Plays the sound a number a time on the given channel
     void play(size_t sample, int channel = -1, int loops = 0);
-    //! Stops the sound
-    void stop(InGameSample sample);
     //! Plays the sound a number a time on the given channel
     void playIntro(size_t sample, int channel = -1, int loops = 0);
-    //! Stops the sound
-    void stopIntro(size_t sample);
+    //! Stops a channel or all channel if -1
+    void stop(int channel = -1);
 
     //! Sets the music volume to the given level
     void setVolume(int volume);

@@ -97,6 +97,7 @@ public:
     virtual void setSoundVolume(int volume, int channel = -1) = 0;
     //! Returns the sound volume of the given channel
     virtual int getSoundVolume(int channel = -1) = 0;
+    virtual void stopSound(int channel) = 0;
 
     //! Instanciate an implementation of Sound based on the implementation of Audio
     virtual std::unique_ptr<Sound> createSound() = 0;
@@ -125,31 +126,33 @@ public:
     ~DefaultAudio();
 
     //! Initialize the audio underneath implementation
-    bool init(EFrequency frequency = FRQ_DEFAULT,
-                     EFormat format = FMT_DEFAULT,
-                     EChannel channels = CHN_DEFAULT,
-                     int chunksize = 1024);
+    bool init(EFrequency frequency,
+                     EFormat format,
+                     EChannel channels,
+                     int chunksize) override;
 
     //! Returns true if the audio system has been initialized with success
-    bool isInitialized();
+    bool isInitialized() override;
     //! Terminates the audio system
-    bool quit();
+    bool quit() override;
 
     //! Returns the maximum volume possible
-    int getMaxVolume();
+    int getMaxVolume() override;
 
     //! Sets the music volume to the given level
-    void setMusicVolume(int volume);
+    void setMusicVolume(int volume) override;
     //! Returns the music volume
-    int getMusicVolume();
+    int getMusicVolume() override;
 
     //! Sets the sound volume on the given channel to the given level
-    void setSoundVolume(int volume, int channel);
+    void setSoundVolume(int volume, int channel) override;
     //! Returns the sound volume of the given channel
-    int getSoundVolume(int channel);
+    int getSoundVolume(int channel) override;
+
+    void stopSound(int channel) override;
 
     //! Returns a basic implementation of Sound
-    std::unique_ptr<Sound> createSound();
+    std::unique_ptr<Sound> createSound() override;
 };
 
 #endif //HAVE_SDL_MIXER
