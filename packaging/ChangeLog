@@ -1,17 +1,24 @@
 freesynd (0.9) unstable; urgency=low
-  [ Enhancements ]
+  [ Added ]
+  * Display routines for Freesynd now use hardware acceleration through textures. Closes: #37
+  * New option in freesynd/CMakeLists for defining the FS_TRACK_FPS macro
+  * Setting language to zero in user.conf selects language based on system locale. Closes: #36
+  * Use of Conan 2 to manage some project's dependencies
+  * Use of libADLMidi to play original XMI files correctly. Closes: #40
+  * Play music when mission is completed or failed
+  * Editor : new menu to play sounds for the game
+  * Increase/Decrease game sound with +/- keys. Saves value in user.conf. Not working for music
+  [ Changed ]
+  * Cmake 3.28 is required for building the app
   * Application uses UTF-8 completely for internal string manipulation. Closes: #33
   * Save files format is now in version 1.3 as logo color is stored as
     a color index and not as the color itself
-  * Display routines for Freesynd now use hardware acceleration through textures. Closes: #37
-  * New option in freesynd/CMakeLists for defining the FS_TRACK_FPS macro
-  * Cmake 3.28 is required for building the app
-  * Setting language to zero in user.conf selects language based on system locale. Closes: #36
-  * Use of Conan 2 to manage some project's dependencies
   * Toggling music/sound is now available through all the application not just in gameplay
   * Toggling music/sound hotkeys are F9 and F10 and assigning weapons in mission is F1 to F8
-  [ Bugs ]
+  [ Fixed ]
   * Option to disable friendly fire. Closes: #69
+  [ Removed ]
+  * Files assassinate.ogg and intro.ogg removed to use XMI files for music
 
  -- Benoit Blancard <benblan@users.sourceforge.net>  <date-to-complete>
 
