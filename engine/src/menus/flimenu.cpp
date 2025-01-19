@@ -91,6 +91,7 @@ void FliMenu::clearFliDescList() {
 bool FliMenu::loadNextFli() {
     // Stop all music if one was being played
     g_MusicMgr.stopCurrentSong();
+    
     playingFli_ = false;
     isFrameLoaded_ = false;
     // loads Fli
@@ -210,6 +211,8 @@ bool FliMenu::handleMouseDown(Point2D point, int button)
     if (fliIndex_ > 0) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);
         if ((playingFli_ && desc.skipable) || (!playingFli_ && desc.waitKeyPressed)) {
+            // Stop all sounds only for skipable FLIs
+            g_SoundMgr.stop();
             // Fli can be ended by pressing a key
             if (!loadNextFli()) {
                 // no fli next so quit
@@ -228,6 +231,8 @@ bool FliMenu::handleUnMappedKey(const FS_Key key) {
     if (fliIndex_ > 0) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);
         if ((playingFli_ && desc.skipable) || (!playingFli_ && desc.waitKeyPressed)) {
+            // Stop all sounds only for skipable FLIs
+            g_SoundMgr.stop();
             // Fli can be ended by pressing a key
             if (!loadNextFli()) {
                 // no fli next so quit
