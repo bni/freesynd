@@ -2,6 +2,7 @@
 // Class for reading named values from configuration files
 // Richard J. Wagner  v2.1  24 May 2004  wagnerr@umich.edu
 // Modified by Joey Parrish, June 2011 joey.parrish@gmail.com
+// Modified by Benoit Blancard, 2024 <benblan@users.sourceforge.net>
 
 // Copyright (c) 2004 Richard J. Wagner
 //
