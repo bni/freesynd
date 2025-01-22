@@ -182,6 +182,9 @@ bool AppContext::readLanguage(const int languageId) {
     case 3:
         curr_language_ = fs_eng::GERMAN;
         break;
+    case 4:
+        curr_language_ = fs_eng::ENGLISH;
+        break;
     default: // In this case, we use the OS locale to define the language
         curr_language_ = g_System.getLanguageFromSystem();
         break;
