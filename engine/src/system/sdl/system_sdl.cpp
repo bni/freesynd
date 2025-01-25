@@ -31,6 +31,7 @@
 
 #include <SDL_image.h>
 #include <algorithm>
+#include <format>
 #include "utf8.h"
 
 #include "fs-engine/config.h"
@@ -79,25 +80,22 @@ SystemSDL::~SystemSDL() {
     SDL_Quit();
 }
 
-bool SystemSDL::initialize(bool fullscreen) {
+void SystemSDL::initialize(bool fullscreen) {
     LOG(Log::k_FLG_INFO, "SystemSDL", "initialize", ("initializing System SDL"))
 
     if (SDL_Init( SDL_INIT_VIDEO ) < 0) {
-        FSERR(Log::k_FLG_GFX, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Error : %s", SDL_GetError()))
-        return false;
+        throw InitializationFailedException(std::format("Critical error, SDL could not be initialized! SDL Error :  {}", SDL_GetError()));
     }
 
     pWindow_ = createWindow(fullscreen);
 
     if (pWindow_ == nullptr) {
-        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Error : %s", SDL_GetError()))
-        return false;
+        throw InitializationFailedException(std::format("Critical error, SDL could not be initialized! SDL Error :  {}", SDL_GetError()));
     }
 
     pRenderer_ = SDL_CreateRenderer(pWindow_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (pRenderer_ == nullptr) {
-        FSERR(Log::k_FLG_GAME, "SystemSDL", "initialize", ("Critical error, SDL could not be initialized! SDL Error : %s", SDL_GetError()))
-        return false;
+        throw InitializationFailedException(std::format("Critical error, SDL could not be initialized! SDL Error :  {}", SDL_GetError()));
     }
 
     // initialize the screen to black
@@ -110,8 +108,7 @@ bool SystemSDL::initialize(bool fullscreen) {
     int sdlImgFlags = IMG_INIT_PNG;
     int initted = IMG_Init(sdlImgFlags);
     if ( (initted & sdlImgFlags) != sdlImgFlags ) {
-        FSERR(Log::k_FLG_GFX, "SystemSDL", "initialize", ("Critical error, SDL_Image could not be initialized! SDL Error : %s", IMG_GetError()))
-        return false;
+        throw InitializationFailedException(std::format("Critical error, SDL_Image could not be initialized! SDL Error :  {}", IMG_GetError()));
     } else {
         // Load the cursor sprites
         if (loadCursorSprites()) {
@@ -135,9 +132,8 @@ bool SystemSDL::initialize(bool fullscreen) {
     }
 
     // Be sure that we don't receive unusefull text events
+    // TextInput are activated when user clicks in a textfield
     SDL_StopTextInput();
-
-    return true;
 }
 
 SDL_Window * SystemSDL::createWindow(bool fullscreen) {
@@ -158,6 +154,14 @@ SDL_Window * SystemSDL::createWindow(bool fullscreen) {
     }
 
     return sdlWindow;
+}
+
+void SystemSDL::showError(const char *errorMsg) {
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                "Error in Freesynd",
+                                errorMsg,
+                                pWindow_);
+    FSERR(Log::k_FLG_IO, "SystemSDL", "showError", ("%s\n", errorMsg));
 }
 
 /*!

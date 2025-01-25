@@ -43,7 +43,7 @@ public:
     ~AppContext();
 
     //! Reads the game config file from the given path
-    bool readConfiguration(const std::string& iniPath, const std::string& userConfFolder);
+    void readConfiguration(const std::string& iniPath, const std::string& userConfFolder);
 
     bool isFullScreen() { return fullscreen_; }
 
@@ -67,9 +67,9 @@ public:
     void getMessage(const std::string & id, std::string & msg);
 
 private:
-    bool readLanguage(const int languageId);
-    bool readFreesyndIni(const std::string& iniFolder);
-    bool readOrCreateUserConf(const std::string& userConfFolder);
+    void readLanguage(const int languageId);
+    void readFreesyndIni(const std::string& iniFolder);
+    void readOrCreateUserConf(const std::string& userConfFolder);
     bool updateUserConf(const ConfigFile& userConf, const std::filesystem::path userConfPath);
 
 private:

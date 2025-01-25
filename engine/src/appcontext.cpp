@@ -24,6 +24,7 @@
 #include "fs-engine/appcontext.h"
 
 #include <locale>
+#include <format>
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
@@ -46,24 +47,29 @@ AppContext::~AppContext() {
     }
 }
 
-bool AppContext::readConfiguration(const std::string& iniFolder, const std::string& userConfFolder) {
+/*!
+ * Read configuration in freesynd.ini and user.conf
+ * @param iniFolder 
+ * @param userConfFolder
+ * @throw InitializationFailedException if any problem during reading config files
+ */
+void AppContext::readConfiguration(const std::string& iniFolder, const std::string& userConfFolder) {
 
-    if (!readFreesyndIni(iniFolder)) {
-        return false;
-    }
+    readFreesyndIni(iniFolder);
 
-    if (!readOrCreateUserConf(userConfFolder)) {
-        return false;
-    }
-
-    return true;
+    readOrCreateUserConf(userConfFolder);
 }
 
-bool AppContext::readFreesyndIni(const std::string& iniFolder) {
+/*!
+ * @brief Read configuration in freesynd.ini
+ * @param iniFolder Folder where freesynd.ini file should be
+ * @throw InitializationFailedException if any problem during reading config file
+ */
+void AppContext::readFreesyndIni(const std::string& iniFolder) {
     ConfigFile freesyndIni;
 
     if (!fs_utl::File::getFreesyndConf(iniFolder, freesyndIni)) {
-        return false;
+        throw InitializationFailedException(std::format("Failed to read configuration in folder: {}", iniFolder));
     }
 
     time_for_click_ = freesyndIni.read("time_for_click", 80u);
@@ -72,8 +78,7 @@ bool AppContext::readFreesyndIni(const std::string& iniFolder) {
     if (freesyndIni.readInto(freesynDataDir, "freesynd_data_dir")) {
         fs_utl::File::setFreesyndDataFolder(freesynDataDir);
     } else {
-        FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot find key freesynd_data_dir\n"));
-        return false;
+        throw InitializationFailedException("Cannot find key freesynd_data_dir in config file freesynd.ini");
     }
 
 
@@ -81,25 +86,22 @@ bool AppContext::readFreesyndIni(const std::string& iniFolder) {
     if (freesyndIni.readInto(originalDataDir, "data_dir")) {
         fs_utl::File::setOriginalDataFolder(originalDataDir);
     } else {
-        FSERR(Log::k_FLG_IO, "AppContext", "readConfiguration", ("Cannot find key data_dir\n"));
-        return false;
+        throw InitializationFailedException("Cannot find key data_dir in config file freesynd.ini");
     }
-
-    return true;
 }
 
 /** \brief
  *
  * \param userConfFolder const std::string& Only set if there was a Cli param
- * \return bool
- *
+ * @throw InitializationFailedException if any problem during reading config file
  */
-bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
+void AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
     ConfigFile userConf;
     fs::path userConfFullpath;
 
     if(!fs_utl::File::getOrCreateUserConfFolder(userConfFolder)) {
-        return false;
+        throw InitializationFailedException(
+                std::format("Failed to read user configuration in folder: {}", userConfFolder));
     }
 
     bool confExist = fs_utl::File::getUserConfFullPath(userConfFullpath);
@@ -110,7 +112,7 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
         std::ifstream in( userConfFullpath );
 
         if( !in ) {
-            return false;
+            throw InitializationFailedException("Failed to read user configuration");
         }
 
         in >> userConf;
@@ -137,11 +139,11 @@ bool AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
         userConf.add("sound_volume", soundVolume_);
 
         if (!updateUserConf(userConf, userConfFullpath)) {
-            return false;
+            throw InitializationFailedException(std::format("Failed to update user configuration in folder: {}", userConfFullpath.c_str()));
         }
     }
 
-    return readLanguage(languageID);
+    readLanguage(languageID);
 }
 
 bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesystem::path userConfPath) {
@@ -165,11 +167,11 @@ bool AppContext::updateUserConf(const ConfigFile& userConf, const std::filesyste
  * Loads the right language file based on the given language id.
  * If id is 0, then look in the CTYPE category of the system Locale,
  * to find the language. By default, the language is English.
- * \param languageId const int
- * \return bool True if the language file has been correctly loaded.
+ * @param languageId const int
+ * @throw InitializationFailedException if any problem during reading language file
  *
  */
-bool AppContext::readLanguage(const int languageId) {
+void AppContext::readLanguage(const int languageId) {
     std::string filename;
         
     switch (languageId) {
@@ -207,11 +209,9 @@ bool AppContext::readLanguage(const int languageId) {
 
     try {
         language_ = new ConfigFile(fs_utl::File::getFreesyndDataFullPath(filename));
-        return true;
     } catch (...) {
-        FSERR(Log::k_FLG_IO, "AppContext", "setLanguage", ("Unable to load language file %s!\n", filename.c_str()));
         language_ = NULL;
-        return false;
+        throw InitializationFailedException(std::format("Unable to load language file : {}", filename));
     }
 }
 

@@ -91,7 +91,10 @@ public:
 
     virtual ~System() {}
 
-    virtual bool initialize(bool fullscreen) = 0;
+    virtual void initialize(bool fullscreen) = 0;
+
+    // Display an error message in a visible way for the user
+    virtual void showError(const char *errorMsg) = 0;
 
     virtual bool clearScreen() = 0;
     virtual void updateScreen() = 0;

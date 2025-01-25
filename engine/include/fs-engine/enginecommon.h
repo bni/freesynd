@@ -26,6 +26,7 @@
 #define ENGINE_ENGINECOMMON_H
 
 #include <array>
+#include <string>
 
 /*!
 * @brief Namespace for the engine library
@@ -113,6 +114,24 @@ namespace fs_eng
         /*! Color constant : Blue */
         kPaletteGameColorBlue = 15
     };
+
+/*!
+ * An exception to use when initialization has failed.
+ */
+class InitializationFailedException : public std::exception {
+public:
+    //! Constructor
+    InitializationFailedException(const std::string& message)
+        : errorMsg_(message) {}
+
+    /*!
+     * Return the error message.
+     */
+    const char* what() const throw() { return errorMsg_.c_str(); }
+
+private:
+    std::string errorMsg_;
+};
 }
 
 /*!

@@ -55,7 +55,9 @@ public:
     ~SystemSDL();
 
     //! Initialize the SDL resources
-    bool initialize(bool fullscreen) override;
+    void initialize(bool fullscreen) override;
+    //! @copydoc System::showError()
+    void showError(const char *errorMsg) override;
     bool clearScreen() override;
     //! Render back buffer to the screen
     void updateScreen() override;

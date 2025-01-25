@@ -20,6 +20,8 @@
 
 #include "fs-engine/base_app.h"
 
+#include <format>
+
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/file.h"
 
@@ -128,44 +130,44 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
 BaseApp::~BaseApp() {}
 
 bool BaseApp::initialize(const CliParam& param) {
-    LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
-    if (!context_->readConfiguration(param.getIniPath(), param.getUserConfDir())) {
-        FSERR(Log::k_FLG_IO, "BaseApp", "initialize", ("failed to read configuration : %s", param.getIniPath().c_str()))
-        return false;
-    }
+    try {
+        LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
+        context_->readConfiguration(param.getIniPath(), param.getUserConfDir());
 
-    if (context_->isTestFiles()) {
-        if (!fs_utl::File::testOriginalData()) {
+        if (context_->isTestFiles()) {
+            if (!fs_utl::File::testOriginalData()) {
+                return false;
+            }
+            // do not tests files from now
+            context_->deactivateTestFlag();
+        }
+
+        system_->initialize(context_->isFullScreen());
+
+        if (!menus_.initialize(isLoadIntroResources())) {
             return false;
         }
-        // do not tests files from now
-        context_->deactivateTestFlag();
-    }
 
-    if (!system_->initialize(context_->isFullScreen())) {
+        if (!animationManager_.loaded()) {
+            animationManager_.load();
+        }
+
+        soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), isLoadIntroResources());
+
+        music_.initialize(param.isSoundDisabled(), system_->getAudio());
+
+        bool resInit = doInitialize(param);
+        if (resInit) {
+            LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialized with success"))
+        }
+
+        EventManager::listen<QuitEvent>(this, &BaseApp::onQuitHandler);
+
+        return resInit;
+    } catch (InitializationFailedException &e) {
+        g_System.showError(e.what());
         return false;
     }
-
-    if (!menus_.initialize(isLoadIntroResources())) {
-        return false;
-    }
-
-    if (!animationManager_.loaded()) {
-        animationManager_.load();
-    }
-
-    soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), isLoadIntroResources());
-
-    music_.initialize(param.isSoundDisabled(), system_->getAudio());
-
-    bool resInit = doInitialize(param);
-    if (resInit) {
-        LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialized with success"))
-    }
-
-    EventManager::listen<QuitEvent>(this, &BaseApp::onQuitHandler);
-
-    return resInit;
 }
 
 bool BaseApp::doInitialize([[maybe_unused]] const CliParam& param) {
