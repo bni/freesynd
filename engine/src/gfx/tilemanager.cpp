@@ -242,16 +242,15 @@ bool TileManager::loadTiles()
     // first reads tile types
     typesData = fs_utl::File::loadOriginalFile("col01.dat", size);
     if (!typesData) {
-        return false;
+        throw InitializationFailedException("Could not read file col01.dat");
     }
 
     // then reads tiles
     uint8 *tilesData = fs_utl::File::loadOriginalFile("hblk01.dat", size);
 
     if (!tilesData) {
-        FSERR(Log::k_FLG_IO, "TileManager", "loadTiles", ("Failed to load tiles data\n"));
+        throw InitializationFailedException("Failed to load tiles data in file hblk01.dat");
         delete[] typesData;
-        return false;
     }
 
     // Loads all tiles and put pixels in a temporaty buffer

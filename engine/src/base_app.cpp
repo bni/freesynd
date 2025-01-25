@@ -136,7 +136,7 @@ bool BaseApp::initialize(const CliParam& param) {
 
         if (context_->isTestFiles()) {
             if (!fs_utl::File::testOriginalData()) {
-                return false;
+                throw InitializationFailedException("Original files are not correct. Run freesynd -a to check files");
             }
             // do not tests files from now
             context_->deactivateTestFlag();
