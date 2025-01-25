@@ -30,7 +30,7 @@ class AudioMenu : public fs_eng::Menu {
 public:
     AudioMenu(fs_eng::MenuManager *m);
 
-    void handleShow() override;
+    bool handleBeforeShow() override;
 
     void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;
 

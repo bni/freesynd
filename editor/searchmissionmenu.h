@@ -64,7 +64,7 @@ public:
     SearchMissionMenu(fs_eng::MenuManager *m);
     ~SearchMissionMenu();
 
-    void handleShow() override;
+    bool handleBeforeShow() override;
     void handleAction(const int actionId, void *ctx) override;
 
 protected:

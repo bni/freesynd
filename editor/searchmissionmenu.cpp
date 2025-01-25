@@ -111,9 +111,11 @@ void SearchMissionMenu::initSearchCriterias() {
     vehicleTypeCriteria_ = 0;
 }
 
-void SearchMissionMenu::handleShow()
+bool SearchMissionMenu::handleBeforeShow()
 {
     initSearchCriterias();
+
+    return true;
 }
 
 bool SearchMissionMenu::matchMissionWithPedType(Mission *pMission) {

@@ -48,10 +48,12 @@ FontMenu::FontMenu(MenuManager * m):
     addStatic(0, 375, fs_eng::kScreenWidth, "MORE", FontManager::SIZE_1, false);
 }
 
-void FontMenu::handleShow()
+bool FontMenu::handleBeforeShow()
 {
     menu_manager_->getColorFromMenuPalette(fs_eng::kMenuPaletteColorDarkGreen, defaultColor_);
     panelId_ = 0;
+
+    return true;
 }
 
 void FontMenu::handleLeave() {

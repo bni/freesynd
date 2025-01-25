@@ -32,9 +32,9 @@ class FontMenu : public fs_eng::Menu {
 public:
     FontMenu(fs_eng::MenuManager *m);
 
-    void handleShow();
+    bool handleBeforeShow() override;
     void handleRender(DirtyList &dirtyList) override;
-    void handleLeave();
+    void handleLeave() override;
 
     void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;
 

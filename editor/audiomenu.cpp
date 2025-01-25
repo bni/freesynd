@@ -70,7 +70,7 @@ AudioMenu::AudioMenu(MenuManager * m):
     addStatic(400, 130, 100, "MUSIC", FontManager::SIZE_3, false);
 }
 
-void AudioMenu::handleShow() {
+bool AudioMenu::handleBeforeShow() {
     maxNbSoundIntro_ = g_SoundMgr.getNumberOfIntroSounds();
     currentSoundIntro_ = 0;
     updateSoundIntroLabel();
@@ -80,6 +80,8 @@ void AudioMenu::handleShow() {
     currentSoundGame_ = 0;
     updateSoundGameLabel();
     getOption(idButtonSoundGamePlay_)->setWidgetEnabled(maxNbSoundGame_ != 0);
+
+    return true;
 }
 
 void AudioMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
