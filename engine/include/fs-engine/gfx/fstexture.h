@@ -38,7 +38,7 @@ public:
     //! Update the pixels in the texture with the given pixels index and a palette
     virtual bool updateStreamingTexture(const uint8_t *pixels, const fs_eng::Palette &colorPalette) = 0;
     //! Create a texture to draw on it
-    virtual bool createRenderTargetTexture(int width, int height) = 0;
+    virtual void createRenderTargetTexture(int width, int height) = 0;
     //! Set this texture to be the render target.
     virtual bool setAsRenderTarget() = 0;
     //! Import a raw pixel array into a 8 bits surface of given width and height, with the color key

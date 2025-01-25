@@ -144,13 +144,9 @@ bool BaseApp::initialize(const CliParam& param) {
 
         system_->initialize(context_->isFullScreen());
 
-        if (!menus_.initialize(isLoadIntroResources())) {
-            return false;
-        }
+        menus_.initialize(isLoadIntroResources());
 
-        if (!animationManager_.loaded()) {
-            animationManager_.load();
-        }
+        animationManager_.load();
 
         soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), isLoadIntroResources());
 

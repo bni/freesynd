@@ -50,7 +50,7 @@ public:
     ~FontManager();
 
     //! Creates all fonts
-    bool loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPalette, bool loadIntroFont);
+    void loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPalette, bool loadIntroFont);
 
     /*!
      * Returns the font used in menus.
@@ -77,8 +77,8 @@ private:
     MenuFont * createMenuFontForSize(SpriteManager *sprites, int darkOffset, int lightOffset,
             char base, const std::string& valid_chars);
 
-    bool createGameFont(fs_eng::Palette &menuPalette);
-    bool createIntroFont();
+    void createGameFont(fs_eng::Palette &menuPalette);
+    void createIntroFont();
 
 private:
     /*!
@@ -87,6 +87,7 @@ private:
     MenuFont * menuFonts_[4];
     /*! Sprite manager for intro font. */
     std::unique_ptr<SpriteManager> pGameFontSprites_;
+    // TODO : use unique pointer
     GameFont *pGameFont_;
     std::unique_ptr<Font> pIntroFont_;
     /*! Sprite manager for intro font. */

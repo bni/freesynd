@@ -62,9 +62,7 @@ public:
     virtual ~AnimationManager();
 
     //! Loads the sprites from original files
-    bool load();
-    //! Returns true if this manager has loaded files
-    bool loaded() { return spritesManager_.loaded(); }
+    void load();
 
     bool setPalette(const fs_eng::Palette &missionPalette);
 
@@ -80,7 +78,7 @@ public:
 
 protected:
     bool loadElementsFromCustomFiles();
-    bool loadElementsFromOriginalFiles();
+    void loadElementsFromOriginalFiles();
 protected:
     //! Size for the texture for storing animation sprites
     static const size_t kAnimSpritesTextureWidth;

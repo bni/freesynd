@@ -20,6 +20,8 @@
 
 #include "fstexture_sdl.h"
 
+#include <format>
+
 #include "fs-utils/log/log.h"
 
 namespace fs_eng {
@@ -188,19 +190,17 @@ bool FSTextureSDL::updateStreamingTexture(const uint8_t *pixels, const fs_eng::P
  * @param height 
  * @return 
  */
-bool FSTextureSDL::createRenderTargetTexture(int width, int height) {
+void FSTextureSDL::createRenderTargetTexture(int width, int height) {
     freeTexture();
 
     pTexture_ = SDL_CreateTexture(pRenderer_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
     if (pTexture_ == nullptr) {
-        FSERR(Log::k_FLG_GFX, "FSTextureSDL", "createRenderTargetTexture", ("Critical error, Could not create texture! SDL Error : %s", SDL_GetError()))
+        throw InitializationFailedException(std::format("Critical error, Could not create texture! SDL Error : %s", SDL_GetError()));
     }
 
     width_ = width;
     height_ = height;
     pFormat_ = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
-
-    return pTexture_ != nullptr;
 }
 
 /*!

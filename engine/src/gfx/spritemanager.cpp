@@ -25,6 +25,7 @@
 
 #include <cassert>
 #include <list>
+#include <format>
 
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
@@ -77,10 +78,10 @@ void SpriteManager::clear()
  * \param tabFile const std::string& name of tabfile
  * \param datFile const std::string& name of data file
  * \param palette
- * \return bool Return true if loading is ok
+ * \throw InitializationFailedException if any problem during loading
  *
  */
-bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &datFile, const fs_eng::Palette &palette) {
+void SpriteManager::loadSprites(const std::string &tabFile, const std::string &datFile, const fs_eng::Palette &palette) {
     size_t size = 0, tabSize = 0;
     uint8_t *data, *tabData;
 
@@ -88,14 +89,12 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
     LOG(Log::k_FLG_GFX, "SpriteManager", "loadSprites", ("Loading sprites from files %s", tabFile.c_str()))
     tabData = fs_utl::File::loadOriginalFile(tabFile, tabSize);
     if (!tabData) {
-        FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed reading file %s", tabFile.c_str()));
-        return false;
+        throw InitializationFailedException(std::format("Failed reading file {}", tabFile));
     }
     data = fs_utl::File::loadOriginalFile(datFile, size);
     if (!data) {
-        FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed reading file %s", datFile.c_str()));
         delete[] tabData;
-        return false;
+        throw InitializationFailedException(std::format("Failed reading file {}", datFile));
     }
 
     spriteCount_ = int(tabSize) / Sprite::kTabEntrySize;
@@ -107,10 +106,8 @@ bool SpriteManager::loadSprites(const std::string &tabFile, const std::string &d
     if (res) {
         LOG(Log::k_FLG_GFX, "SpriteManager", "loadSprites", ("%d sprites loaded", tabSize / 6))
     } else {
-        FSERR(Log::k_FLG_UI, "SpriteManager", "loadSprites", ("Failed loading menu sprites"));
+        throw InitializationFailedException("Failed loading menu sprites");
     }
-
-    return res;
 }
 
 /**

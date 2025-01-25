@@ -66,7 +66,7 @@ public:
     void clear();
 
     //! Loads sprites from the given files
-    bool loadSprites(const std::string &tabFile, const std::string &datFile, const fs_eng::Palette &palette);
+    void loadSprites(const std::string &tabFile, const std::string &datFile, const fs_eng::Palette &palette);
     //! Returns true if this manager has loaded files
     bool loaded() { return spriteCount_ != 0; }
     //! Returns the number of loaded sprites

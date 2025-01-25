@@ -47,7 +47,7 @@ public:
     bool updateStreamingTexture(const uint8_t *pixels, const fs_eng::Palette &colorPalette) override;
 
     //! Creates a texure to be used as a render target
-    bool createRenderTargetTexture(int width, int height) override;
+    void createRenderTargetTexture(int width, int height) override;
     //! @copydoc FSTexture::setAsRenderTarget()
     bool setAsRenderTarget() override;
 

@@ -80,7 +80,7 @@ public:
     MenuManager(MenuFactory *pFactory);
     ~MenuManager();
 
-    bool initialize(bool loadIntroFont);
+    void initialize(bool loadIntroFont);
 
     //! Destroy all menus and resources
     void destroy();
@@ -174,7 +174,7 @@ protected:
 
 private:
     //! Loads the palette used in menu sprites
-    bool loadMenuPalette();
+    void loadMenuPalette();
 
 private:
     /** The menu factory.*/

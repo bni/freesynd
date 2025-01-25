@@ -65,17 +65,16 @@ LogoManager::~LogoManager()
 /*!
  * Load logos from original game files
  * @param paletteColors Palette used for logos ie the menu palette
- * @return True if everything is ok
+ * @throw InitializationFailedException if any problem during reading initialization
  */
-bool LogoManager::loadLogos(const fs_eng::Palette &palette) {
+void LogoManager::loadLogos(const fs_eng::Palette &palette) {
     size_t fileSize;
 
     LOG(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Loading logos..."))
 
     data_all_logos_ = fs_utl::File::loadOriginalFile("mlogos.dat", fileSize);
     if (data_all_logos_ == nullptr) {
-        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not read mlogos.dat"))
-        return false;
+        throw InitializationFailedException("Could not read mlogos.dat");
     }
 
     numberLogo_ = int(fileSize) / (kLogoBigWidth * kLogoBigWidth);
@@ -99,23 +98,18 @@ bool LogoManager::loadLogos(const fs_eng::Palette &palette) {
     delete [] logosBuffer;
 
     if (!res) {
-        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not create logo texture"))
-        return false;
+        throw InitializationFailedException("Could not create logo texture");
     }
 
     if (!logosTexture_->setPalette(palette)) {
-        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not set palette"))
-        return false;
+        throw InitializationFailedException("Could not set palette");
     }
     
     if (!logosTexture_->loadTextureFromSurface()) {
-        FSERR(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("Could not load texture"))
-        return false;
+        throw InitializationFailedException("Could not load texture");
     }
     
     LOG(Log::k_FLG_GFX, "LogoManager", "loadLogos", ("%i logos loaded", numberLogo_))
-    
-    return true;
 }
 
 /*!

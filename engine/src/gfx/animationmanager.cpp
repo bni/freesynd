@@ -44,21 +44,19 @@ AnimationManager::~AnimationManager()
  * \return bool return true if everything is ok.
  *
  */
-bool AnimationManager::load()
+void AnimationManager::load()
 {
-    LOG(Log::k_FLG_GFX, "AnimationManager", "load", ("Loading game sprites ..."))
-    fs_eng::Palette emptyPalette;
-    if (!spritesManager_.loadSprites("hspr-0.tab", "hspr-0.dat", emptyPalette)) {
-        return false;
-    }
+    if (!spritesManager_.loaded()) {
+        LOG(Log::k_FLG_GFX, "AnimationManager", "load", ("Loading game sprites ..."))
+        fs_eng::Palette emptyPalette;
+        spritesManager_.loadSprites("hspr-0.tab", "hspr-0.dat", emptyPalette);
 
-    if (!loadElementsFromCustomFiles()) {
-        // If we could not load custom file
-        // we try loading from original files
-        return loadElementsFromOriginalFiles();
+        if (!loadElementsFromCustomFiles()) {
+            // If we could not load custom file
+            // we try loading from original files
+            loadElementsFromOriginalFiles();
+        }
     }
-
-    return true;
 }
 
 /*!
@@ -131,7 +129,7 @@ bool AnimationManager::loadElementsFromCustomFiles() {
  * @brief Load animations from original game files
  * @return true if loading is ok
  */
-bool AnimationManager::loadElementsFromOriginalFiles() {
+void AnimationManager::loadElementsFromOriginalFiles() {
     size_t size;
     uint8 *data;
 
@@ -162,7 +160,9 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
 
     // Load sprite frame
     data = fs_utl::File::loadOriginalFile("HFRA-0.ANI", size);
-    assert(size % 8 == 0);
+    if (size % 8 != 0) {
+        throw InitializationFailedException("Erroc in reading file HFRA-0.ANI");
+    }
     for (unsigned int i = 0; i < size / 8; i++) {
         GameSpriteFrame f;
         f.first_element_ = data[i * 8] | (data[i * 8 + 1] << 8);
@@ -180,7 +180,9 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
 
     // Load index
     data = fs_utl::File::loadOriginalFile("HSTA-0.ANI", size);
-    assert(size % 2 == 0);
+    if (size % 2 != 0) {
+        throw InitializationFailedException("Erroc in reading file HSTA-0.ANI");
+    }
     for (unsigned int i = 0; i < size / 2; i++) {
         index_.push_back(data[i * 2] | (data[i * 2 + 1] << 8));
         assert(index_[i] < frames_.size());
@@ -188,8 +190,6 @@ bool AnimationManager::loadElementsFromOriginalFiles() {
     delete[] data;
 
     LOG(Log::k_FLG_SND, "AnimationManager", "load", ("index contains %i animations", (int)index_.size()))
-
-    return true;
 }
 
 bool AnimationManager::setPalette(const fs_eng::Palette &missionPalette) {

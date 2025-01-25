@@ -96,7 +96,7 @@ bool MenuFactory::hasShowAnimation(int menuId) {
  * @param menuId 
  * @return 
  */
-const char* MenuFactory::getShowAnimation(int menuId) {
+const char* MenuFactory::getShowAnimation([[maybe_unused]] int menuId) {
     return "";
 }
 
@@ -106,7 +106,7 @@ const char* MenuFactory::getShowAnimation(int menuId) {
  * @param menuId 
  * @return 
  */
-const char* MenuFactory::getLeaveAnimation(int menuId) {
+const char* MenuFactory::getLeaveAnimation([[maybe_unused]] int menuId) {
     return "";
 }
 
@@ -137,33 +137,26 @@ MenuManager::~MenuManager()
 /*!
  * Initialize the menu manager.
  * \param loadIntroFont If true loads the intro sprites and font
+ * \throw InitializationFailedException if any problem during reading initialization
  */
-bool MenuManager::initialize(bool loadIntroFont) {
+void MenuManager::initialize(bool loadIntroFont) {
     LOG(Log::k_FLG_INFO, "MenuManager", "initialize", ("initializing menus..."))
 
-    if (!loadMenuPalette()) {
-        return false;
-    }
+    loadMenuPalette();
 
     // Loads menu sprites
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading menu sprites ..."))
-    if (!menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", menuPalette_)) {
-        return false;
-    }
+    menuSprites_.loadSprites("mspr-0.tab", "mspr-0.dat", menuPalette_);
 
     // Load logos
-    if (!logoManager_.loadLogos(menuPalette_)) {
-        return false;
-    }
-    
+    logoManager_.loadLogos(menuPalette_);
+
     // Loads fonts
     LOG(Log::k_FLG_GFX, "MenuManager", "initialize", ("Loading fonts ..."))
-    if (!fonts_.loadFonts(&menuSprites_, menuPalette_, loadIntroFont)) {
-        return false;
-    }
+    fonts_.loadFonts(&menuSprites_, menuPalette_, loadIntroFont);
 
     pBackgroundTexture_ = g_System.createTexture();
-    return pBackgroundTexture_->createRenderTargetTexture(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
+    pBackgroundTexture_->createRenderTargetTexture(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 }
 
 /*!
@@ -193,9 +186,9 @@ void MenuManager::destroy() {
 
 /*!
  * Load the palette for menu widget from the mselect.pal file
- * @return true if ok
+ * @throw InitializationFailedException if any problem during reading initialization
  */
-bool MenuManager::loadMenuPalette() {
+void MenuManager::loadMenuPalette() {
     size_t size;
 
     LOG(Log::k_FLG_GFX, "MenuManager", "loadMenuPalette", ("Loading menu palette"))
@@ -203,8 +196,7 @@ bool MenuManager::loadMenuPalette() {
     uint8 *paletteData = fs_utl::File::loadOriginalFile("mselect.pal", size);
 
     if (!paletteData) {
-        FSERR(Log::k_FLG_GFX, "MenuManager", "loadMenuPalette", ("Could not read mselect.pal"))
-        return false;
+        throw InitializationFailedException("Could not read mselect.pal");
     }
 
     for (size_t i = 0; i < fs_eng::kPaletteMaxColor; ++i) {
@@ -232,8 +224,6 @@ bool MenuManager::loadMenuPalette() {
     getColorFromMenuPalette(fs_eng::kMenuPaletteColorWhiteBlue, kMenuColorWhiteBlue);
     getColorFromMenuPalette(0, kMenuColorBlack);
     getColorFromMenuPalette(fs_eng::kMenuPaletteColorYellow, kMenuColorYellow);
-
-    return true;
 }
 
 /*!

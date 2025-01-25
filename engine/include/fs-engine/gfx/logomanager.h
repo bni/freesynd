@@ -46,7 +46,7 @@ public:
     ~LogoManager();
 
     //! Initialize logoManager by loading the logos
-    bool loadLogos(const fs_eng::Palette &palette);
+    void loadLogos(const fs_eng::Palette &palette);
 
     //! Return the color value at the given index
     uint8_t getColorAtIndex(int colourIdx);

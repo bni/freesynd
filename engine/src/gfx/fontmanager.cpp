@@ -50,7 +50,14 @@ FontManager::~FontManager()
         delete pGameFont_;
 }
 
-bool FontManager::loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPalette, bool loadIntroFont) {
+/*!
+ * @brief 
+ * @param pMenuSprites 
+ * @param menuPalette 
+ * @param loadIntroFont 
+ * @throw InitializationFailedException if any problem when loading fonts
+ */
+void FontManager::loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPalette, bool loadIntroFont) {
     assert(pMenuSprites);
 
     // Valid char : ' ,-/ A-Z backslash(Ox5c) ` 0x80-DCS
@@ -59,20 +66,19 @@ bool FontManager::loadFonts(SpriteManager *pMenuSprites, fs_eng::Palette &menuPa
     menuFonts_[SIZE_2] = createMenuFontForSize(pMenuSprites, 528, 391, 'A', "0x21-0x60,0x80-0xa8");
     menuFonts_[SIZE_1] = createMenuFontForSize(pMenuSprites, 254, 117, 'A', "0x21-0x60,0x80-0xa8");
 
-    if (!createGameFont(menuPalette)) {
-        return false;
-    }
+    createGameFont(menuPalette);
 
     if (loadIntroFont) {
-        if (!createIntroFont()) {
-            return false;
-        }
+        createIntroFont();
     }
-
-    return true;
 }
 
-bool FontManager::createGameFont(fs_eng::Palette &menuPalette) {
+/*!
+ * Create Font used during the mission gameplay
+ * @param menuPalette 
+ * @throw InitializationFailedException if any problem when loading fonts
+ */
+void FontManager::createGameFont(fs_eng::Palette &menuPalette) {
 
     // loads intro sprites
     LOG(Log::k_FLG_GFX, "FontManager", "loadFonts", ("Creating Game Font ..."))
@@ -83,30 +89,25 @@ bool FontManager::createGameFont(fs_eng::Palette &menuPalette) {
     fs_eng::Palette gameFontPalette = menuPalette;
     gameFontPalette[252] = {254, 254, 254, 255};
     gameFontPalette[18] = {0, 0, 0, 0};
-    if (!pGameFontSprites_->loadSprites("mspr-0.tab", "mspr-0.dat", gameFontPalette)) {
-        return false;
-    }
+    pGameFontSprites_->loadSprites("mspr-0.tab", "mspr-0.dat", gameFontPalette);
 
     pGameFont_ = new GameFont(pGameFontSprites_.get(), 665, 'A', "0x21-0x5a,0x80-0x90,0x93-0x9a,0xa0-0xa8");
-
-    return true;
 }
 
-bool FontManager::createIntroFont() {
+/*!
+ * @brief 
+ * @throw InitializationFailedException if any problem when loading fonts
+ */
+void FontManager::createIntroFont() {
 
     // loads intro sprites
     LOG(Log::k_FLG_GFX, "FontManager", "loadFonts", ("Creating Intro font ..."))
 
     pIntroFontSprites_ = std::make_unique<SpriteManager>(true, SpriteManager::kMenuSpritesTextureWidth);
     fs_eng::Palette emptyPalette;
-    if (!pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", emptyPalette))
-    {
-        return false;
-    }
+    pIntroFontSprites_->loadSprites("mfnt-0.tab", "mfnt-0.dat", emptyPalette);
 
     pIntroFont_ = std::make_unique<Font>(pIntroFontSprites_.get(), 1, '!', "0x21-0x60,0x80-0xa8");
-
-    return true;
 }
 
 MenuFont *FontManager::createMenuFontForSize(SpriteManager *sprites,
