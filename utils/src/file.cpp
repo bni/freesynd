@@ -316,8 +316,9 @@ static bool getResourcePath(fs::path& resourcePath) {
                 fseek(fp, 0, SEEK_SET);
                 size_t  n = fread(mem, 1, filesize, fp);
                 if (n == 0) {
-                    FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("WARN: File '%s' (using path: '%s') is empty\n",
-                    filename.c_str(), dataPath_.string().c_str()));
+                    Error::setError(Log::k_FLG_IO, "File", "loadFileToMem", "File '{}' in path {} is empty", filename, dataPath_.string());
+                    delete[] mem;
+                    mem = NULL;
                 }
                 fclose(fp);
                 return mem;
@@ -325,8 +326,7 @@ static bool getResourcePath(fs::path& resourcePath) {
         }
 
         // If we're here, there's a problem
-        FSERR(Log::k_FLG_IO, "File", "loadFileToMem", ("ERROR: Couldn't open file '%s' (using path: '%s')\n",
-        filename.c_str(), dataPath_.string().c_str()));
+        Error::setError(Log::k_FLG_IO, "File", "loadFileToMem", "Couldn't open file '{}' in path {}", filename, dataPath_.string());
 
         if (fp) {
             fclose(fp);
@@ -410,10 +410,10 @@ static bool getResourcePath(fs::path& resourcePath) {
                 rnc::RncRetCode result = rnc::unpackedLength(data, filesize );
 
                 if (result != 0) {
-                    FSERR(Log::k_FLG_IO, "File", "loadFile", ("Error reading length for file %s : %s!", filename.c_str(), rnc::errorString(result)));
+                    Error::setError(Log::k_FLG_IO, "File", "loadFile", "Error reading length for file {} : {}", filename, rnc::errorString(result));
                     filesize = 0;
                 } else if (filesize == 0) {
-                    FSERR(Log::k_FLG_IO, "File", "loadFile", ("Read length is zero for file : %s!", filename.c_str()));
+                    Error::setError(Log::k_FLG_IO, "File", "loadFile", "Read length is zero for file '{}'", filename);
                 }
 
                 uint8_t *buffer = new uint8[filesize + 1];
@@ -424,13 +424,13 @@ static bool getResourcePath(fs::path& resourcePath) {
                 delete[] data;
 
                 if (result < 0) {
-                    FSERR(Log::k_FLG_IO, "File", "loadFile", ("Error loading file %s: %s!", filename.c_str(), rnc::errorString(result)));
+                    Error::setError(Log::k_FLG_IO, "File", "loadFile", "Error loading file '{}': {}", filename, rnc::errorString(result));
                     filesize = 0;
                     delete[] buffer;
                 }
 
                 if (realSize != filesize) {
-                    FSERR(Log::k_FLG_IO, "File", "loadFile", ("Uncompressed size mismatch for file %s!\n", filename.c_str()));
+                    Error::setError(Log::k_FLG_IO, "File", "loadFile", "Uncompressed size mismatch for file '{}'", filename);
                     filesize = 0;
                     delete[] buffer;
                 }

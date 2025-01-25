@@ -55,8 +55,8 @@ Map * MapManager::loadMap(uint16 i_mapNum)
     }
 
     // Not found so construct new one
-    LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("Load new map"));
     std::string filename = std::format("map{:02}.dat", i_mapNum);
+    LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("Load new map from file %s", filename.c_str()));
     size_t size;
     uint8 *mapData = fs_utl::File::loadOriginalFile(filename, size);
     if (mapData == NULL) {

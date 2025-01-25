@@ -121,8 +121,17 @@ public:
     /*!
      * Called just after the opening animation is played (if one has
      * been defined) and before the menu is rendered for the first time.
+     * @deprecated Use handleBeforeShow()
      */
     virtual void handleShow() {}
+
+    /*!
+     * Called just after the opening animation is played (if one has
+     * been defined) and before the menu is rendered for the first time.
+     * @return False if there was a problem. In this case, the menu will be destroyed
+     * and LogoutMenu will be displayed to quit properly.
+     */
+    virtual bool handleBeforeShow() { handleShow(); return true; }
 
     //! Main render function
     void render(DirtyList &dirtyList);

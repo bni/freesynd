@@ -77,6 +77,11 @@ BriefMenu::BriefMenu(fs_eng::MenuManager * m)
 BriefMenu::~BriefMenu() {
     delete [] a_page_;
     a_page_ = NULL;
+
+    if (p_briefing_ != nullptr) {
+        delete p_briefing_;
+        p_briefing_ = NULL;
+    }
 }
 
 void BriefMenu::handleTick(uint32_t elapsed)
@@ -121,14 +126,17 @@ MinimapRenderer::EZoom BriefMenu::toZoomLevel(uint8 enh_lvl) {
     }
 }
 
-void BriefMenu::handleShow() {
+bool BriefMenu::handleBeforeShow() {
 
     // grab mission info
     int cur_miss = g_Session.getSelectedBlock().mis_id;
 
     // Loads mission briefing
     p_briefing_ = g_gameCtrl.loadBriefing(cur_miss);
-    assert(p_briefing_ != NULL);
+    if (p_briefing_ == nullptr) {
+        // there was a problem so quit
+        return false;
+    }
 
     start_line_ = 0;
     getOption(prevButId_)->setVisible(false);
@@ -165,6 +173,8 @@ void BriefMenu::handleShow() {
         getStatic(txtEnhId_)->setText("");
         getOption(enhButId_)->setWidgetEnabled(false);
     }
+
+    return true;
 }
 
 /*!

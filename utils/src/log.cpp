@@ -26,6 +26,7 @@
 #include <iostream>
 #include <sstream>
 
+
 const uint64_t Log::k_FLG_ALL  = 0xffffffff;
 const uint64_t Log::k_FLG_NONE = 0x00000000;
 const uint64_t Log::k_FLG_INFO = 0x00000001;
@@ -192,3 +193,10 @@ void Log::close() {
         logfile_ = NULL;
     }
 };
+
+namespace fs_utl {
+
+// Initialization of the attribute
+std::string Error::errorMsg_ = "";
+
+}

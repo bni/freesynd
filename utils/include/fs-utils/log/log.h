@@ -24,19 +24,21 @@
 #include <cstdint>
 #include <stdio.h>
 #include <string>
+#include <string_view>
+#include <format>
 
 // Logging is enabled only in debug mode
 #ifdef _DEBUG
 
 #define LOG(t, c, m, str) { if (Log::canLog(t)) {Log::logHeader(t, c, m, "DEBUG"); Log::logMessage str;} }  // NOLINT
-#define FSERR(t, c, m, str) { if (Log::canLog(t)) {Log::logHeader(t, c, m, "ERROR"); Log::logMessage str;} printf ("ERROR: "); printf str; }  // NOLINT
-#define FSINFO(t, c, m, str) { if (Log::canLog(t)) {Log::logHeader(t, c, m, "INFO "); Log::logMessage str;} printf ("INFO : "); printf str; }  // NOLINT
+#define FSERR(t, c, m, str) { if (Log::canLog(t)) {Log::logHeader(t, c, m, "ERROR"); Log::logMessage str;} printf ("ERROR: "); printf str; printf("\n");}  // NOLINT
+#define FSINFO(t, c, m, str) { if (Log::canLog(t)) {Log::logHeader(t, c, m, "INFO "); Log::logMessage str;} printf ("INFO : "); printf str; printf("\n");}  // NOLINT
 
 #else
 
 #define LOG(type, comp, meth, str)
-#define FSERR(t, c, m, str)  { printf ("ERROR: "); printf str; }  // NOLINT
-#define FSINFO(t, c, m, str) { printf ("INFO : "); printf str; }  // NOLINT
+#define FSERR(t, c, m, str)  { printf ("ERROR: "); printf str; printf("\n");}  // NOLINT
+#define FSINFO(t, c, m, str) { printf ("INFO : "); printf str; printf("\n");}  // NOLINT
 
 #endif
 
@@ -102,5 +104,41 @@ class Log {
     /*! A pointer to a log file.*/
     static FILE *logfile_;
 };
+
+namespace fs_utl {
+
+class Error {
+ public:
+   
+   /*!
+    * Set an error message for later display.
+    * In debug mode, the message is displayed in the log
+    * @tparam ...Args 
+    * @param type Type of log
+    * @param comp The class where the error happened
+    * @param method The method where the error happened
+    * @param rt_fmt_str The format string
+    * @param ...args The arguments
+    */
+   template<typename... Args>
+   static void setError(uint64_t type, const char * comp, const char * method, std::string_view rt_fmt_str, Args&&... args) {
+      errorMsg_.assign(std::vformat(rt_fmt_str, std::make_format_args(args...)));
+      // Log the message
+#ifdef _DEBUG
+      if (Log::canLog(type)) {
+         Log::logHeader(type, comp, method, "ERROR");
+         Log::logMessage(errorMsg_.c_str());
+      }
+#endif
+   }
+
+   //! Return the last registered error
+   static std::string getError() { return errorMsg_; }
+
+private:
+   //static void setErrorMessage(std::string msg);
+   static std::string errorMsg_;
+};
+}
 
 #endif  // FREESYND_UTILS_LOG_H_

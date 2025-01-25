@@ -161,7 +161,7 @@ void SystemSDL::showError(const char *errorMsg) {
                                 "Error in Freesynd",
                                 errorMsg,
                                 pWindow_);
-    FSERR(Log::k_FLG_IO, "SystemSDL", "showError", ("%s\n", errorMsg));
+    FSERR(Log::k_FLG_IO, "SystemSDL", "showError", (errorMsg));
 }
 
 /*!

@@ -299,7 +299,21 @@ void MenuManager::showNextMenu() {
     nextMenuId_ = -1;
 
     dirtyList_.flush();
-    current_->handleShow();
+    if (!current_->handleBeforeShow()) {
+        // There was a problem during initialization
+        // Display the error to the player
+        g_System.showError(fs_utl::Error::getError().c_str());
+        // Delete current menu
+        if (current_->isCachable()) {
+            // Remove from cache first
+            menus_.erase(current_->getId());
+        }
+        delete current_;
+        current_ = nullptr;
+        // then go to logout before quiting
+        gotoMenu(Menu::kMenuIdLogout);
+        return;
+    }
 
     // After showing the window, check to see if a cursor must be display
     if (current_->cursorWhenShown() == Menu::kNoCursor) {
