@@ -37,9 +37,9 @@ public:
     ~ResearchMenu();
 
     void handleTick(uint32_t elapsed) override;
-    void handleShow();
-    void handleRender(DirtyList &dirtyList);
-    void handleLeave();
+    bool handleBeforeShow() override;
+    void handleRender(DirtyList &dirtyList) override;
+    void handleLeave() override;
     void handleAction(const int actionId, void *ctx) override;
 
 protected:

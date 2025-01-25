@@ -108,13 +108,15 @@ void ConfMenu::handleRender(DirtyList &dirtyList) {
     }
 }
 
-void ConfMenu::handleShow() {
+bool ConfMenu::handleBeforeShow() {
 
     toAcceptLogo_ = g_Session.getLogo();
     toAcceptColourId_ = g_Session.getLogoColour();
 
     getStatic(toAcceptUsrNameTxtId_)->setText(g_Session.getUserName(), false);
     getStatic(toAcceptCmpNameTxtId_)->setText(g_Session.getCompanyName(), false);
+
+    return true;
 }
 
 void ConfMenu::handleLeave() {

@@ -36,9 +36,9 @@ class DebriefMenu : public fs_eng::Menu {
 public:
     DebriefMenu(fs_eng::MenuManager *m);
 
-    void handleShow();
-    void handleRender(DirtyList &dirtyList);
-    void handleLeave();
+    bool handleBeforeShow() override;
+    void handleRender(DirtyList &dirtyList) override;
+    void handleLeave() override;
 
     void updateStatsFields(Mission *pMission);
     void checkNewWeaponFound();

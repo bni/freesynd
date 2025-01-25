@@ -259,7 +259,7 @@ void ResearchMenu::updateClock() {
     getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
 }
 
-void ResearchMenu::handleShow() {
+bool ResearchMenu::handleBeforeShow() {
     // Update the time
     updateClock();
 
@@ -267,6 +267,8 @@ void ResearchMenu::handleShow() {
     if (g_Session.researchManager().getActiveSearch()) {
         showResGraph(g_Session.researchManager().getActiveSearch());
     }
+
+    return true;
 }
 
 void ResearchMenu::handleRender(DirtyList &dirtyList)

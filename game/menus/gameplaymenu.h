@@ -43,7 +43,7 @@ public:
     GameplayMenu(fs_eng::MenuManager *m);
     //! Update the menu state
     void handleTick(uint32_t elapsed) override;
-    void handleShow() override;
+    bool handleBeforeShow() override;
     void handleRender(DirtyList &dirtyList) override;
     void handleLeave() override;
 

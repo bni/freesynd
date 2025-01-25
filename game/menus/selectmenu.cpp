@@ -339,7 +339,7 @@ void SelectMenu::drawSelectedModInfos(int x, int y)
     getMenuFont(FontManager::SIZE_1)->drawText(504, y + 28, pSelectedMod_->desc(), true);
 }
 
-void SelectMenu::handleShow() {
+bool SelectMenu::handleBeforeShow() {
     // Update the time
     updateClock();
 
@@ -359,6 +359,8 @@ void SelectMenu::handleShow() {
     menu_manager_->resetSinceMouseDown();
 
     dashOffset_ = 0;
+
+    return true;
 }
 
 void SelectMenu::handleRender(DirtyList &dirtyList) {

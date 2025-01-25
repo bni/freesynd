@@ -285,7 +285,7 @@ void GameplayMenu::initWorldCoords()
  * Called before the menu is first shown.
  * Place to do some initializing.
  */
-void GameplayMenu::handleShow() {
+bool GameplayMenu::handleBeforeShow() {
     mission_ = g_missionCtrl.mission();
     mission_->start(g_gameCtrl.weaponManager());
     // init selection to the first selectable agent
@@ -318,6 +318,8 @@ void GameplayMenu::handleShow() {
     g_MusicMgr.playSong(fs_eng::MusicManager::kMusicSongAssassinate, true);
     
     menu_manager_->resetSinceMouseDown();
+
+    return true;
 }
 
 #ifdef ANIM_PLUS_FRAME_VIEW

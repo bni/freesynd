@@ -34,9 +34,9 @@ public:
     ConfMenu(fs_eng::MenuManager *m);
     ~ConfMenu();
 
-    virtual void handleRender(DirtyList &dirtyList);
-    void handleShow();
-    void handleLeave();
+    virtual void handleRender(DirtyList &dirtyList) override;
+    bool handleBeforeShow() override;
+    void handleLeave() override;
 
     void handleAction(const int actionId, void *ctx) override;
 

@@ -74,7 +74,7 @@ public:
     void setNextMenu(int menuId) { nextMenu_ = menuId; }
 
     void handleTick(uint32_t elapsed) override;
-    void handleShow() override;
+    bool handleBeforeShow() override;
 
     void handleLeave() override;
 

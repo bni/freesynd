@@ -67,7 +67,7 @@ LoadSaveMenu::LoadSaveMenu(fs_eng::MenuManager * m):
     editNameId_ = -1;
 }
 
-void LoadSaveMenu::handleShow()
+bool LoadSaveMenu::handleBeforeShow()
 {
     // List of savefile names.
     std::vector<std::string> files;
@@ -82,6 +82,8 @@ void LoadSaveMenu::handleShow()
     for (int i=0; i<10; i++) {
         pTextFields_[i]->setText(files[i].c_str());
     }
+
+    return true;
 }
 
 void LoadSaveMenu::handleLeave() {

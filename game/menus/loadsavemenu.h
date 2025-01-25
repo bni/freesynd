@@ -33,8 +33,8 @@ class LoadSaveMenu : public fs_eng::Menu {
 public:
     LoadSaveMenu(fs_eng::MenuManager *m);
 
-    void handleShow();
-    void handleLeave();
+    bool handleBeforeShow() override;
+    void handleLeave() override;
 
     void handleAction(const int actionId, void *ctx) override;
 

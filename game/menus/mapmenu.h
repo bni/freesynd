@@ -40,7 +40,7 @@ public:
     ~MapMenu();
 
     void handleTick(uint32_t elapsed) override;
-    void handleShow() override;
+    bool handleBeforeShow() override;
     void handleAction(const int actionId, void *ctx) override;
 
 protected:

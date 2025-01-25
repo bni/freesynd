@@ -100,7 +100,7 @@ DebriefMenu::DebriefMenu(fs_eng::MenuManager *m) : fs_eng::Menu(m, fs_game_menus
  * This method sets the menu cursor and shows it and
  * updates infos based on mission statistics.
  */
-void DebriefMenu::handleShow() {
+bool DebriefMenu::handleBeforeShow() {
     Mission *pMission = g_missionCtrl.mission();
 
     // update game state and listen for any change
@@ -111,6 +111,8 @@ void DebriefMenu::handleShow() {
     updateStatsFields(pMission);
 
     checkNewWeaponFound();
+
+    return true;
 }
 
 void DebriefMenu::updateStatsFields(Mission *pMission) {

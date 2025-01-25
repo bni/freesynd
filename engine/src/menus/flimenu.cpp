@@ -114,12 +114,16 @@ bool FliMenu::loadNextFli() {
     return false;
 }
 
-void FliMenu::handleShow()
+bool FliMenu::handleBeforeShow()
 {
     // Loads the first Fli
     if (!fliList_.empty()) {
-        loadNextFli();
+        // There's supposed to be a fli to play
+        // so if loadNextFli return false, it's an error
+        return loadNextFli();
     }
+
+    return true;
 }
 
 void FliMenu::handleTick(uint32_t elapsed)

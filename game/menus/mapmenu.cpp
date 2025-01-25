@@ -340,7 +340,7 @@ void MapMenu::drawDottedline(Point2D start, Point2D end) {
     }
 }
 
-void MapMenu::handleShow() {
+bool MapMenu::handleBeforeShow() {
     if (!countriesTexture_) {
         initCountriesTexture();
     }
@@ -351,6 +351,8 @@ void MapMenu::handleShow() {
     updateClock();
 
     buildMapOfCountriesPerColor();
+
+    return true;
 }
 
 void MapMenu::buildMapOfCountriesPerColor() {
