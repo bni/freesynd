@@ -34,7 +34,7 @@ class LoadingMenu : public fs_eng::Menu {
 public:
     LoadingMenu(fs_eng::MenuManager *m);
 
-    void handleTick(uint32_t elapsed) override;
+    bool handleTick(uint32_t elapsed) override;
 
 protected:
     /*! This is a flag to load the mission only once.*/

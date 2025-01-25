@@ -37,13 +37,13 @@ LoadingMenu::LoadingMenu(fs_eng::MenuManager * m):fs_eng::Menu(m, fs_game_menus:
     addStatic(0, 180, fs_eng::kScreenWidth, "#LDGAME_TITLE", fs_eng::FontManager::SIZE_4, true);
 }
 
-void LoadingMenu::handleTick(uint32_t elapsed)
+bool LoadingMenu::handleTick(uint32_t elapsed)
 {
     if (do_load_) {
         // Loads mission
         if (!g_gameCtrl.loadSelectedMission()) {
             // there was a problem during loading the mission => quit game
-            menu_manager_->gotoMenu(kMenuIdLogout);
+            return false;
         }
 
         do_load_ = false;
@@ -52,4 +52,6 @@ void LoadingMenu::handleTick(uint32_t elapsed)
     if (timer_.update(elapsed) && g_missionCtrl.mission()) {
         menu_manager_->gotoMenu(fs_game_menus::kMenuIdGameplay);
     }
+
+    return true;
 }

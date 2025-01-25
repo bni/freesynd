@@ -147,7 +147,7 @@ public:
     //! Handles mouse button released
     void mouseUpEvent(Point2D point, int button);
 
-    virtual void handleTick([[maybe_unused]] uint32_t elapsed) {}
+    virtual bool handleTick([[maybe_unused]] uint32_t elapsed) { return true; }
 
     //! Callback function : Childs can reimplement
     /*!

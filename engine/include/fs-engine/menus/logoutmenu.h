@@ -26,6 +26,7 @@
 #define LOGOUTMENU_H
 
 #include "fs-engine/menus/menu.h"
+#include "fs-utils/misc/timer.h"
 
 namespace fs_eng {
 
@@ -36,10 +37,10 @@ class LogoutMenu : public Menu {
 public:
     LogoutMenu(MenuManager *m);
 
-    void handleTick(uint32_t elapsed) override;
+    bool handleTick(uint32_t elapsed) override;
 
 protected:
-    int tick_count_;
+    fs_utl::Timer timerLogout_;
 };
 
 }

@@ -73,7 +73,7 @@ public:
     //! Set the menu to be display at the end of the last animation
     void setNextMenu(int menuId) { nextMenu_ = menuId; }
 
-    void handleTick(uint32_t elapsed) override;
+    bool handleTick(uint32_t elapsed) override;
     bool handleBeforeShow() override;
 
     void handleLeave() override;

@@ -36,7 +36,7 @@ public:
     ResearchMenu(fs_eng::MenuManager *m);
     ~ResearchMenu();
 
-    void handleTick(uint32_t elapsed) override;
+    bool handleTick(uint32_t elapsed) override;
     bool handleBeforeShow() override;
     void handleRender(DirtyList &dirtyList) override;
     void handleLeave() override;

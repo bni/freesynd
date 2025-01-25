@@ -84,7 +84,7 @@ BriefMenu::~BriefMenu() {
     }
 }
 
-void BriefMenu::handleTick(uint32_t elapsed)
+bool BriefMenu::handleTick(uint32_t elapsed)
 {
     if (g_Session.updateTime(elapsed)) {
         updateClock();
@@ -93,6 +93,8 @@ void BriefMenu::handleTick(uint32_t elapsed)
     if (mm_renderer_.handleTick(elapsed)) {
         redrawMiniMap();
     }
+
+    return true;
 }
 
 /*!

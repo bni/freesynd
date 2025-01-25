@@ -39,7 +39,7 @@ public:
     MapMenu(fs_eng::MenuManager *m);
     ~MapMenu();
 
-    void handleTick(uint32_t elapsed) override;
+    bool handleTick(uint32_t elapsed) override;
     bool handleBeforeShow() override;
     void handleAction(const int actionId, void *ctx) override;
 

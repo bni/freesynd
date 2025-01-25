@@ -326,10 +326,10 @@ bool GameplayMenu::handleBeforeShow() {
 int qanim = 1959, qframe = 0;
 #endif
 
-void GameplayMenu::handleTick(uint32_t elapsed)
+bool GameplayMenu::handleTick(uint32_t elapsed)
 {
     if (paused_)
-        return;
+        return true;
     bool change = false;
     tick_count_ += elapsed;
 
@@ -399,6 +399,8 @@ void GameplayMenu::handleTick(uint32_t elapsed)
     }
 
     drawMissionHint(elapsed);
+
+    return true;
 }
 
 void GameplayMenu::handleRender(DirtyList &dirtyList) {

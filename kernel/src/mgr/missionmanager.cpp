@@ -23,11 +23,9 @@
 
 #include "fs-kernel/mgr/missionmanager.h"
 
-#include <stdio.h>
-#include <assert.h>
+#include <format>
 
 #include "fs-engine/appcontext.h"
-#include "fs-engine/io/resources.h"
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "fs-kernel/model/missionbriefing.h"
@@ -42,7 +40,11 @@
 /*!
  * Offset in the game data from the start to find the scenario section.
  */
-const uint32 kScenarioOffset = 97128;
+const uint32_t kScenarioOffset = 97128;
+//! Pattern for filename for mission briefing
+constexpr std::string kFileMissionPattern = "miss{}{:02}.dat";
+//! Pattern for filename for mission game
+constexpr std::string kFileGamePattern = "game{:02}.dat";
 
 class LoadMissionException : public std::exception
 {
@@ -76,24 +78,24 @@ MissionManager::MissionManager(fs_eng::TileManager *pTileManager) : mapManager_(
  * \return NULL if mission could not be loaded
  */
 MissionBriefing *MissionManager::loadBriefing(int n) {
-    char tmp[100];
+    std::string filename;
     // Briefing file depends on the current language
     switch(g_Ctx.currLanguage()) {
         case fs_eng::ENGLISH:
-            sprintf(tmp, MISSION_PATTERN_EN, n);
+            filename = std::format(kFileMissionPattern, "", n);
             break;
         case fs_eng::FRENCH:
-            sprintf(tmp, MISSION_PATTERN_FR, n);
+            filename = std::format(kFileMissionPattern, "1", n);
             break;
         case fs_eng::ITALIAN:
-            sprintf(tmp, MISSION_PATTERN_IT, n);
+            filename = std::format(kFileMissionPattern, "2", n);
             break;
         case fs_eng::GERMAN:
-            sprintf(tmp, MISSION_PATTERN_GE, n);
+            filename = std::format(kFileMissionPattern, "3", n);
             break;
     }
     size_t size;
-    uint8 *data = fs_utl::File::loadOriginalFile(tmp, size);
+    uint8 *data = fs_utl::File::loadOriginalFile(filename, size);
     if (data == NULL) {
         return NULL;
     }
@@ -118,6 +120,9 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
             return NULL;
         }
         p_mb->init_minimap(p_map, level_data);
+    } else {
+        delete p_mb;
+        return NULL;
     }
 
     return p_mb;
@@ -164,11 +169,11 @@ void MissionManager::destroyMission() {
  * briefing minimap.
  */
 bool MissionManager::load_level_data(int n, LevelData::LevelDataAll &level_data) {
-    char tmp[100];
     size_t size;
 
-    sprintf(tmp, GAME_PATTERN, n);
-    uint8 *data = fs_utl::File::loadOriginalFile(tmp, size);
+    std::string filename = std::format(kFileGamePattern, n);
+    LOG(Log::k_FLG_IO, "MissionManager", "load_level_data()", ("Loading file %s", filename.c_str()));
+    uint8 *data = fs_utl::File::loadOriginalFile(filename, size);
     if (data == NULL) {
         return false;
     }

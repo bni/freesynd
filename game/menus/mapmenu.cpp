@@ -244,7 +244,7 @@ void MapMenu::handleBlockSelected() {
     /*addDirtyRect(192, 310, 260, 70);*/
 }
 
-void MapMenu::handleTick(uint32_t elapsed) {
+bool MapMenu::handleTick(uint32_t elapsed) {
     // This a count to refresh the blinking line of the selector
     if (timerBlinkLine_.update(elapsed)) {
         offsetLine_ = (offsetLine_ + 1) % kIntervalSize;
@@ -257,6 +257,8 @@ void MapMenu::handleTick(uint32_t elapsed) {
         handleBlockSelected();
         updateClock();
     }
+
+    return true;
 }
 
 /*!

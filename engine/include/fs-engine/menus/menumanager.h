@@ -97,14 +97,7 @@ public:
     //! Dispatches event based on its type
     void handleEvent(const FS_Event& evt);
 
-    void handleTick(uint32_t elapsed) {
-        if (current_)
-            current_->handleTick(elapsed);
-
-        if (nextMenuId_ != -1) {
-            changeCurrentMenu();
-        }
-    }
+    void handleTick(uint32_t elapsed);
 
     // Change the menu
     void gotoMenu(int menuId);

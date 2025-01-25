@@ -126,7 +126,7 @@ bool FliMenu::handleBeforeShow()
     return true;
 }
 
-void FliMenu::handleTick(uint32_t elapsed)
+bool FliMenu::handleTick(uint32_t elapsed)
 {
     if (fliPlayer_.hasFrames()) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);
@@ -138,7 +138,7 @@ void FliMenu::handleTick(uint32_t elapsed)
             if ((frameIndex = fliPlayer_.decodeFrame(nbColor)) == -1) {
                 // Frame is not good -> quit
                 menu_manager_->gotoMenu(nextMenu_);
-                return;
+                return true;
             }
             isFrameLoaded_ = true;
 
@@ -192,6 +192,8 @@ void FliMenu::handleTick(uint32_t elapsed)
             menu_manager_->gotoMenu(nextMenu_);
         }
     }
+
+    return true;
 }
 
 void FliMenu::handleRender(DirtyList &dirtyList)

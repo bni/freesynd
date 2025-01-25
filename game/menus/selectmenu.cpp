@@ -241,7 +241,7 @@ void SelectMenu::drawAgent()
     }
 }
 
-void SelectMenu::handleTick(uint32_t elapsed)
+bool SelectMenu::handleTick(uint32_t elapsed)
 {
     // Updates the moving agent selector
     if (timerSelector_.update(elapsed)) {
@@ -253,6 +253,8 @@ void SelectMenu::handleTick(uint32_t elapsed)
     if (g_Session.updateTime(elapsed)) {
         updateClock();
     }
+
+    return true;
 }
 
 /*!

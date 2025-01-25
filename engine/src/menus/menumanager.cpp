@@ -268,6 +268,19 @@ FliMenu *MenuManager::getFliTransitionMenu() {
     return dynamic_cast<FliMenu *>(pMenu);
 }
 
+void MenuManager::handleTick(uint32_t elapsed) {
+    if (current_) {
+        if (!current_->handleTick(elapsed)) {
+            g_System.showError(fs_utl::Error::getError().c_str());
+            gotoMenu(Menu::kMenuIdLogout);
+        }
+    }
+
+    if (nextMenuId_ != -1) {
+        changeCurrentMenu();
+    }
+}
+
 /*!
  * Change the current menu with the one with the given name.
  * Plays the transition animations between the two menus.
