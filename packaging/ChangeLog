@@ -8,6 +8,7 @@ freesynd (0.9) unstable; urgency=low
   * Play music when mission is completed or failed
   * Editor : new menu to play sounds for the game
   * Increase/Decrease game sound with +/- keys. Saves value in user.conf. Not working for music
+  * Error during the game are now displayed using a pop up. Closes: #38
   [ Changed ]
   * Project has been relicensed to GPL v3. Closes: #39
   * Cmake 3.28 is required for building the app
@@ -16,6 +17,7 @@ freesynd (0.9) unstable; urgency=low
     a color index and not as the color itself
   * Toggling music/sound is now available through all the application not just in gameplay
   * Toggling music/sound hotkeys are F9 and F10 and assigning weapons in mission is F1 to F8
+  * CLI parameter is now managed using CLI11 library
   [ Fixed ]
   * Option to disable friendly fire. Closes: #69
   [ Removed ]
