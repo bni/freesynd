@@ -50,16 +50,12 @@
 #include "menus/gamemenufactory.h"
 #include "menus/gamemenuid.h"
 
-GameCliParam::GameCliParam():startMission_(0), cheatCodes_("") {}
+GameCliParam::GameCliParam():startMission_(-1), cheatCodes_("") {}
 
 void GameCliParam::addOptions(CLI::App &app) {
-    app.add_option("-m,--mission", startMission_, "Jump directly to the specified mission.")->option_text("<id>");
+    app.add_option("-m,--mission", startMission_, "Jump directly to the specified mission.")
+        ->option_text("<id>")->check(CLI::Range(1, 50));
     app.add_option("-c,--cheat", startMission_, "Set the list of cheatcodes separated by colon.")->option_text("<codes>");
-
-    // TODO : define validator
-    /*if (mission >= 0 && mission < 50) {
-                startMission_ = mission;
-            }*/
 }
 
 App::App()

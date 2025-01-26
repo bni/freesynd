@@ -44,17 +44,18 @@ int CliParam::parseCommandLine(int argc, char *argv[]) {
 
     app.add_flag("-n,--nosound",disableSound_, "Disable sound");
     app.add_option("-i,--ini", iniPath_, "Specify the directory where to find the freesynd.ini config file.")->option_text("<path>");
-    app.add_option("-u,--user", userConfPath_, "Specify the directory where to find the user.conf file.")->option_text("<path>");
-/*  TODO : add those description
+
+    std::string desc = "Specify the directory where to find the user.conf file.";
     #ifdef _WIN32
-    printf(" (default: freesynd.ini in the same folder as freesynd.exe)\n");
+    desc.append(" (default: freesynd.ini in the same folder as freesynd.exe)");
 #elif defined(__APPLE__)
-    printf(" (default: $HOME/Library/Application Support/FreeSynd/freesynd.ini)\n");
+    desc.append(" (default: $HOME/Library/Application Support/FreeSynd/freesynd.ini)");
 #else
-    printf(" (default: $HOME/.freesynd/freesynd.ini)\n");
+    desc.append(" (default: $HOME/.freesynd/freesynd.ini)");
 #endif
-*/
- #ifdef _DEBUG
+    app.add_option("-u,--user", userConfPath_, desc)->option_text("<path>");
+
+#ifdef _DEBUG
     app.add_option("-l,--log", logMask_, "Apply the specified log flags separated by colon.")->option_text("<flag>");
 #endif
     // Add options from subclasses
