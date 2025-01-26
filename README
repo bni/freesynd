@@ -25,6 +25,8 @@ It is released under the MIT licence.
 
 Class CRC32 from NetworkDLS, see license in utils/ccrc32.h and utils/ccrc32.cpp.
 
+Freesynd uses CLI11 library which is available under a 3-Clause BSD license.
+
 
 ## What's new in this release?
 See the file "ChangeLog".

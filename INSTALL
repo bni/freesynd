@@ -86,8 +86,6 @@ Or you can use cmake without presets
         - `CMAKE_INSTALL_PREFIX`: You can change this standard CMAKE variable to specify the location of installation for all files
         - `BIN_DIR` : Set this variable to a directory specifically for the binary files
         - `DATA_DIR` : Set this variable to a directory specifically for the data files
-        - `USE_ASSASSINATE_OGG`: Use Ogg file for assassinate music instead of midi file
-        - `USE_INTRO_OGG`: Use Ogg file for intro music instead of midi file
         - `USE_SDL_MIXER`: Use SDL Mixer library
         - `USE_SYSTEM_SDL`: Use SDL library
 
