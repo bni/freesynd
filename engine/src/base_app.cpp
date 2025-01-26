@@ -36,85 +36,44 @@
 namespace fs_eng {
 
 CliParam::CliParam() {
-    startMission_ = -1;
     disableSound_ = false;
 }
 
 int CliParam::parseCommandLine(int argc, char *argv[]) {
-    for (int i = 1; i < argc; ++i) {
-#ifdef _DEBUG
-        // This parameter is used in debug phase to accelerate the starting
-        // of a game and to jump directly to a mission
-        // Note : the argument is the index of the block in the structure g_MissionNumbers
-        // as defined in briefmenu.cpp and not the mission number itself.
-        if (0 == strcmp("-m", argv[i]) || 0 == strcmp("--mission", argv[i])) {
-            int mission = atoi(argv[i + 1]);
-            if (mission >= 0 && mission < 50) {
-                startMission_ = mission;
-            }
-            i++;
-        }
+    CLI::App app;
 
-        // Find cheatcodes
-        if (0 == strcmp("-c", argv[i]) || 0 == strcmp("--cheat", argv[i])) {
-            cheatCodes_ = argv[i + 1];
-            i++;
-        }
-
-        // This parameter is used to specify debug flags on command line.
-        // You can specify multiple flags using the ':' as a separator.
-        // example -l "INFO:GFX"
-        if (0 == strcmp("-l", argv[i]) || 0 == strcmp("--log", argv[i])) {
-            i++;
-            logMask_ = argv[i];
-
-        }
-#endif
-
-        if (0 == strcmp("-i", argv[i]) || 0 == strcmp("--ini", argv[i])) {
-            i++;
-            iniPath_ = argv[i];
-        }
-
-        if (0 == strcmp("-u", argv[i]) || 0 == strcmp("--user", argv[i])) {
-            i++;
-            userConfPath_ = argv[i];
-        }
-
-        if (0 == strcmp("--nosound", argv[i])) {
-            disableSound_ = true;
-        }
-
-        if (0 == strcmp("-h", argv[i]) || 0 == strcmp("--help", argv[i])) {
-            printUsage();
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-void CliParam::printUsage() {
-    printf("usage: freesynd [options...]\n");
-    printf("    -h, --help            display this help and exit.\n");
-    printf("    -i, --ini <path>      specify the location of the FreeSynd config file.\n");
-    printf("    -u, --user <path>      specify the location of the user.conf file.\n");
-    printf("    --nosound             disable all sound.\n");
-
-#ifdef _WIN32
+    app.add_flag("-n,--nosound",disableSound_, "Disable sound");
+    app.add_option("-i,--ini", iniPath_, "Specify the directory where to find the freesynd.ini config file.")->option_text("<path>");
+    app.add_option("-u,--user", userConfPath_, "Specify the directory where to find the user.conf file.")->option_text("<path>");
+/*  TODO : add those description
+    #ifdef _WIN32
     printf(" (default: freesynd.ini in the same folder as freesynd.exe)\n");
 #elif defined(__APPLE__)
     printf(" (default: $HOME/Library/Application Support/FreeSynd/freesynd.ini)\n");
 #else
     printf(" (default: $HOME/.freesynd/freesynd.ini)\n");
 #endif
-
-#ifdef _DEBUG
-    printf("    -m, --mission <num>   jump directly to the specified mission.\n");
-    printf("    -c, --cheat <codes>   apply the specified cheat codes.\n");
-    printf("                          separate multiple codes with a colon.\n");
-    printf("    -l, --log <flags>     apply the specified log flags separated by colon.\n");
+*/
+ #ifdef _DEBUG
+    app.add_option("-l,--log", logMask_, "Apply the specified log flags separated by colon.")->option_text("<flag>");
 #endif
+    // Add options from subclasses
+    addOptions(app);
+
+    try
+	{
+		app.parse(argc, argv);
+	}
+	catch (const CLI::ParseError& e)
+	{
+        app.exit(e);
+        if(e.get_name() == "CallForHelp") {
+			return -1;
+        }
+		return 1;
+	}
+
+    return 0;
 }
 
 BaseApp::BaseApp(MenuFactory *pMenuFactory)
@@ -129,9 +88,35 @@ BaseApp::BaseApp(MenuFactory *pMenuFactory)
 
 BaseApp::~BaseApp() {}
 
-bool BaseApp::initialize(const CliParam& param) {
+int BaseApp::run(int argc, char *argv[]) {
+    //fs_eng::CliParam param;
+
+    int res = getCliParam().parseCommandLine(argc, argv);
+    if ( res == -1) { // help
+        return 0;
+    } else if (res == 1) {
+        return 1;
+    }
+
+    // Initialize log
+    Log::initialize(getCliParam().getLogMask(), "game.log");
+
+    LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
+    if (initialize()) {
+        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))
+        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Starting game loop"))
+        res = run();
+    } else {
+        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application failed"))
+    }
+
+    return res;
+}
+
+bool BaseApp::initialize() {
     try {
         LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialization started..."))
+        const CliParam& param = getCliParam();
         context_->readConfiguration(param.getIniPath(), param.getUserConfDir());
 
         if (context_->isTestFiles()) {
@@ -152,7 +137,7 @@ bool BaseApp::initialize(const CliParam& param) {
 
         music_.initialize(param.isSoundDisabled(), system_->getAudio());
 
-        bool resInit = doInitialize(param);
+        bool resInit = doInitialize();
         if (resInit) {
             LOG(Log::k_FLG_INFO, "BaseApp", "initialize", ("App initialized with success"))
         }
@@ -164,10 +149,6 @@ bool BaseApp::initialize(const CliParam& param) {
         g_System.showError(e.what());
         return false;
     }
-}
-
-bool BaseApp::doInitialize([[maybe_unused]] const CliParam& param) {
-   return true;
 }
 
 /*!
@@ -182,6 +163,9 @@ void BaseApp::destroy() {
     menus_.destroy();
 
     doDestroy();
+
+    // Close log
+    Log::close();
 }
 
 void BaseApp::doDestroy() {}
@@ -191,7 +175,7 @@ void BaseApp::doDestroy() {}
  * \param start_mission Mission id used to start the application in debug mode
  * In standard mode start_mission is always -1.
  */
-void BaseApp::run(const CliParam& param) {
+int BaseApp::run() {
 
 #if 0
     system_->updateScreen();
@@ -217,7 +201,7 @@ void BaseApp::run(const CliParam& param) {
 #endif
 
     // Let the concrete app decide what menu to start with
-    menus_.gotoMenu(getStartMenuId(param));
+    menus_.gotoMenu(getStartMenuId());
 
     running_ = true;
     uint32_t lasttick = system_->getTicks();
@@ -240,6 +224,8 @@ void BaseApp::run(const CliParam& param) {
         lasttick = curtick;
         system_->updateScreen();
     }
+
+    return 0;
 }
 
 void BaseApp::waitForKeyPress() {

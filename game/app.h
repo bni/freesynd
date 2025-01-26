@@ -34,6 +34,39 @@
 #include "fs-kernel/mgr/mapmanager.h"
 #include "core/gamecontroller.h"
 
+class GameCliParam : public fs_eng::CliParam {
+
+public:
+    GameCliParam();
+
+    int getStartingMission() const { return startMission_; }
+
+    std::string getCheatCodes() const { return cheatCodes_; }
+    //! Returns true if user has set cheatcodes
+    bool hasCheatCodes() { return cheatCodes_.length() != 0; }
+
+protected:
+    void addOptions(CLI::App &app) override;
+
+private:
+    /*!
+     * Use in development mode to start directly on a mission and skip menus.
+     * Set the variable to a mission id using CLI param "-m".
+     * Note : the argument is the index of the block in the structure g_MissionNumbers
+     * as defined in briefmenu.cpp and not the mission number itself.
+     */
+    int startMission_;
+
+    /*!
+     * This parameter is used to specify cheat codes on command line (option -c).
+     * You can specify multiple codes using the ':' as a separator.
+     * See available cheat codes in App::setCheatCode()
+     * example -c "DO IT AGAIN:NUK THEM"
+     */
+    std::string cheatCodes_;
+
+};
+
 /*!
  * Application class.
  * Used for managing game settings and workflows.
@@ -52,15 +85,20 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const fs_eng::CliParam& param);
+    bool doInitialize() override;
     //! Destroy all components
-    void doDestroy();
+    void doDestroy() override;
     //! Define the menuid that will be displayed at the application's start
-    int getStartMenuId(const fs_eng::CliParam& param);
+    int getStartMenuId() override;
+
+    fs_eng::CliParam & getCliParam() override {
+        return cliParam_;
+    };
 
 private:
     /*! Controls the game logic. */
     std::unique_ptr<GameController> game_ctlr_;
+    GameCliParam cliParam_;
 };
 
 #endif  // APP_H

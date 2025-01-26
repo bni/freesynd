@@ -21,8 +21,6 @@
  * 
  */
 
-#include <memory>
-
 #include <cstdio>
 #include <cstdlib>
 
@@ -121,7 +119,7 @@ void operator delete(void *p) {
 
 int main(int argc, char *argv[]) {
 
-    printf("Freesynd v%i.%i (may 2024)\n", FS_VERSION_MAJOR, FS_VERSION_MINOR);
+    printf("Freesynd v%i.%i (jan 2025)\n", FS_VERSION_MAJOR, FS_VERSION_MINOR);
 
 #ifdef CHEAP_LEAK_DETECTION
     initLeakDetection();
@@ -132,46 +130,12 @@ int main(int argc, char *argv[]) {
 #else
     srand((unsigned) time(NULL));
 #endif
-    fs_eng::CliParam param;
+    
+    App app;
 
-    if (param.parseCommandLine(argc, argv)) {
-        return 1;
-    }
+    int res = app.run(argc, argv);
 
-    // Initialize log
-    Log::initialize(param.getLogMask(), "game.log");
+    app.destroy();
 
-    LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
-    auto app = std::make_unique<App>();
-
-    if (app->initialize(param)) {
-        // setting the cheat codes
-        if (param.hasCheatCodes()) {
-            std::string cheatCodes(param.getCheatCodes());
-            char *cheats = (char *)cheatCodes.c_str();
-            char *token = strtok(cheats, ":");
-            while ( token != NULL ) {
-                LOG(Log::k_FLG_INFO, "Main", "main", ("Cheat code activated : %s", token))
-                app->setCheatCode(token);
-                token = strtok(NULL, ":");
-            }
-        }
-
-        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))
-        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Starting game loop"))
-        app->run(param);
-    } else {
-        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application failed"))
-    }
-
-    // Destroy application
-    LOG(Log::k_FLG_INFO, "Main", "main", ("----- End of game loop. Destroy application"))
-    app->destroy();
-
-#ifdef _DEBUG
-    // Close log
-    Log::close();
-#endif
-
-    return 0;
+    return res;
 }

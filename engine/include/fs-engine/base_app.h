@@ -26,7 +26,11 @@
 
 #include <string>
 #include <memory>
+#include <concepts>
 
+#include "CLI/CLI.hpp"
+
+#include "fs-utils/log/log.h"
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/system/system.h"
@@ -41,42 +45,27 @@ class CliParam {
 
 public:
     CliParam();
+    virtual ~CliParam() {}
 
     //! Parse command line parameters
     int parseCommandLine(int argc, char *argv[]);
 
-    int getStartingMission() const { return startMission_; }
     bool isSoundDisabled() const { return disableSound_; }
 
     std::string getLogMask() const { return logMask_; }
-    std::string getCheatCodes() const { return cheatCodes_; }
-    //! Returns true if user has set cheatcodes
-    bool hasCheatCodes() { return cheatCodes_.length() != 0; }
 
     std::string getIniPath() const { return iniPath_; }
     std::string getUserConfDir() const { return userConfPath_; }
-private:
-    void printUsage();
+protected:
+    virtual void addOptions(CLI::App &app) {};
 
 private:
-    /*!
-     * Use in development mode to start directly on a mission and skip menus.
-     * Set the variable to a mission id using CLI param "-m".
-     */
-    int startMission_;
     /*!
      * Set to true to mute the sound and music using CLI param "--nosound".
      */
     bool disableSound_;
     //! This variable stores the log mask to init log. By default we activate all logs
     std::string logMask_ = "ALL";
-    /*!
-     * This parameter is used to specify cheat codes on command line (option -c).
-     * You can specify multiple codes using the ':' as a separator.
-     * See available cheat codes in App::setCheatCode()
-     * example -c "DO IT AGAIN:NUK THEM"
-     */
-    std::string cheatCodes_;
     //! The path to the folder containing the application level parameters
     std::string iniPath_;
     //! The path to the folder containing the user level parameters
@@ -93,33 +82,35 @@ public:
     //! Destructor
     virtual ~BaseApp();
 
-    //! Initialize application
-    virtual bool initialize(const CliParam& param) final;
-
     //! Destroy all components
     virtual void destroy() final;
 
-    //! running loop
-    void run(const CliParam& param);
-
-    //! Returns true if the application is running
-    bool isRunning() const {
-        return running_;
-    }
+    int run(int argc, char *argv[]);
 
     MenuManager &menus() {
         return menus_;
     }
 
 protected:
+    //! Initialize application
+    virtual bool initialize() final;
+    //! running loop
+    int run();
     //! Child class implements this method for initialization
-    virtual bool doInitialize(const CliParam& param);
+    virtual bool doInitialize() { return true; }
     //! Child class overloads this method for destroying resources
     virtual void doDestroy();
     //! Define the menuid that will be displayed at the application's start
-    virtual int getStartMenuId(const CliParam& param) = 0;
+    virtual int getStartMenuId() = 0;
     //! Return true is intro resources must be loaded
     virtual bool isLoadIntroResources();
+
+    virtual fs_eng::CliParam & getCliParam() = 0;
+
+    //! Returns true if the application is running
+    bool isRunning() const {
+        return running_;
+    }
 
     void waitForKeyPress();
 

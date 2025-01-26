@@ -50,6 +50,18 @@
 #include "menus/gamemenufactory.h"
 #include "menus/gamemenuid.h"
 
+GameCliParam::GameCliParam():startMission_(0), cheatCodes_("") {}
+
+void GameCliParam::addOptions(CLI::App &app) {
+    app.add_option("-m,--mission", startMission_, "Jump directly to the specified mission.")->option_text("<id>");
+    app.add_option("-c,--cheat", startMission_, "Set the list of cheatcodes separated by colon.")->option_text("<codes>");
+
+    // TODO : define validator
+    /*if (mission >= 0 && mission < 50) {
+                startMission_ = mission;
+            }*/
+}
+
 App::App()
     : BaseApp(new GameMenuFactory()),
       game_ctlr_(std::make_unique<GameController>())
@@ -67,7 +79,19 @@ App::~App() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool App::doInitialize([[maybe_unused]] const fs_eng::CliParam& param) {
+bool App::doInitialize() {
+    // setting the cheat codes
+        if (cliParam_.hasCheatCodes()) {
+            std::string cheatCodes(cliParam_.getCheatCodes());
+            char *cheats = (char *)cheatCodes.c_str();
+            char *token = strtok(cheats, ":");
+            while ( token != NULL ) {
+                LOG(Log::k_FLG_INFO, "Main", "main", ("Cheat code activated : %s", token))
+                //setCheatCode(token);
+                token = strtok(NULL, ":");
+            }
+        }
+
     return game_ctlr_->initialize();
 }
 
@@ -95,8 +119,8 @@ void App::doDestroy() {
 /*!
  * This method returns the menu Id used to start the app.
  */
-int App::getStartMenuId(const fs_eng::CliParam& param) {
-    if (param.getStartingMission() == -1) {
+int App::getStartMenuId() {
+    if (cliParam_.getStartingMission() == -1) {
         if (context_->isPlayIntro()) {
             // Update intro flag so intro won't be played next time
             context_->updateIntroFlag();
@@ -112,7 +136,7 @@ int App::getStartMenuId(const fs_eng::CliParam& param) {
         // First, we find the block associated with the given
         // mission number
         for (int i = 0; i < 50; i++) {
-            if (g_Session.getBlock(i).mis_id == param.getStartingMission()) {
+            if (g_Session.getBlock(i).mis_id == cliParam_.getStartingMission()) {
                 g_Session.setSelectedBlockId(i);
                 break;
             }

@@ -79,6 +79,7 @@ set(SOURCE_LIST
 
 
 find_package (PNG REQUIRED)
+find_package (CLI11 REQUIRED)
 
 # This is the main library for this directory
 add_library(fs_engine ${SOURCE_LIST} ${HEADER_LIST})
@@ -87,7 +88,8 @@ add_library(Freesynd::Engine ALIAS fs_engine)
 # We need this directory, and users of our library will need it too
 target_include_directories(fs_engine PUBLIC include "${Freesynd_SOURCE_DIR}/extern/utfcpp")
 
-target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG )
+target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG CLI11::CLI11)
+target_link_libraries(fs_engine INTERFACE CLI11::CLI11)
 
 # The USE_SYSTEM_SDL option enables the creation of the fs_engine_sdl
 # library. If not on, there will be an error as there is not other implementation
