@@ -70,14 +70,14 @@ EditorApp::~EditorApp() {
  * \param iniPath The path to the config file.
  * \return True if initialization is ok.
  */
-bool EditorApp::doInitialize([[maybe_unused]] const fs_eng::CliParam& param) {
+bool EditorApp::doInitialize() {
     return editorCtlr_->initialize();
 }
 
 /*!
  * This method returns the menu Id used to start the app.
  */
-int EditorApp::getStartMenuId([[maybe_unused]] const fs_eng::CliParam& param) {
+int EditorApp::getStartMenuId() {
     // Go directly to the main menu
     return fs_edit_menus::kMenuIdMain;
 }

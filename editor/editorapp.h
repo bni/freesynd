@@ -33,6 +33,16 @@
 #include "fs-utils/common.h"
 #include "fs-engine/base_app.h"
 
+class EditorCliParam : public fs_eng::CliParam {
+
+public:
+    EditorCliParam() {}
+
+protected:
+    void addOptions(CLI::App &app) override {};
+
+
+};
 /*!
  * Editor Application class.
  */
@@ -48,15 +58,20 @@ public:
 
 protected:
     //! Initialize application
-    bool doInitialize(const fs_eng::CliParam& param) override;
+    bool doInitialize() override;
     //! Define the menuid that will be displayed at the application's start
-    int getStartMenuId(const fs_eng::CliParam& param) override;
+    int getStartMenuId() override;
 
     bool isLoadIntroResources() override;
+
+    fs_eng::CliParam & getCliParam() override {
+        return cliParam_;
+    };
 
 private:
     /*! Controls the editor logic. */
     std::unique_ptr<EditorController> editorCtlr_;
+    EditorCliParam cliParam_;
 };
 
 #endif // EDITORAPP_H

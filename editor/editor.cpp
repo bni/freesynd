@@ -501,10 +501,6 @@ void Screen::scale2x(int x, int y, int width, int height,
 #include <sys/types.h>
 #endif
 
-#include "fs-utils/common.h"
-#include "fs-utils/io/file.h"
-#include "fs-utils/log/log.h"
-
 #include "editorapp.h"
 
 #ifdef SYSTEM_SDL
@@ -523,35 +519,11 @@ int main(int argc, char *argv[]) {
     srand((unsigned) time(NULL));
 #endif
 
-    fs_eng::CliParam params;
+    EditorApp app;
 
-    if (params.parseCommandLine(argc, argv)) {
-        return 1;
-    }
+    int res = app.run(argc, argv);
 
-    // Initialize log
-    Log::initialize("ALL", "editor.log");
+    app.destroy();
 
-    LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application..."))
-
-    auto app = std::make_unique<EditorApp>();
-
-    if (app->initialize(params)) {
-        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application completed"))
-        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Starting game loop"))
-        app->run(params);
-    } else {
-        LOG(Log::k_FLG_INFO, "Main", "main", ("----- Initializing application failed"))
-    }
-
-    // Destroy application
-    LOG(Log::k_FLG_INFO, "Main", "main", ("----- End of game loop. Destroy application"))
-    app->destroy();
-
-#ifdef _DEBUG
-    // Close log
-    Log::close();
-#endif
-
-    return 0;
+    return res;
 }
