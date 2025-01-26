@@ -139,7 +139,7 @@ void AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
         userConf.add("sound_volume", soundVolume_);
 
         if (!updateUserConf(userConf, userConfFullpath)) {
-            throw InitializationFailedException(std::format("Failed to update user configuration in folder: {}", userConfFullpath.c_str()));
+            throw InitializationFailedException(std::format("Failed to update user configuration in folder: {}", userConfFullpath.string()));
         }
     }
 

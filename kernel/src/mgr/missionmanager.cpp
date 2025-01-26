@@ -42,9 +42,9 @@
  */
 const uint32_t kScenarioOffset = 97128;
 //! Pattern for filename for mission briefing
-constexpr std::string kFileMissionPattern = "miss{}{:02}.dat";
+//constexpr std::string kFileMissionPattern = "miss{}{:02}.dat";
 //! Pattern for filename for mission game
-constexpr std::string kFileGamePattern = "game{:02}.dat";
+//constexpr std::string kFileGamePattern = "game{:02}.dat";
 
 class LoadMissionException : public std::exception
 {
@@ -82,16 +82,16 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
     // Briefing file depends on the current language
     switch(g_Ctx.currLanguage()) {
         case fs_eng::ENGLISH:
-            filename = std::format(kFileMissionPattern, "", n);
+            filename = std::format("miss{}{:02}.dat", "", n);
             break;
         case fs_eng::FRENCH:
-            filename = std::format(kFileMissionPattern, "1", n);
+            filename = std::format("miss{}{:02}.dat", "1", n);
             break;
         case fs_eng::ITALIAN:
-            filename = std::format(kFileMissionPattern, "2", n);
+            filename = std::format("miss{}{:02}.dat", "2", n);
             break;
         case fs_eng::GERMAN:
-            filename = std::format(kFileMissionPattern, "3", n);
+            filename = std::format("miss{}{:02}.dat", "3", n);
             break;
     }
     size_t size;
@@ -171,7 +171,7 @@ void MissionManager::destroyMission() {
 bool MissionManager::load_level_data(int n, LevelData::LevelDataAll &level_data) {
     size_t size;
 
-    std::string filename = std::format(kFileGamePattern, n);
+    std::string filename = std::format("game{:02}.dat", n);
     LOG(Log::k_FLG_IO, "MissionManager", "load_level_data()", ("Loading file %s", filename.c_str()));
     uint8 *data = fs_utl::File::loadOriginalFile(filename, size);
     if (data == NULL) {
