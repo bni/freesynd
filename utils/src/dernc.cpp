@@ -21,7 +21,7 @@
  * 
  */
 
-#include "fs-utils/crc/dernc.h"
+#include "fs-utils/io/dernc.h"
 
 namespace RNC_INTERNAL {
     //! "RNC\001"

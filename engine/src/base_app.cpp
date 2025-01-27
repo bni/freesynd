@@ -122,7 +122,7 @@ bool BaseApp::initialize() {
 
         if (context_->isTestFiles()) {
             if (!fs_utl::File::testOriginalData()) {
-                throw InitializationFailedException("Original files are not correct. Run freesynd -a to check files");
+                throw InitializationFailedException("Original files are not correct. Check logs for details");
             }
             // do not tests files from now
             context_->deactivateTestFlag();

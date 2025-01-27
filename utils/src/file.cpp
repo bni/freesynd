@@ -22,14 +22,17 @@
  * 
  */
 
+#include "fs-utils/io/file.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <cctype>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+
+#include "CRC.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -48,9 +51,7 @@
 #undef ChunkHeader
 #endif
 
-#include "fs-utils/io/file.h"
-#include "fs-utils/crc/ccrc32.h"
-#include "fs-utils/crc/dernc.h"
+#include "fs-utils/io/dernc.h"
 #include "fs-utils/log/log.h"
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
@@ -168,10 +169,10 @@ static bool getResourcePath(fs::path& resourcePath) {
         File::getIniFullPath(iniFolder, iniPath);
 
         if (!fs::exists(iniPath)) {
-            FSERR(Log::k_FLG_IO, "File", "getFreesyndConf", ("Cannot find configuration file %s\n", iniPath.c_str()));
+            FSERR(Log::k_FLG_IO, "File", "getFreesyndConf", ("Cannot find configuration file %s.", iniPath.c_str()));
             return false;
         } else {
-            FSINFO(Log::k_FLG_IO, "File", "getFreesyndConf", ("Reading configuration from file %s.\n", iniPath.c_str()));
+            FSINFO(Log::k_FLG_IO, "File", "getFreesyndConf", ("Reading configuration from file %s.", iniPath.c_str()));
             std::ifstream in( iniPath.c_str() );
 
             if( !in ) {
@@ -212,7 +213,7 @@ static bool getResourcePath(fs::path& resourcePath) {
             // The user has given a path using the cli so use it
             userConfFolderPath_ = userConfFolder;
             if (!fs::exists(userConfFolderPath_)) {
-                FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Directory does not exist: %s.\n", userConfFolder.c_str()));
+                FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Directory does not exist: %s.", userConfFolder.c_str()));
                 return false;
             }
 
@@ -234,7 +235,7 @@ static bool getResourcePath(fs::path& resourcePath) {
         if (!fs::exists(userConfFolderPath_)) {
             LOG(Log::k_FLG_IO, "File", "getOrCreateUserConfFolder", ("Creating user config folder %s", userConfFolderPath_.string().c_str()));
             if (!fs::create_directories(userConfFolderPath_)) {
-                FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Could not create user conf folder.\n"));
+                FSERR(Log::k_FLG_GFX, "File", "getOrCreateUserConfFolder", ("Could not create user conf folder."));
                 return false;
             }
         }
@@ -487,7 +488,7 @@ static bool getResourcePath(fs::path& resourcePath) {
 
     bool File::testOriginalData() {
 
-        LOG(Log::k_FLG_IO, "File", "testOriginalData", ("Testing original Syndicate data..."));
+        FSINFO(Log::k_FLG_IO, "File", "testOriginalData", ("Testing original Syndicate data..."));
 
         std::string crcflname = File::getFreesyndDataFullPath("ref/original_data.crc");
         std::ifstream od(crcflname.c_str());
@@ -497,8 +498,6 @@ static bool getResourcePath(fs::path& resourcePath) {
             return false;
         }
 
-        CCRC32 crc32_test;
-        crc32_test.Initialize();
         bool rsp = true;
         while (od) {
             std::string line;
@@ -511,40 +510,28 @@ static bool getResourcePath(fs::path& resourcePath) {
                         continue;
                     std::string flname = line.substr(0, pos);
                     std::string str_crc32 = line.substr(pos+1);
-                    uint32_t ui_crc32 = 0;
-                    uint32_t multiply = 1 << (4 * 7);
-                    // String hex to uint32
-                    for (size_t i = 0; i < 8; i++) {
-                        char c = str_crc32[i];
-                        if ( c >= '0' && c <= '9')
-                            c -= '0';
-                        if ( c >= 'a' && c <= 'z')
-                            c -= 'a' - 10;
-                        ui_crc32 += c * multiply;
-                        multiply >>= 4;
-                    }
+                    uint64_t ui_crc32 = std::stoul(str_crc32, nullptr, 16);
                     size_t sz;
                     uint8 *data = File::loadOriginalFileToMem(flname, sz);
                     if (!data) {
-                        FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file not found \"%s\"\n", flname.c_str()));
-                        printf("file not found \"%s\". Look at INSTALL/README file for possible solutions.\n", flname.c_str());
+                        FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file not found \"%s\"\nLook at INSTALL/README file for possible solutions.", flname.c_str()));
                         rsp = false;
                         continue;
                     }
-                    if (ui_crc32 != crc32_test.FullCRC(data, sz)) {
+                    if (ui_crc32 != CRC::Calculate(data, sz, CRC::CRC_32())) {
                         rsp = false;
-                        FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file test failed \"%s\"\n", flname.c_str()));
+                        FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file test failed \"%s\"", flname.c_str()));
                     }
                     delete[] data;
                 }
             }
         }
-        if (rsp == false) {
+        if (rsp) {
+            FSINFO(Log::k_FLG_IO, "App", "testOriginalData", ("Test passed. CRC32 for data is correct."));
+        } else {
             FSERR(Log::k_FLG_IO, "File", "testOriginalData", ("failed to test original Syndicate data..."))
         }
         od.close();
-
-        LOG(Log::k_FLG_IO, "App", "testOriginalData", ("Test passed. CRC32 for data is correct."));
 
         return rsp;
     }

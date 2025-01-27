@@ -9,6 +9,7 @@ class ExampleRecipe(ConanFile):
     def requirements(self):
         self.requires("libpng/1.6.44")
         self.requires("cli11/2.4.2")
+        self.requires("crcpp/1.2.0.0")
 
     def layout(self):
         cmake_layout(self)

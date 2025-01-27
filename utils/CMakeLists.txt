@@ -23,8 +23,7 @@
 set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/common.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/log/log.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/crc/ccrc32.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/crc/dernc.h"
+    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/dernc.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/file.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/configfile.h"
     "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/portablefile.h"
@@ -43,7 +42,6 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/utils/src/file.cpp"
     "${Freesynd_SOURCE_DIR}/utils/src/configfile.cpp"
     "${Freesynd_SOURCE_DIR}/utils/src/portablefile.cpp"
-    "${Freesynd_SOURCE_DIR}/utils/src/ccrc32.cpp"
     "${Freesynd_SOURCE_DIR}/utils/src/dernc.cpp"
     "${Freesynd_SOURCE_DIR}/utils/src/seqmodel.cpp"
     )
@@ -52,7 +50,9 @@ set(SOURCE_LIST
 add_library(fs_utils ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Utils ALIAS fs_utils)
 
-target_link_libraries (fs_utils PRIVATE freesynd_warnings)
+find_package(CRCpp REQUIRED)
+
+target_link_libraries (fs_utils PRIVATE freesynd_warnings crcpp::crcpp)
 
 # We need this directory, and users of our library will need it too (ie PUBLIC)
 target_include_directories(fs_utils PUBLIC include)

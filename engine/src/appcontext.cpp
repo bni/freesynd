@@ -108,7 +108,7 @@ void AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
 
     if (confExist) {
         // Load file
-        FSINFO(Log::k_FLG_IO, "AppContext", "readOrCreateUserConf", ("Reading user configuration from existing file.\n"));
+        FSINFO(Log::k_FLG_IO, "AppContext", "readOrCreateUserConf", ("Reading user configuration from existing file: %s", userConfFullpath.c_str()));
         std::ifstream in( userConfFullpath );
 
         if( !in ) {
