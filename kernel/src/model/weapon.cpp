@@ -26,10 +26,6 @@
 
 #include "fs-kernel/model/weapon.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "fs-engine/appcontext.h"
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/sound/soundmanager.h"
@@ -39,6 +35,7 @@
 #include "fs-kernel/model/shot.h"
 
 #define Z_SHIFT_TO_AIR   4
+#define WEAPON_PROPERTY_PATTERN "weapon.{}.{}"
 
 uint16 WeaponInstance::weaponIdCnt = 0;
 
@@ -200,53 +197,53 @@ Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
 }
 
 void Weapon::initFromConfig(WeaponType w_type, ConfigFile &conf) {
-    const char *pattern = "weapon.%d.%s";
-    char propName[25];
+    std::string propName;
+    int typeAsInt = static_cast<int>(w_type);
 
     try {
-        sprintf(propName, pattern, w_type, "name");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "name");
         name_ = g_Ctx.getMessage(conf.read<std::string>(propName));
 
-        sprintf(propName, pattern, w_type, "icon.small");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "icon.small");
         small_icon_ = conf.read<int>(propName);
-        sprintf(propName, pattern, w_type, "icon.big");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "icon.big");
         big_icon_ = conf.read<int>(propName);
-        sprintf(propName, pattern, w_type, "cost");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "cost");
         cost_ = conf.read<int>(propName);
-        sprintf(propName, pattern, w_type, "ammo.nb");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "ammo.nb");
         ammoCapacity_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "ammo.price");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "ammo.price");
         ammo_cost_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "range");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "range");
         range_ = conf.read<int>(propName);
-        sprintf(propName, pattern, w_type, "rank");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "rank");
         rank_ = conf.read<int>(propName, -1);
-        sprintf(propName, pattern, w_type, "anim");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "anim");
         anim_ = conf.read<int>(propName);
-        sprintf(propName, pattern, w_type, "ammopershot");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "ammopershot");
         ammo_per_shot_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "timeforshot");
-        time_for_shot_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "timereload");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "timeforshot");
+        time_for_shot_ = conf.read<uint32_t>(propName, 0);
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "timereload");
         time_reload_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "damagerange");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "damagerange");
         range_dmg_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "shotangle");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "shotangle");
         shot_angle_ = conf.read<double>(propName, 0.0);
-        sprintf(propName, pattern, w_type, "shotaccuracy");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "shotaccuracy");
         shot_accuracy_ = conf.read<double>(propName, 0.0);
-        sprintf(propName, pattern, w_type, "shotspeed");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "shotspeed");
         shot_speed_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "dmg_per_shot");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "dmg_per_shot");
         dmg_per_shot_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "ammo.impactNb");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "ammo.impactNb");
         impactsPerAmmo_ = conf.read<int>(propName, 0);
-        sprintf(propName, pattern, w_type, "weight");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "weight");
         weight_ = conf.read<int>(propName);
-        sprintf(propName, pattern, w_type, "auto.fire_rate");
+        propName = std::format(WEAPON_PROPERTY_PATTERN, typeAsInt, "auto.fire_rate");
         fireRate_ = conf.read<int>(propName, 0);
     } catch (...) {
-        FSERR(Log::k_FLG_GAME, "Weapon", "initFromConfig", ("Cannot load weapon %d : %s\n", w_type, propName))
+        FSERR(Log::k_FLG_GAME, "Weapon", "initFromConfig", ("Cannot load weapon %d : %s\n", w_type, propName.c_str()))
     }
 }
 
@@ -314,7 +311,7 @@ bool WeaponInstance::animate(uint32_t elapsed) {
  *
  */
 bool WeaponInstance::consumeAmmoForEnergyShield(int elapsed) {
-    int timeForShot = pWeaponClass_->timeForShot();
+    uint32_t timeForShot = pWeaponClass_->timeForShot();
     shieldTimeUsed_ += elapsed;
 
     if (ammo_remaining_ > 0 && shieldTimeUsed_ >= timeForShot) {
@@ -369,7 +366,7 @@ void WeaponInstance::deactivate() {
  * \param dmg Information on the damage to perform
  * \param elapsed Time since last frame
  */
-void WeaponInstance::fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, int elapsed) {
+void WeaponInstance::fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, uint32_t elapsed) {
     bool updateStats = true;
     if (isInstanceOf(Weapon::MediKit)) {
         dmg.d_owner->resetHealth();

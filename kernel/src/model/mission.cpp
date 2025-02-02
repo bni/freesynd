@@ -242,7 +242,7 @@ void Mission::checkObjectives() {
         if (pObj->status == kNotStarted) {
             LOG(Log::k_FLG_GAME, "Mission", "checkObjectives()", ("Start objective : %d", cur_objective_));
             // An objective has just started, warn all listeners
-            pObj->start(this);
+            pObj->start();
         }
 
         // Checks if the objective is completed

@@ -38,7 +38,7 @@
  */
 class TrainBody : public Vehicle {
 public:
-    TrainBody(uint16 id, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis);
+    TrainBody(uint16_t id, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis);
     ~TrainBody();
 
     TrainBody * getNext() { return pNextBody_; }
@@ -46,11 +46,13 @@ public:
     void setNext(TrainBody *pNext) { pNextBody_ = pNext; }
 
     //! Set the destination to reach at given speed
-    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override {
+    bool initMovementToDestination([[maybe_unused]] Mission *m,
+                                    [[maybe_unused]] const TilePoint &destinationPt,
+                                    [[maybe_unused]] int newSpeed = -1) override {
         return false;
     }
 
-    bool doMove(int elapsed, Mission *m) {
+    bool doMove([[maybe_unused]] int elapsed, [[maybe_unused]] Mission *m) override {
         return false;
     }
 
@@ -75,13 +77,13 @@ protected:
  */
 class TrainHead : public TrainBody {
 public:
-    TrainHead(uint16 id, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis);
+    TrainHead(uint16_t id, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis);
     ~TrainHead();
 
     //! Set the destination to reach at given speed
     bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
 
-    bool doMove(int elapsed, Mission *m);
+    bool doMove(int elapsed, Mission *m) override;
 
     void appendTrainBody(TrainBody *pTrainBody);
 

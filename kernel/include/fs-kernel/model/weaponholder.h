@@ -116,18 +116,18 @@ protected:
      * Called before a weapon is selected to check if weapon can be selected.
      * \param wi The weapon to select
      */
-    virtual bool canSelectWeapon(WeaponInstance *pNewWeapon) { return true;}
+    virtual bool canSelectWeapon([[maybe_unused]] WeaponInstance *pNewWeapon) { return true;}
     /*!
      * Called when a weapon has been deselected.
      * \param wi The deselected weapon
      */
-    virtual void handleWeaponDeselected(WeaponInstance * wi) {}
+    virtual void handleWeaponDeselected([[maybe_unused]] WeaponInstance * wi) {}
     /*!
      * Called when a weapon has been selected.
      * \param wi The selected weapon
      * \param previousWeapon The previous selected weapon (can be null if no weapon was selected)
      */
-    virtual void handleWeaponSelected(WeaponInstance * wi, WeaponInstance * previousWeapon) {}
+    virtual void handleWeaponSelected([[maybe_unused]] WeaponInstance * wi, [[maybe_unused]] WeaponInstance * previousWeapon) {}
 
     //! Selects a weapon based on the given criteria
     bool selectRequiredWeapon(const WeaponSelectCriteria &criteria);

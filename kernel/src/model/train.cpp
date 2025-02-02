@@ -28,7 +28,7 @@
 #include "fs-kernel/model/mission.h"
 #include "fs-kernel/model/squad.h"
 
-TrainBody::TrainBody(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
+TrainBody::TrainBody(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
     Vehicle(anId, aType, pMap, pAnimation) {
 
     setHealth(startHp);
@@ -77,7 +77,7 @@ void TrainBody::changeTrainAndPassengersPosition(int distanceX, int distanceY) {
     }
 }
 
-TrainHead::TrainHead(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
+TrainHead::TrainHead(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
     TrainBody(anId, aType, pMap, pAnimation, startHp, isMoveOnXAxis) {}
 
 TrainHead::~TrainHead() {
@@ -85,7 +85,7 @@ TrainHead::~TrainHead() {
 }
 
 //! Set the destination to reach at given speed
-bool TrainHead::initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed) {
+bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_unused]] const TilePoint &destinationPt, [[maybe_unused]] int newSpeed) {
     clearDestination();
 
     dest_path_.push_front(destinationPt);
@@ -98,7 +98,7 @@ bool TrainHead::initMovementToDestination(Mission *m, const TilePoint &destinati
  * Moves a vehicle on the map.
  * \param elapsed Elapsed time sine last frame.
  */
-bool TrainHead::doMove(int elapsed, Mission *m)
+bool TrainHead::doMove(int elapsed, [[maybe_unused]] Mission *m)
 {
     bool updated = false;
     int remainingTime = elapsed;

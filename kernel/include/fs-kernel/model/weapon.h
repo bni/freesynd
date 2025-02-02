@@ -105,7 +105,7 @@ public:
     int range() { return range_; }
     int damagePerShot() { return dmg_per_shot_; }
     int ammoPerShot() { return ammo_per_shot_; }
-    int timeForShot() { return time_for_shot_; }
+    uint32_t timeForShot() { return time_for_shot_; }
     int reloadTime() { return time_reload_; }
     int rangeDmg() { return range_dmg_; }
     double shotAngle() { return shot_angle_; }
@@ -243,7 +243,7 @@ protected:
     fs_dmg::DamageType dmg_type_;
     int ammo_per_shot_;
     //! time weapon uses to do a single shot
-    int time_for_shot_;
+    uint32_t time_for_shot_;
     //! time required to make weapon ready to shoot
     int time_reload_;
     /*! True when weapon was found and submit to search manager.*/
@@ -347,7 +347,7 @@ public:
     void handleHit(fs_dmg::DamageToInflict & d);
 
     //! Use weapon
-    void fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, int elapsed);
+    void fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, uint32_t elapsed);
 
     bool consumeAmmoForEnergyShield(int elapsed);
 

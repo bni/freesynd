@@ -42,7 +42,7 @@ void ObjectiveDesc::endObjective(bool succeeded) {
 /*!
  * All targeted objectives sets the current target to the objective target.
  */
-void TargetObjective::handleStart(Mission *p_mission) {
+void TargetObjective::handleStart() {
     EventManager::fire<TargetObjectiveStartedEvent>(p_target_);
 }
 
@@ -55,7 +55,7 @@ ObjPersuade::ObjPersuade(MapObject * pMapObject) : TargetObjective(pMapObject) {
  * \param evt
  * \param pMission
  */
-void ObjPersuade::evaluate(Mission *pMission) {
+void ObjPersuade::evaluate([[maybe_unused]] Mission *pMission) {
     PedInstance *p = static_cast<PedInstance *>(p_target_);
     if (p->isDead())
     {
@@ -75,7 +75,7 @@ ObjAssassinate::ObjAssassinate(MapObject * pMapObject) : TargetObjective(pMapObj
  * \param evt
  * \param pMission
  */
-void ObjAssassinate::evaluate(Mission *pMission) {
+void ObjAssassinate::evaluate([[maybe_unused]] Mission *pMission) {
     PedInstance *p = static_cast<PedInstance *>(p_target_);
     if (p->isDead()) {
         // Target is dead -> objective is completed
@@ -94,7 +94,7 @@ ObjProtect::ObjProtect(MapObject * pMapObject) : TargetObjective(pMapObject) {
  * \param evt
  * \param pMission
  */
-void ObjProtect::evaluate(Mission *pMission) {
+void ObjProtect::evaluate([[maybe_unused]] Mission *pMission) {
     PedInstance *p = static_cast<PedInstance *>(p_target_);
     if (p->isDead()) {
         // Target is dead -> objective is failed
@@ -118,7 +118,7 @@ ObjDestroyVehicle::ObjDestroyVehicle(MapObject * pVehicle) : TargetObjective(pVe
  * \param evt
  * \param pMission
  */
-void ObjDestroyVehicle::evaluate(Mission *pMission) {
+void ObjDestroyVehicle::evaluate([[maybe_unused]] Mission *pMission) {
     Vehicle *pVehicle = static_cast<Vehicle *>(p_target_);
 
     if (pVehicle->isDead()) {
@@ -139,7 +139,7 @@ ObjUseVehicle::ObjUseVehicle(MapObject * pVehicle) : TargetObjective(pVehicle) {
  * \param evt
  * \param pMission
  */
-void ObjUseVehicle::evaluate(Mission *pMission) {
+void ObjUseVehicle::evaluate([[maybe_unused]] Mission *pMission) {
     GenericCar *pVehicle = static_cast<GenericCar *>(p_target_);
 
     if (pVehicle->isDead()) {
@@ -166,7 +166,7 @@ ObjTakeWeapon::ObjTakeWeapon(MapObject * pWeapon) : TargetObjective(pWeapon) {
  * \param evt
  * \param pMission
  */
-void ObjTakeWeapon::evaluate(Mission *pMission) {
+void ObjTakeWeapon::evaluate([[maybe_unused]] Mission *pMission) {
     WeaponInstance *pWeapon = static_cast<WeaponInstance *>(p_target_);
 
     if (pWeapon->isDead()) {
@@ -227,7 +227,7 @@ ObjEvacuate::ObjEvacuate(int x, int y, int z, std::vector <PedInstance *> &lstOf
     }
 }
 
-void ObjEvacuate::handleStart(Mission *p_mission) {
+void ObjEvacuate::handleStart() {
     EventManager::fire<EvacuateObjectiveStartedEvent>(objectiveLocw_);
 }
 

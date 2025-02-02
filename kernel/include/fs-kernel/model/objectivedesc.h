@@ -85,9 +85,9 @@ public:
      * Then calls handleStart() to give the class the ability
      * to customize the start phase.
      */
-    void start(Mission *p_mission) {
+    void start() {
         status = kStarted;
-        handleStart(p_mission);
+        handleStart();
     }
 
     /*!
@@ -105,7 +105,7 @@ protected:
     /*!
      * Subclasses should implements this method to do specific tasks on starting.
      */
-    virtual void handleStart(Mission *p_mission) {}
+    virtual void handleStart() {}
 
     /*!
      * A common method to end objective.
@@ -165,7 +165,7 @@ protected:
      * All targeted objectives sends the same event to indicate
      * the target to the user (signal on the map).
      */
-    void handleStart(Mission *p_mission);
+    void handleStart();
 
 protected:
     MapObject *p_target_;
@@ -255,11 +255,12 @@ class ObjEvacuate : public LocationObjective {
 public:
     ObjEvacuate(int x, int y, int z, std::vector <PedInstance *> &lstOfPeds);
 
-    void handleStart(Mission *p_mission);
-
-    void evaluate(Mission *pMission);
+    void evaluate(Mission *pMission) override;
 
 protected:
+    void handleStart() override;
+
+private:
     std::vector <PedInstance *> pedsToEvacuate;
 };
 
