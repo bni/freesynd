@@ -109,7 +109,7 @@ void SFXObject::draw(const Point2D &screenPos) {
     g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
-bool SFXObject::animate(int elapsed) {
+bool SFXObject::animate(uint32_t elapsed) {
 
     if (is_frame_drawn_) {
         bool changed = draw_all_frames_ ? MapObject::animate(elapsed) : false;

@@ -259,11 +259,9 @@ public:
     bool switchActionStateTo(uint32_t as);
     bool switchActionStateFrom(uint32_t as);
     void synchDrawnAnimWithActionState(void);
-    bool animate(int elapsed, Mission *mission);
+    bool animate(uint32_t elapsed) override;
 
     void drawSelectorAnim(const Point2D &screenPos);
-    //! Update frame to render
-    bool updateAnimation(int elapsed);
     //! Set state for ped (replace switchActionStateTo)
     void goToState(uint32_t as);
     //! Quit state for ped (replace switchActionStateFrom)
@@ -294,9 +292,9 @@ public:
     //! Removes ped's action of using weapon
     void destroyUseWeaponAction();
     //! Execute the current action if any
-    bool executeAction(int elapsed, Mission *pMission);
+    bool executeAction(uint32_t elapsed, Mission *pMission);
     //! Execute a weapon action if any
-    bool executeUseWeaponAction(int elapsed, Mission *pMission);
+    bool executeUseWeaponAction(uint32_t elapsed, Mission *pMission);
     //! Restart the actions of given source and set as current action
     void resetActions(Action::ActionSource source);
     //! Switch to the given source of action
@@ -657,6 +655,9 @@ protected:
     uint16 getRequiredPointsToPersuade(PedType type);
     //! When a ped dies, changes the persuaded owner/persuaded_group relation.
     void updatePersuadedRelations(Squad *pSquad);
+
+    //! Update frame to render
+    bool updateAnimation(int elapsed);
 
 private:
     inline int getClosestDirs(int dir, int& closest, int& closer);

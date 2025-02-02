@@ -65,7 +65,7 @@ public:
     void reset();
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     //!
     void correctZ(int mapMaxZ);
     void setDrawAllFrames(bool daf) {

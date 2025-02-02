@@ -365,7 +365,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         }
 
         for (size_t i = 0; i < mission_->numPeds(); i++)
-            change |= mission_->ped(i)->animate(diff, mission_);
+            change |= mission_->ped(i)->animate(diff);
 
 
         for (size_t i = 0; i < mission_->numVehicles(); i++)

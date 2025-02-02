@@ -97,7 +97,7 @@ public:
         delete animation_;
     }
 
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
     //! Return type of vehicle

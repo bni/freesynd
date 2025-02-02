@@ -409,10 +409,10 @@ bool PedInstance::updateAnimation(int elapsed) {
  * Finally, update the animation. If an action is waiting for an animation
  * and that animation is finished, unlocks the action.
  * \param elapsed Time since the last frame
- * \param mission Mission data
  * \return True if something has changed (so update rendering)
  */
-bool PedInstance::animate(int elapsed, Mission *mission) {
+bool PedInstance::animate(uint32_t elapsed) {
+    Mission *mission = g_missionCtrl.mission();
     // Execute current behaviour
     behaviour_.execute(elapsed, mission);
 
@@ -445,7 +445,7 @@ bool PedInstance::animate(int elapsed, Mission *mission) {
  * \param mission Mission data
  * \return True if something has changed (to update rendering)
  */
-bool PedInstance::executeAction(int elapsed, Mission *pMission) {
+bool PedInstance::executeAction(uint32_t elapsed, Mission *pMission) {
     bool updated = false;
 
     while(currentAction_ != NULL) {
@@ -509,7 +509,7 @@ bool PedInstance::executeAction(int elapsed, Mission *pMission) {
 /*!
  * Executes a shoot action.
  */
-bool PedInstance::executeUseWeaponAction(int elapsed, Mission *pMission) {
+bool PedInstance::executeUseWeaponAction(uint32_t elapsed, Mission *pMission) {
     bool updated = false;
     if(pUseWeaponAction_ != NULL) {
         // execute action

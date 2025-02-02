@@ -341,7 +341,7 @@ public:
     void activate();
     void deactivate();
 
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
     void handleHit(fs_dmg::DamageToInflict & d);

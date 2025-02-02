@@ -135,7 +135,7 @@ public:
     virtual ~Door() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     bool isPathBlocker();
 
 protected:
@@ -151,7 +151,7 @@ public:
     virtual ~LargeDoor() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     bool isPathBlocker();
 
 protected:
@@ -166,7 +166,7 @@ public:
     virtual ~Tree() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     void handleHit(fs_dmg::DamageToInflict &d)override;
 
 protected:
@@ -182,7 +182,7 @@ public:
               int damagedAnim);
     virtual ~WindowObj() {}
 
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
     void handleHit(fs_dmg::DamageToInflict &d) override;
 
@@ -227,7 +227,7 @@ public:
     Semaphore(uint16 id, Map *pMap, int anim, int damagedAnim);
     virtual ~Semaphore() {}
 
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
     void handleHit(fs_dmg::DamageToInflict &d) override;
@@ -254,7 +254,7 @@ public:
     AnimWindow(uint16 id, Map *pMap, int anim);
     virtual ~AnimWindow() {}
 
-    bool animate(int elapsed) override;
+    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
 protected:

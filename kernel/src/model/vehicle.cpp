@@ -82,7 +82,7 @@ void Vehicle::draw(const Point2D &screenPos)
     animation_->draw(posWithOffs, getDirection(4), frame_);
 }
 
-bool Vehicle::animate(int elapsed)
+bool Vehicle::animate(uint32_t elapsed)
 {
     bool updated = false;
 

@@ -120,7 +120,7 @@ protected:
     /*! Origin of the minimap on the screen.*/
     static const Point2D kMiniMapScreenPos;
 
-    int tick_count_, last_animate_tick_;
+    uint32_t tick_count_, last_animate_tick_;
     int last_motion_tick_, last_motion_x_, last_motion_y_;
     int mission_hint_ticks_, mission_hint_;
     Mission *mission_;

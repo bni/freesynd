@@ -366,7 +366,7 @@ void Door::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
-bool Door::animate(int elapsed)
+bool Door::animate(uint32_t elapsed)
 {
     Mission *pMission = g_missionCtrl.mission();
     ShootableMovableMapObject *pPed = NULL;
@@ -508,7 +508,7 @@ void LargeDoor::draw(const Point2D &screenPos)
     }
 }
 
-bool LargeDoor::animate(int elapsed)
+bool LargeDoor::animate(uint32_t elapsed)
 {
     // TODO: there must be somewhere locked door
     Mission *pMission = g_missionCtrl.mission();
@@ -872,7 +872,7 @@ void Tree::draw(const Point2D &screenPos)
     }
 }
 
-bool Tree::animate(int elapsed) {
+bool Tree::animate(uint32_t elapsed) {
 
     if (state_ == Static::stttree_Burning) {
         if (!(leftTimeShowAnim(elapsed))) {
@@ -907,7 +907,7 @@ WindowObj::WindowObj(uint16 anId, Map *pMap, int anim, int openAnim, int breakin
         Static(anId, pMap, Static::smt_Window), anim_(anim), open_anim_(openAnim),
         breaking_anim_(breakingAnim), damaged_anim_(damagedAnim) {}
 
-bool WindowObj::animate(int elapsed) {
+bool WindowObj::animate(uint32_t elapsed) {
     bool updated = MapObject::animate(elapsed);
 
     if (state_ == Static::sttwnd_Breaking
@@ -967,7 +967,7 @@ Semaphore::Semaphore(uint16 anId, Map *pMap, int anim, int damagedAnim) :
     setFramesPerSec(2);
 }
 
-bool Semaphore::animate(int elapsed) {
+bool Semaphore::animate(uint32_t elapsed) {
     if (state_ == Static::sttsem_Damaged) {
         if (elapsed_left_bigger_ == 0)
             return false;
@@ -1062,7 +1062,7 @@ void AnimWindow::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
 }
 
-bool AnimWindow::animate(int elapsed)
+bool AnimWindow::animate(uint32_t elapsed)
 {
     switch (state_) {
         case Static::sttawnd_LightOff:

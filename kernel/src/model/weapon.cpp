@@ -284,7 +284,7 @@ WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16 anId, Map *pMap, in
     pFlamerShot_ = NULL;
 }
 
-bool WeaponInstance::animate(int elapsed) {
+bool WeaponInstance::animate(uint32_t elapsed) {
 
     if (activated_) {
         if (isInstanceOf(Weapon::TimeBomb)) {

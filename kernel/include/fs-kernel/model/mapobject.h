@@ -211,7 +211,7 @@ public:
      * \return virtual bool True mean the object has changed
      *
      */
-    virtual bool animate(int elapsed);
+    virtual bool animate(uint32_t elapsed);
 
     void setFramesPerSec(int framesPerSec)
     {
@@ -387,7 +387,7 @@ public:
      * to react to a shot.
      * \param d Damage description
      */
-    virtual void handleHit(fs_dmg::DamageToInflict &d) {}
+    virtual void handleHit([[maybe_unused]] fs_dmg::DamageToInflict &d) {}
 
     bool isAlive() { return health_ > 0; }
     bool isDead() { return health_ <= 0; }
