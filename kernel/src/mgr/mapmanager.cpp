@@ -45,7 +45,7 @@ MapManager::~MapManager()
  * \param i_mapNum The map id.
  * \return NULL if map could not be loaded
  */
-Map * MapManager::loadMap(uint16 i_mapNum)
+Map * MapManager::loadMap(uint16_t i_mapNum)
 {
     LOG(Log::k_FLG_IO, "MapManager", "loadMap()", ("loading map %i", i_mapNum));
     // First look in cache

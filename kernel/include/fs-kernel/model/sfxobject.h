@@ -75,7 +75,7 @@ public:
         }
     }
 protected:
-    static uint16 sfxIdCnt;
+    static uint16_t sfxIdCnt;
     /*! The type of SfxObject.*/
     SfxTypeEnum type_;
     int anim_;

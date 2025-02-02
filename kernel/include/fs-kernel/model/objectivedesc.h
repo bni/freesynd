@@ -59,19 +59,19 @@ public:
 
     union {
         // index within vector of data
-        uint16 targetindx;
-        uint16 grpid;
+        uint16_t targetindx;
+        uint16_t grpid;
     } indx_grpid;
 
     /*! Status of the objective.*/
     EObjectiveStatus status;
 
     // indx for sub objective
-    uint16 subobjindx;
+    uint16_t subobjindx;
 
     //! This message should be set during objective definition
     std::string msg;
-    uint16 nxtobjindx;
+    uint16_t nxtobjindx;
 
     /*!
      * Return true if objective is cleared (succeeded or failed)

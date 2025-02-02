@@ -718,7 +718,7 @@ void PedInstance::showPath(int scrollX, int scrollY, fs_eng::FSColor color) {
     }
 }
 
-PedInstance::PedInstance(Ped *ped, uint16 anId, Map *pMap, bool isOur) :
+PedInstance::PedInstance(Ped *ped, uint16_t anId, Map *pMap, bool isOur) :
     ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed),
     ped_(ped),
     desc_state_(PedInstance::pd_smUndefined),
@@ -1558,9 +1558,9 @@ bool PedInstance::hasAccessCard()
  * a ped of given type. Civilians or criminals are always persuaded.
  * \param aType The type of the ped to persuade.
  */
-uint16 PedInstance::getRequiredPointsToPersuade(PedType aType) {
+uint16_t PedInstance::getRequiredPointsToPersuade(PedType aType) {
     Mod *pMod = slots_[Mod::MOD_BRAIN];
-    uint16 points = 0;
+    uint16_t points = 0;
     if (aType == kPedTypeGuard) {
         if (!pMod) {
             points = 4;
@@ -1611,7 +1611,7 @@ bool PedInstance::canPersuade(PedInstance *pOtherPed, const int persuadotronRang
 
     if (!pOtherPed->isPersuaded() && pOtherPed->isAlive() &&
             isCloseTo(pOtherPed, persuadotronRange)) {
-        uint16 points = getRequiredPointsToPersuade(pOtherPed->type());
+        uint16_t points = getRequiredPointsToPersuade(pOtherPed->type());
         return points <= totalPersuasionPoints_;
     }
 
@@ -1650,10 +1650,13 @@ void PedInstance::addPersuaded(PedInstance *p) {
     switch(p->type()) {
     case kPedTypeGuard:
         totalPersuasionPoints_ +=  3;
+        break;
     case kPedTypePolice:
         totalPersuasionPoints_ +=  4;
+        break;
     case kPedTypeAgent:
         totalPersuasionPoints_ +=  32;
+        break;
     default:
         totalPersuasionPoints_ +=  1;
     }

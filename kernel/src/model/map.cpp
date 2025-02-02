@@ -32,7 +32,7 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/tilemanager.h"
 
-Map::Map(fs_eng::TileManager * tileManager, uint16 anId) : tileManager_(tileManager)
+Map::Map(fs_eng::TileManager * tileManager, uint16_t anId) : tileManager_(tileManager)
 {
     id_ = anId;
     a_tiles_ = NULL;

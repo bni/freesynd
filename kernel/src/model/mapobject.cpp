@@ -28,7 +28,7 @@
 #include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/map.h"
 
-MapObject::MapObject(uint16 anId, Map *pMap, ObjectNature aNature):
+MapObject::MapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
     size_x_(1), size_y_(1), size_z_(2),
     frame_(0), elapsed_carry_(0),
     frames_per_sec_(8),
@@ -441,16 +441,16 @@ void MapObject::offzOnStairs(uint8 twd) {
 
 /** \brief
  *
- * \param anId uint16
+ * \param anId uint16_t
  * \param m int
  * \param aNature ObjectNature
  *
  */
-ShootableMapObject::ShootableMapObject(uint16 anId, Map *pMap, ObjectNature aNature):
+ShootableMapObject::ShootableMapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
     MapObject(anId, pMap, aNature)
 {}
 
-ShootableMovableMapObject::ShootableMovableMapObject(uint16 anId, Map *pMap, ObjectNature aNature):
+ShootableMovableMapObject::ShootableMovableMapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
         ShootableMapObject(anId, pMap, aNature) {
     speed_ = 0;
     base_speed_ = 0;

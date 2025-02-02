@@ -37,7 +37,7 @@
 #define Z_SHIFT_TO_AIR   4
 #define WEAPON_PROPERTY_PATTERN "weapon.{}.{}"
 
-uint16 WeaponInstance::weaponIdCnt = 0;
+uint16_t WeaponInstance::weaponIdCnt = 0;
 
 Weapon::Weapon(WeaponType w_type, ConfigFile &conf)
 {
@@ -261,7 +261,7 @@ WeaponInstance *WeaponInstance::createInstance(Weapon *pWeaponClass, int remaini
     return new WeaponInstance(pWeaponClass, weaponIdCnt++, NULL, remainingAmmo);
 }
 
-WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16 anId, Map *pMap, int remainingAmmo) :
+WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16_t anId, Map *pMap, int remainingAmmo) :
         ShootableMapObject(anId, pMap, MapObject::kNatureWeapon),
         bombSoundTimer(pWeaponClass->reloadTime()), bombExplosionTimer(pWeaponClass->timeForShot()),
         flamerTimer_(180) {

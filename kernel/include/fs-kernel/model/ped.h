@@ -179,7 +179,7 @@ public:
         kPedTypeCriminal = 0x10
     } ;
 
-    PedInstance(Ped *ped, uint16 id, Map *pMap, bool isOur);
+    PedInstance(Ped *ped, uint16_t id, Map *pMap, bool isOur);
     ~PedInstance();
 
     //*************************************
@@ -652,7 +652,7 @@ protected:
     void handleSelectedWeaponHasNoAmmo();
 
     //! Returns the number of points an agent must have to persuade a ped of given type
-    uint16 getRequiredPointsToPersuade(PedType type);
+    uint16_t getRequiredPointsToPersuade(PedType type);
     //! When a ped dies, changes the persuaded owner/persuaded_group relation.
     void updatePersuadedRelations(Squad *pSquad);
 

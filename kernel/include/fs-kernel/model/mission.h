@@ -172,7 +172,7 @@ public:
      * Returns the map id used for the mission.
      */
     int map() { return i_map_id_; }
-    uint16 mapId() { return i_map_id_; }
+    uint16_t mapId() { return i_map_id_; }
 
     int mapWidth();
     int mapHeight();
@@ -346,7 +346,7 @@ protected:
 
     std::vector <ObjectiveDesc *> objectives_;
     //std::vector <ObjectiveDesc> sub_objectives_;
-    uint16 cur_objective_;
+    uint16_t cur_objective_;
     /*!
      * Mission status.
      * By default, a mission is running but it can be
@@ -359,7 +359,7 @@ protected:
     /*!
      * The id of the map for that mission.
      */
-    uint16 i_map_id_;
+    uint16_t i_map_id_;
     /*!
      * A pointer to the map.
      */

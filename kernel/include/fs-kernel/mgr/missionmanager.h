@@ -61,11 +61,11 @@ private:
      */
     struct DataIndex {
         // indexes within vehicle array
-        uint16 vindx[64];
+        uint16_t vindx[64];
         // indexes within peds array
-        uint16 pindx[256];
+        uint16_t pindx[256];
         // contains indexes for driver's vehicle
-        uint16 driverindx[256];
+        uint16_t driverindx[256];
         //uint16 windx[512];
         WeaponInstance * weapons[512];
 
@@ -87,7 +87,7 @@ private:
     void createVehicles(const LevelData::LevelDataAll &level_data,
                             DataIndex &di, Mission *pMission);
     //! Creates a vehicle from the game data
-    Vehicle * createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, Map *pMap);
+    Vehicle * createVehicleInstance(const LevelData::Cars &gamdata, uint16_t id, Map *pMap);
     //! Creates all peds
     void createPeds(const LevelData::LevelDataAll &level_data,
                             DataIndex &di, Mission *pMission);

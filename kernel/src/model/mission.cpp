@@ -194,7 +194,7 @@ void Mission::start(WeaponManager& weaponMgr)
 
     // TODO: check whether enemy agents weapons are equal to best two
     // if not set them
-    for (uint16 i = p_squad_->size(), sz = peds_.size(); i < sz; ++i) {
+    for (uint16_t i = p_squad_->size(), sz = peds_.size(); i < sz; ++i) {
         PedInstance *p = peds_[i];
         if (p->objGroupDef() == PedInstance::og_dmAgent &&
             p->numWeapons() == 0)

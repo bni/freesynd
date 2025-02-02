@@ -92,7 +92,7 @@ public:
         sttawnd_LightOn
     };
 public:
-    static Static *loadInstance(uint8 *data, uint16 id, Map *pMap);
+    static Static *loadInstance(uint8_t *data, uint16_t id, Map *pMap);
     virtual ~Static() {}
 
     //! Return the type of statics
@@ -108,7 +108,7 @@ public:
     void setExcludedFromBlockers(bool exclude) { excludedFromBlockers_ = exclude; }
 
 protected:
-    Static(uint16 anId, Map *pMap, StaticType aType) :
+    Static(uint16_t anId, Map *pMap, StaticType aType) :
             ShootableMapObject(anId, pMap, MapObject::kNatureStatic) {
         type_ = aType;
         orientation_ = kStaticOrientation1;
@@ -131,7 +131,7 @@ protected:
  */
 class Door : public Static {
 public:
-    Door(uint16 id, Map *pMap, int anim, int closingAnim, int openAnim, int openingAnim);
+    Door(uint16_t id, Map *pMap, int anim, int closingAnim, int openAnim, int openingAnim);
     virtual ~Door() {}
 
     void draw(const Point2D &screenPos) override;
@@ -147,7 +147,7 @@ protected:
  */
 class LargeDoor : public Static {
 public:
-    LargeDoor(uint16 id, Map *pMap, int anim, int closingAnim, int openingAnim);
+    LargeDoor(uint16_t id, Map *pMap, int anim, int closingAnim, int openingAnim);
     virtual ~LargeDoor() {}
 
     void draw(const Point2D &screenPos) override;
@@ -162,7 +162,7 @@ protected:
  */
 class Tree : public Static {
 public:
-    Tree(uint16 id, Map *pMap, int anim, int burningAnim, int damagedAnim);
+    Tree(uint16_t id, Map *pMap, int anim, int burningAnim, int damagedAnim);
     virtual ~Tree() {}
 
     void draw(const Point2D &screenPos) override;
@@ -178,7 +178,7 @@ protected:
  */
 class WindowObj : public Static {
 public:
-    WindowObj(uint16 id, Map *pMap, int anim, int openAnim, int breakingAnim,
+    WindowObj(uint16_t id, Map *pMap, int anim, int openAnim, int breakingAnim,
               int damagedAnim);
     virtual ~WindowObj() {}
 
@@ -195,7 +195,7 @@ protected:
  */
 class EtcObj : public Static {
 public:
-    EtcObj(uint16 id, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType type = smt_None);
+    EtcObj(uint16_t id, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType type = smt_None);
     virtual ~EtcObj() {}
 
     void draw(const Point2D &screenPos) override;
@@ -209,7 +209,7 @@ protected:
  */
 class NeonSign : public Static {
 public:
-    NeonSign(uint16 id, Map *pMap, int anim);
+    NeonSign(uint16_t id, Map *pMap, int anim);
     virtual ~NeonSign() {}
 
     void draw(const Point2D &screenPos) override;
@@ -224,7 +224,7 @@ protected:
  */
 class Semaphore : public Static {
 public:
-    Semaphore(uint16 id, Map *pMap, int anim, int damagedAnim);
+    Semaphore(uint16_t id, Map *pMap, int anim, int damagedAnim);
     virtual ~Semaphore() {}
 
     bool animate(uint32_t elapsed) override;
@@ -251,7 +251,7 @@ protected:
  */
 class AnimWindow : public Static {
 public:
-    AnimWindow(uint16 id, Map *pMap, int anim);
+    AnimWindow(uint16_t id, Map *pMap, int anim);
     virtual ~AnimWindow() {}
 
     bool animate(uint32_t elapsed) override;

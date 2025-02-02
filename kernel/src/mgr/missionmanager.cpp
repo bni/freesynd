@@ -113,7 +113,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
     // Loads the mission to get the minimap
     LevelData::LevelDataAll level_data;
     if (load_level_data(n, level_data)) {
-        uint16 map_id = fs_utl::READ_LE_UINT16(level_data.mapinfos.map);
+        uint16_t map_id = fs_utl::READ_LE_UINT16(level_data.mapinfos.map);
         Map *p_map = mapManager_.loadMap(map_id);
         if (p_map == NULL) {
             delete p_mb;
@@ -352,7 +352,7 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
         createPeds(level_data, di, p_mission);
 
         LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("Static creation"));
-        for (uint16 i = 0; i < 400; i++) {
+        for (uint16_t i = 0; i < 400; i++) {
             LevelData::Statics & sref = level_data.statics[i];
             if(sref.desc == 0)
                 continue;
@@ -410,14 +410,14 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
 }
 
 void MissionManager::createWeapons(const LevelData::LevelDataAll &level_data, DataIndex &di, Mission *pMission) {
-    for (uint16 i = 0; i < 512; i++) {
+    for (uint16_t i = 0; i < 512; i++) {
         const LevelData::Weapons & wref = level_data.weapons[i];
         if(wref.desc == 0)
             continue;
         WeaponInstance *w = create_weapon_instance(wref, pMission->get_map());
         if (w) {
             if (wref.desc == 0x05) {
-                uint16 offset_owner = fs_utl::READ_LE_UINT16(wref.offset_owner);
+                uint16_t offset_owner = fs_utl::READ_LE_UINT16(wref.offset_owner);
                 if (offset_owner != 0) {
                     offset_owner = (offset_owner - 2) / 92; // 92 = ped data size
                     if (offset_owner > 7 && di.pindx[offset_owner] != 0xFFFF) {
@@ -509,7 +509,7 @@ WeaponInstance * MissionManager::create_weapon_instance(const LevelData::Weapons
 
 void MissionManager::createVehicles(const LevelData::LevelDataAll &level_data, DataIndex &di, Mission *pMission) {
     TrainHead *pTrainHead = NULL;
-    for (uint16 i = 0; i < 64; i++) {
+    for (uint16_t i = 0; i < 64; i++) {
         const LevelData::Cars & car = level_data.cars[i];
         // car.sub_type 0x09 - train
         if (car.type == 0x0)
@@ -541,7 +541,7 @@ void MissionManager::createVehicles(const LevelData::LevelDataAll &level_data, D
 /*!
  *
  */
-Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, uint16 id, Map *pMap) {
+Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, uint16_t id, Map *pMap) {
 
     int hp = fs_utl::READ_LE_INT16(gamdata.health);
     int dir = gamdata.orientation >> 5;
@@ -699,8 +699,8 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
 
 void MissionManager::createScriptedActionsForPed(Mission *pMission, DataIndex &di, const LevelData::LevelDataAll &level_data, PedInstance *pPed) {
     const LevelData::People & peopleData = level_data.people[pPed->id()];
-    uint16 offset_start = fs_utl::READ_LE_UINT16(peopleData.offset_scenario_start);
-    uint16 offset_nxt = offset_start;
+    uint16_t offset_start = fs_utl::READ_LE_UINT16(peopleData.offset_scenario_start);
+    uint16_t offset_nxt = offset_start;
     Vehicle *v = pPed->inVehicle();
     bool isInVehicle = v != NULL;
 
@@ -760,7 +760,7 @@ void MissionManager::createScriptedActionsForPed(Mission *pMission, DataIndex &d
         } else if (sc.type == LevelData::kScenarioTypeUseVehicle) {
             if (!isInVehicle) {
                 LOG(Log::k_FLG_GAME, "MissionManager","createScriptedActionsForPed", (" - Enter vehicle"))
-                uint16 bindx = fs_utl::READ_LE_UINT16(sc.offset_object);
+                uint16_t bindx = fs_utl::READ_LE_UINT16(sc.offset_object);
                 // TODO: test all maps for objects other then vehicle
                 assert(bindx >= 0x5C02 && bindx < 0x6682);
                 bindx -= 0x5C02;

@@ -358,7 +358,7 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
                             (fli_info_.width - 1)) = (opcode & 0xFF);
                 break;
             case OP_LINESKIPCOUNT:
-                currentLine += -(int16) opcode;
+                currentLine += -(int16_t) opcode;
                 break;
             }
         } while (((opcode >> 14) & 3) != OP_PACKETCOUNT);
@@ -380,13 +380,13 @@ void FliPlayer::decodeDeltaFLC(uint8_t *data) {
             else if (rleCount < 0) {
                 uint16_t dataWord = *(uint16_t *) data;
                 data += 2;
-                for (int i = 0; i < -(int16) rleCount; ++i) {
+                for (int i = 0; i < -(int16_t) rleCount; ++i) {
                     *(uint16_t *) (offscreen_ +
                                  (currentLine * fli_info_.width) + column +
                                  (i * 2)) = dataWord;
                 }
 
-                column += (-(int16) rleCount) * 2;
+                column += (-(int16_t) rleCount) * 2;
             }
             else {            // End of cutscene ?
                 return;

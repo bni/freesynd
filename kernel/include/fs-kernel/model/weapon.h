@@ -280,7 +280,7 @@ public:
     //! Creates a instance for the given weapon class
     static WeaponInstance *createInstance(Weapon *pWeaponClass, int remainingAmmo = -1);
 
-    WeaponInstance(Weapon *w, uint16 id, Map *pMap, int remainingAmmo = -1);
+    WeaponInstance(Weapon *w, uint16_t id, Map *pMap, int remainingAmmo = -1);
     ~WeaponInstance() {};
 
     //*************************************
@@ -352,7 +352,7 @@ public:
     bool consumeAmmoForEnergyShield(uint32_t elapsed);
 
 protected:
-    static uint16 weaponIdCnt;
+    static uint16_t weaponIdCnt;
     Weapon *pWeaponClass_;
     /*! Owner of the weapon.*/
     PedInstance *pOwner_;

@@ -38,7 +38,7 @@ public:
     ~MapManager();
 
     //! Load the map with the given id if not in cache
-    Map * loadMap(uint16 i_mapNum);
+    Map * loadMap(uint16_t i_mapNum);
     //! Sets the palette for the given mission
     bool loadPalette(int paletteId);
 

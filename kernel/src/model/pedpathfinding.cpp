@@ -1035,7 +1035,7 @@ void PedInstance::removeTilesWithNoChildsFromBase(Mission *m, unsigned short blv
         --indx;
         do {
             toSetDesc &bref = bv[indx];
-            uint16 lvl_child = (bref.pNode->lvl + 1);
+            uint16_t lvl_child = (bref.pNode->lvl + 1);
             bool remv = true;
             if (bref.pNode->dirh != 0) {
                 if ((bref.pNode->dirh & 0x01) == 0x01) {
@@ -1173,7 +1173,7 @@ void PedInstance::removeTilesWithNoChildsFromTarget(Mission *m, unsigned short t
         floodPointDesc *pfdp;
         do {
             toSetDesc &bref = tv[indx];
-            uint16 lvl_child = (bref.pNode->lvl + 1);
+            uint16_t lvl_child = (bref.pNode->lvl + 1);
             bool remv = true;
             if (bref.pNode->dirh != 0) {
                 if ((bref.pNode->dirh & 0x01) == 0x01) {
@@ -1316,7 +1316,7 @@ void PedInstance::createPath(Mission *m, floodPointDesc *mdpmirror, std::vector<
         WorldPoint toadd;
         pfdp = &(mdpmirror[currentTile.tx + currentTile.ty * m->mmax_x_
                     + currentTile.tz * m->mmax_m_xy]);
-        uint16 lvl_child = ct == m_fdBasePoint ? pfdp->lvl + 1
+        uint16_t lvl_child = ct == m_fdBasePoint ? pfdp->lvl + 1
             : pfdp->lvl - 1;
         if (pfdp->dirh != 0) {
             if (pfdp->isDirectionUpContains(floodPointDesc::kBMaskDirSouth)) {

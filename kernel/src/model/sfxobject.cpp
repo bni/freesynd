@@ -28,7 +28,7 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/animationmanager.h"
 
-uint16 SFXObject::sfxIdCnt = 0;
+uint16_t SFXObject::sfxIdCnt = 0;
 
 /*!
  * Constructor of the class.

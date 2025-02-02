@@ -83,7 +83,7 @@ public:
      * is restored when a ped owns the right version of Chest.
      * \return 0 if ped do not have good chest.
      */
-    uint16 getHealthRegenerationPeriod() {
+    uint16_t getHealthRegenerationPeriod() {
         Mod *pMod = slots_[Mod::MOD_CHEST];
         if (pMod) {
             // TODO : add different times depending on version of chest

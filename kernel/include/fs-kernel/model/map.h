@@ -36,12 +36,12 @@
  */
 class Map {
 public:
-    Map(fs_eng::TileManager *tileManager, uint16 anId);
+    Map(fs_eng::TileManager *tileManager, uint16_t anId);
     ~Map();
 
     bool loadMap(uint8 *mapData);
 
-    uint16 id() { return id_; }
+    uint16_t id() { return id_; }
     int width() { return map_width_; }
     int height() { return map_height_; }
     void mapDimensions(int *x, int *y, int *z);
@@ -73,7 +73,7 @@ public:
 protected:
     /*!  Every map has a unique ID which is used to identify the
     name of the file containing map data.*/
-    uint16 id_;
+    uint16_t id_;
     int max_x_, max_y_, max_z_;
     fs_eng::Tile **a_tiles_;
     fs_eng::TileManager *tileManager_;

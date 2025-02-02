@@ -34,7 +34,7 @@
 const int Static::kStaticOrientation1 = 0;
 const int Static::kStaticOrientation2 = 2;
 
-Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
+Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
 {
     LevelData::Statics * gamdata =
         (LevelData::Statics *) data;
@@ -45,9 +45,9 @@ Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
 
     // NOTE: objects states are usually mixed with type,
     // no separation between object type and its state
-    uint16 curanim = fs_utl::READ_LE_UINT16(gamdata->index_current_anim);
-    uint16 baseanim = fs_utl::READ_LE_UINT16(gamdata->index_base_anim);
-    uint16 curframe = fs_utl::READ_LE_UINT16(gamdata->index_current_frame);
+    uint16_t curanim = fs_utl::READ_LE_UINT16(gamdata->index_current_anim);
+    uint16_t baseanim = fs_utl::READ_LE_UINT16(gamdata->index_base_anim);
+    uint16_t curframe = fs_utl::READ_LE_UINT16(gamdata->index_current_frame);
     switch(gamdata->sub_type) {
         case 0x01:
             // phone booth
@@ -355,7 +355,7 @@ Static *Static::loadInstance(uint8 * data, uint16 id, Map *pMap)
     return s;
 }
 
-Door::Door(uint16 anId, Map *pMap, int anim, int closingAnim, int openAnim, int openingAnim) :
+Door::Door(uint16_t anId, Map *pMap, int anim, int closingAnim, int openAnim, int openingAnim) :
     Static(anId, pMap, Static::smt_Door), anim_(anim), closing_anim_(closingAnim),
         open_anim_(openAnim), opening_anim_(openingAnim) {
     state_ = Static::sttdoor_Closed;
@@ -484,7 +484,7 @@ bool Door::isPathBlocker()
 }
 
 
-LargeDoor::LargeDoor(uint16 anId, Map *pMap, int anim, int closingAnim, int openingAnim):
+LargeDoor::LargeDoor(uint16_t anId, Map *pMap, int anim, int closingAnim, int openingAnim):
         Static(anId, pMap, Static::smt_LargeDoor), anim_(anim),
         closing_anim_(closingAnim), opening_anim_(openingAnim) {
     state_ = Static::sttdoor_Closed;
@@ -850,7 +850,7 @@ bool LargeDoor::isPathBlocker()
 }
 
 
-Tree::Tree(uint16 anId, Map *pMap, int anim, int burningAnim, int damagedAnim) :
+Tree::Tree(uint16_t anId, Map *pMap, int anim, int burningAnim, int damagedAnim) :
         Static(anId, pMap, Static::smt_Tree), anim_(anim), burning_anim_(burningAnim),
         damaged_anim_(damagedAnim) {
     state_ = Static::stttree_Healthy;
@@ -902,7 +902,7 @@ void Tree::handleHit(fs_dmg::DamageToInflict &d) {
     }
 }
 
-WindowObj::WindowObj(uint16 anId, Map *pMap, int anim, int openAnim, int breakingAnim,
+WindowObj::WindowObj(uint16_t anId, Map *pMap, int anim, int openAnim, int breakingAnim,
                      int damagedAnim) :
         Static(anId, pMap, Static::smt_Window), anim_(anim), open_anim_(openAnim),
         breaking_anim_(breakingAnim), damaged_anim_(damagedAnim) {}
@@ -941,7 +941,7 @@ void WindowObj::handleHit(fs_dmg::DamageToInflict &d) {
     }
 }
 
-EtcObj::EtcObj(uint16 anId, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType aType) :
+EtcObj::EtcObj(uint16_t anId, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType aType) :
         Static(anId, pMap, aType), anim_(anim), burning_anim_(burningAnim),
         damaged_anim_(damagedAnim) {}
 
@@ -950,7 +950,7 @@ void EtcObj::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
-NeonSign::NeonSign(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, Static::smt_NeonSign) {
+NeonSign::NeonSign(uint16_t anId, Map *pMap, int anim) : Static(anId, pMap, Static::smt_NeonSign) {
     anim_ = anim;
 }
 
@@ -959,7 +959,7 @@ void NeonSign::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
 }
 
-Semaphore::Semaphore(uint16 anId, Map *pMap, int anim, int damagedAnim) :
+Semaphore::Semaphore(uint16_t anId, Map *pMap, int anim, int damagedAnim) :
         Static(anId, pMap, Static::smt_Semaphore), anim_(anim),
         damaged_anim_(damagedAnim), elapsed_left_smaller_(0),
         elapsed_left_bigger_(0), up_down_(1)
@@ -1047,7 +1047,7 @@ void Semaphore::draw(const Point2D &screenPos)
     g_SpriteMgr.drawFrame(anim_ +  state_, frame_, addOffs(screenPos));
 }
 
-AnimWindow::AnimWindow(uint16 anId, Map *pMap, int anim) : Static(anId, pMap, smt_AnimatedWindow) {
+AnimWindow::AnimWindow(uint16_t anId, Map *pMap, int anim) : Static(anId, pMap, smt_AnimatedWindow) {
     setExcludedFromBlockers(true);
     setFramesPerSec(4);
     anim_ = anim;

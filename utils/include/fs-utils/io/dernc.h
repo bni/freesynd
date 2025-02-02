@@ -45,7 +45,7 @@ namespace rnc {
     //! Read the length from the RNC header
     RncRetCode unpackedLength(const uint8_t *packed_data, size_t &length);
     //! Error control
-    uint16 crc(uint8_t *packed_data, size_t packed_length);
+    uint16_t crc(uint8_t *packed_data, size_t packed_length);
     //! Decompress the data
     RncRetCode unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t &length);
 

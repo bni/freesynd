@@ -102,8 +102,8 @@
         floodPointDesc *pNode;
     };
     typedef struct {
-        uint16 indxs;
-        uint16 n;
+        uint16_t indxs;
+        uint16_t n;
     } lvlNodesDesc;
 
 #endif

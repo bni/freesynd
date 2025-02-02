@@ -54,7 +54,7 @@ public:
     };
 
 public:
-    MapObject(uint16 id, Map *pMap, ObjectNature nature);
+    MapObject(uint16_t id, Map *pMap, ObjectNature nature);
     virtual ~MapObject() {}
 
     //! Return the nature of the object
@@ -65,7 +65,7 @@ public:
     const char* natureName();
 
     //! Return the object's id
-    uint16 id() const { return id_; }
+    uint16_t id() const { return id_; }
 
     //! Set if MapObject is visible on screen
     void setDrawable(bool drawable) {
@@ -280,7 +280,7 @@ protected:
     //! the nature of this object
     ObjectNature nature_;
     //! Id of the object. Id is unique within a nature
-    uint16 id_;
+    uint16_t id_;
     /*!
      * Tile based coordinates.
      */
@@ -322,7 +322,7 @@ private:
  */
 class ShootableMapObject : public MapObject {
 public:
-    ShootableMapObject(uint16 id, Map *pMap, ObjectNature nature);
+    ShootableMapObject(uint16_t id, Map *pMap, ObjectNature nature);
     virtual ~ShootableMapObject() {}
 
     int health() { return health_; }
@@ -401,7 +401,7 @@ public:
  */
 class ShootableMovableMapObject : public ShootableMapObject {
 public:
-    ShootableMovableMapObject(uint16 id, Map *pMap, ObjectNature nature);
+    ShootableMovableMapObject(uint16_t id, Map *pMap, ObjectNature nature);
     virtual ~ShootableMovableMapObject() {}
 
     void setSpeed(int new_speed) {
