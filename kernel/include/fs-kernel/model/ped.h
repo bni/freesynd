@@ -447,7 +447,7 @@ public:
     }
     unsigned int objGroupID() { return obj_group_id_; }
 
-    void setTimeBeforeCheck(int32 tm) { tm_before_check_ = tm; }
+    void setTimeBeforeCheck(int32_t tm) { tm_before_check_ = tm; }
     void setBaseModAcc(double mod_acc) { base_mod_acc_ = mod_acc; }
 
     class Mmuu32_t: public std::multimap<uint32_t, uint32_t> {
@@ -724,7 +724,7 @@ protected:
     uint32_t old_obj_group_id_;
 
     //! time wait before checking environment (enemies, friends etc)
-    int32 tm_before_check_;
+    int32_t tm_before_check_;
 
     //! base value that influences accuracy during fire
     double base_mod_acc_;

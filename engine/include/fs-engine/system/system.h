@@ -55,14 +55,14 @@ struct FS_QuitEvent {
 struct FS_MouseMotionEvent {
     FS_EventType type;    /**< SDL_MOUSEMOTION */
     uint32_t state;    /**< The current button state */
-    int32 x, y;    /**< The X/Y coordinates of the mouse */
+    int32_t x, y;    /**< The X/Y coordinates of the mouse */
     int keyMods;
 };
 
 struct FS_MouseButtonEvent {
     FS_EventType type;    /**< SDL_MOUSEMOTION */
     uint8 button;    /**< The current button state */
-    int32 x, y;    /**< The X/Y coordinates of the mouse */
+    int32_t x, y;    /**< The X/Y coordinates of the mouse */
     int keyMods;
 };
 

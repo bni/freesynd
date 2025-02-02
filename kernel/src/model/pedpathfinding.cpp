@@ -2575,7 +2575,7 @@ uint8 PedInstance::moveToDir(Mission* m, int elapsed, DirMoveType &dir_move,
             if (pos_.tx != tilenx || pos_.ty != tileny) {
                 // TODO: check for stairs and offset should be correct,
                 // to avoid jumping on top of stairs
-                int32 dec_z = 0;
+                int32_t dec_z = 0;
                 if (tilenx - pos_.tx == 0) {
                     if (tileny - pos_.ty > 0) {
                         if ((fpd->dirh & 0x01) == 0x01) {

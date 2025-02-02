@@ -60,7 +60,7 @@ public:
     int policeKilled() { return policeKilled_;}
     int guardKilled() { return guardKilled_;}
     int convinced() { return convinced_;}
-    int missionDuration() { return missionDuration_; }
+    uint32_t missionDuration() { return missionDuration_; }
     int agents() { return agents_; }
     int agentCaptured() { return agentCaptured_; }
 

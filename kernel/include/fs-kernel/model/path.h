@@ -35,12 +35,12 @@
  * Used by moveTodir().
  */
 struct DirMoveType {
-        int32 dir_orig;
-        int32 dir_last;
-        int32 dir_closest;
-        int32 dir_closer;
-        int32 dir_modifier;
-        int32 modifier_value;
+        int32_t dir_orig;
+        int32_t dir_last;
+        int32_t dir_closest;
+        int32_t dir_closer;
+        int32_t dir_modifier;
+        int32_t modifier_value;
         // directional movement only
         // to decide whether to continue movement by changing
         // direction or not

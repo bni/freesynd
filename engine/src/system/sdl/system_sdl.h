@@ -128,9 +128,9 @@ protected:
     /*! Cursor visibility.*/
     bool cursor_visible_;
     /*! Cursor screen coordinates. */
-    int32 cursor_x_;
+    int32_t cursor_x_;
     /*! Cursor screen coordinates. */
-    int32 cursor_y_;
+    int32_t cursor_y_;
     /*! Current cursor hotspot.*/
     int cursor_hs_x_;
     /*! Current cursor hotspot.*/

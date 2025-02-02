@@ -38,8 +38,6 @@ typedef unsigned char uint8;
 typedef signed short int16;
 typedef unsigned short uint16;
 
-typedef signed int int32;
-
 namespace fs_utl {
 
     //! This type is used for characters in Code Page 437

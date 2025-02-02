@@ -169,7 +169,7 @@ public:
      * \param loc The location.
      * \param distance
      */
-    bool isCloseTo(const WorldPoint &loc, int32 distance) {
+    bool isCloseTo(const WorldPoint &loc, int32_t distance) {
         int cx = pos_.tx * 256 + pos_.ox - (loc.x);
         int cy = pos_.ty * 256 + pos_.oy - (loc.y);
         int cz = pos_.tz * 128 + pos_.oz - (loc.z);

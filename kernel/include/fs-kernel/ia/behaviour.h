@@ -71,7 +71,7 @@ public:
     //! Destroy existing components and set given one as new one
     void replaceAllcomponentsBy(BehaviourComponent *pComp);
 
-    virtual void execute(int elapsed, Mission *pMission);
+    virtual void execute(uint32_t elapsed, Mission *pMission);
 
     virtual void handleBehaviourEvent(BehaviourEvent evtType, void *pCtxt = NULL);
 protected:
@@ -95,7 +95,7 @@ public:
     bool isEnabled() { return enabled_; }
     void setEnabled(bool val) { enabled_ = val; }
 
-    virtual void execute(int elapsed, Mission *pMission, PedInstance *pPed) = 0;
+    virtual void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) = 0;
 
     virtual void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt){};
 
@@ -115,7 +115,7 @@ public:
 
     CommonAgentBehaviourComponent(PedInstance *pPed);
 
-    void execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
 private:
@@ -132,7 +132,7 @@ class PersuaderBehaviourComponent : public BehaviourComponent {
 public:
     PersuaderBehaviourComponent();
 
-    void execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
 private:
@@ -151,7 +151,7 @@ class PersuadedBehaviourComponent : public BehaviourComponent {
 public:
     PersuadedBehaviourComponent();
 
-    void execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
 private:
@@ -198,7 +198,7 @@ public:
 
     PanicComponent();
 
-    void execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
 private:
@@ -231,7 +231,7 @@ class PoliceBehaviourComponent : public BehaviourComponent {
 public:
     PoliceBehaviourComponent();
 
-    void execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
 private:
@@ -278,7 +278,7 @@ class PlayerHostileBehaviourComponent : public BehaviourComponent {
 public:
     PlayerHostileBehaviourComponent();
 
-    void execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
 

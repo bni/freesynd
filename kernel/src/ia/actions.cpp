@@ -365,7 +365,7 @@ bool WalkToDirectionAction::doExecute(int elapsed, Mission *pMission, PedInstanc
  * \param range Radius of the trigger zone
  * \param loc Center of the trigger zone
  */
-TriggerAction::TriggerAction(int32 range, const WorldPoint &loc) :
+TriggerAction::TriggerAction(int32_t range, const WorldPoint &loc) :
         MovementAction(kActTypeUndefined, false, true) {
     range_ = range;
     centerLoc_ = loc;

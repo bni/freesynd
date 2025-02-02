@@ -78,7 +78,7 @@ void Behaviour::replaceAllcomponentsBy(BehaviourComponent *pComp) {
  * \param elapsed Time elapsed since last frame
  * \param pMission Mission data
  */
-void Behaviour::execute(int elapsed, Mission *pMission) {
+void Behaviour::execute(uint32_t elapsed, Mission *pMission) {
     if (pThisPed_->isDead()) {
         return;
     }
@@ -103,7 +103,7 @@ CommonAgentBehaviourComponent::CommonAgentBehaviourComponent(PedInstance *pPed):
  * \param pMission Mission data
  * \param pPed The owner of the behaviour
  */
-void CommonAgentBehaviourComponent::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+void CommonAgentBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     // If Agent is equiped with right chest, his health periodically updates
     if (doRegenerates_ && healthTimer_.update(elapsed)) {
         if (pPed->increaseHealth(kRegeratesHealthStep)) {
@@ -130,7 +130,7 @@ PersuaderBehaviourComponent::PersuaderBehaviourComponent():
     persuadotronRange_ = g_weaponMgr.getWeapon(Weapon::Persuadatron)->range();
 }
 
-void PersuaderBehaviourComponent::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+void PersuaderBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     // Check if Agent has selected his Persuadotron
     if (doUsePersuadotron_) {
         // iterate through all peds except our agents
@@ -164,7 +164,7 @@ PersuadedBehaviourComponent::PersuadedBehaviourComponent():
     status_ = kPersuadStatusWaitForHitAction;
 }
 
-void PersuadedBehaviourComponent::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+void PersuadedBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kPersuadStatusInitializing) {
         pPed->destroyAllActions(true);
         // set follow owner as new default action
@@ -257,7 +257,7 @@ WeaponInstance * PersuadedBehaviourComponent::findWeaponWithAmmo(Mission *pMissi
    double currentDistance = kMaxRangeForSearchingWeapon;
 
     int numweapons = pMission->numWeaponsOnGround();
-    for (int32 i = 0; i < numweapons; ++i) {
+    for (int32_t i = 0; i < numweapons; ++i) {
         WeaponInstance *w = pMission->weaponOnGround(i);
         if (!w->hasOwner() && w->canShoot() && w->ammoRemaining() > 0) {
             double length = 0;
@@ -295,7 +295,7 @@ PanicComponent::PanicComponent():
     setEnabled(false);
 }
 
-void PanicComponent::execute(int elapsed, Mission *pMission, PedInstance *pCivil) {
+void PanicComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pCivil) {
     if (pCivil->isPanicImmuned()) {
         return;
     }
@@ -402,7 +402,7 @@ PoliceBehaviourComponent::PoliceBehaviourComponent():
     pTarget_ = NULL;
 }
 
-void PoliceBehaviourComponent::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+void PoliceBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kPoliceStatusAlert && scoutTimer_.update(elapsed)) {
         findAndEngageNewTarget(pMission, pPed);
     } else if (status_ == kPoliceStatusCheckReengageOrDefault) {
@@ -549,7 +549,7 @@ PlayerHostileBehaviourComponent::PlayerHostileBehaviourComponent():
     status_ = kHostileStatusDefault;
 }
 
-void PlayerHostileBehaviourComponent::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+void PlayerHostileBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kHostileStatusDefault) {
         // In this mode, ped is looking for an enemy
         PedInstance *pArmedGuy = findPlayerAgent(pMission, pPed);

@@ -291,14 +291,14 @@ protected:
  */
 class TriggerAction : public MovementAction {
 public:
-    TriggerAction(int32 range, const WorldPoint &loc);
+    TriggerAction(int32_t range, const WorldPoint &loc);
 protected:
     bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
 protected:
     /*! Center of trigger zone.*/
     WorldPoint centerLoc_;
     /*! The range of trigger zone.*/
-    int32 range_;
+    int32_t range_;
 };
 
 /*!
