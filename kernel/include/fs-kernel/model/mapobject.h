@@ -441,7 +441,7 @@ public:
      * \return True if the position has been updated.
      *
      */
-    virtual bool doMove(int elapsed, Mission *m) = 0;
+    virtual bool doMove(uint32_t elapsed, Mission *m) = 0;
 
     //! Return true if the ped is moving
     bool isMoving() { return speed_ != 0 || !dest_path_.empty();}

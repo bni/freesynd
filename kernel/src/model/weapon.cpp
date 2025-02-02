@@ -306,11 +306,11 @@ bool WeaponInstance::animate(uint32_t elapsed) {
 
 /**
  * Calculate amount of ammo consummed in the elapsed time
- * \param elapsed int
+ * \param elapsed uint32_t
  * \return bool return true if there is no more ammo
  *
  */
-bool WeaponInstance::consumeAmmoForEnergyShield(int elapsed) {
+bool WeaponInstance::consumeAmmoForEnergyShield(uint32_t elapsed) {
     uint32_t timeForShot = pWeaponClass_->timeForShot();
     shieldTimeUsed_ += elapsed;
 

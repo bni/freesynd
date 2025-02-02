@@ -78,17 +78,17 @@ protected:
  */
 class Vehicle : public ShootableMovableMapObject{
 public:
-    static const uint8 kVehicleTypeLargeArmored;
-    static const uint8 kVehicleTypeLargeArmoredDamaged;
-    static const uint8 kVehicleTypeTrainHead;
-    static const uint8 kVehicleTypeTrainBody;
-    static const uint8 kVehicleTypeRegularCar;
-    static const uint8 kVehicleTypeFireFighter;
-    static const uint8 kVehicleTypeSmallArmored;
-    static const uint8 kVehicleTypePolice;
-    static const uint8 kVehicleTypeMedics;
+    static const uint8_t kVehicleTypeLargeArmored;
+    static const uint8_t kVehicleTypeLargeArmoredDamaged;
+    static const uint8_t kVehicleTypeTrainHead;
+    static const uint8_t kVehicleTypeTrainBody;
+    static const uint8_t kVehicleTypeRegularCar;
+    static const uint8_t kVehicleTypeFireFighter;
+    static const uint8_t kVehicleTypeSmallArmored;
+    static const uint8_t kVehicleTypePolice;
+    static const uint8_t kVehicleTypeMedics;
 
-    Vehicle(uint16 anId, uint8 aType, Map *pMap, VehicleAnimation *pAnimation) : ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle) {
+    Vehicle(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation) : ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle) {
         type_ = aType;
         animation_ = pAnimation;
     }
@@ -101,7 +101,7 @@ public:
     void draw(const Point2D &screenPos) override;
 
     //! Return type of vehicle
-    uint8 getType() { return type_; }
+    uint8_t getType() { return type_; }
     //! Return true if vehicle is a car
     bool isCar() { return type_ != kVehicleTypeTrainHead && type_ != kVehicleTypeTrainBody; }
 
@@ -134,7 +134,7 @@ protected:
 
 private:
     /*! Type of vehicle.*/
-    uint8 type_;
+    uint8_t type_;
 };
 
 /*!
@@ -143,7 +143,7 @@ private:
 class GenericCar : public Vehicle
 {
 public:
-    GenericCar(VehicleAnimation *pAnimation, uint16 id, uint8 aType, Map *pMap);
+    GenericCar(VehicleAnimation *pAnimation, uint16_t id, uint8_t aType, Map *pMap);
     virtual ~GenericCar() {}
 
     //! See ShootableMovableMapObject::initMovementToDestination()
@@ -155,8 +155,8 @@ public:
         speed_ = new_speed;
     }
 
-    //! See ShootableMovableMapObject::doMove()
-    bool doMove(int elapsed, Mission *m);
+    //! @copydoc ShootableMovableMapObject::doMove()
+    bool doMove(uint32_t elapsed, Mission *m) override;
 
     //! Adds the given ped to the list of passengers
     void addPassenger(PedInstance *p);
@@ -181,7 +181,7 @@ public:
 
 protected:
     bool findPathToNearestWalkableTile(Map *pMap, const TilePoint &startPt, int *basex, int *basey, std::vector < TilePoint > *path2add);
-    uint16 tileDir(int x, int y, int z);
+    uint16_t tileDir(int x, int y, int z);
     bool dirWalkable(TilePoint *p, int x, int y, int z);
 
 protected:

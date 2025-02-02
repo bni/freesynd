@@ -34,15 +34,15 @@
 #include "fs-kernel/model/shot.h"
 #include "fs-kernel/mgr/missionmanager.h"
 
-const uint8 Vehicle::kVehicleTypeLargeArmored = 0x01;
-const uint8 Vehicle::kVehicleTypeLargeArmoredDamaged = 0x04;
-const uint8 Vehicle::kVehicleTypeTrainHead = 0x05;
-const uint8 Vehicle::kVehicleTypeTrainBody = 0x09;
-const uint8 Vehicle::kVehicleTypeRegularCar = 0x0D;
-const uint8 Vehicle::kVehicleTypeFireFighter = 0x11;
-const uint8 Vehicle::kVehicleTypeSmallArmored = 0x1C;
-const uint8 Vehicle::kVehicleTypePolice = 0x24;
-const uint8 Vehicle::kVehicleTypeMedics = 0x28;
+const uint8_t Vehicle::kVehicleTypeLargeArmored = 0x01;
+const uint8_t Vehicle::kVehicleTypeLargeArmoredDamaged = 0x04;
+const uint8_t Vehicle::kVehicleTypeTrainHead = 0x05;
+const uint8_t Vehicle::kVehicleTypeTrainBody = 0x09;
+const uint8_t Vehicle::kVehicleTypeRegularCar = 0x0D;
+const uint8_t Vehicle::kVehicleTypeFireFighter = 0x11;
+const uint8_t Vehicle::kVehicleTypeSmallArmored = 0x1C;
+const uint8_t Vehicle::kVehicleTypePolice = 0x24;
+const uint8_t Vehicle::kVehicleTypeMedics = 0x28;
 
 VehicleAnimation::VehicleAnimation() {
     vehicle_anim_ = kNormalAnim;
@@ -164,15 +164,15 @@ bool Vehicle::containsHostilesForPed(PedInstance* p,
     return false;
 }
 
-GenericCar::GenericCar(VehicleAnimation * pAnimation, uint16 anId, uint8 aType, Map *pMap):
+GenericCar::GenericCar(VehicleAnimation * pAnimation, uint16_t anId, uint8_t aType, Map *pMap):
     Vehicle(anId, aType, pMap, pAnimation)
 {
     pDriver_ = NULL;
     hold_on_.wayFree = 0;
 }
 
-uint16 GenericCar::tileDir(int x, int y, int z) {
-    uint16 dir = 0x0;
+uint16_t GenericCar::tileDir(int x, int y, int z) {
+    uint16_t dir = 0x0;
     int near_tile;
 
     switch(pMap_->tileAt(x, y, z)){
@@ -339,8 +339,8 @@ bool GenericCar::dirWalkable(TilePoint *p, int x, int y, int z) {
     if(!(pMap_->isTileWalkableByCar(x,y,z)))
         return false;
 
-    uint16 dirStart = tileDir(p->tx,p->ty,p->tz);
-    uint16 dirEnd = tileDir(x,y,z);
+    uint16_t dirStart = tileDir(p->tx,p->ty,p->tz);
+    uint16_t dirEnd = tileDir(x,y,z);
     if (dirStart == 0x0 || dirEnd == 0x0)
         return false;
     if (dirStart == 0xFFFF || dirEnd == 0xFFFF)
@@ -374,7 +374,7 @@ bool GenericCar::dirWalkable(TilePoint *p, int x, int y, int z) {
  * \return true if destination has been set correctly.
  */
 bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &destinationPt, int newSpeed) {
-    std::map < TilePoint, uint16 > open;
+    std::map < TilePoint, uint16_t > open;
     std::set < TilePoint > closed;
     std::map < TilePoint, TilePoint > parent;
     int basex = pos_.tx, basey = pos_.ty;
@@ -417,7 +417,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
     TilePoint closest;
     float closest_dist = 100000;
 
-    uint16 wrong_dir = (uint16)getDirection(4);
+    uint16_t wrong_dir = (uint16_t)getDirection(4);
     if (wrong_dir == 0x0)
         wrong_dir = 0x0400;
     else if(wrong_dir == 0x1)
@@ -426,7 +426,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
         wrong_dir = 0x0;
     else if(wrong_dir == 0x3)
         wrong_dir = 0x0020;
-    open.insert(std::pair< TilePoint, uint16 >(TilePoint(basex, basey, z, pos_.ox, pos_.oy),
+    open.insert(std::pair< TilePoint, uint16_t >(TilePoint(basex, basey, z, pos_.ox, pos_.oy),
         wrong_dir));
     int watchDog = 1000;
 
@@ -434,8 +434,8 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
         watchDog--;
         float dist = 100000;
         TilePoint p;
-        std::map < TilePoint, uint16 >::iterator pit;
-        for (std::map < TilePoint, uint16 >::iterator it = open.begin();
+        std::map < TilePoint, uint16_t >::iterator pit;
+        for (std::map < TilePoint, uint16_t >::iterator it = open.begin();
              it != open.end(); it++)
         {
             float d =
@@ -476,8 +476,8 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
             break;
         }
 
-        std::map <TilePoint, uint16> neighbours;
-        uint16 goodDir = tileDir(p.tx, p.ty, p.tz);
+        std::map <TilePoint, uint16_t> neighbours;
+        uint16_t goodDir = tileDir(p.tx, p.ty, p.tz);
 
         if (wrong_dir != 0x6000 && p.tx > 0) {
             if (dirWalkable(&p, p.tx - 1, p.ty, p.tz)
@@ -501,7 +501,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
                 && ((goodDir & 0x000F) == 0x0 || goodDir == 0xFFFF))
                 neighbours[TilePoint(p.tx, p.ty + 1, p.tz)] = 0x0400;
 
-        for (std::map <TilePoint, uint16>::iterator it = neighbours.begin();
+        for (std::map <TilePoint, uint16_t>::iterator it = neighbours.begin();
             it != neighbours.end(); it++)
             if (dirWalkable(&p, it->first.tx, it->first.ty,
                 it->first.tz)
@@ -677,7 +677,7 @@ bool GenericCar::findPathToNearestWalkableTile(Map *pMap, const TilePoint &start
  * Moves a vehicle on the map.
  * \param elapsed Elapsed time sine last frame.
  */
-bool GenericCar::doMove(int elapsed, Mission *m)
+bool GenericCar::doMove(uint32_t elapsed, Mission *m)
 {
     bool updated = false;
     int used_time = elapsed;

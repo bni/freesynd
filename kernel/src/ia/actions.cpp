@@ -91,7 +91,7 @@ Action(aType) {
  * If action is finished (failed or succeeded), quits state.
  * \return True to update screen.
  */
-bool MovementAction::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool MovementAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusNotStarted) {
         // Action is not started so start it
         status_ = kActStatusRunning;
@@ -140,7 +140,7 @@ bool MovementAction::suspend(PedInstance *pPed) {
     return true;
 }
 
-void MovementAction::resume(Mission *pMission, PedInstance *pPed) {
+void MovementAction::resume([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     status_ = savedStatus_;
     pPed->goToState(targetState_);
 }
@@ -262,7 +262,7 @@ void WalkAction::doStart(Mission *pMission, PedInstance *pPed) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool WalkAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool WalkAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     bool updated = pPed->doMove(elapsed, pMission);
     if (!pPed->hasDestination()) {
         // Ped has arrived at destination
@@ -294,7 +294,7 @@ bool WalkToDirectionAction::suspend(PedInstance *pPed) {
     return MovementAction::suspend(pPed);
 }
 
-void WalkToDirectionAction::doStart(Mission *pMission, PedInstance *pPed) {
+void WalkToDirectionAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     moveDirdesc_.clear();
     moveDirdesc_.bounce = true;
     pPed->setSpeed(newSpeed_ != -1? newSpeed_ : pPed->getDefaultSpeed());
@@ -307,7 +307,7 @@ void WalkToDirectionAction::doStart(Mission *pMission, PedInstance *pPed) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool WalkToDirectionAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool WalkToDirectionAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     bool endAction = false;
     int distanceToWalk = 0;
     if (destLocW_.x != -1) {
@@ -377,7 +377,7 @@ TriggerAction::TriggerAction(int32_t range, const WorldPoint &loc) :
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool TriggerAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool TriggerAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
     for (uint8 i = 0; i < AgentManager::kMaxSlot; ++i) {
         PedInstance *pAgent = pMission->getSquad()->member(i);
         if(pAgent && pAgent->isAlive() && pAgent->isCloseTo(centerLoc_, range_)) {
@@ -394,7 +394,7 @@ bool TriggerAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed)
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool EscapeAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool EscapeAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     setSucceeded();
     pPed->escape();
     return true;
@@ -432,7 +432,7 @@ void FollowAction::doStart(Mission *pMission, PedInstance *pPed) {
     }
 }
 
-bool FollowAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool FollowAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     bool updated = false;
 
     if (pTarget_->isDead()) {
@@ -482,7 +482,7 @@ MovementAction(kActTypeFollowToShoot) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-void FollowToShootAction::doStart(Mission *pMission, PedInstance *pPed) {
+void FollowToShootAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (pPed->selectedWeapon() == NULL) {
         setFailed();
         return;
@@ -493,7 +493,7 @@ void FollowToShootAction::doStart(Mission *pMission, PedInstance *pPed) {
     targetLastPosW_.reset();
 }
 
-bool FollowToShootAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool FollowToShootAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     bool updated = false;
 
     if (pTarget_->isDead()) {
@@ -533,14 +533,14 @@ PutdownWeaponAction::PutdownWeaponAction(uint8 weaponIdx) : MovementAction(kActT
     targetState_ = PedInstance::pa_smPutDown;
 }
 
-void PutdownWeaponAction::doStart(Mission *pMission, PedInstance *pPed) {
+void PutdownWeaponAction::doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
     status_ = kActStatusWaitForAnim;
 }
 
 /*!
  * Action can be executed only when the animation of dropping a weapon is done.
  */
-bool PutdownWeaponAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool PutdownWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (status_ != kActStatusWaitForAnim) {
         WeaponInstance *pWeapon = pPed->dropWeapon(weaponIdx_);
         // Dropping a timebomb means activate it to explode
@@ -560,7 +560,7 @@ PickupWeaponAction::PickupWeaponAction(WeaponInstance *pWeapon) :
     targetState_ = PedInstance::pa_smPickUp;
 }
 
-void PickupWeaponAction::doStart(Mission *pMission, PedInstance *pPed) {
+void PickupWeaponAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // recheck here in case weapon was pickup between the time the action
     // was added and now
     if (pWeapon_->hasOwner() || pWeapon_->isDead() ||
@@ -573,7 +573,7 @@ void PickupWeaponAction::doStart(Mission *pMission, PedInstance *pPed) {
     }
 }
 
-bool PickupWeaponAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool PickupWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ != kActStatusWaitForAnim) {
         pWeapon_->setOwner(pPed);
         pWeapon_->deactivate();
@@ -590,13 +590,13 @@ EnterVehicleAction::EnterVehicleAction(Vehicle *pVehicle) :
     pVehicle_ = pVehicle;
 }
 
-void EnterVehicleAction::doStart(Mission *pMission, PedInstance *pPed) {
+void EnterVehicleAction::doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
     if (pVehicle_->isDead()) {
         setFailed();
     }
 }
 
-bool EnterVehicleAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool EnterVehicleAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // Ped needs to be near vehicle to get in
     if (pPed->samePosition(pVehicle_)) {
         // state of ped is set in addPassenger
@@ -623,7 +623,7 @@ void DriveVehicleAction::doStart(Mission *pMission, PedInstance *pPed) {
     }
 }
 
-bool DriveVehicleAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool DriveVehicleAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (pPed->sameTile(dest_)) {
         setSucceeded();
     }
@@ -646,7 +646,7 @@ void DriveTrainAction::doStart(Mission *pMission, PedInstance *pPed) {
     }
 }
 
-bool DriveTrainAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool DriveTrainAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
     if (!pTrain_->hasDestination()) {
         setSucceeded();
 
@@ -680,11 +680,11 @@ MovementAction(kActTypeWait, true, true), waitTimer_(0) {
     waitType_ = waitFor;
 }
 
-void WaitAction::doStart(Mission *pMission, PedInstance *pPed) {
+void WaitAction::doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
     waitTimer_.reset();
 }
 
-bool WaitAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool WaitAction::doExecute(uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (waitType_ == kWaitTime) {
         if (waitTimer_.update(elapsed)) {
             setSucceeded();
@@ -704,7 +704,7 @@ MovementAction(kActTypeWaitShoot, true), waitTimer_(2000) {
     pTarget_ = pPed;
 }
 
-void WaitBeforeShootingAction::doStart(Mission *pMission, PedInstance *pPed) {
+void WaitBeforeShootingAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (pTarget_->isDead()) {
         setFailed();
     } else {
@@ -714,7 +714,7 @@ void WaitBeforeShootingAction::doStart(Mission *pMission, PedInstance *pPed) {
     }
 }
 
-bool WaitBeforeShootingAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool WaitBeforeShootingAction::doExecute(uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // point toward target
     pPed->setDirectionTowardObject(*pTarget_);
 
@@ -735,7 +735,7 @@ MovementAction(kActTypeFire) {
     pTarget_ = pPed;
 }
 
-void FireWeaponAction::doStart(Mission *pMission, PedInstance *pPed) {
+void FireWeaponAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (pTarget_->isDead()) {
         setFailed();
     } else if (pPed->type() == PedInstance::kPedTypePolice && pTarget_->selectedWeapon() == NULL) {
@@ -757,7 +757,7 @@ void FireWeaponAction::doStart(Mission *pMission, PedInstance *pPed) {
     }
 }
 
-bool FireWeaponAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool FireWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (!pPed->isUsingWeapon()) {
         setSucceeded();
     }
@@ -786,7 +786,7 @@ HitAction(d) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool FallDeadHitAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool FallDeadHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusRunning) {
         pPed->handleDeath(pMission, damage_);
         setSucceeded();
@@ -804,7 +804,7 @@ HitAction(d) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-void RecoilHitAction::doStart(Mission *pMission, PedInstance *pPed) {
+void RecoilHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // Change direction due to impact
     pPed->setDirectionTowardPosition(damage_.originLocW);
     status_ = kActStatusWaitForAnim;
@@ -816,7 +816,7 @@ void RecoilHitAction::doStart(Mission *pMission, PedInstance *pPed) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool RecoilHitAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusRunning) {
         if (pPed->handleDeath(pMission, damage_)) {
             targetState_ = PedInstance::pa_smNone;
@@ -836,7 +836,7 @@ HitAction(d) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-void LaserHitAction::doStart(Mission *pMission, PedInstance *pPed) {
+void LaserHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // Change direction due to impact
     pPed->setDirectionTowardPosition(damage_.originLocW);
     status_ = kActStatusWaitForAnim;
@@ -848,7 +848,7 @@ void LaserHitAction::doStart(Mission *pMission, PedInstance *pPed) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool LaserHitAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusRunning) {
         if (pPed->handleDeath(pMission, damage_)) {
             targetState_ = PedInstance::pa_smNone;
@@ -868,7 +868,7 @@ HitAction(d),burnTimer_(kTimeToWalkBurning) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-void WalkBurnHitAction::doStart(Mission *pMission, PedInstance *pPed) {
+void WalkBurnHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     moveDirdesc_.clear();
     walkedDist_ = 0;
     moveDirection_ = rand() % 256;
@@ -881,7 +881,7 @@ void WalkBurnHitAction::doStart(Mission *pMission, PedInstance *pPed) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool WalkBurnHitAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool WalkBurnHitAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     int walkDistDiff = 0;
     pPed->moveToDir(pMission, elapsed, moveDirdesc_, moveDirection_, -1, -1, &walkDistDiff, true);
     walkedDist_ += walkDistDiff;
@@ -908,7 +908,7 @@ HitAction(d) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-void PersuadedHitAction::doStart(Mission *pMission, PedInstance *pPed) {
+void PersuadedHitAction::doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
     status_ = kActStatusWaitForAnim;
     g_SoundMgr.play(fs_eng::PERSUADE);
 }
@@ -919,7 +919,7 @@ void PersuadedHitAction::doStart(Mission *pMission, PedInstance *pPed) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool PersuadedHitAction::doExecute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool PersuadedHitAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusRunning) {
         PedInstance *pAgent = static_cast<PedInstance *>(damage_.d_owner);
         pPed->handlePersuadedBy(pAgent);
@@ -948,13 +948,13 @@ void ShootAction::setAimedAt(const WorldPoint &aimedAt) {
  * \param pPed The ped executing the action.
  * \return true to redraw
  */
-bool ShootAction::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool ShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusNotStarted) {
         // Turn to target
         pPed->setDirectionTowardPosition(aimedAt_);
         // Shoot
         fs_dmg::DamageToInflict dmg;
-        fillDamageDesc(pMission, pPed, pWeapon_, dmg);
+        fillDamageDesc(pPed, pWeapon_, dmg);
         pWeapon_->playSound();
         pWeapon_->fire(pMission, dmg, elapsed);
         // change state to firing
@@ -983,12 +983,10 @@ bool ShootAction::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
 
 /*!
  * Fills the ShotAttributes structure with needed information.
- * \param pMission Mission data
  * \param targetLoc Where to shoot
  * \param dmg Structure to fill
  */
-void ShootAction::fillDamageDesc(Mission *pMission,
-                                    PedInstance *pShooter,
+void ShootAction::fillDamageDesc(PedInstance *pShooter,
                                     WeaponInstance *pWeapon,
                                     fs_dmg::DamageToInflict &dmg) {
     dmg.pWeapon = pWeapon;
@@ -1042,7 +1040,7 @@ AutomaticShootAction::AutomaticShootAction(const WorldPoint &aimedAt, WeaponInst
 {
 }
 
-bool AutomaticShootAction::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool AutomaticShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     bool firstTime = false;
     if (status_ == kActStatusNotStarted) {
         setRunning();
@@ -1058,7 +1056,7 @@ bool AutomaticShootAction::execute(int elapsed, Mission *pMission, PedInstance *
         } else if (firstTime || fireRateTimer_.update(elapsed)) {
             pPed->setDirectionTowardPosition(aimedAt_);
             fs_dmg::DamageToInflict dmg;
-            fillDamageDesc(pMission, pPed, pWeapon_, dmg);
+            fillDamageDesc(pPed, pWeapon_, dmg);
             pWeapon_->playSound();
             pWeapon_->fire(pMission, dmg, elapsed);
         }
@@ -1093,7 +1091,7 @@ void AutomaticShootAction::stop() {
  * \param pPed The ped executing the action.
  * \return true to redraw
  */
-bool UseMedikitAction::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool UseMedikitAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     bool update = false;
     if (status_ == kActStatusNotStarted) {
         // set time before completing action
@@ -1128,7 +1126,7 @@ bool UseMedikitAction::execute(int elapsed, Mission *pMission, PedInstance *pPed
  * \param pPed The ped executing the action.
  * \return true to redraw
  */
-bool UseEnergyShieldAction::execute(int elapsed, Mission *pMission, PedInstance *pPed) {
+bool UseEnergyShieldAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusNotStarted) {
         status_ = kActStatusRunning;
 

@@ -349,7 +349,7 @@ public:
     //! Use weapon
     void fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, uint32_t elapsed);
 
-    bool consumeAmmoForEnergyShield(int elapsed);
+    bool consumeAmmoForEnergyShield(uint32_t elapsed);
 
 protected:
     static uint16 weaponIdCnt;

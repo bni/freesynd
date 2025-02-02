@@ -332,7 +332,7 @@ public:
     bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1);
 
     //! See ShootableMovableMapObject::doMove()
-    bool doMove(int elapsed, Mission *pMission);
+    bool doMove(uint32_t elapsed, Mission *pMission) override;
 
     //*************************************
     // Weapon management
@@ -404,7 +404,7 @@ public:
     void setDrawnAnim(AnimationDrawn drawn_anim);
     bool handleDrawnAnim(int elapsed);
 
-    uint8 moveToDir(Mission *m, int elapsed, DirMoveType &dir_move,
+    uint8 moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
         int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,
         bool set_dist = false);
 
@@ -657,7 +657,7 @@ protected:
     void updatePersuadedRelations(Squad *pSquad);
 
     //! Update frame to render
-    bool updateAnimation(int elapsed);
+    bool updateAnimation(uint32_t elapsed);
 
 private:
     inline int getClosestDirs(int dir, int& closest, int& closer);

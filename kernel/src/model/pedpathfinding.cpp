@@ -2322,7 +2322,7 @@ void PedInstance::buildFinalDestinationPath(Mission *m, std::vector<TilePoint> &
 #endif
 }
 
-bool PedInstance::doMove(int elapsed, Mission *pMission)
+bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
 {
     bool updated = false;
     int used_time = elapsed;
@@ -2469,12 +2469,15 @@ bool PedInstance::doMove(int elapsed, Mission *pMission)
 }
 
 /*! \returns bitmask :
- * 0b(1) - success, 1b(2) - bounced, 2b(4) - need bounce (for bounce forbidden),
- * 3b(8) - non-walkable tile as base, 4b(16) - wrong direction,
- * 5b(32) - dist passed set, 6b(64) -  bouncing restored original dir
- * (loop is possible)
+ * - 0b(1): success
+ * - 1b(2): bounced
+ * - 2b(4): need bounce (for bounce forbidden)
+ * - 3b(8): non-walkable tile as base
+ * - 4b(16): wrong direction
+ * - 5b(32): dist passed set
+ * - 6b(64): bouncing restored original dir (loop is possible)
  */
-uint8 PedInstance::moveToDir(Mission* m, int elapsed, DirMoveType &dir_move,
+uint8 PedInstance::moveToDir(Mission* m, uint32_t elapsed, DirMoveType &dir_move,
     int dir, int t_posx, int t_posy, int* dist, bool set_dist)
 {
     // TODO: better non-posiotional random walking

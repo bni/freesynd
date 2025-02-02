@@ -98,7 +98,7 @@ bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_u
  * Moves a vehicle on the map.
  * \param elapsed Elapsed time sine last frame.
  */
-bool TrainHead::doMove(int elapsed, [[maybe_unused]] Mission *m)
+bool TrainHead::doMove(uint32_t elapsed, [[maybe_unused]] Mission *m)
 {
     bool updated = false;
     int remainingTime = elapsed;

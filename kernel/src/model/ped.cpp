@@ -394,7 +394,7 @@ void PedInstance::leaveState(uint32_t as) {
  * \param elapsed Time since the last frame
  * \return True if animation has ended.
  */
-bool PedInstance::updateAnimation(int elapsed) {
+bool PedInstance::updateAnimation(uint32_t elapsed) {
     MapObject::animate(elapsed);
 
     return handleDrawnAnim(elapsed);

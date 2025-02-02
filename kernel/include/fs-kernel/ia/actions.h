@@ -111,7 +111,7 @@ public:
     virtual ~Action() { }
 
     //! Entry point to execute the action
-    virtual bool execute(int elapsed, Mission *pMission, PedInstance *pPed) = 0;
+    virtual bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) = 0;
 
     //! Returns the source of the action
     ActionSource source() { return source_; }
@@ -166,7 +166,7 @@ public:
     virtual ~MovementAction() { pNext_ = NULL; }
 
     //! Entry point to execute the action
-    bool execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
     //! Return true if action has been suspended
     virtual bool suspend(PedInstance *pPed);
     //! Resume action
@@ -208,7 +208,7 @@ protected:
     //! Subclasses must implement this method to do somthing at the begining of the action
     virtual void doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {}
     //! Sublasses must implement this method to realize this action
-    virtual bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed) = 0;
+    virtual bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) = 0;
 protected:
     /*! When this flag is set, the ped cannot shoot.*/
     bool isExclusive_;
@@ -244,7 +244,7 @@ public:
     void resume(Mission *pMission, PedInstance *pPed) override;
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! Where to walk to.*/
     TilePoint destLocT_;
@@ -272,7 +272,7 @@ public:
     bool suspend(PedInstance *pPed);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! Where to walk to.*/
     WorldPoint destLocW_;
@@ -293,7 +293,7 @@ class TriggerAction : public MovementAction {
 public:
     TriggerAction(int32_t range, const WorldPoint &loc);
 protected:
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! Center of trigger zone.*/
     WorldPoint centerLoc_;
@@ -310,7 +310,7 @@ public:
     EscapeAction():
         MovementAction(kActTypeUndefined, false, true) {}
 protected:
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 };
 
 /*!
@@ -326,9 +326,9 @@ public:
 
     ActionSource sourceToReset() { return sourceToReset_; }
 protected:
-    bool doExecute([[maybe_unused]] int elapsed,
+    bool doExecute([[maybe_unused]] uint32_t elapsed,
                     [[maybe_unused]] Mission *pMission,
-                    [[maybe_unused]] PedInstance *pPed) { return true; }
+                    [[maybe_unused]] PedInstance *pPed) override { return true; }
 private:
     ActionSource sourceToReset_;
 };
@@ -348,9 +348,9 @@ public:
 
     MovementAction *targetAction() { return pTargetAction_; }
 protected:
-    bool doExecute([[maybe_unused]] int elapsed,
+    bool doExecute([[maybe_unused]] uint32_t elapsed,
                     [[maybe_unused]] Mission *pMission, 
-                    [[maybe_unused]] PedInstance *pPed) { return true; }
+                    [[maybe_unused]] PedInstance *pPed) override { return true; }
 private:
     MovementAction *pTargetAction_;
 };
@@ -368,7 +368,7 @@ public:
 
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     //! Update the target's last position
     void updateLastTargetPos();
@@ -395,7 +395,7 @@ public:
     void setTarget(PedInstance *pTarget) { pTarget_ = pTarget; }
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
 protected:
     /*! The ped to follow.*/
@@ -417,7 +417,7 @@ public:
 
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! Index of the weapon to drop in the ped's inventory.*/
     uint8 weaponIdx_;
@@ -435,7 +435,7 @@ public:
     void setWeapon(WeaponInstance *pWeapon) { pWeapon_ = pWeapon; }
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! The weapon to pick up.*/
     WeaponInstance *pWeapon_;
@@ -450,7 +450,7 @@ public:
 
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! The vehicle to enter.*/
     Vehicle *pVehicle_;
@@ -465,7 +465,7 @@ public:
 
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! Vehicle to drive.*/
     GenericCar *pVehicle_;
@@ -482,7 +482,7 @@ public:
 
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     void dropAgents(const Mission &mission);
 protected:
@@ -510,7 +510,7 @@ public:
 
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
 protected:
     WaitEnum waitType_;
@@ -531,7 +531,7 @@ public:
     void setTarget(PedInstance *pPed) { pTarget_ = pPed; }
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
 protected:
     /*! The ped watched by this ped.*/
@@ -552,7 +552,7 @@ public:
     bool suspend([[maybe_unused]] PedInstance *pPed) { return false; }
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     /*! The ped that is being shot at by the action owner.*/
     PedInstance *pTarget_;
@@ -586,7 +586,7 @@ public:
     //!
     FallDeadHitAction(fs_dmg::DamageToInflict &d);
 protected:
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 };
 
 /*!
@@ -599,7 +599,7 @@ public:
     RecoilHitAction(fs_dmg::DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 };
 
 /*!
@@ -611,7 +611,7 @@ public:
     LaserHitAction(fs_dmg::DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 };
 
 /*!
@@ -624,7 +624,7 @@ public:
     WalkBurnHitAction(fs_dmg::DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
 protected:
     /*!
@@ -652,7 +652,7 @@ public:
     PersuadedHitAction(fs_dmg::DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 };
 
 /*!
@@ -691,12 +691,12 @@ public:
     ShootAction(const WorldPoint &aimedAt, WeaponInstance *pWeapon);
 
     //! Entry point to execute the action
-    bool execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
     //! Update target position
     void setAimedAt(const WorldPoint &aimedAt);
 protected:
     //! Fills the ShotAttributes with values
-    void fillDamageDesc(Mission *pMission, PedInstance *pShooter, WeaponInstance *pWeapon, fs_dmg::DamageToInflict &dmg);
+    void fillDamageDesc(PedInstance *pShooter, WeaponInstance *pWeapon, fs_dmg::DamageToInflict &dmg);
 protected:
     //! Where the player aimed with the mouse
     WorldPoint aimedAt_;
@@ -711,7 +711,7 @@ class AutomaticShootAction : public ShootAction {
 public:
     AutomaticShootAction(const WorldPoint &aimedAt, WeaponInstance *pWeapon);
 
-    bool execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
     void stop();
 protected:
     /*! Fire rate.*/
@@ -726,7 +726,7 @@ public:
     UseMedikitAction(WeaponInstance *pMedikit) : UseWeaponAction(pMedikit) {}
 
     //! Entry point to execute the action
-    bool execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 protected:
     //! Time to wait between two weapon actions
     int timeToWait_;
@@ -740,7 +740,7 @@ public:
     UseEnergyShieldAction(WeaponInstance *pEnergyShield) : UseWeaponAction(pEnergyShield) {}
 
     //! Entry point to execute the action
-    bool execute(int elapsed, Mission *pMission, PedInstance *pPed);
+    bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
     void stop();
 protected:
 
