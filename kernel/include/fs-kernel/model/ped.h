@@ -196,8 +196,8 @@ public:
     bool hasEscaped() { return fs_utl::isBitsOnWithMask(desc_state_, pd_smEscaped); }
     //! Indicate that the ped has escaped
     void escape() { fs_utl::setBitsWithMask(&desc_state_, pd_smEscaped); }
-    //! Return true if ped don't panic
-    bool isPanicImmuned() { return panicImmuned_; }
+    //! Return true if a ped can go in panic mode
+    bool isImmunedToPanic();
     //! Tells the ped not to panic
     void setPanicImmuned() { panicImmuned_ = true; }
 
@@ -738,7 +738,7 @@ protected:
     //! controller of ped - for persuaded
     PedInstance *owner_;
     //! Points obtained by agents for persuading peds
-    uint16 totalPersuasionPoints_;
+    uint16_t totalPersuasionPoints_;
     //! The group of peds that this ped has persuaded
     std::set <PedInstance *> persuadedSet_;
     //! Tells whether the panic can react to panic or not

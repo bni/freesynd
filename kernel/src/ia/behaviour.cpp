@@ -53,10 +53,11 @@ void Behaviour::destroyComponents() {
     }
 }
 
-void Behaviour::handleBehaviourEvent(BehaviourEvent evtType, void *pCtxt) {
+void Behaviour::handleBehaviourEvent(BehaviourEventType evtType, void *pCtxt) {
     for (std::list < BehaviourComponent * >::iterator it = compLst_.begin();
             it != compLst_.end(); it++) {
-        (*it)->handleBehaviourEvent(pThisPed_, evtType, pCtxt);
+        BehaviourEvent event {pThisPed_, evtType, pCtxt};
+        (*it)->handleBehaviourEvent(event);
     }
 }
 
@@ -87,7 +88,8 @@ void Behaviour::execute(uint32_t elapsed, Mission *pMission) {
             it != compLst_.end(); it++) {
         BehaviourComponent *pComp = *it;
         if (pComp->isEnabled()) {
-            pComp->execute(elapsed, pMission, pThisPed_);
+            Behaviour::BehaviourParam param {elapsed, pMission, pThisPed_};
+            pComp->execute(param);
         }
     }
 }
@@ -103,19 +105,19 @@ CommonAgentBehaviourComponent::CommonAgentBehaviourComponent(PedInstance *pPed):
  * \param pMission Mission data
  * \param pPed The owner of the behaviour
  */
-void CommonAgentBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+void CommonAgentBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
     // If Agent is equiped with right chest, his health periodically updates
-    if (doRegenerates_ && healthTimer_.update(elapsed)) {
-        if (pPed->increaseHealth(kRegeratesHealthStep)) {
+    if (doRegenerates_ && healthTimer_.update(param.elapsed)) {
+        if (param.pPed->increaseHealth(kRegeratesHealthStep)) {
             doRegenerates_ = false;
         }
     }
 }
 
-void CommonAgentBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt) {
-    switch(evtType) {
+void CommonAgentBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    switch(event.evtType) {
     case Behaviour::kBehvEvtHit:
-        if (pPed->hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2)) {
+        if (event.pPed->hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2)) {
             doRegenerates_ = true;
         }
         break;
@@ -130,24 +132,24 @@ PersuaderBehaviourComponent::PersuaderBehaviourComponent():
     persuadotronRange_ = g_weaponMgr.getWeapon(Weapon::Persuadatron)->range();
 }
 
-void PersuaderBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+void PersuaderBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
     // Check if Agent has selected his Persuadotron
     if (doUsePersuadotron_) {
         // iterate through all peds except our agents
-        for (size_t i = pMission->getSquad()->size(); i < pMission->numPeds(); i++) {
-            PedInstance *pOtherPed = pMission->ped(i);
-            if (pPed->canPersuade(pOtherPed, persuadotronRange_)) {
+        for (size_t i = param.pMission->getSquad()->size(); i < param.pMission->numPeds(); i++) {
+            PedInstance *pOtherPed = param.pMission->ped(i);
+            if (param.pPed->canPersuade(pOtherPed, persuadotronRange_)) {
                 fs_dmg::DamageToInflict dmg;
                 dmg.dtype = fs_dmg::kDmgTypePersuasion;
-                dmg.d_owner = pPed;
+                dmg.d_owner = param.pPed;
                 pOtherPed->insertHitAction(dmg);
             }
         }
     }
 }
 
-void PersuaderBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt) {
-    switch(evtType) {
+void PersuaderBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    switch(event.evtType) {
     case Behaviour::kBehvEvtPersuadotronActivated:
         doUsePersuadotron_ = true;
         break;
@@ -164,70 +166,70 @@ PersuadedBehaviourComponent::PersuadedBehaviourComponent():
     status_ = kPersuadStatusWaitForHitAction;
 }
 
-void PersuadedBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+void PersuadedBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
     if (status_ == kPersuadStatusInitializing) {
-        pPed->destroyAllActions(true);
+        param.pPed->destroyAllActions(true);
         // set follow owner as new default action
-        FollowAction *pAction = new FollowAction(pPed->owner());
-        pPed->addToDefaultActions(pAction);
-        pPed->addToDefaultActions(new ResetScriptedAction(Action::kActionDefault));
-        pPed->addMovementAction(pAction, false);
+        FollowAction *pAction = new FollowAction(param.pPed->owner());
+        param.pPed->addToDefaultActions(pAction);
+        param.pPed->addToDefaultActions(new ResetScriptedAction(Action::kActionDefault));
+        param.pPed->addMovementAction(pAction, false);
         status_ = kPersuadStatusFollow;
     } else if (status_ == kPersuadStatusLookForWeapon) {
-        if (checkWeaponTimer_.update(elapsed)) {
-            WeaponInstance *pWeapon = findWeaponWithAmmo(pMission, pPed);
+        if (checkWeaponTimer_.update(param.elapsed)) {
+            WeaponInstance *pWeapon = findWeaponWithAmmo(param.pMission, param.pPed);
             if (pWeapon) {
                 // a weapon is found
                 // initiate alternative actions : go to weapon and take it
                 status_ = kPersuadStatusTakeWeapon;
-                if (pPed->altAction() == NULL) {
-                    MovementAction * pActions = pPed->createActionPickup(pWeapon);
+                if (param.pPed->altAction() == NULL) {
+                    MovementAction * pActions = param.pPed->createActionPickup(pWeapon);
                     // set a warning after picking up weapon so we know we can select it
                     pActions->next()->setWarnBehaviour(true);
                     // add a reset action to automatically go back to follow owner after picking up weapon
                     pActions->next()->link(
                         new ResetScriptedAction(Action::kActionDefault));
-                    pPed->addToAltActions(pActions);
+                    param.pPed->addToAltActions(pActions);
                 } else {
                     // just update weapon
-                    changeTargetWeaponInAltActions(pWeapon, pPed);
+                    changeTargetWeaponInAltActions(pWeapon, param.pPed);
                 }
                 // execute alternative actions
-                pPed->setCurrentActionWithSource(Action::kActionAlt);
+                param.pPed->setCurrentActionWithSource(Action::kActionAlt);
             }
         }
     }
 }
 
-void PersuadedBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt) {
-    if (evtType == Behaviour::kBehvEvtWeaponOut) {
-        PedInstance *pPedSource = static_cast<PedInstance *> (pCtxt);
-        if (pPedSource == pPed->owner()) {
+void PersuadedBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    if (event.evtType == Behaviour::kBehvEvtWeaponOut) {
+        PedInstance *pPedSource = static_cast<PedInstance *> (event.pCtxt);
+        if (pPedSource == event.pPed->owner()) {
             // the ped who is armed is our owner so select weapon or look for one
-            if (pPed->numWeapons() > 0) {
-                pPed->selectWeapon(0);
+            if (event.pPed->numWeapons() > 0) {
+                event.pPed->selectWeapon(0);
             } else {
                 // ped has no weapon -> start looking for some
                 status_ = kPersuadStatusLookForWeapon;
             }
         }
-    } else if (evtType == Behaviour::kBehvEvtWeaponCleared) {
-        PedInstance *pPedSource = static_cast<PedInstance *> (pCtxt);
-        if (pPedSource == pPed->owner()) {
+    } else if (event.evtType == Behaviour::kBehvEvtWeaponCleared) {
+        PedInstance *pPedSource = static_cast<PedInstance *> (event.pCtxt);
+        if (pPedSource == event.pPed->owner()) {
             // the ped who cleared his weapon is our owner so deselect weapon or
             // stop searching for one
-            if (pPed->deselectWeapon() == NULL && status_ == kPersuadStatusLookForWeapon) {
+            if (event.pPed->deselectWeapon() == NULL && status_ == kPersuadStatusLookForWeapon) {
                 status_ = kPersuadStatusFollow;
             }
         }
-    } else if (evtType == Behaviour::kBehvEvtActionEnded) {
+    } else if (event.evtType == Behaviour::kBehvEvtActionEnded) {
         if (status_ == kPersuadStatusWaitForHitAction) {
             status_ = kPersuadStatusInitializing;
         } else {
-            Action::ActionType *pType = static_cast<Action::ActionType *> (pCtxt);
+            Action::ActionType *pType = static_cast<Action::ActionType *> (event.pCtxt);
             if (*pType == Action::kActTypePickUp) {
-                if (pPed->owner()->isArmed()) {
-                    pPed->selectWeapon(0);
+                if (event.pPed->owner()->isArmed()) {
+                    event.pPed->selectWeapon(0);
                 }
                 // weapon found so back to normal
                 status_ = kPersuadStatusFollow;
@@ -236,11 +238,11 @@ void PersuadedBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behavi
                 status_ = kPersuadStatusLookForWeapon;
             }
         }
-    } else if (evtType == Behaviour::kBehvEvtEnterVehicle) {
-        Vehicle *pVehicle = static_cast<Vehicle *> (pCtxt);
+    } else if (event.evtType == Behaviour::kBehvEvtEnterVehicle) {
+        Vehicle *pVehicle = static_cast<Vehicle *> (event.pCtxt);
         MovementAction *pAction =
-                pPed->createActionEnterVehicle(pVehicle);
-        pPed->addMovementAction(pAction, false);
+                event.pPed->createActionEnterVehicle(pVehicle);
+        event.pPed->addMovementAction(pAction, false);
         status_ = kPersuadStatusFollow;
     }
 }
@@ -253,11 +255,11 @@ void PersuadedBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behavi
  * \return NULL if no weapon is found.
  */
 WeaponInstance * PersuadedBehaviourComponent::findWeaponWithAmmo(Mission *pMission, PedInstance *pPed) {
-   WeaponInstance *pWeaponFound = NULL;
+   WeaponInstance *pWeaponFound = nullptr;
    double currentDistance = kMaxRangeForSearchingWeapon;
 
-    int numweapons = pMission->numWeaponsOnGround();
-    for (int32_t i = 0; i < numweapons; ++i) {
+    size_t numweapons = pMission->numWeaponsOnGround();
+    for (size_t i = 0; i < numweapons; ++i) {
         WeaponInstance *w = pMission->weaponOnGround(i);
         if (!w->hasOwner() && w->canShoot() && w->ammoRemaining() > 0) {
             double length = 0;
@@ -289,63 +291,54 @@ void PersuadedBehaviourComponent::changeTargetWeaponInAltActions(WeaponInstance 
 PanicComponent::PanicComponent():
         BehaviourComponent(), scoutTimer_(500) {
     backFromPanic_ = false;
-    status_ = kPanicStatusAlert;
+    status_ = kPanicStatusCalm;
     // this component will be activated by event to
     // lower CPU consumption
     setEnabled(false);
 }
 
-void PanicComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pCivil) {
-    if (pCivil->isPanicImmuned()) {
-        return;
-    }
-
-    if (status_ == kPanicStatusAlert && scoutTimer_.update(elapsed)) {
-        pArmedPed_ = findNearbyArmedPed(pMission, pCivil);
+void PanicComponent::execute(const Behaviour::BehaviourParam &param) {
+    if (status_ == kPanicStatusCalm && scoutTimer_.update(param.elapsed)) {
+        pArmedPed_ = findNearbyArmedPed(param.pMission, param.pPed);
         if (pArmedPed_) {
-            runAway(pCivil);
+            runAway(param.pPed);
             status_ = kPanicStatusInPanic;
         } else if (backFromPanic_) {
             backFromPanic_ = false;
-            pCivil->setCurrentActionWithSource(Action::kActionDefault);
-            status_ = kPanicStatusAlert;
+            param.pPed->setCurrentActionWithSource(Action::kActionDefault);
+            status_ = kPanicStatusCalm;
         }
     }
 }
 
-void PanicComponent::handleBehaviourEvent(PedInstance *pCivil, Behaviour::BehaviourEvent evtType, void *pCtxt) {
-    if (pCivil->isPanicImmuned()) {
+void PanicComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    if (event.pPed->isImmunedToPanic()) {
         return;
     }
 
-    switch(evtType) {
-    case Behaviour::kBehvEvtEjectedFromVehicle:
-        // reacting to ejection from vehicle is the same as when a gun is out
-        // -> panic!
-        pCivil->destroyAllActions(true);
-        pCivil->addToDefaultActions(new WalkToDirectionAction());
+    switch(event.evtType) {
     case Behaviour::kBehvEvtWeaponOut:
-        // civilian in cars do not panic
-        if (pCivil->inVehicle() == NULL && !isEnabled()) {
+        // Someone has shown a gun, so activate panic behaviour for peds
+        if (!isEnabled()) {
             setEnabled(true);
-            status_ = kPanicStatusAlert;
+            status_ = kPanicStatusCalm;
         }
         break;
     case Behaviour::kBehvEvtWeaponCleared:
         if (g_missionCtrl.mission()->numArmedPeds() == 0) {
             setEnabled(false);
-            if (!pCivil->isCurrentActionFromSource(Action::kActionDefault)) {
-                pCivil->setCurrentActionWithSource(Action::kActionDefault);
-                status_ = kPanicStatusAlert;
+            if (!event.pPed->isCurrentActionFromSource(Action::kActionDefault)) {
+                event.pPed->setCurrentActionWithSource(Action::kActionDefault);
+                status_ = kPanicStatusCalm;
             }
         }
         break;
     case Behaviour::kBehvEvtActionEnded:
-        if (!pCivil->isCloseTo(pArmedPed_, kScoutDistance)) {
+        if (!event.pPed->isCloseTo(pArmedPed_, kScoutDistance)) {
             // Ped is far from armed guy,
             pArmedPed_ = NULL;
             // so next time check if there another enemy around
-            status_ = kPanicStatusAlert;
+            status_ = kPanicStatusCalm;
             scoutTimer_.setToMax();
             backFromPanic_ = true;
         }
@@ -402,17 +395,17 @@ PoliceBehaviourComponent::PoliceBehaviourComponent():
     pTarget_ = NULL;
 }
 
-void PoliceBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
-    if (status_ == kPoliceStatusAlert && scoutTimer_.update(elapsed)) {
-        findAndEngageNewTarget(pMission, pPed);
+void PoliceBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
+    if (status_ == kPoliceStatusAlert && scoutTimer_.update(param.elapsed)) {
+        findAndEngageNewTarget(param.pMission, param.pPed);
     } else if (status_ == kPoliceStatusCheckReengageOrDefault) {
         // check if there is a nearby enemy
-        bool foundNewTarget = findAndEngageNewTarget(pMission, pPed);
-        if ( !foundNewTarget && !pPed->isCurrentActionFromSource(Action::kActionDefault)) {
+        bool foundNewTarget = findAndEngageNewTarget(param.pMission, param.pPed);
+        if ( !foundNewTarget && !param.pPed->isCurrentActionFromSource(Action::kActionDefault)) {
             // there is no one around so go back to patrol if it's not already the case
-            pPed->deselectWeapon();
-            pPed->setCurrentActionWithSource(Action::kActionDefault);
-            if (pMission->numArmedPeds() != 0) {
+            param.pPed->deselectWeapon();
+            param.pPed->setCurrentActionWithSource(Action::kActionDefault);
+            if (param.pMission->numArmedPeds() != 0) {
                 // There are still some armed peds so keep on alert
                 status_ = kPoliceStatusAlert;
             } else {
@@ -422,35 +415,35 @@ void PoliceBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedI
     }
 }
 
-void PoliceBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt) {
-    switch(evtType) {
+void PoliceBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    switch(event.evtType) {
     case Behaviour::kBehvEvtEjectedFromVehicle:
-        handleEjectionFromVehicle(pPed, pCtxt);
+        handleEjectionFromVehicle(event.pPed, event.pCtxt);
         break;
     case Behaviour::kBehvEvtWeaponOut:
-        if (status_ == kPoliceStatusDefault && !pPed->inVehicle()) {
+        if (status_ == kPoliceStatusDefault && !event.pPed->inVehicle()) {
             // When someone get his weapon out, police is on alert
             status_ = kPoliceStatusAlert;
         }
         break;
     case Behaviour::kBehvEvtWeaponCleared:
         // our target has dropped his weapon
-        if (status_ == kPoliceStatusFollowAndShootTarget && pTarget_ == pCtxt) {
+        if (status_ == kPoliceStatusFollowAndShootTarget && pTarget_ == event.pCtxt) {
             status_ = kPoliceStatusPendingEndFollow;
-            pPed->stopShooting();
+            event.pPed->stopShooting();
 
             // just wait a few time before engaging another target or simply
             // continue with default behavior
             WaitAction *pWait = new WaitAction(WaitAction::kWaitWeapon, kPolicePendingTime);
             pWait->setWarnBehaviour(true);
-            pPed->addMovementAction(pWait, false);
+            event.pPed->addMovementAction(pWait, false);
         } else if (status_ == kPoliceStatusAlert) {
             status_ = kPoliceStatusCheckReengageOrDefault;
         }
         break;
     case Behaviour::kBehvEvtActionEnded:
         {
-            Action::ActionType *pType = static_cast<Action::ActionType *> (pCtxt);
+            Action::ActionType *pType = static_cast<Action::ActionType *> (event.pCtxt);
             if (*pType == Action::kActTypeWait) {
                 // We are at the end of waiting period so check if we need to engage right now
                 // of if we can go back on patrol
@@ -549,39 +542,39 @@ PlayerHostileBehaviourComponent::PlayerHostileBehaviourComponent():
     status_ = kHostileStatusDefault;
 }
 
-void PlayerHostileBehaviourComponent::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+void PlayerHostileBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
     if (status_ == kHostileStatusDefault) {
         // In this mode, ped is looking for an enemy
-        PedInstance *pArmedGuy = findPlayerAgent(pMission, pPed);
+        PedInstance *pArmedGuy = findPlayerAgent(param.pMission, param.pPed);
         if (pArmedGuy != NULL) {
             status_ = kHostileStatusFollowAndShoot;
-            followAndShootTarget(pPed, pArmedGuy);
+            followAndShootTarget(param.pPed, pArmedGuy);
         }
     } else if (status_ == kHostileStatusFollowAndShoot && pTarget_->isDead()) {
         status_ = kHostileStatusPendingEndFollow;
         pTarget_ = NULL;
-        pPed->stopShooting();
+        param.pPed->stopShooting();
         // just wait a few time before engaging another target or simply
         // continue with default behavior
         WaitAction *pWait = new WaitAction(WaitAction::kWaitWeapon);
         pWait->setWarnBehaviour(true);
-        pPed->addMovementAction(pWait, false);
+        param.pPed->addMovementAction(pWait, false);
     } else if (status_ == kHostileStatusCheckForDefault) {
         // check if there is a nearby enemy
-        PedInstance *pArmedGuy = findPlayerAgent(pMission, pPed);
+        PedInstance *pArmedGuy = findPlayerAgent(param.pMission, param.pPed);
         if (pArmedGuy != NULL) {
             status_ = kHostileStatusFollowAndShoot;
-            followAndShootTarget(pPed, pArmedGuy);
+            followAndShootTarget(param.pPed, pArmedGuy);
         } else {
-            pPed->deselectWeapon();
-            pPed->setCurrentActionWithSource(Action::kActionDefault);
+            param.pPed->deselectWeapon();
+            param.pPed->setCurrentActionWithSource(Action::kActionDefault);
             status_ = kHostileStatusDefault;
         }
     }
 }
 
-void PlayerHostileBehaviourComponent::handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt) {
-    if (evtType == Behaviour::kBehvEvtActionEnded) {
+void PlayerHostileBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    if (event.evtType == Behaviour::kBehvEvtActionEnded) {
         // We are at the end of waiting period so check if we need to engage right now
         // of if we can go back to default
         status_ = kHostileStatusCheckForDefault;

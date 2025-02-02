@@ -203,6 +203,17 @@ void PedInstance::setTypeFromValue(uint8 value) {
     }
 }
 
+/*!
+ * A ped cannot panic only if:
+ * - he's immuned because he's an mission objective
+ * - he's in a car
+ * - he's persuaded
+ * @return True means he can't panic
+ */
+bool PedInstance::isImmunedToPanic() { 
+    return panicImmuned_ || isInVehicle() || isPersuaded();
+}
+
 bool PedInstance::switchActionStateTo(uint32_t as) {
     uint32_t prevState = state_;
     switch(as) {

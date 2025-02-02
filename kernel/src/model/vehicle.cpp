@@ -821,7 +821,10 @@ void GenericCar::handleHit(fs_dmg::DamageToInflict &d) {
         if (pShooter && pShooter->isOurAgent()) {
             PedInstance *pPed = pDriver_;
             dropPassenger(pPed);
-            pPed->behaviour().handleBehaviourEvent(Behaviour::kBehvEvtEjectedFromVehicle, pShooter);
+            // Remove scripted actions for driving car
+            pPed->destroyAllActions(true);
+            // Make the ped start walking
+            pPed->addToDefaultActions(new WalkToDirectionAction());
         }
     }
 }

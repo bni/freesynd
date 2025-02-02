@@ -44,7 +44,7 @@ public:
     /*!
      * List of events that may affect behaviours.
      */
-    enum BehaviourEvent {
+    enum BehaviourEventType {
         //! An agent has activated his Persuadotron
         kBehvEvtPersuadotronActivated,
         //! An agent has deactivated his Persuadotron
@@ -63,6 +63,21 @@ public:
         kBehvEvtEjectedFromVehicle,
     };
 
+    struct BehaviourEvent {
+        PedInstance *pPed;
+        BehaviourEventType evtType;
+        void *pCtxt;
+    };
+
+    struct BehaviourParam {
+        //! elapsed Time elapsed since last frame
+        uint32_t elapsed;
+        //! Mission data
+        Mission *pMission;
+        //! The owner of the behaviour
+        PedInstance *pPed;
+    };
+
     virtual ~Behaviour();
 
     void setOwner(PedInstance *pPed) { pThisPed_ = pPed; }
@@ -73,7 +88,7 @@ public:
 
     virtual void execute(uint32_t elapsed, Mission *pMission);
 
-    virtual void handleBehaviourEvent(BehaviourEvent evtType, void *pCtxt = NULL);
+    virtual void handleBehaviourEvent(BehaviourEventType evtType, void *pCtxt = NULL);
 protected:
     void destroyComponents();
 protected:
@@ -95,9 +110,9 @@ public:
     bool isEnabled() { return enabled_; }
     void setEnabled(bool val) { enabled_ = val; }
 
-    virtual void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) = 0;
+    virtual void execute(const Behaviour::BehaviourParam &param) = 0;
 
-    virtual void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt){};
+    virtual void handleBehaviourEvent([[maybe_unused]] const Behaviour::BehaviourEvent &event){};
 
 protected:
     bool enabled_;
@@ -115,9 +130,9 @@ public:
 
     CommonAgentBehaviourComponent(PedInstance *pPed);
 
-    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
+    void execute(const Behaviour::BehaviourParam &param) override;
 
-    void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 private:
     /*! Flag to indicate whether ped can regenerate his health.*/
     bool doRegenerates_;
@@ -132,9 +147,9 @@ class PersuaderBehaviourComponent : public BehaviourComponent {
 public:
     PersuaderBehaviourComponent();
 
-    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
+    void execute(const Behaviour::BehaviourParam &param) override;
 
-    void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 private:
     /*! Flag to indicate an agent can use his persuadotron.*/
     bool doUsePersuadotron_;
@@ -151,9 +166,9 @@ class PersuadedBehaviourComponent : public BehaviourComponent {
 public:
     PersuadedBehaviourComponent();
 
-    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
+    void execute(const Behaviour::BehaviourParam &param) override;
 
-    void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 private:
     WeaponInstance * findWeaponWithAmmo(Mission *pMission, PedInstance *pPed);
     void changeTargetWeaponInAltActions(WeaponInstance *pWeapon, PedInstance *pPed);
@@ -198,9 +213,9 @@ public:
 
     PanicComponent();
 
-    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
+    void execute(const Behaviour::BehaviourParam &param) override;
 
-    void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 private:
     //! Checks whether there is an armed ped next to the ped : returns that ped
     PedInstance * findNearbyArmedPed(Mission *pMission, PedInstance *pPed);
@@ -212,7 +227,7 @@ private:
      */
     enum PanicStatus {
         //! Default status : not panicking
-        kPanicStatusAlert,
+        kPanicStatusCalm,
         //! Ped is in panic
         kPanicStatusInPanic
     };
@@ -231,9 +246,9 @@ class PoliceBehaviourComponent : public BehaviourComponent {
 public:
     PoliceBehaviourComponent();
 
-    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
+    void execute(const Behaviour::BehaviourParam &param) override;
 
-    void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 private:
     void handleEjectionFromVehicle(PedInstance *pPed, void *pCtxt);
     //! Find a nearby armed Ped and follow and shoot him
@@ -278,9 +293,9 @@ class PlayerHostileBehaviourComponent : public BehaviourComponent {
 public:
     PlayerHostileBehaviourComponent();
 
-    void execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
+    void execute(const Behaviour::BehaviourParam &param) override;
 
-    void handleBehaviourEvent(PedInstance *pPed, Behaviour::BehaviourEvent evtType, void *pCtxt);
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 
 private:
     //! looking for the nearest player agent

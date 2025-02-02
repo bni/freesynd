@@ -206,7 +206,7 @@ public:
     void removeAndJoinChain();
 protected:
     //! Subclasses must implement this method to do somthing at the begining of the action
-    virtual void doStart(Mission *pMission, PedInstance *pPed) {}
+    virtual void doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {}
     //! Sublasses must implement this method to realize this action
     virtual bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed) = 0;
 protected:
