@@ -88,14 +88,14 @@ protected:
     struct WeaponSelectCriteria {
         union {
             //! weapon index from weapons_ in mission_
-            uint32 indx;
+            uint32_t indx;
             //! use only this weapon for attack
             WeaponInstance *wi;
             //! use only this type of weapon
             Weapon::WeaponType wpn_type;
             //! use weapon that inflicts this type of damage
             //! MapObject::DamageType
-            uint32 dmg_type;
+            uint32_t dmg_type;
         } criteria;
 
         enum CriteriaType {

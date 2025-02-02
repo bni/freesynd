@@ -670,7 +670,7 @@ void DriveTrainAction::dropAgents(const Mission &mission) {
     }
 }
 
-WaitAction::WaitAction(WaitEnum waitFor, uint32 duration) :
+WaitAction::WaitAction(WaitEnum waitFor, uint32_t duration) :
 MovementAction(kActTypeWait, true, true), waitTimer_(duration) {
     waitType_ = waitFor;
 }

@@ -249,7 +249,7 @@ protected:
     /*! True when weapon was found and submit to search manager.*/
     bool submittedToSearch_;
     //WeaponShotPropertyType
-    uint32 shot_property_;
+    uint32_t shot_property_;
     int range_dmg_;
     //! some weapons have wider shot
     double shot_angle_;
@@ -302,7 +302,7 @@ public:
     int ammoCapacity() { return pWeaponClass_->ammoCapacity(); }
     int rank() { return pWeaponClass_->rank(); }
     int getWeight() { return pWeaponClass_->weight(); }
-    uint32 shotProperty() { return pWeaponClass_->shotProperty(); }
+    uint32_t shotProperty() { return pWeaponClass_->shotProperty(); }
     Weapon::WeaponAnimIndex index() { return pWeaponClass_->index(); }
 
     bool usesAmmo() {
@@ -313,10 +313,10 @@ public:
         return pWeaponClass_->canShoot();
     }
 
-    bool doesDmgStrict(uint32 dmg_type) {
+    bool doesDmgStrict(uint32_t dmg_type) {
         return pWeaponClass_->dmgType() == dmg_type;
     }
-    bool doesDmgNonStrict(uint32 dmg_type) {
+    bool doesDmgNonStrict(uint32_t dmg_type) {
         return (pWeaponClass_->dmgType() & dmg_type) != 0;
     }
     fs_dmg::DamageType dmgType() {

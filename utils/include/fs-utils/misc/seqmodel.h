@@ -58,7 +58,7 @@ public:
     //! Returns the line number for the given element
     virtual int getLineForElement(void *pElement) = 0;
     //! Returns the number of elements
-    virtual unsigned int size() = 0;
+    virtual size_t size() = 0;
     //! Removes all elements from the collection
     virtual void clear() = 0;
 
@@ -178,7 +178,7 @@ public:
     /*!
      * Returns number of elements in the vector.
      */
-    unsigned int size() {
+    size_t size() override {
         return elements_.size();
     }
 

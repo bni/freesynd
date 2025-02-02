@@ -638,7 +638,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
     }
 #endif
 #ifdef _DEBUG
-    std::map <uint32, std::string> obj_ids;
+    std::map <uint32_t, std::string> obj_ids;
     // NOTE: not very useful way of remembering "Who is who"
     obj_ids[0] = "Undefined";
     obj_ids[PedInstance::kPlayerGroupId] = "Players Agents or Persuaded";
@@ -649,7 +649,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
 #endif
 
     PedManager peds;
-    for (uint16 i = 0; i < 256; i++) {
+    for (uint16_t i = 0; i < 256; i++) {
         const LevelData::People & pedref = level_data.people[i];
 
         PedInstance *p =
@@ -659,7 +659,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
             pMission->addPed(p);
 
             if (pedref.location == LevelData::kPeopleLocInVehicle) {
-                uint16 vid = 0xFFFF;  // Id of the vehicle
+                uint16_t vid = 0xFFFF;  // Id of the vehicle
                 bool setDriver = false;  // Tells if ped should be the driver
                 if (di.driverindx[i] != 0xFFFF) {
                     // Current ped is the driver
@@ -667,7 +667,7 @@ void MissionManager::createPeds(const LevelData::LevelDataAll &level_data, DataI
                     setDriver = true;
                 } else {
                     // Current ped is just a passenger
-                    uint16 vin = fs_utl::READ_LE_UINT16(pedref.offset_of_vehicle);
+                    uint16_t vin = fs_utl::READ_LE_UINT16(pedref.offset_of_vehicle);
                     if (vin != 0) {
                         vin = (vin - 0x5C02) / 42; // 42 vehicle data size
                         vid = di.vindx[vin];

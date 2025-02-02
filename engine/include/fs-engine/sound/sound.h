@@ -93,7 +93,7 @@ public:
     virtual void play(int channel, int loops = 0) const = 0;
     virtual void stop(int channel) const  = 0;
     virtual bool setVolume(int volume)  = 0;
-    virtual bool loadSound(uint8 *soundData, uint32 size)  = 0;
+    virtual bool loadSound(uint8_t *soundData, uint32_t size)  = 0;
 };
 
 #if !defined(HAVE_SDL_MIXER) || HAVE_SDL_MIXER == 0
@@ -107,7 +107,7 @@ public:
     void play([[maybe_unused]] int channel, [[maybe_unused]] int loops = 0) const {;}
     void stop([[maybe_unused]] int channel) const {;}
     bool setVolume([[maybe_unused]] int volume) { return true; }
-    bool loadSound([[maybe_unused]] uint8 *soundData, [[maybe_unused]] uint32 size) { return true; }
+    bool loadSound([[maybe_unused]] uint8_t *soundData, [[maybe_unused]] uint32_t size) { return true; }
 };
 
 #endif  // HAVE_SDL_MIXER

@@ -40,7 +40,7 @@
 //*************************************
 const int PedInstance::kAgentMaxHealth = 16;
 const int PedInstance::kDefaultShootReactionTime = 200;
-const uint32 PedInstance::kPlayerGroupId = 1;
+const uint32_t PedInstance::kPlayerGroupId = 1;
 
 Ped::Ped() {
     memset(stand_anims_, 0, sizeof(stand_anims_));
@@ -203,8 +203,8 @@ void PedInstance::setTypeFromValue(uint8 value) {
     }
 }
 
-bool PedInstance::switchActionStateTo(uint32 as) {
-    uint32 prevState = state_;
+bool PedInstance::switchActionStateTo(uint32_t as) {
+    uint32_t prevState = state_;
     switch(as) {
         case pa_smNone:
             //printf("Ped has undefined state");
@@ -264,8 +264,8 @@ bool PedInstance::switchActionStateTo(uint32 as) {
 /*!
  * \return true if state has changed.
  */
-bool PedInstance::switchActionStateFrom(uint32 as) {
-    uint32 prevState = state_;
+bool PedInstance::switchActionStateFrom(uint32_t as) {
+    uint32_t prevState = state_;
     switch(as) {
         case pa_smNone:
             //printf("Ped has undefined state");
@@ -361,7 +361,7 @@ void PedInstance::synchDrawnAnimWithActionState(void) {
  * Update corresponding animation.
  * \param as new state
  */
-void PedInstance::goToState(uint32 as) {
+void PedInstance::goToState(uint32_t as) {
     if(switchActionStateTo(as)) {
         synchDrawnAnimWithActionState();
     }
@@ -372,7 +372,7 @@ void PedInstance::goToState(uint32 as) {
  * Update corresponding animation.
  * \param as new state
  */
-void PedInstance::leaveState(uint32 as) {
+void PedInstance::leaveState(uint32_t as) {
     if (switchActionStateFrom(as)) {
         synchDrawnAnimWithActionState();
     }
@@ -1269,26 +1269,26 @@ bool PedInstance::handleDeath(Mission *pMission, fs_dmg::DamageToInflict &d) {
     return health_ == 0;
 }
 
-void PedInstance::addEnemyGroupDef(uint32 eg_id, uint32 eg_def) {
+void PedInstance::addEnemyGroupDef(uint32_t eg_id, uint32_t eg_def) {
     enemy_group_defs_.add(eg_id, eg_def);
 }
 
-void PedInstance::rmEnemyGroupDef(uint32 eg_id, uint32 eg_def) {
+void PedInstance::rmEnemyGroupDef(uint32_t eg_id, uint32_t eg_def) {
     enemy_group_defs_.rm(eg_id, eg_def);
 }
 
-bool PedInstance::isInEnemyGroupDef(uint32 eg_id, uint32 eg_def) {
+bool PedInstance::isInEnemyGroupDef(uint32_t eg_id, uint32_t eg_def) {
     return enemy_group_defs_.isIn(eg_id, eg_def);
 }
 
-void PedInstance::addEmulatedGroupDef(uint32 eg_id, uint32 eg_def) {
+void PedInstance::addEmulatedGroupDef(uint32_t eg_id, uint32_t eg_def) {
     emulated_group_defs_.add(eg_id, eg_def);
 }
-void PedInstance::rmEmulatedGroupDef(uint32 eg_id, uint32 eg_def) {
+void PedInstance::rmEmulatedGroupDef(uint32_t eg_id, uint32_t eg_def) {
     emulated_group_defs_.rm(eg_id, eg_def);
 }
 
-bool PedInstance::isInEmulatedGroupDef(uint32 eg_id, uint32 eg_def) {
+bool PedInstance::isInEmulatedGroupDef(uint32_t eg_id, uint32_t eg_def) {
     return emulated_group_defs_.isIn(eg_id, eg_def);
 }
 

@@ -530,7 +530,7 @@ bool LargeDoor::animate(int elapsed)
     int set_wayFree = 0;
 
     bool changed = MapObject::animate(elapsed);
-    uint32 cur_state = state_;
+    uint32_t cur_state = state_;
     switch(state_) {
         case Static::sttdoor_Open:
             if (orientation_ == kStaticOrientation1) {

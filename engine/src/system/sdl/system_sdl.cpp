@@ -397,7 +397,7 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
     return evtOut.type != EVT_NONE;
 }
 
-void SystemSDL::delay(uint32 msec) {
+void SystemSDL::delay(uint32_t msec) {
     SDL_Delay(msec);
 }
 

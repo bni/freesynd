@@ -234,16 +234,10 @@ void GameSession::getDayHourFromPeriod(int elapsed, int & days, int & hours) {
  * the last update.
  * For every day passed, it calls the updateCountries() method and update
  * the user's amount of money.
- * \param elapsed The number of millisecond since the last update. Set to -1
- * to reset the counter.
+ * \param elapsed The number of millisecond since the last update.
  * \return True if time has changed.
  */
-bool GameSession::updateTime(int elapsed) {
-
-    if (elapsed == -1) {
-        time_elapsed_ = 0;
-        return false;
-    }
+bool GameSession::updateTime(uint32_t elapsed) {
 
     time_elapsed_ += elapsed;
     if (time_elapsed_ > hour_delay_) {

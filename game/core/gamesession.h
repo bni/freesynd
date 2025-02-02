@@ -210,7 +210,7 @@ public:
     /*!
      * Returns the index of the current selected region on map menu.
      */
-    uint8 getSelectedBlockId() { return selected_blck_; }
+    uint8_t getSelectedBlockId() { return selected_blck_; }
 
     //! Convenience method to get the selected block
     Block & getSelectedBlock();
@@ -219,10 +219,10 @@ public:
      * Sets the index of the current selected region on map menu.
      * \param index The region index (between 0 and 49 inclusive)
      */
-    void setSelectedBlockId(uint8 index) { if (index < 50) selected_blck_ = index; }
+    void setSelectedBlockId(uint8_t index) { if (index < 50) selected_blck_ = index; }
 
     //! Returns the block's color depending on who owns it
-    uint8 get_owner_color(Block & blk);
+    uint8_t get_owner_color(Block & blk);
 
     //! Update state when finishing a mission
     void mark_selected_block_completed();
@@ -239,7 +239,7 @@ public:
     void cheatAccelerateTime() { hour_delay_ = 1000; }
 
     //! Do all time related updates
-    bool updateTime(int elapsed);
+    bool updateTime(uint32_t elapsed);
 
     //! Returns the number of days and hours from the given amount of time
     void getDayHourFromPeriod(int elapsed, int & days, int & hours);
@@ -285,7 +285,7 @@ private:
      * Stores the index of the current selected
      * region on the mission map.
      */
-    uint8 selected_blck_;
+    uint8_t selected_blck_;
 
     /*! Cheat flag to tell that all missions are playable.*/
     bool enable_all_mis_;

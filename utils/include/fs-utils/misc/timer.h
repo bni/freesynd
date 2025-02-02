@@ -37,7 +37,7 @@ class Timer {
      /*!
       * Contructor to set the max time.
       */
-     Timer(uint32 i_max) {
+     Timer(uint32_t i_max) {
          reset(i_max);
      }
 
@@ -51,7 +51,7 @@ class Timer {
      /*!
       * Reset the counter and sets a new max time.
       */
-     void reset(uint32 i_max) {
+     void reset(uint32_t i_max) {
          i_counter_ = 0;
          i_max_ = i_max;
      }
@@ -61,7 +61,7 @@ class Timer {
       * If max is reached, counter is reset.
       * \return True if timer has reached max.
       */
-     bool update(uint32 elapsed) {
+     bool update(uint32_t elapsed) {
          i_counter_ += elapsed;
          if (i_counter_ > i_max_) {
              i_counter_ = 0;
@@ -80,8 +80,8 @@ class Timer {
      }
 
  private:
-    uint32 i_counter_;
-    uint32 i_max_;
+    uint32_t i_counter_;
+    uint32_t i_max_;
 };
 
 /*!
@@ -96,7 +96,7 @@ class BoolTimer : public Timer {
       * \param i_max Maximum value of the counter
       * \param b_state The initial state.
       */
-     BoolTimer(uint32 i_max, bool b_state) : Timer(i_max) {
+     BoolTimer(uint32_t i_max, bool b_state) : Timer(i_max) {
          b_state_ = b_state;
      }
 
@@ -109,7 +109,7 @@ class BoolTimer : public Timer {
       * to the opposite.
       * \return True if timer has reached max.
       */
-     bool update(uint32 elapsed) {
+     bool update(uint32_t elapsed) {
          bool res = Timer::update(elapsed);
          if (res) {
              b_state_ = !b_state_;

@@ -63,7 +63,7 @@ public:
     //! Returns pointer if required weapon type is availiable
     Weapon * getAvailable(Weapon::WeaponType wpn);
     //! Creates a list of available weapons of required damage
-    void getAvailable(uint32 dmg_type, std::vector <Weapon *> &wpns);
+    void getAvailable(uint32_t dmg_type, std::vector <Weapon *> &wpns);
 
     //! Save instance to file
     bool saveToFile(fs_utl::PortableFile &file);
@@ -72,10 +72,10 @@ public:
 
     //! checks existing weapons that can do such damage and sets whether they can shoot
     //! strict check
-    bool checkDmgTypeCanShootStrict(uint32 dmg, bool &can_shoot);
+    bool checkDmgTypeCanShootStrict(uint32_t dmg, bool &can_shoot);
     //! checks existing weapons that can do such damage and sets whether they can shoot
     //! non strict check
-    bool checkDmgTypeCanShootNonStrict(uint32 dmg, bool &can_shoot);
+    bool checkDmgTypeCanShootNonStrict(uint32_t dmg, bool &can_shoot);
 protected:
     //! Loads the weapon from file
     Weapon *loadWeapon(Weapon::WeaponType wt);

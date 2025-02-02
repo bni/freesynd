@@ -147,7 +147,7 @@ public:
 
 protected:
     /*! The group to eliminate.*/
-    uint32 groupDefMask_;
+    uint32_t groupDefMask_;
 };
 
 /*!

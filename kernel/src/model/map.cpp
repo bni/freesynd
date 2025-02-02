@@ -54,7 +54,7 @@ bool Map::loadMap(uint8 * mapData)
     LOG(Log::k_FLG_GFX, "Map", "loadMap",
         ("Map size in tiles: max_x = %d, max_y = %d, max_z = %d.", max_x_, max_y_, max_z_));
 
-    uint32 *lookup = new uint32[max_x_ * max_y_];
+    uint32_t *lookup = new uint32_t[max_x_ * max_y_];
     // NOTE : increased map height by 1 to enable range check on higher tiles
     a_tiles_ = new fs_eng::Tile*[max_x_ * max_y_ * (max_z_ + 1)];
 

@@ -41,13 +41,13 @@ public:
     ~SdlMixerSound();
 
     //! Plays the sound a number a time
-    void play(int channel, int loops) const;
+    void play(int channel, int loops) const override;
     //! Stops the sound
-    void stop(int channel) const;
+    void stop(int channel) const override;
     //! Sets the sample volume
-    bool setVolume(int volume);
+    bool setVolume(int volume) override;
     //! Loads the sample from memory
-    bool loadSound(uint8 *soundData, uint32 size);
+    bool loadSound(uint8_t *soundData, uint32_t size) override;
 
 protected:
     /*! The sdl structure that stores sound data.*/

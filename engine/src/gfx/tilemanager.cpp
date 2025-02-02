@@ -83,7 +83,7 @@ TileManager::TileManager()
  */
 TileManager::~TileManager()
 {
-    for (uint32 i = 0; i < (uint32)kNumOfTiles; i++) {
+    for (uint32_t i = 0; i < (uint32_t)kNumOfTiles; i++) {
         delete tiles_[i];
     }
     delete [] tiles_;

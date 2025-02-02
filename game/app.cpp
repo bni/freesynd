@@ -131,7 +131,7 @@ int App::getStartMenuId() {
         // in the given mission
         // First, we find the block associated with the given
         // mission number
-        for (int i = 0; i < 50; i++) {
+        for (uint8_t i = 0; i < 50; i++) {
             if (g_Session.getBlock(i).mis_id == cliParam_.getStartingMission()) {
                 g_Session.setSelectedBlockId(i);
                 break;

@@ -54,7 +54,7 @@ struct FS_QuitEvent {
 
 struct FS_MouseMotionEvent {
     FS_EventType type;    /**< SDL_MOUSEMOTION */
-    uint32 state;    /**< The current button state */
+    uint32_t state;    /**< The current button state */
     int32 x, y;    /**< The X/Y coordinates of the mouse */
     int keyMods;
 };
@@ -107,7 +107,7 @@ public:
 
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event &evtOut) = 0;
-    virtual void delay(uint32 msec) = 0;
+    virtual void delay(uint32_t msec) = 0;
     virtual uint32_t getTicks() = 0;
 
     //! Draw a point on the screen at given position and color

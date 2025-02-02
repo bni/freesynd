@@ -309,7 +309,7 @@ protected:
      * MapObject::animate should be called
      */
     bool is_frame_drawn_;
-    uint32 state_;
+    uint32_t state_;
 
 private:
     //! Object should be drawn only if visible

@@ -57,7 +57,7 @@ public:
     std::string getIniPath() const { return iniPath_; }
     std::string getUserConfDir() const { return userConfPath_; }
 protected:
-    virtual void addOptions(CLI::App &app) {};
+    virtual void addOptions([[maybe_unused]] CLI::App &app) {};
 
 private:
     /*!

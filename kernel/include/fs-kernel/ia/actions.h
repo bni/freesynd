@@ -215,7 +215,7 @@ protected:
     /*! This flag tells that the action can be executed when ped is in a vehicule.*/
     bool canExecInVehicle_;
     /*! Store the state the ped will have when executing the action.*/
-    uint32 targetState_;
+    uint32_t targetState_;
     /*! Previous action in the chain.*/
     MovementAction *pPrevious_;
     /*! Next action in the chain.*/
@@ -326,7 +326,9 @@ public:
 
     ActionSource sourceToReset() { return sourceToReset_; }
 protected:
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed) { return true; }
+    bool doExecute([[maybe_unused]] int elapsed,
+                    [[maybe_unused]] Mission *pMission,
+                    [[maybe_unused]] PedInstance *pPed) { return true; }
 private:
     ActionSource sourceToReset_;
 };
@@ -346,7 +348,9 @@ public:
 
     MovementAction *targetAction() { return pTargetAction_; }
 protected:
-    bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed) { return true; }
+    bool doExecute([[maybe_unused]] int elapsed,
+                    [[maybe_unused]] Mission *pMission, 
+                    [[maybe_unused]] PedInstance *pPed) { return true; }
 private:
     MovementAction *pTargetAction_;
 };
@@ -500,7 +504,7 @@ public:
     };
 
     //! Wait for time
-    WaitAction(WaitEnum waitFor, uint32 duration);
+    WaitAction(WaitEnum waitFor, uint32_t duration);
     //! Wait for weapon action
     WaitAction(WaitEnum waitFor);
 
@@ -545,7 +549,7 @@ public:
 
     void setTarget(PedInstance *pPed) { pTarget_ = pPed; }
     //! Action cannot be suspended
-    bool suspend(PedInstance *pPed) { return false; }
+    bool suspend([[maybe_unused]] PedInstance *pPed) { return false; }
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
     bool doExecute(int elapsed, Mission *pMission, PedInstance *pPed);
@@ -568,7 +572,7 @@ public:
     HitAction(fs_dmg::DamageToInflict &d);
 
     //! HitAction cannot be suspended
-    bool suspend(PedInstance *pPed) { return false; }
+    bool suspend([[maybe_unused]] PedInstance *pPed) { return false; }
 protected:
     //! Stores the damage received
     fs_dmg::DamageToInflict damage_;

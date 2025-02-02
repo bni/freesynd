@@ -167,7 +167,7 @@ public:
     //! Default time for a ped between two shoots
     static const int kDefaultShootReactionTime;
     //! Id of the group for the player's agents
-    static const uint32 kPlayerGroupId;
+    static const uint32_t kPlayerGroupId;
     /*!
      * Type of Ped.
      */
@@ -256,8 +256,8 @@ public:
 
     void showPath(int scrollX, int scrollY, fs_eng::FSColor color);
 
-    bool switchActionStateTo(uint32 as);
-    bool switchActionStateFrom(uint32 as);
+    bool switchActionStateTo(uint32_t as);
+    bool switchActionStateFrom(uint32_t as);
     void synchDrawnAnimWithActionState(void);
     bool animate(int elapsed, Mission *mission);
 
@@ -265,9 +265,9 @@ public:
     //! Update frame to render
     bool updateAnimation(int elapsed);
     //! Set state for ped (replace switchActionStateTo)
-    void goToState(uint32 as);
+    void goToState(uint32_t as);
     //! Quit state for ped (replace switchActionStateFrom)
-    void leaveState(uint32 as);
+    void leaveState(uint32_t as);
 
     //*************************************
     // Action management
@@ -450,11 +450,11 @@ public:
     void setTimeBeforeCheck(int32 tm) { tm_before_check_ = tm; }
     void setBaseModAcc(double mod_acc) { base_mod_acc_ = mod_acc; }
 
-    class Mmuu32_t: public std::multimap<uint32, uint32> {
+    class Mmuu32_t: public std::multimap<uint32_t, uint32_t> {
     public:
         Mmuu32_t() {}
         ~Mmuu32_t() {}
-        void rm(uint32 first, uint32 second = 0) {
+        void rm(uint32_t first, uint32_t second = 0) {
             Mmuu32_t::iterator it = this->find(first);
             if (it == this->end())
                 return;
@@ -475,7 +475,7 @@ public:
                 } while (it->first == first && it != this->end());
             }
         }
-        void add(uint32 first, uint32 second = 0) {
+        void add(uint32_t first, uint32_t second = 0) {
             Mmuu32_t::iterator it = this->find(first);
             if (it != this->end()) {
                 if (second == 0) {
@@ -483,7 +483,7 @@ public:
                         // non-zeros should be removed, second value equal zero
                         // should be the only present
                         this->rm(first);
-                        this->insert(std::pair<uint32, uint32>(first, second));
+                        this->insert(std::pair<uint32_t, uint32_t>(first, second));
                     }
                 } else {
                     bool found = false;
@@ -497,12 +497,12 @@ public:
                         ++it;
                     } while (it != this->end());
                     if (!found)
-                        this->insert(std::pair<uint32, uint32>(first, second));
+                        this->insert(std::pair<uint32_t, uint32_t>(first, second));
                 }
             } else
-                this->insert(std::pair<uint32, uint32>(first, second));
+                this->insert(std::pair<uint32_t, uint32_t>(first, second));
         }
-        bool isIn(uint32 first, uint32 second = 0) {
+        bool isIn(uint32_t first, uint32_t second = 0) {
             Mmuu32_t::iterator it = this->find(first);
             bool found = false;
             if (it != this->end()) {
@@ -525,7 +525,7 @@ public:
                 return false;
             bool found = false;
             Mmuu32_t::iterator it_this = this->begin();
-            uint32 first_value = it_this->first;
+            uint32_t first_value = it_this->first;
             do {
                 Mmuu32_t::iterator it_mm = mm.find(first_value);
                 found = it_mm != mm.end();
@@ -545,8 +545,8 @@ public:
                 return false;
             bool found = false;
             Mmuu32_t::iterator it_this = this->begin();
-            uint32 first_value = it_this->first;
-            uint32 second_value = it_this->second;
+            uint32_t first_value = it_this->first;
+            uint32_t second_value = it_this->second;
             do {
                 Mmuu32_t::iterator it_mm = mm.find(first_value);
                 found = it_mm != mm.end();
@@ -581,13 +581,13 @@ public:
         }
     };
 
-    void addEnemyGroupDef(uint32 eg_id, uint32 eg_def = 0);
-    void rmEnemyGroupDef(uint32 eg_id, uint32 eg_def = 0);
-    bool isInEnemyGroupDef(uint32 eg_id, uint32 eg_def = 0);
+    void addEnemyGroupDef(uint32_t eg_id, uint32_t eg_def = 0);
+    void rmEnemyGroupDef(uint32_t eg_id, uint32_t eg_def = 0);
+    bool isInEnemyGroupDef(uint32_t eg_id, uint32_t eg_def = 0);
 
-    void addEmulatedGroupDef(uint32 eg_id, uint32 eg_def = 0);
-    void rmEmulatedGroupDef(uint32 eg_id, uint32 eg_def = 0);
-    bool isInEmulatedGroupDef(uint32 eg_id, uint32 eg_def = 0);
+    void addEmulatedGroupDef(uint32_t eg_id, uint32_t eg_def = 0);
+    void rmEmulatedGroupDef(uint32_t eg_id, uint32_t eg_def = 0);
+    bool isInEmulatedGroupDef(uint32_t eg_id, uint32_t eg_def = 0);
     bool isInEmulatedGroupDef(Mmuu32_t &r_egd,
         bool id_only = true);
     bool emulatedGroupDefsEmpty() { return emulated_group_defs_.size() == 0; }
@@ -699,10 +699,10 @@ protected:
     UseWeaponAction *pUseWeaponAction_;
 
     // (pedDescStateMasks)
-    uint32 desc_state_;
+    uint32_t desc_state_;
     // this inherits definition from desc_state_
     // ((target checked)desc_state_ & hostile_desc_) != 0 kill him
-    uint32 hostile_desc_;
+    uint32_t hostile_desc_;
     Mmuu32_t enemy_group_defs_;
     // if object is not hostile here, enemy_group_defs_ check
     // is skipped, but not hostiles_found_ or desc_state_
@@ -716,12 +716,12 @@ protected:
     //! from this list they will move to friends_found_ if in sight
     std::set <ShootableMapObject *> friends_not_seen_;
     //! defines group obj belongs to (objGroupDefMasks), not unique
-    uint32 obj_group_def_;
-    uint32 old_obj_group_def_;
+    uint32_t obj_group_def_;
+    uint32_t old_obj_group_def_;
 
     //! a unique group identification number, 0 - all group IDs
-    uint32 obj_group_id_;
-    uint32 old_obj_group_id_;
+    uint32_t obj_group_id_;
+    uint32_t old_obj_group_id_;
 
     //! time wait before checking environment (enemies, friends etc)
     int32 tm_before_check_;

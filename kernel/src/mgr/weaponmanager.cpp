@@ -180,7 +180,7 @@ Weapon * WeaponManager::getAvailable(Weapon::WeaponType wpn) {
     return NULL;
 }
 
-void WeaponManager::getAvailable(uint32 dmg_type, std::vector <Weapon *> &wpns)
+void WeaponManager::getAvailable(uint32_t dmg_type, std::vector <Weapon *> &wpns)
 {
     // search in available weapons
     for (unsigned i = 0; i != availableWeapons_.size(); ++i) {
@@ -278,7 +278,7 @@ bool WeaponManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::For
     return true;
 }
 
-bool WeaponManager::checkDmgTypeCanShootStrict(uint32 dmg, bool &can_shoot)
+bool WeaponManager::checkDmgTypeCanShootStrict(uint32_t dmg, bool &can_shoot)
 {
     bool found = false;
     can_shoot = false;
@@ -296,7 +296,7 @@ bool WeaponManager::checkDmgTypeCanShootStrict(uint32 dmg, bool &can_shoot)
     return found;
 }
 
-bool WeaponManager::checkDmgTypeCanShootNonStrict(uint32 dmg, bool &can_shoot)
+bool WeaponManager::checkDmgTypeCanShootNonStrict(uint32_t dmg, bool &can_shoot)
 {
     bool found = false;
     can_shoot = false;

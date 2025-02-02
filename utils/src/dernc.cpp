@@ -28,14 +28,14 @@ namespace RNC_INTERNAL {
     const uint32_t kRncSignature = 0x524E4301;
 
     struct BitStream {
-        uint32 bit_buffer;      // Holds between 16 and 32 bits
+        uint32_t bit_buffer;      // Holds between 16 and 32 bits
         int bit_count;          // How many bits does bitbuf hold?
     };
 
     struct HuffmanTable {
         int node_count;         // Number of nodes in the tree
         struct {
-            uint32 code;
+            uint32_t code;
             int code_length;
             int value;
         } table[32];
@@ -74,12 +74,12 @@ namespace RNC_INTERNAL {
         return value;
     }
 
-    uint32 bitPeek(BitStream &bit_stream, uint32 mask) {
+    uint32_t bitPeek(BitStream &bit_stream, uint32_t mask) {
         return bit_stream.bit_buffer &mask;
     }
 
     static void bitAdvance(BitStream &bit_stream, int count,
-            uint8 *&packed_data) {
+            uint8_t *&packed_data) {
         bit_stream.bit_buffer >>= count;
         bit_stream.bit_count -= count;
         if (bit_stream.bit_count < 16) {
@@ -91,35 +91,35 @@ namespace RNC_INTERNAL {
     }
 
     static void bitAdvance8(BitStream &bit_stream, int count,
-            uint8 *&packed_data, uint8 *packed_data_end) {
+            uint8_t *&packed_data, uint8_t *packed_data_end) {
         bit_stream.bit_buffer >>= count;
         bit_stream.bit_count -= count;
         if (bit_stream.bit_count < 16) {
             packed_data += 2;
             if (packed_data < packed_data_end) {
                 bit_stream.bit_buffer |=
-                    ((uint32)(*packed_data) << bit_stream.bit_count);
+                    ((uint32_t)(*packed_data) << bit_stream.bit_count);
                 bit_stream.bit_count += 16;
             }
         }
     }
 
-    uint32 bitRead(BitStream &bit_stream, uint32 mask, int count,
-            uint8 *&packed_data) {
-        uint32 result = bitPeek(bit_stream, mask);
+    uint32_t bitRead(BitStream &bit_stream, uint32_t mask, int count,
+            uint8_t *&packed_data) {
+        uint32_t result = bitPeek(bit_stream, mask);
         bitAdvance(bit_stream, count, packed_data);
         return result;
     }
 
-    uint32 bitRead8(BitStream &bit_stream, uint32 mask, int count,
-            uint8 *&packed_data, uint8 *packed_data_end) {
-        uint32 result = bitPeek(bit_stream, mask);
+    uint32_t bitRead8(BitStream &bit_stream, uint32_t mask, int count,
+            uint8_t *&packed_data, uint8_t *packed_data_end) {
+        uint32_t result = bitPeek(bit_stream, mask);
         bitAdvance8(bit_stream, count, packed_data, packed_data_end);
         return result;
     }
 
     void readHuffmanTable(HuffmanTable &huffman_table,
-            BitStream &bit_stream, uint8 *&packed_data) {
+            BitStream &bit_stream, uint8_t *&packed_data) {
         uint32_t count = bitRead(bit_stream, 0x1f, 5, packed_data);
         if (!count)
             return;
@@ -132,7 +132,7 @@ namespace RNC_INTERNAL {
                 leaf_max = leaf_length[i];
         }
 
-        uint32 code_b = 0;
+        uint32_t code_b = 0;
         int node_count = 0;
         for (int i = 1; i <= leaf_max; ++i) {
             for (int j = 0; j < count; ++j)
@@ -151,10 +151,10 @@ namespace RNC_INTERNAL {
     }
 
     int readHuffmanData(HuffmanTable &huffman_table,
-            BitStream &bit_stream, uint8 *&packed_data,
-            uint8 *packed_data_end) {
+            BitStream &bit_stream, uint8_t *&packed_data,
+            uint8_t *packed_data_end) {
         int i;
-        uint32 mask;
+        uint32_t mask;
 
         for (i = 0; i < huffman_table.node_count; ++i) {
             mask = (1u << huffman_table.table[i].code_length) - 1;
@@ -171,7 +171,7 @@ namespace RNC_INTERNAL {
             bitAdvance8(bit_stream, huffman_table.table[i].code_length,
                    packed_data, packed_data_end);
 
-        uint32 result = huffman_table.table[i].value;
+        uint32_t result = huffman_table.table[i].value;
 
         if (result >= 2) {
             result = 1 << (result - 1);
@@ -187,12 +187,12 @@ namespace RNC_INTERNAL {
         return result;
     }
 
-    void bitReadInit(BitStream &bit_stream, uint8 *&packed_data) {
+    void bitReadInit(BitStream &bit_stream, uint8_t *&packed_data) {
         bit_stream.bit_buffer = fs_utl::READ_LE_UINT16(packed_data);
         bit_stream.bit_count = 16;
     }
 
-    void bitReadFix(BitStream &bit_stream, uint8 *&packed_data) {
+    void bitReadFix(BitStream &bit_stream, uint8_t *&packed_data) {
         bit_stream.bit_count -= 16;
         // Remove the top 16 bits
         bit_stream.bit_buffer &= (1u << bit_stream.bit_count) - 1;
@@ -202,13 +202,13 @@ namespace RNC_INTERNAL {
         bit_stream.bit_count += 16;
     }
 
-    void bitReadFix8(BitStream &bit_stream, uint8 *&packed_data) {
+    void bitReadFix8(BitStream &bit_stream, uint8_t *&packed_data) {
         bit_stream.bit_count -= 16;
         // Remove the top 16 bits
         bit_stream.bit_buffer &= (1u << bit_stream.bit_count) - 1;
         // Replace with the data at the current input position
         bit_stream.bit_buffer |=
-            ((uint32)(*packed_data) << bit_stream.bit_count);
+            ((uint32_t)(*packed_data) << bit_stream.bit_count);
         bit_stream.bit_count += 16;
     }
 
@@ -244,7 +244,7 @@ const char * rnc::errorString(RncRetCode retCode) {
                   0 ? 0 : (error_code > maxError ? maxError : error_code)];
 }
 
-rnc::RncRetCode rnc::unpackedLength(const uint8 *packed_data, size_t &length) {
+rnc::RncRetCode rnc::unpackedLength(const uint8_t *packed_data, size_t &length) {
     using namespace RNC_INTERNAL;
 
     if (!isRncCompressed(packed_data))
@@ -307,7 +307,7 @@ rnc::RncRetCode rnc::unpack(uint8_t *packed_data, uint8_t *unpacked_data, size_t
     // Process compressed chunks
     HuffmanTable raw_huff_tbl, dist_huff_tbl, len_huff_tbl;
     int length, position;
-    uint32 ch_count;
+    uint32_t ch_count;
     while (output < output_end) {
         readHuffmanTable(raw_huff_tbl, bit_stream, input);
         readHuffmanTable(dist_huff_tbl, bit_stream, input);

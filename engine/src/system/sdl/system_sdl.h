@@ -71,7 +71,7 @@ public:
     //! Pumps an event from the event queue
     bool pumpEvents(FS_Event &evtOut) override;
 
-    void delay(uint32 msec) override;
+    void delay(uint32_t msec) override;
     uint32_t getTicks() override;
 
     void drawPoint (Point2D start, fs_eng::FSColor color) override;

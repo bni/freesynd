@@ -94,7 +94,7 @@ bool SdlMixerSound::setVolume(int volume)
  * \param soundData Data as loaded from original resource
  * \param size The size of the input data
  */
-bool SdlMixerSound::loadSound(uint8 * soundData, uint32 size)
+bool SdlMixerSound::loadSound(uint8_t * soundData, uint32_t size)
 {
     SDL_RWops *rw = SDL_RWFromMem(soundData, size);
     if (!rw) {
