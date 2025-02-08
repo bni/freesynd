@@ -281,6 +281,14 @@ WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16_t anId, Map *pMap, 
     pFlamerShot_ = NULL;
 }
 
+/*!
+ * Scanner is not selectable
+ * @return 
+ */
+bool WeaponInstance::isSelectable() {
+    return pWeaponClass_->getType() != Weapon::Scanner;
+}
+
 bool WeaponInstance::animate(uint32_t elapsed) {
 
     if (activated_) {

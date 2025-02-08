@@ -551,7 +551,7 @@ void PedInstance::handleSelectedWeaponHasNoAmmo() {
             selectMedikitOrShield(Weapon::EnergyShield);
         } else if (pDeselectedWeapon->isInstanceOf(Weapon::MediKit)) {
             if (pSelectedWeaponBeforeMedikit_ != NULL) {
-                selectWeapon(*pSelectedWeaponBeforeMedikit_);
+                selectWeapon(pSelectedWeaponBeforeMedikit_);
                 pSelectedWeaponBeforeMedikit_ = NULL;
             }
         }
@@ -989,7 +989,7 @@ void PedInstance::handleWeaponSelected(WeaponInstance * wi, WeaponInstance * pre
  * \return the instance of dropped weapon
  */
 WeaponInstance * PedInstance::dropWeapon(uint8 index) {
-    if (selected_weapon_ == index) {
+    if (isWeaponSelected(weapon(index))) {
         stopUsingWeapon();
     }
     WeaponInstance *pWeapon = removeWeaponAtIndex(index);

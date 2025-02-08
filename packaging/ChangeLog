@@ -9,6 +9,7 @@ freesynd (0.9) unstable; urgency=low
   * Editor : new menu to play sounds for the game
   * Increase/Decrease game sound with +/- keys. Saves value in user.conf. Not working for music
   * Error during the game are now displayed using a pop up. Closes: #38
+  * Added unit testing with Catch2
   [ Changed ]
   * Project has been relicensed to GPL v3. Closes: #39
   * Cmake 3.28 is required for building the app

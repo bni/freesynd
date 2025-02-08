@@ -37,17 +37,15 @@
  */
 class WeaponHolder {
 public:
-    //! This constat indicates that there is no weapon selected.
-    static const int kNoWeaponSelected;
     /*! Defines the maximum number of weapons an agent can carry.*/
     static const uint8 kMaxHoldedWeapons;
 
     WeaponHolder();
     virtual ~WeaponHolder();
 
-    uint8 numWeapons() { return weapons_.size(); }
+    size_t numWeapons() { return weapons_.size(); }
 
-    WeaponInstance *weapon(uint8 n) {
+    WeaponInstance *weapon(size_t n) {
         assert(n < weapons_.size());
         return weapons_[n];
     }
@@ -55,26 +53,26 @@ public:
     void addWeapon(WeaponInstance *w);
 
     //! Removes the weapon from the inventory at the given index.
-    WeaponInstance *removeWeaponAtIndex(uint8 n);
+    WeaponInstance *removeWeaponAtIndex(size_t n);
 
     //! Removes the given weapon from the inventory.
     void removeWeapon(WeaponInstance *w);
-    //! Removes and delete all weapons in the inventory
-    void destroyAllWeapons();
 
     //! Selects the weapon at given index in the inventory
-    void selectWeapon(uint8 n);
+    void selectWeapon(size_t n);
     //! Selects the weapon in the inventory
-    void selectWeapon(const WeaponInstance &weaponToSelect);
+    void selectWeapon(WeaponInstance *pWeaponToSelect);
     //! Deselects a selected weapon if any
     WeaponInstance * deselectWeapon();
 
     //! Returns the currently used weapon or null if no weapon is used
     WeaponInstance *selectedWeapon() {
-        return selected_weapon_ >= 0
-                && selected_weapon_ < (int) weapons_.size()
-            ? weapons_[selected_weapon_] : NULL;
+        return selectedWeapon_;
     }
+    //! Return true if there is a weapon selected
+    bool isAnyWeaponSelected() { return selectedWeapon_ != nullptr; }
+    //! Return true if the given weapon is currently selected
+    bool isWeaponSelected(WeaponInstance *pWeapon);
 
     //! Select any shooting weapon with ammo
     void selectShootingWeaponWithAmmo();
@@ -99,16 +97,20 @@ protected:
         } criteria;
 
         enum CriteriaType {
-            kCritPointer = 2,           // wi
-            kCritWeaponType = 3,        // wpn_type
-            kCritDamageStrict = 4,      // type == dmg_type
-            kCritDamageNonStrict = 5,   // type & dmg_type != 0
-            kCritPlayerSelection = 6,   // Manage selection from weapon selector
-            kCritLoadedShoot = 7        // select weapon who can shoot and has ammo
+            //! Search weapon based on a given type
+            kCritWeaponType = 3,
+            //! Search weapon that inflicts strict damage
+            kCritDamageStrict = 4,
+            //! Search weapon that inflicts non strict damage
+            kCritDamageNonStrict = 5,
+            //! Search weapon that has the same type as the current selection
+            kCritPlayerSelection = 6,
+            //! Search weapon who can shoot and has ammo
+            kCritLoadedShoot = 7
         };
         //! Union descriptor
         CriteriaType desc;
-        //! Search weapon based on the rank attribute
+        //! Select the final weapon based on the rank attribute
         bool use_ranks;
     };
 
@@ -116,7 +118,7 @@ protected:
      * Called before a weapon is selected to check if weapon can be selected.
      * \param wi The weapon to select
      */
-    virtual bool canSelectWeapon([[maybe_unused]] WeaponInstance *pNewWeapon) { return true;}
+    virtual bool canSelectWeapon(WeaponInstance *pNewWeapon) { return pNewWeapon->isSelectable();}
     /*!
      * Called when a weapon has been deselected.
      * \param wi The deselected weapon
@@ -139,7 +141,7 @@ protected:
     /*!
      * The currently selected weapon inside the inventory.
      */
-    int selected_weapon_;
+    WeaponInstance * selectedWeapon_;
     /*!
      * On automatic weapon selection, weapon will be selected upon
      * this criteria.

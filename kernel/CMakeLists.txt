@@ -102,3 +102,7 @@ source_group(
   TREE "${PROJECT_SOURCE_DIR}/kernel/include"
   FILES ${HEADER_LIST})
 
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
+

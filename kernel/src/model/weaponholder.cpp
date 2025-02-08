@@ -28,27 +28,31 @@
 //*************************************
 // Constant definition
 //*************************************
-const int WeaponHolder::kNoWeaponSelected = -1;
-const uint8 WeaponHolder::kMaxHoldedWeapons = 8;
+const uint8_t WeaponHolder::kMaxHoldedWeapons = 8;
 
 WeaponHolder::WeaponHolder() {
-    // -1 means no weapon is selected
-    selected_weapon_ = kNoWeaponSelected;
+    // Starts with no weapon selected
+    selectedWeapon_ = nullptr;
 }
 
 WeaponHolder::~WeaponHolder() {
-    destroyAllWeapons();
+    selectedWeapon_ = nullptr;
+    weapons_.clear();
 }
 
 /*!
  * Adds the givent weapon to the inventory.
  * Weapon is placed at the end of the inventory.
+ * When a weapon is in inventory, it is not rendered on screen.
  * \param w The weapon to add
  */
 void WeaponHolder::addWeapon(WeaponInstance *w) {
-    if (w != NULL && weapons_.size() < kMaxHoldedWeapons) {
-        w->setDrawable(false);
-        weapons_.push_back(w);
+    if (w && weapons_.size() < kMaxHoldedWeapons) {
+        auto it = std::find(weapons_.begin(), weapons_.end(), w);
+        if (it == weapons_.end()) {
+            w->setDrawable(false);
+            weapons_.push_back(w);
+        }
     }
 }
 
@@ -58,7 +62,7 @@ void WeaponHolder::addWeapon(WeaponInstance *w) {
  * \param n The index. Must be less than the total number of weapons.
  * \return The removed weapon or NULL if not found.
  */
-WeaponInstance *WeaponHolder::removeWeaponAtIndex(uint8 n) {
+WeaponInstance *WeaponHolder::removeWeaponAtIndex(size_t n) {
     if (n < weapons_.size()) {
         WeaponInstance *w = weapons_[n];
         removeWeapon(w);
@@ -74,30 +78,13 @@ WeaponInstance *WeaponHolder::removeWeaponAtIndex(uint8 n) {
  * \param w The weapon instance.
  */
 void WeaponHolder::removeWeapon(WeaponInstance *wi) {
-    // if no weapon was selected before dropping,
-    // no use to update selection
-    bool upd_selected = selected_weapon_ != kNoWeaponSelected;
+    
+    if (isWeaponSelected(wi)) {
+        deselectWeapon();
+    }
 
-    for (int i = 0; i < (int)weapons_.size(); ++i) {
-        std::vector <WeaponInstance *>::iterator it = weapons_.begin() + i;
-        if ((*it) == wi) {
-            if (selectedWeapon() == wi) {
-                deselectWeapon();
-                // when dropping the selected weapon
-                // we don't select another weapon after
-                upd_selected = false;
-            }
-
-            // shift index to selected weapon if dropped weapon index
-            // was before selected weapon
-            if (upd_selected && selected_weapon_ > i)
-                --selected_weapon_;
-
-            weapons_.erase(it);
-            wi->setOwner(NULL);
-
-            break;
-        }
+    if (std::erase(weapons_, wi)) {
+        wi->setOwner(NULL);
     }
 }
 
@@ -113,26 +100,22 @@ void WeaponHolder::transferWeapons(WeaponHolder &anotherHolder) {
 }
 
 /*!
- * Removes and delete all weapons from the inventory.
+ * Return true if given weapon is selected.
+ * @param pWeapon The weapon to check
+ * @return true if pWeapon is not null and equal to the selected weapon.
  */
-void WeaponHolder::destroyAllWeapons() {
-    while (weapons_.size())
-        delete removeWeaponAtIndex(0);
+bool WeaponHolder::isWeaponSelected(WeaponInstance *pWeapon) {
+    return pWeapon != nullptr && selectedWeapon_ == pWeapon;
 }
 
 /*!
  * Selects the weapon at given index in the inventory.
  * Calls onWeaponDeselected() and onWeaponSelected().
  */
-void WeaponHolder::selectWeapon(uint8 n) {
-    assert(n < weapons_.size());
-    WeaponInstance *pNewWeapon = weapons_[n];
-    if (canSelectWeapon(pNewWeapon)) {
-        // First deselect current weapon if any
-        WeaponInstance *prevSelectedWeapon = deselectWeapon();
-
-        selected_weapon_ = n;
-        handleWeaponSelected(pNewWeapon, prevSelectedWeapon);
+void WeaponHolder::selectWeapon(size_t n) {
+    if (n < weapons_.size()) {
+        WeaponInstance *pNewWeapon = weapons_[n];
+        selectWeapon(pNewWeapon);
     }
 }
 
@@ -142,12 +125,14 @@ void WeaponHolder::selectWeapon(uint8 n) {
  * \return void
  *
  */
-void WeaponHolder::selectWeapon(const WeaponInstance &weaponToSelect) {
-    for (uint8 i = 0; i < numWeapons(); ++i) {
-        if (weaponToSelect.id() == weapons_[i]->id()) {
-            selectWeapon(i);
-            return;
-        }
+void WeaponHolder::selectWeapon(WeaponInstance *pWeaponToSelect) {
+    if (!isWeaponSelected(pWeaponToSelect) && canSelectWeapon(pWeaponToSelect)) {
+        // First deselect current weapon if any
+        WeaponInstance *prevSelectedWeapon = deselectWeapon();
+
+        selectedWeapon_ = pWeaponToSelect;
+
+        handleWeaponSelected(pWeaponToSelect, prevSelectedWeapon);
     }
 }
 
@@ -158,9 +143,9 @@ void WeaponHolder::selectWeapon(const WeaponInstance &weaponToSelect) {
  */
 WeaponInstance * WeaponHolder::deselectWeapon() {
     WeaponInstance *wi = NULL;
-    if (selected_weapon_ != kNoWeaponSelected) {
-        wi = weapons_[selected_weapon_];
-        selected_weapon_ = kNoWeaponSelected;
+    if (isAnyWeaponSelected()) {
+        wi = selectedWeapon_;
+        selectedWeapon_ = nullptr;
         handleWeaponDeselected(wi);
     }
 
@@ -173,77 +158,51 @@ WeaponInstance * WeaponHolder::deselectWeapon() {
  * \return True if selection has changed
  */
 bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
-    WeaponInstance *wi = selectedWeapon();
-    // pair <rank, indx>
-    std::vector < std::pair<int, int> > found_weapons;
-    uint8 sz = weapons_.size();
+    std::vector < WeaponInstance *> found_weapons;
 
-    bool found = false;
     switch (criteria.desc) {
-        case WeaponSelectCriteria::kCritPointer:
-            if (criteria.criteria.wi == wi) {
-                found = true;
-            } else {
-                for (uint8 i = 0; i < sz; ++i) {
-                    if (weapon(i) == wi) {
-                        selectWeapon(i);
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            break;
         case WeaponSelectCriteria::kCritWeaponType:
-            for (uint8 i = 0; i < sz; ++i) {
-                WeaponInstance *pWI = weapons_[i];
-                if (pWI->isInstanceOf(criteria.criteria.wpn_type)) {
-                    if (pWI->usesAmmo()) {
-                        if (pWI->ammoRemaining()) {
-                            found = true;
-                            selectWeapon(i);
+            for (auto weapon : weapons_) {
+                if (weapon->isInstanceOf(criteria.criteria.wpn_type)) {
+                    if (weapon->usesAmmo()) {
+                        if (weapon->ammoRemaining()) {
+                            found_weapons.push_back(weapon);
                             break;
                         }
                     } else {
-                        found = true;
-                        selectWeapon(i);
+                        found_weapons.push_back(weapon);
                         break;
                     }
                 }
             }
+
             break;
         case WeaponSelectCriteria::kCritDamageStrict:
-            for (uint8 i = 0; i < sz; ++i) {
-                WeaponInstance *pWI = weapons_[i];
-                if (pWI->canShoot()
-                    && pWI->doesDmgStrict(criteria.criteria.dmg_type))
+            for (auto pWeapon : weapons_) {
+                if (pWeapon->canShoot()
+                    && pWeapon->doesDmgStrict(criteria.criteria.dmg_type))
                 {
-                    if (pWI->usesAmmo()) {
-                        if (pWI->ammoRemaining()) {
-                            found = true;
-                            found_weapons.push_back(std::make_pair(pWI->rank(),
-                                i));
+                    if (pWeapon->usesAmmo()) {
+                        if (pWeapon->ammoRemaining()) {
+                            found_weapons.push_back(pWeapon);
                         }
                     } else {
-                        found = true;
-                        found_weapons.push_back(std::make_pair(pWI->rank(), i));
+                        found_weapons.push_back(pWeapon);
                     }
                 }
             }
             break;
         case WeaponSelectCriteria::kCritDamageNonStrict:
-            for (uint8 i = 0; i < sz; ++i) {
-                WeaponInstance *pWI = weapons_[i];
-                if (pWI->canShoot()
-                    && pWI->doesDmgNonStrict(criteria.criteria.dmg_type))
+            for (auto pWeapon : weapons_) {
+                if (pWeapon->canShoot()
+                    && pWeapon->doesDmgNonStrict(criteria.criteria.dmg_type))
                 {
-                    if (pWI->usesAmmo()) {
-                        if (pWI->ammoRemaining()) {
-                            found = true;
-                            found_weapons.push_back(std::make_pair(pWI->rank(), i));
+                    if (pWeapon->usesAmmo()) {
+                        if (pWeapon->ammoRemaining()) {
+                            found_weapons.push_back(pWeapon);
                         }
                     } else {
-                        found = true;
-                        found_weapons.push_back(std::make_pair(pWI->rank(), i));
+                        found_weapons.push_back(pWeapon);
                     }
                 }
             }
@@ -253,28 +212,29 @@ bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
                 // If the selected weapon was a shooting one
                 // select a shooting weapon for the agent, choosing
                 // first a weapon of same type then any shooting weapon
-                for (uint8 i = 0; i < sz; ++i) {
-                    WeaponInstance *pWI = weapons_[i];
-                    if (pWI->canShoot() && pWI->ammoRemaining() > 0)
+                for (auto pWeapon : weapons_) {
+                    if (pWeapon->canShoot() && pWeapon->ammoRemaining() > 0)
                     {
-                        if (pWI->hasSameTypeAs(*(criteria.criteria.wi))) {
+                        if (pWeapon->hasSameTypeAs(*(criteria.criteria.wi))) {
+                            //We found a weapon of same type with ammo
+                            // so remove all already found weapons
                             found_weapons.clear();
-                            found_weapons.push_back(std::make_pair(pWI->rank(), i));
+                            // and give the new one
+                            found_weapons.push_back(pWeapon);
                             break;
                         } else {
                             // We found a loaded weapon of different type
                             // save it for after
-                            found_weapons.push_back(std::make_pair(pWI->rank(), i));
+                            found_weapons.push_back(pWeapon);
                         }
                     }
                 }
             }
             break;
         case WeaponSelectCriteria::kCritLoadedShoot:
-            for (uint8 i = 0; i < sz; ++i) {
-                WeaponInstance *pWI = weapons_[i];
-                if (pWI->canShoot() && pWI->ammoRemaining() > 0) {
-                    found_weapons.push_back(std::make_pair(pWI->rank(), i));
+            for (auto pWeapon : weapons_) {
+                if (pWeapon->canShoot() && pWeapon->ammoRemaining() > 0) {
+                    found_weapons.push_back(pWeapon);
                 }
             }
             break;
@@ -284,27 +244,28 @@ bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
 
     if (!found_weapons.empty()) {
         int best_rank = -1;
-        int indx = found_weapons[0].second;
-        if (criteria.use_ranks) {
-            sz = found_weapons.size();
-            for (uint8 i = 0; i < sz; ++i) {
-                if (best_rank < found_weapons[i].first) {
-                    best_rank = found_weapons[i].first;
-                    indx = found_weapons[i].second;
+        WeaponInstance *weaponToSelect = nullptr;
+        for (auto pWeapon : found_weapons) {
+            if (criteria.use_ranks) {
+                if (best_rank < pWeapon->rank()) {
+                    best_rank = pWeapon->rank();
+                    weaponToSelect = pWeapon;
                 }
+            } else {
+                weaponToSelect = pWeapon;
             }
         }
-        found = true;
-        selectWeapon(indx);
+        selectWeapon(weaponToSelect);
+        return true;
     }
-    return found;
+    return false;
 }
 
 /*!
  * Select a weapon for the ped if he has no weapon out.
  */
 void WeaponHolder::selectShootingWeaponWithAmmo() {
-    if (selected_weapon_ == kNoWeaponSelected) {
+    if (!isAnyWeaponSelected()) {
         // Select a loaded weapon for ped
         WeaponSelectCriteria crit;
         crit.desc = WeaponSelectCriteria::kCritLoadedShoot;
@@ -317,17 +278,16 @@ void WeaponHolder::selectShootingWeaponWithSameTypeFirst(WeaponInstance *pLeader
     WeaponSelectCriteria criteria;
     criteria.desc = WeaponSelectCriteria::kCritPlayerSelection;
     criteria.criteria.wi = pLeaderWeapon;
+    criteria.use_ranks = true;
     selectRequiredWeapon(criteria);
 }
 
 void WeaponHolder::selectMedikitOrShield(Weapon::WeaponType weaponType) {
     if (weaponType == Weapon::MediKit || weaponType == Weapon::EnergyShield) {
-        for (uint8 i = 0; i < numWeapons(); ++i) {
-            WeaponInstance *pWI = weapons_[i];
-            if (pWI->isInstanceOf(weaponType) && pWI->ammoRemaining() > 0) {
-                selectWeapon(i);
-                break;
-            }
-        }
+        WeaponSelectCriteria criteria;
+        criteria.desc = WeaponSelectCriteria::kCritWeaponType;
+        criteria.criteria.wpn_type = weaponType;
+        criteria.use_ranks = false;
+        selectRequiredWeapon(criteria);
     }
 }

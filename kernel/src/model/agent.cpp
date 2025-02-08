@@ -37,10 +37,17 @@ int Agent::agentCnt = 1;
  * \param agent_name The agent name.
  * \param male True means the agent is a male.
  */
-Agent::Agent(const char *agent_name, bool male) : name_(agent_name),
-male_(male), active_(true) {
+Agent::Agent(const char *agent_name, bool male) : 
+                name_(agent_name), male_(male), active_(true) {
     id_ = agentCnt++;
     is_alive_ = true;
+}
+
+void Agent::destroyAllWeapons() {
+    // First deselect any selected weapon
+    deselectWeapon();
+    while (weapons_.size())
+        delete removeWeaponAtIndex(0);
 }
 
 bool Agent::saveToFile(fs_utl::PortableFile &file) {

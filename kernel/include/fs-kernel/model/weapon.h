@@ -279,8 +279,8 @@ class WeaponInstance : public ShootableMapObject {
 public:
     //! Creates a instance for the given weapon class
     static WeaponInstance *createInstance(Weapon *pWeaponClass, int remainingAmmo = -1);
-
     WeaponInstance(Weapon *w, uint16_t id, Map *pMap, int remainingAmmo = -1);
+
     ~WeaponInstance() {};
 
     //*************************************
@@ -322,6 +322,9 @@ public:
     fs_dmg::DamageType dmgType() {
         return pWeaponClass_->dmgType();
     }
+
+    //! Return true if weapon can be selected
+    bool isSelectable();
 
     //*************************************
     // Behaviour

@@ -17,9 +17,6 @@
 #  along with this program. If not, see <https://www.gnu.org/licenses/>. 
 # 
 
-# Note that headers are optional, and do not affect add_library, but they will not
-# show up in IDEs unless they are listed in add_library.
-
 cmake_minimum_required (VERSION 3.28)
 
 project(
@@ -114,6 +111,13 @@ if(Doxygen_FOUND)
 else()
     message(STATUS "Doxygen not found, not building docs")
 endif()
+
+find_package(Catch2 3 REQUIRED)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+    include(Catch)
+endif()
+
 
 # Build the sources in these subdirectory.
 add_subdirectory (packaging)

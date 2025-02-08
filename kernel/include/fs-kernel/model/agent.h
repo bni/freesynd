@@ -52,6 +52,8 @@ public:
     bool isAlive() { return is_alive_; }
     void set_dead() { is_alive_ = false; }
 
+    void destroyAllWeapons();
+
     //! Save instance to file
     bool saveToFile(fs_utl::PortableFile &file);
     //! Load instance from file

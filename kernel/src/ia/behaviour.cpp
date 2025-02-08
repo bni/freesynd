@@ -207,7 +207,7 @@ void PersuadedBehaviourComponent::handleBehaviourEvent(const Behaviour::Behaviou
         if (pPedSource == event.pPed->owner()) {
             // the ped who is armed is our owner so select weapon or look for one
             if (event.pPed->numWeapons() > 0) {
-                event.pPed->selectWeapon(0);
+                event.pPed->selectWeapon((size_t) 0);
             } else {
                 // ped has no weapon -> start looking for some
                 status_ = kPersuadStatusLookForWeapon;
@@ -229,7 +229,7 @@ void PersuadedBehaviourComponent::handleBehaviourEvent(const Behaviour::Behaviou
             Action::ActionType *pType = static_cast<Action::ActionType *> (event.pCtxt);
             if (*pType == Action::kActTypePickUp) {
                 if (event.pPed->owner()->isArmed()) {
-                    event.pPed->selectWeapon(0);
+                    event.pPed->selectWeapon((size_t) 0);
                 }
                 // weapon found so back to normal
                 status_ = kPersuadStatusFollow;
