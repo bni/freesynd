@@ -36,6 +36,8 @@
 #define EXECUTION_SPEED_TIME
 #endif
 
+namespace fs_knl {
+
 const uint8 floodPointDesc::kBMaskDirNorth = 0x10;
 const uint8 floodPointDesc::kBMaskDirNorthEast = 0x08;
 const uint8 floodPointDesc::kBMaskDirEast = 0x04;
@@ -2857,4 +2859,6 @@ inline int PedInstance::getClosestDirs(int dir, int& closest, int& closer) {
         }
     }
     return 1;
+}
+
 }

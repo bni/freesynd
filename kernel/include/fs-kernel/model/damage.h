@@ -29,10 +29,10 @@
 
 #include "fs-kernel/model/position.h"
 
-class ShootableMapObject;
-class WeaponInstance;
-
-namespace fs_dmg {
+namespace fs_knl {
+    class ShootableMapObject;
+    class WeaponInstance;
+    
     /*!
      * These are all types of damage caused by weapons.
      */

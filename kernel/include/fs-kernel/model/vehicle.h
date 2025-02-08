@@ -32,6 +32,8 @@
 #include "fs-kernel/model/map.h"
 #include "ped.h"
 
+namespace fs_knl {
+
 /*!
  * This class holds informations about the animation of a vehicle.
  */
@@ -177,7 +179,7 @@ public:
         return (pPed != NULL && pDriver_ == pPed);
     }
 
-    void handleHit(fs_dmg::DamageToInflict &d);
+    void handleHit(DamageToInflict &d);
 
 protected:
     bool findPathToNearestWalkableTile(Map *pMap, const TilePoint &startPt, int *basex, int *basey, std::vector < TilePoint > *path2add);
@@ -189,4 +191,5 @@ protected:
     PedInstance *pDriver_;
 };
 
+}
 #endif

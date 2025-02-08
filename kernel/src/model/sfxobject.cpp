@@ -28,6 +28,7 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/animationmanager.h"
 
+namespace fs_knl {
 uint16_t SFXObject::sfxIdCnt = 0;
 
 /*!
@@ -162,4 +163,5 @@ void SFXObject::reset() {
     sfx_life_over_ = false;
     frame_ = 0;
     elapsed_left_ = 0;
+}
 }

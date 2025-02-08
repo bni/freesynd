@@ -27,6 +27,7 @@
 #include "fs-utils/misc/timer.h"
 #include "fs-kernel/ia/actions.h"
 
+namespace fs_knl {
 class Mission;
 class PedInstance;
 class BehaviourComponent;
@@ -323,5 +324,6 @@ private:
     PedInstance *pTarget_;
 };
 
+}
 
 #endif // IA_BEHAVIOUR_H_

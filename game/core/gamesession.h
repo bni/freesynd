@@ -105,7 +105,7 @@ public:
     //! Maximum length for user's and company's name
     static const int kNameMaxSize;
 
-    GameSession(WeaponManager *pWeaponManager, ModManager *pModManager);
+    GameSession(fs_knl::WeaponManager *pWeaponManager, fs_knl::ModManager *pModManager);
     ~GameSession();
 
     /*!
@@ -197,7 +197,7 @@ public:
         return money_ >= amount;
     }
 
-    ResearchManager &researchManager() {
+    fs_knl::ResearchManager &researchManager() {
         return researchMan_;
     }
 
@@ -292,7 +292,7 @@ private:
     /*! Cheat flag to enable replay of finished missions. */
     bool replay_mission_;
     /*! Manager for researches. */
-    ResearchManager researchMan_;
+    fs_knl::ResearchManager researchMan_;
 };
 
 #define g_Session   GameSession::singleton()

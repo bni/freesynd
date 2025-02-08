@@ -30,6 +30,7 @@
 
 #include "fs-kernel/model/weapon.h"
 
+namespace fs_knl {
 /*!
  * A weapon holder is an object that can hold weapons.
  * Creation/destruction of weapons holds by the WeaponHolder is
@@ -148,5 +149,6 @@ protected:
      */
     WeaponSelectCriteria prefered_weapon_;
 };
+}
 
 #endif

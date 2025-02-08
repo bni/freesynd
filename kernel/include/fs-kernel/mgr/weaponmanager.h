@@ -36,6 +36,8 @@
 #include "fs-utils/io/formatversion.h"
 #include "fs-kernel/model/weapon.h"
 
+namespace fs_knl {
+
 /*!
  * Weapon manager class.
  */
@@ -89,6 +91,7 @@ protected:
     VectorModel<Weapon *> availableWeapons_;
 };
 
-#define g_weaponMgr    WeaponManager::singleton()
+}
+#define g_weaponMgr    fs_knl::WeaponManager::singleton()
 
 #endif

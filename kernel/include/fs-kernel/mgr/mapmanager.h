@@ -29,6 +29,7 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/map.h"
 
+namespace fs_knl {
 /*!
  * Map manager class.
  */
@@ -48,4 +49,5 @@ protected:
     fs_eng::TileManager *pTileManager_;
 };
 
+}
 #endif

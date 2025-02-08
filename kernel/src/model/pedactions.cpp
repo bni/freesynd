@@ -22,6 +22,7 @@
 #include "fs-kernel/model/ped.h"
 #include "fs-utils/log/log.h"
 
+namespace fs_knl {
 /*!
  * Add the given action to the list of actions.
  * If appendAction is true, the action is added after all existing actions.
@@ -285,31 +286,31 @@ void PedInstance::addActionDriveVehicle(
  * Insert an action of type HitAction before any action in list and suspend
  * currently executing action.
  */
-void PedInstance::insertHitAction(fs_dmg::DamageToInflict &d) {
+void PedInstance::insertHitAction(DamageToInflict &d) {
     HitAction *pHitAct = NULL;
     if (d.d_owner == this) { // it's a suicide
-        if (d.dtype == fs_dmg::kDmgTypeBullet) {
+        if (d.dtype == kDmgTypeBullet) {
             // Ped's instantly dead
             pHitAct = new FallDeadHitAction(d);
         } else {
             // it's an explosion : walk and burn
             pHitAct = new WalkBurnHitAction(d);
         }
-    } else if (d.dtype == fs_dmg::kDmgTypeExplosion) {
+    } else if (d.dtype == kDmgTypeExplosion) {
         if (hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2)) {
             pHitAct = new RecoilHitAction(d);
         } else {
             pHitAct = new WalkBurnHitAction(d);
         }
-    } else if (d.dtype & (fs_dmg::kDmgTypeBullet | fs_dmg::kDmgTypeCollision)) {
+    } else if (d.dtype & (kDmgTypeBullet | kDmgTypeCollision)) {
         // When hit by a bullet or collision, ped is ejected
         pHitAct = new RecoilHitAction(d);
-    } else if (d.dtype == fs_dmg::kDmgTypeBurn) {
+    } else if (d.dtype == kDmgTypeBurn) {
         pHitAct = new WalkBurnHitAction(d);
-    } else if (d.dtype == fs_dmg::kDmgTypeLaser) {
+    } else if (d.dtype == kDmgTypeLaser) {
         // When hit by a laser, ped is vaporized
         pHitAct = new LaserHitAction(d);
-    } else if (d.dtype == fs_dmg::kDmgTypePersuasion) {
+    } else if (d.dtype == kDmgTypePersuasion) {
         pHitAct = new PersuadedHitAction(d);
     }
 
@@ -371,4 +372,6 @@ void PedInstance::addActionUseMedikit(WeaponInstance *pMedikit) {
  */
 void PedInstance::addActionUseEnergyShield(WeaponInstance *pEnergyShield) {
     pUseWeaponAction_ = new UseEnergyShieldAction(pEnergyShield);
+}
+
 }

@@ -31,6 +31,8 @@
 
 #include "fs-kernel/model/mapobject.h"
 
+namespace fs_knl {
+
 /*!
  * Static map object class.
  */
@@ -167,7 +169,7 @@ public:
 
     void draw(const Point2D &screenPos) override;
     bool animate(uint32_t elapsed) override;
-    void handleHit(fs_dmg::DamageToInflict &d)override;
+    void handleHit(DamageToInflict &d)override;
 
 protected:
     int anim_, burning_anim_, damaged_anim_;
@@ -184,7 +186,7 @@ public:
 
     bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
-    void handleHit(fs_dmg::DamageToInflict &d) override;
+    void handleHit(DamageToInflict &d) override;
 
 protected:
     int anim_, open_anim_, breaking_anim_, damaged_anim_;
@@ -230,7 +232,7 @@ public:
     bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
-    void handleHit(fs_dmg::DamageToInflict &d) override;
+    void handleHit(DamageToInflict &d) override;
 
 protected:
     int anim_, damaged_anim_;
@@ -261,4 +263,5 @@ protected:
     int anim_;
 };
 
+}
 #endif

@@ -32,6 +32,8 @@
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/tilemanager.h"
 
+namespace fs_knl {
+
 Map::Map(fs_eng::TileManager * tileManager, uint16_t anId) : tileManager_(tileManager)
 {
     id_ = anId;
@@ -367,4 +369,6 @@ void MiniMap::setTarget(MapObject *pTarget) {
 //! Clear the target source
 void MiniMap::clearTarget() {
     p_target_ = NULL;
+}
+
 }

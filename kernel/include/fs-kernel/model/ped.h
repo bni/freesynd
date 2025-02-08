@@ -40,6 +40,8 @@
 #include "fs-kernel/ia/actions.h"
 #include "fs-kernel/ia/behaviour.h"
 
+namespace fs_knl {
+
 class Agent;
 class Mission;
 class Squad;
@@ -323,7 +325,7 @@ public:
     //! Adds action to use Energy Shield
     void addActionUseEnergyShield(WeaponInstance *pMedikit);
     //! Creates and insert a HitAction for the ped
-    void insertHitAction(fs_dmg::DamageToInflict &d);
+    void insertHitAction(DamageToInflict &d);
 
     //*************************************
     // Movement management
@@ -365,11 +367,11 @@ public:
     void setEnergyActivated(bool status);
 
     //! Return the damage after applying protection of Mod
-    int getRealDamage(fs_dmg::DamageToInflict &d);
+    int getRealDamage(DamageToInflict &d);
     //! Method called when object is hit by a weapon shot.
-    void handleHit(fs_dmg::DamageToInflict &d) override;
+    void handleHit(DamageToInflict &d) override;
     //! Method called to check if ped has died
-    bool handleDeath(Mission *pMission, fs_dmg::DamageToInflict &d);
+    bool handleDeath(Mission *pMission, DamageToInflict &d);
 
     //*************************************
     // Persuasion
@@ -769,4 +771,6 @@ struct PoliceWarningEmittedEvent {
     // for compilation
     int id;
 };
+
+}
 #endif

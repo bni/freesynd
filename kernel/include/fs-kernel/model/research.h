@@ -30,6 +30,7 @@
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 
+namespace fs_knl {
 /*!
  * Represents a research on a specific field.
  */
@@ -136,4 +137,5 @@ struct ResearchEndEvent {
     Research *pResearch;
 };
 
+}
 #endif //RESEARCH_H

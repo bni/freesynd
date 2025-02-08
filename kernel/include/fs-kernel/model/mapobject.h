@@ -34,6 +34,8 @@
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/damage.h"
 
+namespace fs_knl {
+
 class Map;
 class Mission;
 
@@ -387,7 +389,7 @@ public:
      * to react to a shot.
      * \param d Damage description
      */
-    virtual void handleHit([[maybe_unused]] fs_dmg::DamageToInflict &d) {}
+    virtual void handleHit([[maybe_unused]] DamageToInflict &d) {}
 
     bool isAlive() { return health_ > 0; }
     bool isDead() { return health_ <= 0; }
@@ -460,4 +462,5 @@ protected:
     std::list<TilePoint> dest_path_;
 };
 
+}
 #endif  //KERNEL_MAPOBJECT_H

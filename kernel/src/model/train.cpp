@@ -28,6 +28,8 @@
 #include "fs-kernel/model/mission.h"
 #include "fs-kernel/model/squad.h"
 
+namespace fs_knl {
+
 TrainBody::TrainBody(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
     Vehicle(anId, aType, pMap, pAnimation) {
 
@@ -162,3 +164,4 @@ void TrainHead::appendTrainBody(TrainBody *pTrainBodyToAdd) {
     pBody->setNext(pTrainBodyToAdd);
 }
 
+}

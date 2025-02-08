@@ -30,6 +30,7 @@
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 
+namespace fs_knl {
 //*************************************
 // Constant definition
 //*************************************
@@ -139,8 +140,8 @@ void PersuaderBehaviourComponent::execute(const Behaviour::BehaviourParam &param
         for (size_t i = param.pMission->getSquad()->size(); i < param.pMission->numPeds(); i++) {
             PedInstance *pOtherPed = param.pMission->ped(i);
             if (param.pPed->canPersuade(pOtherPed, persuadotronRange_)) {
-                fs_dmg::DamageToInflict dmg;
-                dmg.dtype = fs_dmg::kDmgTypePersuasion;
+                DamageToInflict dmg;
+                dmg.dtype = kDmgTypePersuasion;
                 dmg.d_owner = param.pPed;
                 pOtherPed->insertHitAction(dmg);
             }
@@ -633,3 +634,4 @@ void PlayerHostileBehaviourComponent::followAndShootTarget(PedInstance *pPed, Pe
     pPed->setCurrentActionWithSource(Action::kActionAlt);
 }
 
+}

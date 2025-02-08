@@ -37,6 +37,8 @@
 #include "fs-kernel/model/pathsurfaces.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 
+namespace fs_knl {
+
 class Vehicle;
 class PedInstance;
 class Agent;
@@ -385,4 +387,5 @@ struct MissionEndedEvent {
     Mission::Status status;
 };
 
+}
 #endif

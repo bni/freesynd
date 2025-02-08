@@ -29,6 +29,7 @@
 #include "fs-kernel/model/mission.h"
 #include "fs-kernel/mgr/agentmanager.h"
 
+namespace fs_knl {
 /*!
  * A common method to end targeted objective.
  * \param succeeded True means objective is completed with success.
@@ -265,4 +266,6 @@ void ObjEvacuate::evaluate(Mission *pMission) {
 
     // If we're here, then all peds are in the circle -> objective is completed
     endObjective(true);
+}
+
 }

@@ -34,6 +34,8 @@
 #include "fs-kernel/model/shot.h"
 #include "fs-kernel/mgr/missionmanager.h"
 
+namespace fs_knl {
+
 const uint8_t Vehicle::kVehicleTypeLargeArmored = 0x01;
 const uint8_t Vehicle::kVehicleTypeLargeArmoredDamaged = 0x04;
 const uint8_t Vehicle::kVehicleTypeTrainHead = 0x05;
@@ -788,7 +790,7 @@ bool GenericCar::doMove(uint32_t elapsed, Mission *m)
  * Method called when object is hit by a weapon shot.
  * \param d Damage description
  */
-void GenericCar::handleHit(fs_dmg::DamageToInflict &d) {
+void GenericCar::handleHit(DamageToInflict &d) {
     if (health_ <= 0)
         return;
 
@@ -796,10 +798,10 @@ void GenericCar::handleHit(fs_dmg::DamageToInflict &d) {
     if (health_ == 0) {
         clearDestination();
         switch ((unsigned int)d.dtype) {
-            case fs_dmg::kDmgTypeBullet:
-            case fs_dmg::kDmgTypeLaser:
-            case fs_dmg::kDmgTypeBurn:
-            case fs_dmg::kDmgTypeExplosion:
+            case kDmgTypeBullet:
+            case kDmgTypeLaser:
+            case kDmgTypeBurn:
+            case kDmgTypeExplosion:
                 animation_->set_animation_type(VehicleAnimation::kOnFireAnim);
                 setTimeShowAnim(10000);
                 break;
@@ -883,4 +885,6 @@ void GenericCar::setDriver(PedInstance *pPed, bool forceDriver) {
             Vehicle::addPassenger(pPed);
         }
     }
+}
+
 }

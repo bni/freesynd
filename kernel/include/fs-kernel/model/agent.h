@@ -36,6 +36,8 @@
 #include "fs-kernel/model/modowner.h"
 #include "fs-kernel/model/weaponholder.h"
 
+namespace fs_knl {
+
 /*!
  * Stores information about agent health, weapons inventory and modifications.
  */
@@ -70,4 +72,5 @@ protected:
     bool is_alive_;
 };
 
+}
 #endif

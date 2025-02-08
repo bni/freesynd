@@ -27,6 +27,8 @@
 #include "fs-engine/appcontext.h"
 #include "fs-engine/events/event.h"
 
+namespace fs_knl {
+
 ResearchManager::ResearchManager(WeaponManager *pWeaponManager, ModManager *pModManager) {
     pCurrResearch_ = NULL;
     pWeaponManager_ = pWeaponManager;
@@ -448,4 +450,6 @@ bool ResearchManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::F
     }
 
     return true;
+}
+
 }

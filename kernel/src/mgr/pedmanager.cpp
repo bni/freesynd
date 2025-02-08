@@ -32,6 +32,8 @@
 #include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/mgr/modmanager.h"
 
+namespace fs_knl {
+
 PedManager::PedManager()
 {
 }
@@ -353,4 +355,6 @@ void PedManager::initCriminal(PedInstance *pPed) {
     pPed->setBaseSpeed(128);
     pPed->setTimeBeforeCheck(500);
     pPed->setBaseModAcc(0.2);
+}
+
 }

@@ -24,6 +24,8 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/position.h"
 
+namespace fs_knl {
+
 class PedInstance;
 
 /*!
@@ -62,4 +64,5 @@ private:
     size_t size_;
 };
 
+}
 #endif  // CORE_SQUAD_H_

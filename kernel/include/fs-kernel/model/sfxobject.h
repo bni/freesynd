@@ -29,6 +29,8 @@
 #include "fs-kernel/model/mapobject.h"
 #include "fs-kernel/model/map.h"
 
+namespace fs_knl {
+
 /*!
  * SFXObject map object class.
  */
@@ -89,4 +91,5 @@ protected:
     bool managed_;
 };
 
+}
 #endif  //KERNEL_SFXOBJECT_H

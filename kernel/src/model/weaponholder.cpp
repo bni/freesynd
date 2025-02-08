@@ -25,6 +25,7 @@
 
 #include "fs-kernel/model/weaponholder.h"
 
+namespace fs_knl {
 //*************************************
 // Constant definition
 //*************************************
@@ -290,4 +291,5 @@ void WeaponHolder::selectMedikitOrShield(Weapon::WeaponType weaponType) {
         criteria.use_ranks = false;
         selectRequiredWeapon(criteria);
     }
+}
 }

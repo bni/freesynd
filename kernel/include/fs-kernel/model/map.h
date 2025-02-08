@@ -30,6 +30,7 @@
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/mapobject.h"
 
+namespace fs_knl {
 
 /*!
  * Map class.
@@ -120,4 +121,5 @@ private:
     MapObject *p_target_;
 };
 
+}
 #endif

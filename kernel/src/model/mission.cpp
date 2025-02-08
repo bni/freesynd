@@ -38,6 +38,8 @@
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/squad.h"
 
+namespace fs_knl {
+
 const uint8 Mission::kBMaskBlockerTargetOutOfMap = 0x20;
 const uint8 Mission::kBMaskBlockerTargetObjectUpdated = 0x02;
 const uint8 Mission::kBMaskBlockerTargetPosUpdated = 0x04;
@@ -174,7 +176,7 @@ void Mission::start(WeaponManager& weaponMgr)
     // creating a list of available weapons
     // TODO: consider weight of weapons when adding?
     std::vector <Weapon *> wpns;
-    weaponMgr.getAvailable(fs_dmg::kDmgTypeBullet, wpns);
+    weaponMgr.getAvailable(kDmgTypeBullet, wpns);
     int indx_best = -1;
     int indx_second = -1;
     for (int i = 0, sz = wpns.size(), rank_best = -1, rank_second = -1;
@@ -3080,4 +3082,6 @@ bool Mission::isTileSolid(int x, int y, int z, int ox, int oy, int oz) {
     }
 
     return solid;
+}
+
 }

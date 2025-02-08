@@ -21,6 +21,8 @@
 
 #include "fs-kernel/model/research.h"
 
+namespace fs_knl {
+
 int Research::researchCnt = 1;
 
 /*! This is a list of multiplicator to compute current funding
@@ -267,4 +269,6 @@ bool Research::loadFromFile(fs_utl::PortableFile &infile, EResType type, const f
     updateProjection();
 
     return true;
+}
+
 }

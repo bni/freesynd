@@ -31,6 +31,8 @@
 
 #include "fs-kernel/model/sfxobject.h"
 
+namespace fs_knl {
+
 class Mission;
 class WeaponInstance;
 class PedInstance;
@@ -41,17 +43,17 @@ class PedInstance;
  */
 class Shot {
  public:
-    explicit Shot(const fs_dmg::DamageToInflict &dmg) {
+    explicit Shot(const DamageToInflict &dmg) {
         dmg_ = dmg;
     }
     virtual ~Shot() {}
 
     virtual void inflictDamage(Mission *pMission) = 0;
 
-    fs_dmg::DamageToInflict & getAttributes() { return dmg_; }
+    DamageToInflict & getAttributes() { return dmg_; }
  protected:
     //! The damage that will be inflicted by this shot
-    fs_dmg::DamageToInflict dmg_;
+    DamageToInflict dmg_;
 };
 
 /*!
@@ -62,7 +64,7 @@ class Shot {
 class InstantImpactShot : public Shot {
  public:
     explicit InstantImpactShot(
-        const fs_dmg::DamageToInflict &dmg) : Shot(dmg) {}
+        const DamageToInflict &dmg) : Shot(dmg) {}
 
     void inflictDamage(Mission *pMission) override;
  private:
@@ -90,7 +92,7 @@ class Explosion : public Shot {
                                 const WorldPoint &location, double range,
                                 int dmgValue);
 
-    explicit Explosion(const fs_dmg::DamageToInflict &dmg);
+    explicit Explosion(const DamageToInflict &dmg);
 
     void inflictDamage(Mission *pMission) override;
  private:
@@ -112,7 +114,7 @@ class Explosion : public Shot {
 class ProjectileShot: public Shot {
  public:
     //! Constructor
-    explicit ProjectileShot(const fs_dmg::DamageToInflict &dmg);
+    explicit ProjectileShot(const DamageToInflict &dmg);
 
     //! Animate the shot
     virtual bool animate(int elapsed, Mission *m);
@@ -162,7 +164,7 @@ class ProjectileShot: public Shot {
 class GaussGunShot: public ProjectileShot {
  public:
     //! Constructor
-    explicit GaussGunShot(const fs_dmg::DamageToInflict &dmg);
+    explicit GaussGunShot(const DamageToInflict &dmg);
     //! Destructor
     ~GaussGunShot() {}
 
@@ -181,7 +183,7 @@ class GaussGunShot: public ProjectileShot {
 class FlamerShot: public ProjectileShot {
  public:
     //! Constructor
-    explicit FlamerShot(Mission *pMission, const fs_dmg::DamageToInflict &dmg);
+    explicit FlamerShot(Mission *pMission, const DamageToInflict &dmg);
     //! Desctructor
     ~FlamerShot();
 
@@ -193,5 +195,7 @@ class FlamerShot: public ProjectileShot {
     //! The flame that represents the shot
     SFXObject *pFlame_;
 };
+
+}
 
 #endif  // MODEL_SHOT_H_

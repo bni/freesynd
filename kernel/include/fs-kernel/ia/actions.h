@@ -26,13 +26,14 @@
 #include "fs-kernel/model/path.h"
 #include "fs-kernel/model/static.h"
 
+namespace fs_knl {
+
 class Mission;
 class PedInstance;
 class WeaponInstance;
 class Vehicle;
 class GenericCar;
 class TrainHead;
-
 
 /*!
  * The Action class is an abstract class representing an action that a ped can do
@@ -569,13 +570,13 @@ protected:
 class HitAction : public MovementAction {
 public:
     //! Constructor of the class
-    HitAction(fs_dmg::DamageToInflict &d);
+    HitAction(DamageToInflict &d);
 
     //! HitAction cannot be suspended
     bool suspend([[maybe_unused]] PedInstance *pPed) { return false; }
 protected:
     //! Stores the damage received
-    fs_dmg::DamageToInflict damage_;
+    DamageToInflict damage_;
 };
 
 /*!
@@ -584,7 +585,7 @@ protected:
 class FallDeadHitAction : public HitAction {
 public:
     //!
-    FallDeadHitAction(fs_dmg::DamageToInflict &d);
+    FallDeadHitAction(DamageToInflict &d);
 protected:
     bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 };
@@ -596,7 +597,7 @@ protected:
 class RecoilHitAction : public HitAction {
 public:
     //!
-    RecoilHitAction(fs_dmg::DamageToInflict &d);
+    RecoilHitAction(DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
     bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
@@ -608,7 +609,7 @@ protected:
 class LaserHitAction : public HitAction {
 public:
     //!
-    LaserHitAction(fs_dmg::DamageToInflict &d);
+    LaserHitAction(DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
     bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
@@ -621,7 +622,7 @@ protected:
 class WalkBurnHitAction : public HitAction {
 public:
     //!
-    WalkBurnHitAction(fs_dmg::DamageToInflict &d);
+    WalkBurnHitAction(DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
     bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
@@ -649,7 +650,7 @@ protected:
 class PersuadedHitAction : public HitAction {
 public:
     //!
-    PersuadedHitAction(fs_dmg::DamageToInflict &d);
+    PersuadedHitAction(DamageToInflict &d);
 protected:
     void doStart(Mission *pMission, PedInstance *pPed);
     bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
@@ -696,7 +697,7 @@ public:
     void setAimedAt(const WorldPoint &aimedAt);
 protected:
     //! Fills the ShotAttributes with values
-    void fillDamageDesc(PedInstance *pShooter, WeaponInstance *pWeapon, fs_dmg::DamageToInflict &dmg);
+    void fillDamageDesc(PedInstance *pShooter, WeaponInstance *pWeapon, DamageToInflict &dmg);
 protected:
     //! Where the player aimed with the mouse
     WorldPoint aimedAt_;
@@ -746,4 +747,5 @@ protected:
 
 };
 
+}
 #endif // IA_ACTIONS_H_

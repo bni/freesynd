@@ -32,7 +32,7 @@
 #include "fs-kernel/model/ped.h"
 #include "fs-kernel/model/leveldata.h"
 
-
+namespace fs_knl {
 /*!
  * Pedestrians manager class.
  */
@@ -58,4 +58,5 @@ protected:
     void initCriminal(PedInstance *pPed);
 };
 
+}
 #endif

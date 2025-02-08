@@ -28,6 +28,8 @@
 #include "fs-engine/gfx/cp437.h"
 #include "fs-kernel/model/map.h"
 
+namespace fs_knl {
+
 const int MissionBriefing::kMaxInfos = MAX_INFOS;
 const int MissionBriefing::kMaxEnht = MAX_ENHT;
 
@@ -191,4 +193,6 @@ void MissionBriefing::init_minimap(Map *p_map, LevelData::LevelDataAll &level_da
  */
 uint8 MissionBriefing::getMinimapOverlay(int x, int y) {
     return minimap_overlay_[x + y * p_minimap_->max_x()];
+}
+
 }

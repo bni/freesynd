@@ -28,6 +28,8 @@
 #include "fs-engine/gfx/tile.h"
 #include "fs-kernel/model/map.h"
 
+namespace fs_knl {
+
 MapObject::MapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
     size_x_(1), size_y_(1), size_z_(2),
     frame_(0), elapsed_carry_(0),
@@ -492,4 +494,6 @@ bool ShootableMovableMapObject::addOffsetToPosition(int nOffX, int nOffY)
     }
 
     return changed;
+}
+
 }

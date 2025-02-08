@@ -29,6 +29,7 @@
 #include <iostream>
 #include <sstream>
 
+namespace fs_knl {
 /*!
  * This a convenient structure to store a position
  * in map tile coordinates.
@@ -166,4 +167,5 @@ public:
     }
 };
 
+}
 #endif // MODEL_POSITION_H_

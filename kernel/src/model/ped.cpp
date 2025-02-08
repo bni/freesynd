@@ -35,6 +35,8 @@
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/ia/behaviour.h"
 
+namespace fs_knl {
+
 //*************************************
 // Constant definition
 //*************************************
@@ -633,8 +635,8 @@ void PedInstance::commitSuicide() {
         Explosion::createExplosion(g_missionCtrl.mission(), this, 512.0, 16);
     } else {
         // else he just shoot himself
-        fs_dmg::DamageToInflict dit;
-        dit.dtype = fs_dmg::kDmgTypeBullet;
+        DamageToInflict dit;
+        dit.dtype = kDmgTypeBullet;
         dit.d_owner = this;
         // force damage value to agent health so he's killed at once
         dit.dvalue = PedInstance::kAgentMaxHealth;
@@ -1208,7 +1210,7 @@ bool PedInstance::handleDrawnAnim(int elapsed) {
  * Return the damage after applying reduction of Mod protection.
  * \param d Damage description
  */
-int PedInstance::getRealDamage(fs_dmg::DamageToInflict &d) {
+int PedInstance::getRealDamage(DamageToInflict &d) {
     // TODO : implement
     return d.dvalue;
 }
@@ -1217,7 +1219,7 @@ int PedInstance::getRealDamage(fs_dmg::DamageToInflict &d) {
  * Method called when object is hit by a weapon shot.
  * \param d Damage description
  */
-void PedInstance::handleHit(fs_dmg::DamageToInflict &d) {
+void PedInstance::handleHit(DamageToInflict &d) {
     if (health_ > 0) {
         decreaseHealth(getRealDamage(d));
 
@@ -1236,25 +1238,25 @@ void PedInstance::handleHit(fs_dmg::DamageToInflict &d) {
  * \param d Damage description
  * \return true if Ped has died
  */
-bool PedInstance::handleDeath(Mission *pMission, fs_dmg::DamageToInflict &d) {
+bool PedInstance::handleDeath(Mission *pMission, DamageToInflict &d) {
     if (health_ == 0) {
         clearDestination();
         switchActionStateTo(PedInstance::pa_smDead);
 
         switch (d.dtype) {
-            case fs_dmg::kDmgTypeBullet:
+            case kDmgTypeBullet:
                 setDrawnAnim(PedInstance::ad_DieAnim);
                 dropAllWeapons();
                 break;
-            case fs_dmg::kDmgTypeLaser:
+            case kDmgTypeLaser:
                 if (is_our_) {
                     setDrawnAnim(PedInstance::ad_DeadAgentAnim);
                 } else {
                     setDrawnAnim(PedInstance::ad_NoAnimation);
                 }
                 break;
-            case fs_dmg::kDmgTypeExplosion:
-            case fs_dmg::kDmgTypeBurn:
+            case kDmgTypeExplosion:
+            case kDmgTypeBurn:
                 if (hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2) &&
                     d.d_owner != this) {
                     setDrawnAnim(PedInstance::ad_DieAnim);
@@ -1711,4 +1713,6 @@ void PedInstance::dropPersuadedFromCar(Vehicle *pCar) {
             // default action is to follow owner
             (*it)->setCurrentActionWithSource(Action::kActionDefault);
     }
+}
+
 }

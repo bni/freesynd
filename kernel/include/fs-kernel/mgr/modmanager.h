@@ -33,6 +33,8 @@
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 
+namespace fs_knl {
+
 /*!
  * Modifications manager class.
  */
@@ -75,6 +77,8 @@ protected:
     VectorModel<Mod *> mods_;
 };
 
-#define g_modMgr    ModManager::singleton()
+}
+
+#define g_modMgr    fs_knl::ModManager::singleton()
 
 #endif

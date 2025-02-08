@@ -30,6 +30,8 @@
 
 #include "fs-engine/appcontext.h"
 
+namespace fs_knl {
+
 ModManager::ModManager()
 {
 }
@@ -294,3 +296,4 @@ Mod* ModManager::getHighestVersion(Mod::EModType mt)
     return pMod;
 }
 
+}

@@ -23,6 +23,7 @@
 #include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/model/ped.h"
 
+namespace fs_knl {
 
 //! Default constructor
 Squad::Squad() {
@@ -105,4 +106,6 @@ void Squad::getPositionInSquadFormation(size_t slotId, TilePoint *pPosition) {
     //this should be removed if non-tile position needed
     pPosition->ox = 63 + 128 * (slotId % 2);
     pPosition->oy = 63 + 128 * (slotId >> 1);
+}
+
 }

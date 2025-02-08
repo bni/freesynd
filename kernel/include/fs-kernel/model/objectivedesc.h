@@ -27,6 +27,8 @@
 #include "fs-utils/common.h"
 #include "ped.h"
 
+namespace fs_knl {
+
 /*!
  * Defines all possible status for the current objective.
  */
@@ -263,5 +265,7 @@ protected:
 private:
     std::vector <PedInstance *> pedsToEvacuate;
 };
+
+}
 
 #endif // MODEL_OBJECTIVEDESC_H

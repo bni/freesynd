@@ -29,6 +29,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace fs_knl {
+
 int Agent::agentCnt = 1;
 
 /*!
@@ -107,4 +109,6 @@ bool Agent::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersi
     int health = infile.read32();
 
     return true;
+}
+
 }

@@ -25,6 +25,7 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/position.h"
 
+namespace fs_knl {
 
     class floodPointDesc {
     public:
@@ -105,6 +106,8 @@
         uint16_t indxs;
         uint16_t n;
     } lvlNodesDesc;
+
+}
 
 #endif
 

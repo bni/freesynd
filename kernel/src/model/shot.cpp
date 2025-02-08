@@ -32,6 +32,8 @@
 #include "fs-kernel/model/ped.h"
 #include "fs-kernel/model/vehicle.h"
 
+namespace fs_knl {
+
 void InstantImpactShot::inflictDamage(Mission *pMission) {
     WorldPoint originLocW(dmg_.d_owner->position()); // origin of shooting
     /*printf("Origin loc %d %d %d\n", originLocW.x, originLocW.y, originLocW.z);*/
@@ -233,7 +235,7 @@ void Explosion::createExplosion(Mission *pMission, ShootableMapObject *pOwner, d
 }
 
 void Explosion::createExplosion(Mission *pMission, ShootableMapObject *pOwner, const WorldPoint &location, double range, int dmgValue) {
-    fs_dmg::DamageToInflict dmg;
+    DamageToInflict dmg;
     if (pOwner && pOwner->is(MapObject::kNatureWeapon)) {
         // Explosion is coming from a Bomb or a GaussGun
         dmg.pWeapon = dynamic_cast<WeaponInstance *>(pOwner);
@@ -243,7 +245,7 @@ void Explosion::createExplosion(Mission *pMission, ShootableMapObject *pOwner, c
     }
 
     dmg.d_owner = pOwner;
-    dmg.dtype = fs_dmg::kDmgTypeExplosion;
+    dmg.dtype = kDmgTypeExplosion;
     dmg.range = range;
     dmg.dvalue =  dmgValue;
     dmg.originLocW = location;
@@ -253,7 +255,7 @@ void Explosion::createExplosion(Mission *pMission, ShootableMapObject *pOwner, c
     explosion.inflictDamage(pMission);
 }
 
-Explosion::Explosion(const fs_dmg::DamageToInflict &dmg) : Shot(dmg) {
+Explosion::Explosion(const DamageToInflict &dmg) : Shot(dmg) {
     // GaussGun has a different animation for explosion
     if (dmg_.pWeapon && dmg_.pWeapon->isInstanceOf(Weapon::GaussGun)) {
         rngDmgAnim_ = SFXObject::sfxt_LargeFire;
@@ -401,7 +403,7 @@ void Explosion::getAllShootablesWithinRange(Mission *pMission,
     }
 }
 
-ProjectileShot::ProjectileShot(const fs_dmg::DamageToInflict &dmg) : Shot(dmg) {
+ProjectileShot::ProjectileShot(const DamageToInflict &dmg) : Shot(dmg) {
     elapsed_ = -1;
     curPosW_ = dmg.originLocW;
     currentDistance_ = 0;
@@ -555,7 +557,7 @@ bool ProjectileShot::moveProjectile(int elapsed, Mission *pMission) {
     return endMove;
 }
 
-GaussGunShot::GaussGunShot(const fs_dmg::DamageToInflict &dmg) : ProjectileShot(dmg) {
+GaussGunShot::GaussGunShot(const DamageToInflict &dmg) : ProjectileShot(dmg) {
     lastAnimDist_ = 0;
 }
 
@@ -605,7 +607,7 @@ void GaussGunShot::drawTrace(Mission *pMission) {
     }
 }
 
-FlamerShot::FlamerShot(Mission *pMission, const fs_dmg::DamageToInflict &dmg) :
+FlamerShot::FlamerShot(Mission *pMission, const DamageToInflict &dmg) :
         ProjectileShot(dmg) {
     // We create a SFXObjet that we keep in memory to updateits position
     pFlame_ = new SFXObject(pMission->get_map(),
@@ -646,4 +648,4 @@ void FlamerShot::inflictDamage(Mission *pMission) {
         }
     }
 }
-
+}

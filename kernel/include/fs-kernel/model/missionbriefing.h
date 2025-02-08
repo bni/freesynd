@@ -26,6 +26,8 @@
 #include "fs-utils/common.h"
 #include "fs-kernel/model/leveldata.h"
 
+namespace fs_knl {
+
 #define MAX_INFOS   10
 #define MAX_ENHT    10
 
@@ -121,4 +123,5 @@ class MissionBriefing {
     uint8 minimap_overlay_[128*128];
 };
 
+}
 #endif  // CORE_MISSIONBRIEFING_H_

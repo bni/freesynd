@@ -33,6 +33,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/io/configfile.h"
 
+namespace fs_knl {
+
 WeaponManager::WeaponManager() {
     all_game_weapons_.reserve(18);
 }
@@ -315,3 +317,4 @@ bool WeaponManager::checkDmgTypeCanShootNonStrict(uint32_t dmg, bool &can_shoot)
 
 }
 
+}

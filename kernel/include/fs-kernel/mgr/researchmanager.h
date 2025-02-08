@@ -31,7 +31,7 @@
 #include "fs-kernel/mgr/weaponmanager.h"
 #include "fs-kernel/mgr/modmanager.h"
 
-
+namespace fs_knl {
 /*!
  * This class manages all research functionality.
  */
@@ -91,4 +91,5 @@ protected:
     ModManager *pModManager_;
 };
 
+}
 #endif //RESEARCHMANAGER_H

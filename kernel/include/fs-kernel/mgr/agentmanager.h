@@ -31,6 +31,8 @@
 #include "fs-utils/misc/singleton.h"
 #include "fs-kernel/model/agent.h"
 
+namespace fs_knl {
+
 extern const char * const g_AgentNames[];
 extern const int g_NumAgentNames;
 
@@ -132,6 +134,7 @@ protected:
     ModManager *pModManager_;
 };
 
-#define g_agentMgr    AgentManager::singleton()
+}
+#define g_agentMgr    fs_knl::AgentManager::singleton()
 
 #endif

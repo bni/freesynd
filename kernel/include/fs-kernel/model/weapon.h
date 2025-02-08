@@ -36,6 +36,8 @@
 #include "fs-utils/io/configfile.h"
 #include "fs-utils/misc/timer.h"
 
+namespace fs_knl {
+
 class FlamerShot;
 class PedInstance;
 
@@ -124,7 +126,7 @@ public:
     }
 
     WeaponAnimIndex index() { return idx_; }
-    fs_dmg::DamageType dmgType() { return dmg_type_; }
+    DamageType dmgType() { return dmg_type_; }
 
     bool operator==(Weapon weapon) { return this->type_ == weapon.getType(); }
 
@@ -240,7 +242,7 @@ protected:
     /*!Rank is used to order shooting weapons by value.*/
     int rank_;
     WeaponType type_;
-    fs_dmg::DamageType dmg_type_;
+    DamageType dmg_type_;
     int ammo_per_shot_;
     //! time weapon uses to do a single shot
     uint32_t time_for_shot_;
@@ -319,7 +321,7 @@ public:
     bool doesDmgNonStrict(uint32_t dmg_type) {
         return (pWeaponClass_->dmgType() & dmg_type) != 0;
     }
-    fs_dmg::DamageType dmgType() {
+    DamageType dmgType() {
         return pWeaponClass_->dmgType();
     }
 
@@ -347,10 +349,10 @@ public:
     bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
-    void handleHit(fs_dmg::DamageToInflict & d);
+    void handleHit(DamageToInflict & d);
 
     //! Use weapon
-    void fire(Mission *pMission, fs_dmg::DamageToInflict &dmg, uint32_t elapsed);
+    void fire(Mission *pMission, DamageToInflict &dmg, uint32_t elapsed);
 
     bool consumeAmmoForEnergyShield(uint32_t elapsed);
 
@@ -373,5 +375,7 @@ protected:
 
     FlamerShot *pFlamerShot_;
 };
+
+}
 
 #endif

@@ -34,6 +34,7 @@
 #include "fs-kernel/model/missionbriefing.h"
 #include "fs-kernel/model/mission.h"
 
+namespace fs_knl {
 /*!
  * Mission manager class.
  * Stores information about all missions.
@@ -110,6 +111,7 @@ private:
     Mission *pMission_;
 };
 
-#define g_missionCtrl    MissionManager::singleton()
+}
+#define g_missionCtrl    fs_knl::MissionManager::singleton()
 
 #endif

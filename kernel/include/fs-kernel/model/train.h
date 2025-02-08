@@ -31,6 +31,7 @@
 
 #include "vehicle.h"
 
+namespace fs_knl {
 /*!
  * A train is composed of TrainBody chained together.
  * The train head contains the driver and moves. The other parts
@@ -92,4 +93,5 @@ private:
     void stopIfDestinationReached(const WorldPoint &destinationPt);
 };
 
+}
 #endif // MODEL_TRAIN_H_

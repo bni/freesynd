@@ -28,6 +28,8 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 
+namespace fs_knl {
+
 MapManager::MapManager(fs_eng::TileManager *pTileManager) : pTileManager_(pTileManager)
 {
 }
@@ -105,5 +107,4 @@ bool MapManager::loadPalette(int paletteId) {
     return pTileManager_->setPalette(paletteId);
 }
 
-
-
+}

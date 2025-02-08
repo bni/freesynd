@@ -31,6 +31,8 @@
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/ped.h"
 
+namespace fs_knl {
+
 const int Static::kStaticOrientation1 = 0;
 const int Static::kStaticOrientation2 = 2;
 
@@ -654,8 +656,8 @@ bool LargeDoor::animate(uint32_t elapsed)
                     it != found_peds_mid.end(); ++it )
                 {
                     pPed = *it;
-                    fs_dmg::DamageToInflict d;
-                    d.dtype = fs_dmg::kDmgTypeCollision;
+                    DamageToInflict d;
+                    d.dtype = kDmgTypeCollision;
                     d.d_owner = NULL;
                     d.dvalue = 1024;
                     d.ddir = -1;
@@ -890,9 +892,9 @@ bool Tree::animate(uint32_t elapsed) {
  * Implementation for the Tree. Tree burns only when hit by laser of fire.
  * \param d Damage information
  */
-void Tree::handleHit(fs_dmg::DamageToInflict &d) {
+void Tree::handleHit(DamageToInflict &d) {
     if (isAlive() &&
-        (d.dtype == fs_dmg::kDmgTypeLaser || d.dtype == fs_dmg::kDmgTypeBurn || d.dtype == fs_dmg::kDmgTypeExplosion)) {
+        (d.dtype == kDmgTypeLaser || d.dtype == kDmgTypeBurn || d.dtype == kDmgTypeExplosion)) {
         decreaseHealth(d.dvalue);
         if (isDead()) {
             state_ = Static::stttree_Burning;
@@ -928,9 +930,9 @@ void WindowObj::draw(const Point2D &screenPos)
  * Implementation for the Tree. Tree burns only when hit by laser of fire.
  * \param d Damage information
  */
-void WindowObj::handleHit(fs_dmg::DamageToInflict &d) {
+void WindowObj::handleHit(DamageToInflict &d) {
     if (isAlive() &&
-        (d.dtype == fs_dmg::kDmgTypeBullet || d.dtype == fs_dmg::kDmgTypeExplosion)) {
+        (d.dtype == kDmgTypeBullet || d.dtype == kDmgTypeExplosion)) {
         decreaseHealth(d.dvalue);
         if (isDead()) {
             state_ = Static::sttwnd_Breaking;
@@ -1017,9 +1019,9 @@ bool Semaphore::animate(uint32_t elapsed) {
  * Implementation for the Semaphore.
  * \param d Damage information
  */
-void Semaphore::handleHit(fs_dmg::DamageToInflict &d) {
+void Semaphore::handleHit(DamageToInflict &d) {
     if (isAlive() &&
-        (d.dtype == fs_dmg::kDmgTypeLaser || d.dtype == fs_dmg::kDmgTypeExplosion)) {
+        (d.dtype == kDmgTypeLaser || d.dtype == kDmgTypeExplosion)) {
         decreaseHealth(d.dvalue);
         if (isDead()) {
             state_ = Static::sttsem_Damaged;
@@ -1137,3 +1139,4 @@ bool AnimWindow::animate(uint32_t elapsed)
     return false;
 }
 
+}

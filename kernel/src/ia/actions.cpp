@@ -36,7 +36,7 @@
 #include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/mission.h"
 
-
+namespace fs_knl {
 //*************************************
 // Constant definition
 //*************************************
@@ -765,7 +765,7 @@ bool FireWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unus
     return true;
 }
 
-HitAction::HitAction(fs_dmg::DamageToInflict &d) :
+HitAction::HitAction(DamageToInflict &d) :
 MovementAction(kActTypeHit) {
     damage_.aimedLocW = d.aimedLocW;
     damage_.dtype = d.dtype;
@@ -775,7 +775,7 @@ MovementAction(kActTypeHit) {
     damage_.pWeapon = d.pWeapon;
 }
 
-FallDeadHitAction::FallDeadHitAction(fs_dmg::DamageToInflict &d) :
+FallDeadHitAction::FallDeadHitAction(DamageToInflict &d) :
 HitAction(d) {
     targetState_ = PedInstance::pa_smNone;
 }
@@ -794,7 +794,7 @@ bool FallDeadHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pM
     return true;
 }
 
-RecoilHitAction::RecoilHitAction(fs_dmg::DamageToInflict &d) :
+RecoilHitAction::RecoilHitAction(DamageToInflict &d) :
 HitAction(d) {
     targetState_ = PedInstance::pa_smHit;
 }
@@ -826,7 +826,7 @@ bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMis
     return true;
 }
 
-LaserHitAction::LaserHitAction(fs_dmg::DamageToInflict &d) :
+LaserHitAction::LaserHitAction(DamageToInflict &d) :
 HitAction(d) {
     targetState_ = PedInstance::pa_smHitByLaser;
 }
@@ -858,7 +858,7 @@ bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMiss
     return true;
 }
 
-WalkBurnHitAction::WalkBurnHitAction(fs_dmg::DamageToInflict &d) :
+WalkBurnHitAction::WalkBurnHitAction(DamageToInflict &d) :
 HitAction(d),burnTimer_(kTimeToWalkBurning) {
     targetState_ = PedInstance::pa_smWalkingBurning;
 }
@@ -897,7 +897,7 @@ bool WalkBurnHitAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstan
     return true;
 }
 
-PersuadedHitAction::PersuadedHitAction(fs_dmg::DamageToInflict &d) :
+PersuadedHitAction::PersuadedHitAction(DamageToInflict &d) :
 HitAction(d) {
     targetState_ = PedInstance::pa_smHitByPersuadotron;
     warnBehaviour_ = true;
@@ -953,7 +953,7 @@ bool ShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed
         // Turn to target
         pPed->setDirectionTowardPosition(aimedAt_);
         // Shoot
-        fs_dmg::DamageToInflict dmg;
+        DamageToInflict dmg;
         fillDamageDesc(pPed, pWeapon_, dmg);
         pWeapon_->playSound();
         pWeapon_->fire(pMission, dmg, elapsed);
@@ -988,7 +988,7 @@ bool ShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed
  */
 void ShootAction::fillDamageDesc(PedInstance *pShooter,
                                     WeaponInstance *pWeapon,
-                                    fs_dmg::DamageToInflict &dmg) {
+                                    DamageToInflict &dmg) {
     dmg.pWeapon = pWeapon;
     dmg.dtype = pWeapon->getClass()->dmgType();
     dmg.dvalue =  pWeapon->getClass()->damagePerShot();
@@ -1055,7 +1055,7 @@ bool AutomaticShootAction::execute(uint32_t elapsed, Mission *pMission, PedInsta
             stop();
         } else if (firstTime || fireRateTimer_.update(elapsed)) {
             pPed->setDirectionTowardPosition(aimedAt_);
-            fs_dmg::DamageToInflict dmg;
+            DamageToInflict dmg;
             fillDamageDesc(pPed, pWeapon_, dmg);
             pWeapon_->playSound();
             pWeapon_->fire(pMission, dmg, elapsed);
@@ -1102,7 +1102,7 @@ bool UseMedikitAction::execute(uint32_t elapsed, Mission *pMission, PedInstance 
             setFailed();
         } else {
             pWeapon_->playSound();
-            fs_dmg::DamageToInflict dmg;
+            DamageToInflict dmg;
             dmg.d_owner = pPed;
             pWeapon_->fire(pMission, dmg, elapsed);
             update = true;
@@ -1135,7 +1135,7 @@ bool UseEnergyShieldAction::execute(uint32_t elapsed, Mission *pMission, PedInst
             return false;
         } else {
             //pWeapon_->playSound();
-            fs_dmg::DamageToInflict dmg;
+            DamageToInflict dmg;
             pWeapon_->fire(pMission, dmg, elapsed);
         }
     } else if (status_ == kActStatusRunning) {
@@ -1155,4 +1155,6 @@ void UseEnergyShieldAction::stop() {
         pPed->setEnergyActivated(false);
         setSucceeded();
     }
+}
+
 }

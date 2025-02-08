@@ -37,6 +37,8 @@
 #include "fs-kernel/mgr/pedmanager.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 
+namespace fs_knl {
+
 /*!
  * Offset in the game data from the start to find the scenario section.
  */
@@ -982,4 +984,6 @@ void MissionManager::createObjectives(const LevelData::LevelDataAll &level_data,
 
     // Clear temp list
     peds_evacuate.clear();
+}
+
 }

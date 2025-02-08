@@ -31,6 +31,8 @@
 #include "fs-kernel/mgr/weaponmanager.h"
 #include "fs-kernel/mgr/modmanager.h"
 
+namespace fs_knl {
+
 const char * const g_AgentNames[] = {
     "AFSHAR",
     "ARNOLD",
@@ -341,4 +343,6 @@ int AgentManager::getSquadSlotForAgent(Agent *pAgent) {
         }
     }
     return -1;
+}
+
 }
