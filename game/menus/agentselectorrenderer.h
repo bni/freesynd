@@ -60,7 +60,7 @@ public:
     //! Check if player has clicked on a agent selector
     bool hasClickedOnAgentSelector(int x, int y, SelectorEvent & evt);
     //! Renders the agent's selectors
-    void render(SquadSelection & selection, Squad * pSquad, const fs_eng::Palette &palette);
+    void render(SquadSelection & selection, fs_knl::Squad * pSquad, const fs_eng::Palette &palette);
 
     //! gets percentage for any x coord
     int getPercentageAnyX(size_t agent, int x) {
@@ -134,7 +134,7 @@ private:
         return (int)(((float)offset / (float) kIpaBarWidth) * 100.0);
     }
 
-    void drawSelectorForAgent(size_t agentSlot, PedInstance *pAgent, bool isSelected, const fs_eng::Palette &palette);
+    void drawSelectorForAgent(size_t agentSlot, fs_knl::PedInstance *pAgent, bool isSelected, const fs_eng::Palette &palette);
     
 private:
     static const int kIpaBarWidth;

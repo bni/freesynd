@@ -39,11 +39,11 @@ SquadSelection::SquadSelection() {
  * Pre existing selection has been cleared.
  * \param pSquad The current squad.
  */
-void SquadSelection::setSquad(Squad *pSquad) {
+void SquadSelection::setSquad(fs_knl::Squad *pSquad) {
     clear();
     pSquad_ = pSquad;
 
-    for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
         // try to select agent. if true means agent has been selected
         if (selectAgent(i, false)) {
             break;
@@ -65,7 +65,7 @@ void SquadSelection::clear() {
 size_t SquadSelection::size() {
     size_t agents = 0;
 
-    for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
         if (isAgentSelected(i)) {
             agents++;
         }
@@ -104,8 +104,8 @@ bool SquadSelection::selectAgent(size_t agentNo, bool addToGroup) {
  * Deselects an agent. Called when an agent died.
  * \param p_ped The agent to deselect.
  */
-void SquadSelection::deselectAgent(PedInstance *p_ped) {
-    for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
+void SquadSelection::deselectAgent(fs_knl::PedInstance *p_ped) {
+    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
         if (pSquad_->member(i) == p_ped) {
             selected_agents_ &= ~(1 << i);
             // check if leader was deselected
@@ -122,7 +122,7 @@ void SquadSelection::deselectAgent(PedInstance *p_ped) {
 void SquadSelection::selectAllAgents(bool b_selectAll) {
     if (b_selectAll) {
         // Select all agents
-        for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
+        for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
             if (isAgentSelectable(i)) {
                 selected_agents_ |= (1 << i);
             }
@@ -137,7 +137,7 @@ void SquadSelection::selectAllAgents(bool b_selectAll) {
  * Returns true if agent is active and alive.
  */
 bool SquadSelection::isAgentSelectable(size_t agentNo) {
-    PedInstance *pPed = pSquad_->member(agentNo);
+    fs_knl::PedInstance *pPed = pSquad_->member(agentNo);
     return  pPed && pPed->isAlive();
 }
 
@@ -149,7 +149,7 @@ void SquadSelection::checkLeader(size_t agentNo) {
     if (agentNo == leader_) {
         // The leader has been deselected
         // find another leader among the remaining selection
-        for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
+        for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
             if (isAgentSelectable(i) && leader_ != i) {
                 leader_ = i;
                 break;
@@ -162,11 +162,11 @@ void SquadSelection::checkLeader(size_t agentNo) {
  * Deselects the leader selected weapon and for the other agents, it depends
  * on the leader's weapon.
  */
-void SquadSelection::deselectWeaponOfSameCategory(Weapon *pWeaponFromLeader) {
+void SquadSelection::deselectWeaponOfSameCategory(fs_knl::Weapon *pWeaponFromLeader) {
     bool categoryShooting = pWeaponFromLeader->canShoot();
     for (SquadSelection::Iterator it = begin(); it != end(); ++it) {
-        PedInstance *pAgent = *it;
-        WeaponInstance *pWeaponToDeselect = pAgent->selectedWeapon();
+        fs_knl::PedInstance *pAgent = *it;
+        fs_knl::WeaponInstance *pWeaponToDeselect = pAgent->selectedWeapon();
         if (pWeaponToDeselect != NULL) {
             if (pAgent == leader() ||
                 (categoryShooting && pWeaponToDeselect->getClass()->canShoot()) ||
@@ -185,12 +185,12 @@ void SquadSelection::deselectWeaponOfSameCategory(Weapon *pWeaponFromLeader) {
  * \param apply_to_all In case of Medikit, all selected agents must use one.
  */
 void SquadSelection::selectWeaponFromLeader(uint8_t weapon_idx, bool applySelectionToAll) {
-    PedInstance *pLeader = leader();
-    WeaponInstance *pLeaderWeapon = pLeader->weapon(weapon_idx);
+    fs_knl::PedInstance *pLeader = leader();
+    fs_knl::WeaponInstance *pLeaderWeapon = pLeader->weapon(weapon_idx);
 
     for (SquadSelection::Iterator it = begin(); it != end(); ++it)
     {
-        PedInstance *ped = *it;
+        fs_knl::PedInstance *ped = *it;
         ped->stopUsingWeapon();
         if (pLeader == ped) {
             // Forces selection of the weapon for the leader
@@ -210,13 +210,13 @@ void SquadSelection::selectWeaponFromLeader(uint8_t weapon_idx, bool applySelect
  * \param addAction True to add the action at the end of the list of action,
  * false to set as the only action.
  */
-void SquadSelection::pickupWeapon(WeaponInstance *pWeapon, bool addAction) {
+void SquadSelection::pickupWeapon(fs_knl::WeaponInstance *pWeapon, bool addAction) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it)
     {
-        PedInstance *pAgent = *it;
+        fs_knl::PedInstance *pAgent = *it;
         // Agent has space in inventory
-        if (pAgent->numWeapons() < WeaponHolder::kMaxHoldedWeapons) {
-            MovementAction * pActions = pAgent->createActionPickup(pWeapon);
+        if (pAgent->numWeapons() < fs_knl::WeaponHolder::kMaxHoldedWeapons) {
+            fs_knl::MovementAction * pActions = pAgent->createActionPickup(pWeapon);
             pAgent->addMovementAction(pActions, addAction);
 
             break;
@@ -229,10 +229,10 @@ void SquadSelection::pickupWeapon(WeaponInstance *pWeapon, bool addAction) {
  * This action replaces all actions in the agents list.
  * \param pPed The ped to follow
  */
-void SquadSelection::followPed(PedInstance *pPed) {
+void SquadSelection::followPed(fs_knl::PedInstance *pPed) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it)
     {
-        PedInstance *pAgent = *it;
+        fs_knl::PedInstance *pAgent = *it;
         if (!pAgent->inVehicle()) { // Agent must not be in a vehicle
             pAgent->addActionFollowPed(pPed);
         }
@@ -248,16 +248,16 @@ void SquadSelection::followPed(PedInstance *pPed) {
  * \param addAction True to add the action at the end of the list of action,
  * false to set as the only action.
  */
-void SquadSelection::enterOrLeaveVehicle(Vehicle *pVehicle, bool addAction) {
+void SquadSelection::enterOrLeaveVehicle(fs_knl::Vehicle *pVehicle, bool addAction) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it)
     {
-        PedInstance *pAgent = *it;
+        fs_knl::PedInstance *pAgent = *it;
 
         if (pVehicle->isCar() && pAgent->inVehicle() == pVehicle) {
             // First stop the car
             if (pVehicle->speed() != 0) {
                 pVehicle->clearDestination();
-                GenericCar *pCar = dynamic_cast<GenericCar *>(pVehicle);
+                fs_knl::GenericCar *pCar = dynamic_cast<fs_knl::GenericCar *>(pVehicle);
                 pCar->getDriver()->destroyAllActions();
             }
 
@@ -266,7 +266,7 @@ void SquadSelection::enterOrLeaveVehicle(Vehicle *pVehicle, bool addAction) {
             pAgent->dropPersuadedFromCar(pVehicle);
         } else {
             // Agent is out
-            MovementAction *pAction =
+            fs_knl::MovementAction *pAction =
                 pAgent->createActionEnterVehicle(pVehicle);
             pAgent->addMovementAction(pAction, addAction);
             pAgent->informPersuadedToEnterVehicle(pVehicle);
@@ -281,16 +281,16 @@ void SquadSelection::enterOrLeaveVehicle(Vehicle *pVehicle, bool addAction) {
  * \param addAction True to add the action at the end of the list of action,
  * false to set as the only action.
  */
-void SquadSelection::moveTo(TilePoint &mapPt, bool addAction) {
+void SquadSelection::moveTo(fs_knl::TilePoint &mapPt, bool addAction) {
     size_t i=0;
     for (SquadSelection::Iterator it = begin(); it != end(); ++it, i++)
     {
-        PedInstance *pAgent = *it;
-        Vehicle *pVehicle = pAgent->inVehicle();
+        fs_knl::PedInstance *pAgent = *it;
+        fs_knl::Vehicle *pVehicle = pAgent->inVehicle();
         if (pVehicle) {
             if (pVehicle->isCar()) {
                 // Agent is in drivable vehicle
-                GenericCar *pCar = dynamic_cast<GenericCar *>(pVehicle);
+                fs_knl::GenericCar *pCar = dynamic_cast<fs_knl::GenericCar *>(pVehicle);
                 if (pCar->isDriver(pAgent))
                 {
                     int stx = mapPt.tx;
@@ -303,12 +303,12 @@ void SquadSelection::moveTo(TilePoint &mapPt, bool addAction) {
                     sty = mapPt.ty * 256 + mapPt.oy + 128 * (pVehicle->tileZ() - 1);
                     //soy = sty % 256;
                     sty = sty / 256;
-                    TilePoint posT = TilePoint(stx, sty, 0, 128, 128);
+                    fs_knl::TilePoint posT = fs_knl::TilePoint(stx, sty, 0, 128, 128);
                     pAgent->addActionDriveVehicle(pCar, posT, addAction);
                 }
             }
         } else {
-            TilePoint tmpPosT = mapPt;
+            fs_knl::TilePoint tmpPosT = mapPt;
 
             if (size() > 1) {
                 pSquad_->getPositionInSquadFormation(i, &tmpPosT);
@@ -324,9 +324,9 @@ void SquadSelection::moveTo(TilePoint &mapPt, bool addAction) {
  * Agent will shoot only if he's armed and ready to shoot.
  * \param aimedLocW Where the agent must shoot
  */
-void SquadSelection::shootAt(const WorldPoint &aimedLocW) {
+void SquadSelection::shootAt(const fs_knl::WorldPoint &aimedLocW) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it) {
-        PedInstance *pAgent = *it;
+        fs_knl::PedInstance *pAgent = *it;
         pAgent->addActionShootAt(aimedLocW);
     }
 }
@@ -339,11 +339,11 @@ void SquadSelection::shootAt(const WorldPoint &aimedLocW) {
  * \param pTarget ShootableMapObject*
  * \return bool
  */
-bool SquadSelection::isTargetInRange(Mission *pMission, ShootableMapObject *pTarget) {
+bool SquadSelection::isTargetInRange(fs_knl::Mission *pMission, fs_knl::ShootableMapObject *pTarget) {
     for (SquadSelection::Iterator it = begin(); it != end(); ++it) {
         if ((*it)->isArmed()) {
-            WorldPoint shooterPosW((*it)->position());
-            WeaponInstance *pWeapon = (*it)->selectedWeapon();
+            fs_knl::WorldPoint shooterPosW((*it)->position());
+            fs_knl::WeaponInstance *pWeapon = (*it)->selectedWeapon();
 
             uint8 blockRes = pMission->checkIfBlockersInShootingLine(
                 shooterPosW, &pTarget, NULL, false, false, pWeapon->range(), NULL, (*it));

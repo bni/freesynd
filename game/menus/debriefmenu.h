@@ -27,7 +27,6 @@
 #include "fs-engine/menus/menu.h"
 #include "fs-kernel/model/research.h"
 
-class Mission;
 
 /*!
  * Menu displaying statistics about the last mission played.
@@ -40,11 +39,11 @@ public:
     void handleRender(DirtyList &dirtyList) override;
     void handleLeave() override;
 
-    void updateStatsFields(Mission *pMission);
+    void updateStatsFields(fs_knl::Mission *pMission);
     void checkNewWeaponFound();
 
 protected:
-    void onResearchEndEvent(ResearchEndEvent *pEvt);
+    void onResearchEndEvent(fs_knl::ResearchEndEvent *pEvt);
 protected:
     /*! Id of the text widget for mission status.*/
     int txtStatusId_;

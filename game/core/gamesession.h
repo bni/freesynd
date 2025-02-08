@@ -30,6 +30,9 @@
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/io/formatversion.h"
 #include "fs-kernel/mgr/researchmanager.h"
+#include "fs-kernel/model/mission.h"
+
+//using namespace fs_knl;
 
 enum Status_Pop {
     STAT_VERY_HAPPY = 5,
@@ -88,9 +91,6 @@ struct Block {
     /*! The id to find the palette file hpal0X.dat*/
     uint8_t paletteId;
 };
-
-class Mission;
-class Agent;
 
 /*!
  * A holder for player data.

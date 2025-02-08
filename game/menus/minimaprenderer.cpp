@@ -49,7 +49,7 @@ BriefMinimapRenderer::BriefMinimapRenderer(const Point2D &screenPos) : MinimapRe
 /*!
  * Init the renderer with a new mission, zoom level and draw_enemies params.
  */
-void BriefMinimapRenderer::init(MissionBriefing *p_briefing, EZoom zoom, bool draw_enemies) {
+void BriefMinimapRenderer::init(fs_knl::MissionBriefing *p_briefing, EZoom zoom, bool draw_enemies) {
     pBriefing_ = p_briefing;
     setZoom(zoom);
     drawEnemies_ = draw_enemies;
@@ -70,7 +70,7 @@ void BriefMinimapRenderer::initMinimapLocation() {
 
     for (int x = 0; x < maxx && (!found); x++) {
         for (int y = 0; y < maxy && (!found); y++) {
-            if (pBriefing_->getMinimapOverlay(x, y) == MiniMap::kOverlayOurAgent) {
+            if (pBriefing_->getMinimapOverlay(x, y) == fs_knl::MiniMap::kOverlayOurAgent) {
                 // We found a tile with an agent on it
                 // stop searching and memorize position
                 world_.tx = x;
@@ -225,10 +225,10 @@ GamePlayMinimapRenderer::GamePlayMinimapRenderer(const Point2D &screenPos) : Min
     p_mission_ = NULL;
     handleClearSignal();
 
-    EventManager::listen<ObjectiveEndedEvent>(this, &GamePlayMinimapRenderer::onObjectiveEndedEvent);
-    EventManager::listen<MissionEndedEvent>(this, &GamePlayMinimapRenderer::onMissionEndedEvent);
-    EventManager::listen<EvacuateObjectiveStartedEvent>(this, &GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent);
-    EventManager::listen<TargetObjectiveStartedEvent>(this, &GamePlayMinimapRenderer::onTargetObjectiveStartedEvent);
+    EventManager::listen<fs_knl::ObjectiveEndedEvent>(this, &GamePlayMinimapRenderer::onObjectiveEndedEvent);
+    EventManager::listen<fs_knl::MissionEndedEvent>(this, &GamePlayMinimapRenderer::onMissionEndedEvent);
+    EventManager::listen<fs_knl::EvacuateObjectiveStartedEvent>(this, &GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent);
+    EventManager::listen<fs_knl::TargetObjectiveStartedEvent>(this, &GamePlayMinimapRenderer::onTargetObjectiveStartedEvent);
 }
 
 /*!
@@ -236,7 +236,7 @@ GamePlayMinimapRenderer::GamePlayMinimapRenderer(const Point2D &screenPos) : Min
  * \param pMission A mission.
  * \param b_scannerEnabled True if scanner is enabled -> changes zoom level.
  */
-void GamePlayMinimapRenderer::init(Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette) {
+void GamePlayMinimapRenderer::init(fs_knl::Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette) {
     p_mission_ = pMission;
     p_minimap_ = pMission->getMiniMap();
     setScannerEnabled(b_scannerEnabled);
@@ -390,7 +390,7 @@ void GamePlayMinimapRenderer::initCircleTexture(const fs_eng::Palette & palette)
  */
 void GamePlayMinimapRenderer::updateWorldPosition() {
     int halfSize = mm_maxtile_ / 2;
-    TilePoint tp = pCenter_->position();
+    fs_knl::TilePoint tp = pCenter_->position();
 
     if (tp.tx < halfSize) {
         // we're too close of the top border -> stop moving along X axis
@@ -417,17 +417,17 @@ void GamePlayMinimapRenderer::updateWorldPosition() {
     }
 }
 
-void GamePlayMinimapRenderer::onObjectiveEndedEvent([[maybe_unused]] ObjectiveEndedEvent *pEvt) {
+void GamePlayMinimapRenderer::onObjectiveEndedEvent([[maybe_unused]] fs_knl::ObjectiveEndedEvent *pEvt) {
     p_minimap_->clearTarget();
     handleClearSignal();
 }
 
-void GamePlayMinimapRenderer::onMissionEndedEvent([[maybe_unused]] MissionEndedEvent *pEvt) {
+void GamePlayMinimapRenderer::onMissionEndedEvent([[maybe_unused]] fs_knl::MissionEndedEvent *pEvt) {
     p_minimap_->clearTarget();
     handleClearSignal();
 }
 
-void GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent(EvacuateObjectiveStartedEvent *pEvt) {
+void GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent(fs_knl::EvacuateObjectiveStartedEvent *pEvt) {
     handleClearSignal();
     signalSourceLocW_.x = pEvt->evacuationPoint.x;
     signalSourceLocW_.y = pEvt->evacuationPoint.y;
@@ -456,7 +456,7 @@ void GamePlayMinimapRenderer::handleClearSignal() {
 /*!
  * Defines a signal position on the map.
  */
-void GamePlayMinimapRenderer::onTargetObjectiveStartedEvent(TargetObjectiveStartedEvent *pEvt) {
+void GamePlayMinimapRenderer::onTargetObjectiveStartedEvent(fs_knl::TargetObjectiveStartedEvent *pEvt) {
     handleClearSignal();
     // get the target current position
     p_minimap_->setTarget(pEvt->pTarget);
@@ -508,7 +508,7 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
     return true;
 }
 
-Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPosition) {
+Point2D GamePlayMinimapRenderer::mapToScreenPosition(const fs_knl::TilePoint &mapPosition) {
     return 
         {
              ((mapPosition.tx - world_.tx) * pixpertile_) + ((mapPosition.ox - world_.ox) / (256 / pixpertile_)),
@@ -519,8 +519,8 @@ Point2D GamePlayMinimapRenderer::mapToScreenPosition(const TilePoint &mapPositio
  * \param mm_x coord on the minimap in pixels
  * \param mm_y coord on the minimap in pixels
  */
-TilePoint GamePlayMinimapRenderer::minimapToMapPoint(const Point2D & minimapPt) {
-    TilePoint pt;
+fs_knl::TilePoint GamePlayMinimapRenderer::minimapToMapPoint(const Point2D & minimapPt) {
+    fs_knl::TilePoint pt;
     // I'm not sure this code is correct
     int tx = (minimapPt.x) / pixpertile_;
     int ty = (minimapPt.y) / pixpertile_;
@@ -570,7 +570,7 @@ void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
 
 void GamePlayMinimapRenderer::drawVehicles(const fs_eng::Palette & palette) {
     for (size_t i = 0; i < p_mission_->numVehicles(); i++) {
-        Vehicle *p_vehicle = p_mission_->vehicle(i);
+        fs_knl::Vehicle *p_vehicle = p_mission_->vehicle(i);
         Point2D screenPos = mapToScreenPosition(p_vehicle->position());
 
         if (isVisible(p_vehicle)) {
@@ -598,7 +598,7 @@ void GamePlayMinimapRenderer::drawWeapons(const fs_eng::Palette & palette) {
     const size_t weapon_size = 2;
     for (size_t i = 0; i < p_mission_->numWeaponsOnGround(); i++)
     {
-        WeaponInstance * w = p_mission_->weaponOnGround(i);
+        fs_knl::WeaponInstance * w = p_mission_->weaponOnGround(i);
         // we draw weapons that have no owner ie that are on the ground
         // and are not destroyed
         if (!w->isDrawable())
@@ -617,7 +617,7 @@ void GamePlayMinimapRenderer::drawWeapons(const fs_eng::Palette & palette) {
 void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
     for (size_t i = 0; i < p_mission_->numPeds(); i++)
     {
-        PedInstance *p_ped = p_mission_->ped(i);
+        fs_knl::PedInstance *p_ped = p_mission_->ped(i);
         // we are not showing dead or peds inside vehicle
         if (p_ped->isDead() || p_ped->inVehicle())
             continue;
@@ -631,8 +631,8 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
             } else {
                 switch (p_ped->type())
                 {
-                case PedInstance::kPedTypeCivilian:
-                case PedInstance::kPedTypeCriminal:
+                case fs_knl::PedInstance::kPedTypeCivilian:
+                case fs_knl::PedInstance::kPedTypeCriminal:
                     {
                         // white rect 2x2 (opaque and transparent blinking)
                         int ped_width = 2;
@@ -643,7 +643,7 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
                         }
                     break;
                     }
-                case PedInstance::kPedTypeAgent:
+                case fs_knl::PedInstance::kPedTypeAgent:
                 {
                     if (p_ped->isOurAgent())
                     {
@@ -657,12 +657,12 @@ void GamePlayMinimapRenderer::drawPedestrians(const fs_eng::Palette & palette) {
                     }
                 }
                 break;
-                case PedInstance::kPedTypePolice:
+                case fs_knl::PedInstance::kPedTypePolice:
                     {
                     drawPedCircle(screenPos, 2);
                     }
                     break;
-                case PedInstance::kPedTypeGuard:
+                case fs_knl::PedInstance::kPedTypeGuard:
                     {
                     drawPedCircle(screenPos, 3);
                     }

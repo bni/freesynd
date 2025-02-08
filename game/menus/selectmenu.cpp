@@ -111,7 +111,7 @@ void SelectMenu::drawAgentSelector(Point2D pos) {
 
 void SelectMenu::drawAgent()
 {
-    Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+    fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
     if (selected == NULL)
         return;
 
@@ -202,14 +202,14 @@ void SelectMenu::drawAgent()
 
     // draw inventory
     Point2D pos[8];
-    WeaponInstance * draw_weapons[8];
+    fs_knl::WeaponInstance * draw_weapons[8];
     for (uint8 i = 0; i < 8; ++i) {
         draw_weapons[i] = NULL;
     }
     for (int j = 0, k = 0; j < 2; ++j)
         for (int i = 0; i < 4 && (j * 4 + i < selected->numWeapons()); ++i)
         {
-            WeaponInstance *wi = selected->weapon(j * 4 + i);
+            fs_knl::WeaponInstance *wi = selected->weapon(j * 4 + i);
             if (wi == weapon_dragged_ && menu_manager_->isMouseDragged()) {
                 pos[7] = weapon_pos_;
                 draw_weapons[7] = wi;
@@ -224,10 +224,10 @@ void SelectMenu::drawAgent()
 
     // Draw weapons for the selected agent
     for (uint8_t i = 0; i < 8; ++i) {
-        WeaponInstance *wi = draw_weapons[i];
+        fs_knl::WeaponInstance *wi = draw_weapons[i];
 
         if (wi) {
-            Weapon *pWeaponClass = wi->getClass();
+            fs_knl::Weapon *pWeaponClass = wi->getClass();
             menuSprites().drawSprite(pWeaponClass->getSmallIconId(), pos[i].x, pos[i].y, false, true);
 
             if (pWeaponClass->usesAmmo()) {
@@ -314,7 +314,7 @@ void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
     }
 
     if (selectedWInstId_ > 0 && g_gameCtrl.weaponManager().isAvailable(pSelectedWeap_)) {
-        WeaponInstance *wi = g_gameCtrl.agents().squadMember(cur_agent_)->weapon(selectedWInstId_ - 1);
+        fs_knl::WeaponInstance *wi = g_gameCtrl.agents().squadMember(cur_agent_)->weapon(selectedWInstId_ - 1);
         if (wi->needsReloading()) {
             int rldCost = pSelectedWeap_->calculateReloadingCost(wi->ammoRemaining());
 
@@ -351,8 +351,8 @@ bool SelectMenu::handleBeforeShow() {
         getStatic(txtAgentId_)->setText("");
     }
 
-    for (int iAgnt=0; iAgnt<AgentManager::MAX_AGENT; iAgnt++) {
-        Agent *pAgentFromCryo = g_gameCtrl.agents().agent(iAgnt);
+    for (int iAgnt=0; iAgnt<fs_knl::AgentManager::MAX_AGENT; iAgnt++) {
+        fs_knl::Agent *pAgentFromCryo = g_gameCtrl.agents().agent(iAgnt);
         pTeamLBox_->setSquadLine(g_gameCtrl.agents().getSquadSlotForAgent(pAgentFromCryo), iAgnt);
     }
     showItemList();
@@ -369,10 +369,10 @@ void SelectMenu::handleRender(DirtyList &dirtyList) {
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
     // write team member icons and health
-    Agent *t1 = g_gameCtrl.agents().squadMember(AgentManager::kSlot1);
-    Agent *t2 = g_gameCtrl.agents().squadMember(AgentManager::kSlot2);
-    Agent *t3 = g_gameCtrl.agents().squadMember(AgentManager::kSlot3);
-    Agent *t4 = g_gameCtrl.agents().squadMember(AgentManager::kSlot4);
+    fs_knl::Agent *t1 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot1);
+    fs_knl::Agent *t2 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot2);
+    fs_knl::Agent *t3 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot3);
+    fs_knl::Agent *t4 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot4);
     if (t1) {
         if (t1->isActive()) {
             menuSprites().drawSprite(fs_eng::Sprite::MSPR_SELECT_1, 20, 84, false, true);
@@ -451,10 +451,10 @@ void SelectMenu::toggleAgent(int n)
 {
     int nactive = 0;
     // count the number of active agents
-    for (size_t i = 0; i < AgentManager::kMaxSlot; i++)
+    for (size_t i = 0; i < fs_knl::AgentManager::kMaxSlot; i++)
         if (g_gameCtrl.agents().isSquadSlotActive(i))
             nactive++;
-    Agent *a = g_gameCtrl.agents().squadMember(n);
+    fs_knl::Agent *a = g_gameCtrl.agents().squadMember(n);
     if (a) {
         // prevent from inactiving the last active agent
         if (a->isActive() && nactive == 1)
@@ -470,7 +470,7 @@ void SelectMenu::toggleAgent(int n)
 void SelectMenu::updateAcceptEnabled() {
     // Player cannot start mission if no agent has been activated
     bool found = false;
-    for (size_t i=0; i<AgentManager::kMaxSlot; i++) {
+    for (size_t i=0; i<fs_knl::AgentManager::kMaxSlot; i++) {
         if (g_gameCtrl.agents().isSquadSlotActive(i)) {
             found = true;
             break;
@@ -490,7 +490,7 @@ void SelectMenu::handleMouseMotion(Point2D point, uint32_t state)
 void SelectMenu::handleMouseUp(Point2D point, int button)
 {
     if (button == 3) {
-        Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+        fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
         if (selected == NULL)
             weapon_dragged_ = NULL;
         if (weapon_dragged_) {
@@ -511,7 +511,7 @@ void SelectMenu::handleMouseUp(Point2D point, int button)
                     }
                 }
             }
-            Agent *reciever = target != -1
+            fs_knl::Agent *reciever = target != -1
                 ? g_gameCtrl.agents().squadMember(target) : NULL;
             if (target != cur_agent_ && reciever
                 && reciever->numWeapons() < 8)
@@ -533,9 +533,9 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
     if (point.x >= 20 && point.x <= 140) {
         if (point.y >= 84 && point.y <= 150) {
             if (point.x >= 82) {
-                handleClickOnAgentSelector(AgentManager::kSlot2, button);
+                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot2, button);
             } else {
-                handleClickOnAgentSelector(AgentManager::kSlot1, button);
+                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot1, button);
             }
         }
         if (point.y > 150 && point.y < 162) {
@@ -544,15 +544,15 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
         }
         if (point.y >= 162 && point.y <= 228) {
             if (point.x >= 82) {
-                handleClickOnAgentSelector(AgentManager::kSlot4, button);
+                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot4, button);
             } else {
-                handleClickOnAgentSelector(AgentManager::kSlot3, button);
+                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot3, button);
             }
         }
     }
 
     // Checks if the user clicked on item in the current agent inventory
-    Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+    fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
     if (selected) {
         if (point.x >= 366 && point.x < 366 + 4 * 32
             && point.y >= 308 && point.y < 308 + 2 * 32)
@@ -568,7 +568,7 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
                 // 2/ computes the id of the selected weapon and selects it
                 newId++;
 
-                WeaponInstance *wi = selected->weapon(newId - 1);
+                fs_knl::WeaponInstance *wi = selected->weapon(newId - 1);
                 if (button == 3) {
                     weapon_dragged_ = wi;
                     weapon_pos_ = point;
@@ -672,11 +672,11 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
     } else if (actionId == pTeamLBox_->getId()) {
         // get the selected agent from the team listbox
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
-        Agent *pNewAgent = static_cast<Agent *> (pPair->second);
+        fs_knl::Agent *pNewAgent = static_cast<fs_knl::Agent *> (pPair->second);
 
         bool found = false;
         // check if selected agent is already part of the mission squad
-        for (size_t j = 0; j < AgentManager::kMaxSlot; j++) {
+        for (size_t j = 0; j < fs_knl::AgentManager::kMaxSlot; j++) {
             if (g_gameCtrl.agents().squadMember(j) == pNewAgent) {
                 found = true;
                 break;
@@ -704,13 +704,13 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
         showModWeaponPanel();
     } else if (actionId == pWeaponsLBox_->getId()) {
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
-        pSelectedWeap_ = static_cast<Weapon *> (pPair->second);
+        pSelectedWeap_ = static_cast<fs_knl::Weapon *> (pPair->second);
         showModWeaponPanel();
     } else if (actionId == cancelButId_) {
         showItemList();
     } else if (actionId == reloadButId_) {
-        Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
-        WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
+        fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+        fs_knl::WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
         int rldCost = pSelectedWeap_->calculateReloadingCost(wi->ammoRemaining());
 
         if (g_Session.canAfford(rldCost)) {
@@ -723,29 +723,29 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
         // Buying weapon
         if (pSelectedWeap_) {
             if (sel_all_) {
-                for (size_t n = 0; n < AgentManager::kMaxSlot; n++) {
-                    Agent *selected = g_gameCtrl.agents().squadMember(n);
+                for (size_t n = 0; n < fs_knl::AgentManager::kMaxSlot; n++) {
+                    fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(n);
                     if (selected && selected->numWeapons() < 8
                         && g_Session.canAfford(pSelectedWeap_->cost())) {
                         g_Session.decreaseMoney(pSelectedWeap_->cost());
-                        selected->addWeapon(WeaponInstance::createInstance(pSelectedWeap_));
+                        selected->addWeapon(fs_knl::WeaponInstance::createInstance(pSelectedWeap_));
                         getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
                     }
                 }
             } else {
-                Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+                fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
                 if (selected && selected->numWeapons() < 8
                     && g_Session.canAfford(pSelectedWeap_->cost())) {
                     g_Session.decreaseMoney(pSelectedWeap_->cost());
-                    selected->addWeapon(WeaponInstance::createInstance(pSelectedWeap_));
+                    selected->addWeapon(fs_knl::WeaponInstance::createInstance(pSelectedWeap_));
                     getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
                 }
             }
             needRendering();
         } else if (pSelectedMod_) {
             if (sel_all_) {
-                for (size_t n = 0; n < AgentManager::kMaxSlot; n++) {
-                    Agent *selected = g_gameCtrl.agents().squadMember(n);
+                for (size_t n = 0; n < fs_knl::AgentManager::kMaxSlot; n++) {
+                    fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(n);
                     if (selected && selected->canHaveMod(pSelectedMod_)
                         && g_Session.canAfford(pSelectedMod_->cost())) {
                         selected->addMod(pSelectedMod_);
@@ -754,7 +754,7 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
                     }
                 }
             } else {
-                Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+                fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
                 if (selected && selected->canHaveMod(pSelectedMod_)
                     && g_Session.canAfford(pSelectedMod_->cost())) {
                     selected->addMod(pSelectedMod_);
@@ -767,8 +767,8 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
 
     } else if (actionId == sellButId_ && selectedWInstId_) {
         addDirtyRect(360, 305, 135, 70);
-        Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
-        WeaponInstance *pWi = selected->removeWeaponAtIndex(selectedWInstId_ - 1);
+        fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+        fs_knl::WeaponInstance *pWi = selected->removeWeaponAtIndex(selectedWInstId_ - 1);
         g_Session.increaseMoney(pWi->getClass()->cost());
         getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
         delete pWi;
@@ -779,14 +779,14 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
 void SelectMenu::updateSelectedWeapon() {
     assert(selectedWInstId_ != 0);
 
-    Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+    fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
     if (selected == NULL) {
         tab_ = TAB_EQUIPS;
         showItemList();
         return;
     }
 
-    WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
+    fs_knl::WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
 
     // if weapon is researched it can be bought
     if (g_gameCtrl.weaponManager().isAvailable(wi->getClass())) {

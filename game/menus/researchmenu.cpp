@@ -85,7 +85,7 @@ ResearchMenu::ResearchMenu(fs_eng::MenuManager * m):
     searchTitleLblId_ = addStatic(158, 86, "", FontManager::SIZE_2, true);    // Current search title
 
     // Register for the ResearchEndEvent
-    handleResearchEnd_ = EventManager::listen<ResearchEndEvent>(this, &ResearchMenu::onResearchEndEvent);
+    handleResearchEnd_ = EventManager::listen<fs_knl::ResearchEndEvent>(this, &ResearchMenu::onResearchEndEvent);
 }
 
 ResearchMenu::~ResearchMenu() {
@@ -177,7 +177,7 @@ void ResearchMenu::showResInfo() {
         getStatic(fundMinLblId_)->setVisible(true);
         getStatic(fundMaxLblId_)->setVisible(true);
 
-        if (pSelectedRes_->getStatus() == Research::STARTED) {
+        if (pSelectedRes_->getStatus() == fs_knl::Research::STARTED) {
             showResGraph(pSelectedRes_);
         } else {
             // Show start research button only if selected research
@@ -189,7 +189,7 @@ void ResearchMenu::showResInfo() {
     }
 }
 
-void ResearchMenu::showResGraph(Research *pRes) {
+void ResearchMenu::showResGraph(fs_knl::Research *pRes) {
     redrawGraph();
     pResForGraph_ = pRes;
     getOption(researchId_)->setVisible(false);
@@ -302,10 +302,10 @@ void ResearchMenu::handleRender(DirtyList &dirtyList)
         Point2D projectedPt {pResForGraph_->getProjectedHour() + 205, 110};
 
         // draw progression
-        std::list < Research::ProgressPoint > list = pResForGraph_->getProgressList();
-        for (std::list < Research::ProgressPoint >::iterator it = list.begin();
+        std::list < fs_knl::Research::ProgressPoint > list = pResForGraph_->getProgressList();
+        for (std::list < fs_knl::Research::ProgressPoint >::iterator it = list.begin();
                 it != list.end(); it++) {
-            Research::ProgressPoint p = *it;
+            fs_knl::Research::ProgressPoint p = *it;
             Point2D nextPt {p.hours + 205, 350 - (int)(p.percentage *2.4f)};
 
             g_System.drawLine(lastPt, nextPt, getMenuManager()->kMenuColorLightGreen);
@@ -337,7 +337,7 @@ void ResearchMenu::handleAction(const int actionId, void *ctx)
     if (actionId == pFieldEquipLBox_->getId() || actionId == pFieldModsLBox_->getId()) {
         // get selected field
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
-        pSelectedRes_ = static_cast<Research *> (pPair->second);
+        pSelectedRes_ = static_cast<fs_knl::Research *> (pPair->second);
 
         // Hide list
         hideFieldList();
@@ -352,7 +352,7 @@ void ResearchMenu::handleAction(const int actionId, void *ctx)
 
     } else if (actionId == pEquipsLBox_->getId()) { // Selection of an avalaible weapon
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
-        pSelectedWeapon_ = static_cast<Weapon *> (pPair->second);
+        pSelectedWeapon_ = static_cast<fs_knl::Weapon *> (pPair->second);
         hideDetailsList();
         getOption(cancelDescId_)->setVisible(true);
 
@@ -396,7 +396,7 @@ void ResearchMenu::handleAction(const int actionId, void *ctx)
  * \return void
  *
  */
-void ResearchMenu::onResearchEndEvent(ResearchEndEvent *pEvt) {
+void ResearchMenu::onResearchEndEvent(fs_knl::ResearchEndEvent *pEvt) {
     // If current graph was for this research, make it disappear
     if (pResForGraph_ && pResForGraph_->getId() == pEvt->pResearch->getId()) {
         pResForGraph_ = NULL;

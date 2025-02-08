@@ -52,7 +52,7 @@ protected:
     void hideDetailsList();
 
     void showResInfo();
-    void showResGraph(Research *pRes);
+    void showResGraph(fs_knl::Research *pRes);
     //! Draws infos on the selected weapon
     void drawSelectedWeaponInfos(int x, int y);
     //! Draws infos on the selected mod
@@ -60,7 +60,7 @@ protected:
 
     void redrawGraph() { addDirtyRect(200, 110, 250, 250); }
 
-    void onResearchEndEvent(ResearchEndEvent *pEvt);
+    void onResearchEndEvent(fs_knl::ResearchEndEvent *pEvt);
 
 protected:
     enum ETab {
@@ -70,13 +70,13 @@ protected:
 
     ETab tab_;
     /*! Weapon selected in the Equips tab.*/
-    Weapon *pSelectedWeapon_;
+    fs_knl::Weapon *pSelectedWeapon_;
     /*! Mod selected in the Mods tab.*/
     Mod *pSelectedMod_;
     /*! Research selected from the field list*/
-    Research *pSelectedRes_;
+    fs_knl::Research *pSelectedRes_;
     /*! Research used for displaying graph.*/
-    Research *pResForGraph_;
+    fs_knl::Research *pResForGraph_;
     /*! Id of the text widget for time.*/
     int txtTimeId_;
     /*! Id of the mods toogle button.*/

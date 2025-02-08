@@ -72,10 +72,10 @@ class SquadSelection {
              */
             Iterator& operator++()
             {
-                while (idx_ < AgentManager::kMaxSlot)
+                while (idx_ < fs_knl::AgentManager::kMaxSlot)
                 {
                     idx_ += 1;
-                    if (idx_ < AgentManager::kMaxSlot && pSel_->isAgentSelected(idx_)) {
+                    if (idx_ < fs_knl::AgentManager::kMaxSlot && pSel_->isAgentSelected(idx_)) {
                         break;
                     }
                 }
@@ -94,13 +94,13 @@ class SquadSelection {
             // Return a reference to the value in the node.  I do this instead
           // of returning by value so a caller can update the value in the
           // node directly.
-          PedInstance * operator*()
+          fs_knl::PedInstance * operator*()
           {
               return (pSel_->pSquad_->member(idx_));
           }
 
           // Return the address of the value referred to.
-          PedInstance * operator->()
+          fs_knl::PedInstance * operator->()
           {
               //PedInstance * pPed = *(*this); // dereference *this to get the value
               //return (&pPed); // Return the address of the referent
@@ -120,7 +120,7 @@ class SquadSelection {
      */
     Iterator begin() {
 
-        for (size_t idx=0; idx < AgentManager::kMaxSlot; idx++)
+        for (size_t idx=0; idx < fs_knl::AgentManager::kMaxSlot; idx++)
         {
             if (isAgentSelected(idx)) {
                 return Iterator(idx, this);
@@ -145,7 +145,7 @@ class SquadSelection {
     }
 
     //! Sets the squand and selects the first active agent of the squad.
-    void setSquad(Squad *pSquad);
+    void setSquad(fs_knl::Squad *pSquad);
     //! Clear current selection
     void clear();
     //! Returns the number of selected agents
@@ -153,33 +153,33 @@ class SquadSelection {
     //! selects/deselects agent
     bool selectAgent(size_t agentNo, bool addToGroup);
     //! Force deselection of agent
-    void deselectAgent(PedInstance *p_ped);
+    void deselectAgent(fs_knl::PedInstance *p_ped);
     //! Selects/deselects all agent
     void selectAllAgents(bool b_selectAll);
     //! Returns the leader's slot
     size_t getLeaderSlot() { return leader_; }
     // Returns the leader as a PedInstance
-    PedInstance * leader() { return pSquad_->member(leader_);}
+    fs_knl::PedInstance * leader() { return pSquad_->member(leader_);}
 
     //*************************************
     // Action on multiple agents
     //*************************************
     //! Deselects all selected agents weapons
-    void deselectWeaponOfSameCategory(Weapon *pWeaponFromLeader);
+    void deselectWeaponOfSameCategory(fs_knl::Weapon *pWeaponFromLeader);
     //! Select a weapon for the leader and for all selected agents
     void selectWeaponFromLeader(uint8_t weapon_idx, bool apply_to_all);
     //! Go and pick up weapon
-    void pickupWeapon(WeaponInstance *pWeapon, bool addAction);
+    void pickupWeapon(fs_knl::WeaponInstance *pWeapon, bool addAction);
     //! Follow Ped
-    void followPed(PedInstance *pPed);
+    void followPed(fs_knl::PedInstance *pPed);
     //! Enter or leave the vehicle : do the same as leader
-    void enterOrLeaveVehicle(Vehicle *pVehicle, bool addAction);
+    void enterOrLeaveVehicle(fs_knl::Vehicle *pVehicle, bool addAction);
     //! Move selected agents to the given point
-    void moveTo(TilePoint &mapPt, bool addAction);
+    void moveTo(fs_knl::TilePoint &mapPt, bool addAction);
     //! Every selected armed agent shoot at location
-    void shootAt(const WorldPoint &aimedLocW);
+    void shootAt(const fs_knl::WorldPoint &aimedLocW);
     //! Return true if target is in range of at least one agent
-    bool isTargetInRange(Mission *pMission, ShootableMapObject *pTarget);
+    bool isTargetInRange(fs_knl::Mission *pMission, fs_knl::ShootableMapObject *pTarget);
  private:
     /*!
      * Return true if an agent can be selected :
@@ -199,7 +199,7 @@ class SquadSelection {
     size_t leader_;
     /*! A reference to the current squad so we can check the agents
      * status.*/
-    Squad  *pSquad_;
+    fs_knl::Squad  *pSquad_;
 };
 
 #endif  // MENUS_SQUADSELECTION_H_

@@ -28,10 +28,9 @@
 
 #include "fs-engine/menus/menu.h"
 #include "fs-utils/misc/timer.h"
+#include "fs-engine/menus/widget.h"
+#include "fs-kernel/model/weapon.h"
 
-class ListBox;
-class WeaponInstance;
-class Weapon;
 class Mod;
 
 /*!
@@ -92,7 +91,7 @@ protected:
     int dashOffset_;
     bool sel_all_;
     /*! Selected weapon on the weapon list.*/
-    Weapon *pSelectedWeap_;
+    fs_knl::Weapon *pSelectedWeap_;
     /*! Selected weapon instance id on the current agent inventory.*/
     int selectedWInstId_;
     /*! Selected mod on the mods list.*/
@@ -126,7 +125,7 @@ protected:
     /*! The mods list.*/
     fs_eng::ListBox *pModsLBox_;
 
-    WeaponInstance *weapon_dragged_;
+    fs_knl::WeaponInstance *weapon_dragged_;
     Point2D weapon_pos_;
 };
 

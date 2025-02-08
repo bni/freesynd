@@ -31,8 +31,7 @@
 #include "fs-kernel/model/pathsurfaces.h"
 #include "fs-kernel/model/objectivedesc.h"
 #include "fs-kernel/model/mission.h"
-
-class MissionBriefing;
+#include "fs-kernel/model/missionbriefing.h"
 
 /*!
  * Base class Renderer for minimap.
@@ -84,7 +83,7 @@ class MinimapRenderer {
     /*! Current zoom level.*/
     EZoom zoom_;
     /*! Tile coord on the map for the top left corner of the minimap.*/
-    TilePoint world_;
+    fs_knl::TilePoint world_;
     //! Top left corner of the minimap on the screen
     Point2D topLeftCornerPos_;
 };
@@ -99,7 +98,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
     //! Class Constructor.
     BriefMinimapRenderer(const Point2D &screenPos);
     //! Reset the class with a new mission
-    void init(MissionBriefing *p_briefing, EZoom zoom, bool drawEnemies);
+    void init(fs_knl::MissionBriefing *p_briefing, EZoom zoom, bool drawEnemies);
 
     //! update the class with elapsed time
     bool handleTick(uint32_t elapsed) override;
@@ -135,7 +134,7 @@ class BriefMinimapRenderer : public MinimapRenderer {
     /*! The scrolling step : depends on the zoom level.*/
     int scroll_step_;
     /*! The MissionBriefing that contains the minimap.*/
-    MissionBriefing *pBriefing_;
+    fs_knl::MissionBriefing *pBriefing_;
     /*! IF true, enemies are drawn on the minimap.*/
     bool drawEnemies_;
 };
@@ -151,14 +150,14 @@ public:
     GamePlayMinimapRenderer(const Point2D &screenPos);
 
     //! Reset the class with a new mission
-    void init(Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette);
+    void init(fs_knl::Mission *pMission, bool b_scannerEnabled, const fs_eng::Palette & palette);
 
     /*!
      * Sets the minimap center on the given object.
      * This object should be the Agent leader.
      * \param pObject The MapObject on which to center the minimap.
      */
-    void centerOn(MapObject *pObject) { pCenter_ = pObject; }
+    void centerOn(fs_knl::MapObject *pObject) { pCenter_ = pObject; }
 
     //! Tells whether scanner is on or off.
     void setScannerEnabled(bool b_enabled);
@@ -170,7 +169,7 @@ public:
     void render(const fs_eng::Palette & palette) override;
 
     //! Returns the map coordinates of the point on the minimap.
-    TilePoint minimapToMapPoint(const Point2D & minimapPt);
+    fs_knl::TilePoint minimapToMapPoint(const Point2D & minimapPt);
 
 protected:
 
@@ -212,8 +211,8 @@ protected:
      * Returns true if object is visible on the minimap
      * \param object to verify
      */
-    bool isVisible(MapObject *pObject) {
-        const TilePoint pt = pObject->position();
+    bool isVisible(fs_knl::MapObject *pObject) {
+        const fs_knl::TilePoint pt = pObject->position();
         return (pt.tx >= world_.tx &&
             pt.tx < (world_.tx + mm_maxtile_) &&
             pt.ty >= world_.ty &&
@@ -223,7 +222,7 @@ protected:
      * Returns coord of the given tile relatively
      * to the top letf corner of the minimap in pixel.
      */
-    Point2D mapToScreenPosition(const TilePoint &mapPosition);
+    Point2D mapToScreenPosition(const fs_knl::TilePoint &mapPosition);
 
     /*!
      * Returns X coord of the current real world coordinate of the signal relatively
@@ -248,10 +247,10 @@ protected:
 
     //! Clear all signals on map
     void handleClearSignal();
-    void onTargetObjectiveStartedEvent(TargetObjectiveStartedEvent *pEvt);
-    void onEvacuateObjectiveStartedEvent(EvacuateObjectiveStartedEvent *pEvt);
-    void onObjectiveEndedEvent(ObjectiveEndedEvent *pEvt);
-    void onMissionEndedEvent(MissionEndedEvent *pEvt);
+    void onTargetObjectiveStartedEvent(fs_knl::TargetObjectiveStartedEvent *pEvt);
+    void onEvacuateObjectiveStartedEvent(fs_knl::EvacuateObjectiveStartedEvent *pEvt);
+    void onObjectiveEndedEvent(fs_knl::ObjectiveEndedEvent *pEvt);
+    void onMissionEndedEvent(fs_knl::MissionEndedEvent *pEvt);
 private:
      /*! Radius of the red evacuation circle.*/
     static const int kEvacuationRadius;
@@ -265,15 +264,15 @@ private:
     static const int kCircleSpriteSize;
 
     /*! The mission that contains the minimap.*/
-    Mission *p_mission_;
+    fs_knl::Mission *p_mission_;
     /*! The minimap to display.*/
-    MiniMap *p_minimap_;
+    fs_knl::MiniMap *p_minimap_;
     //! The minimap is always centered on the lead agent
-    MapObject *pCenter_;
+    fs_knl::MapObject *pCenter_;
     /*! Coords in pixels of the cross.*/
     Point2D crossPos_;
     /*! Coords on the world map of the signal source.*/
-    WorldPoint signalSourceLocW_;
+    fs_knl::WorldPoint signalSourceLocW_;
     /*! Type of emitted signal. If NONE, no signal is emitted.*/
     ESignalType signalType_;
     /*! Radius for the signal circle.*/

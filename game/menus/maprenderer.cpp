@@ -37,7 +37,7 @@
 
 const int MapRenderer::kGameplayPanelWidth = 129;
 
-void MapRenderer::init(Mission *pMission, SquadSelection *pSelection) {
+void MapRenderer::init(fs_knl::Mission *pMission, SquadSelection *pSelection) {
     pMission_ = pMission;
     pMap_ = pMission->get_map();
     pSelection_ = pSelection;
@@ -49,7 +49,7 @@ void MapRenderer::init(Mission *pMission, SquadSelection *pSelection) {
 void MapRenderer::render(const Point2D &viewport) {
     // TODO: list of bugs to fix in rendering
     //  - Some advert panels lack a corner
-    TilePoint mtp = pMap_->screenToTilePoint(viewport.x, viewport.y);
+    fs_knl::TilePoint mtp = pMap_->screenToTilePoint(viewport.x, viewport.y);
     int sw = mtp.tx;
     int chk = fs_eng::kScreenWidth / (fs_eng::Tile::kTileWidth / 2) + 2
         + fs_eng::kScreenHeight / (fs_eng::Tile::kTileHeight / 3) + pMap_->maxZ() * 2;
@@ -110,7 +110,7 @@ void MapRenderer::render(const Point2D &viewport) {
 
                     // draw everything that's on the tile
                     if (tile_z - 1 >= 0) {
-                        TilePoint currentTile(tile_x, tile_y, tile_z - 1);
+                        fs_knl::TilePoint currentTile(tile_x, tile_y, tile_z - 1);
                         Point2D screenPos = {screen_w - cmx + fs_eng::Tile::kTileWidth / 2,
                             coord_h - viewport.y + fs_eng::Tile::kTileHeight / 3 * 2};
 
@@ -138,7 +138,7 @@ void MapRenderer::render(const Point2D &viewport) {
     DEBUG_SPEED_LOG("MapRenderer::render")
 }
 
-int MapRenderer::tileHashKey(MapObject * m) {
+int MapRenderer::tileHashKey(fs_knl::MapObject * m) {
     return tileHashKey(m->position());
 }
 
@@ -155,7 +155,7 @@ void MapRenderer::listObjectsToDraw(const Point2D &viewport) {
 
     // Include peds
     for (size_t i = 0; i < pMission_->numPeds(); i++) {
-        PedInstance *pPed = pMission_->ped(i);
+        fs_knl::PedInstance *pPed = pMission_->ped(i);
         if (pPed->isDrawable() && isObjectInsideDrawingArea(pPed, viewport)) {
             addObjectToDraw(pPed);
         }
@@ -163,7 +163,7 @@ void MapRenderer::listObjectsToDraw(const Point2D &viewport) {
 
     // vehicles
     for (size_t i = 0; i < pMission_->numVehicles(); i++) {
-        Vehicle *pVehicle = pMission_->vehicle(i);
+        fs_knl::Vehicle *pVehicle = pMission_->vehicle(i);
         if (isObjectInsideDrawingArea(pVehicle, viewport)) {
             addObjectToDraw(pVehicle);
         }
@@ -171,7 +171,7 @@ void MapRenderer::listObjectsToDraw(const Point2D &viewport) {
 
     // weapons
     for (size_t i = 0; i < pMission_->numWeaponsOnGround(); i++) {
-        WeaponInstance *pWeapon = pMission_->weaponOnGround(i);
+        fs_knl::WeaponInstance *pWeapon = pMission_->weaponOnGround(i);
         if (pWeapon->isDrawable() && isObjectInsideDrawingArea(pWeapon, viewport)) {
             addObjectToDraw(pWeapon);
         }
@@ -179,7 +179,7 @@ void MapRenderer::listObjectsToDraw(const Point2D &viewport) {
 
     // statics
     for (size_t i = 0; i < pMission_->numStatics(); i++) {
-        Static *pStatic = pMission_->statics(i);
+        fs_knl::Static *pStatic = pMission_->statics(i);
         if (isObjectInsideDrawingArea(pStatic, viewport)) {
             addObjectToDraw(pStatic);
         }
@@ -187,7 +187,7 @@ void MapRenderer::listObjectsToDraw(const Point2D &viewport) {
 
     // sfx objects
     for (size_t i = 0; i < pMission_->numSfxObjects(); i++) {
-        SFXObject *pSfx = pMission_->sfxObjects(i);
+        fs_knl::SFXObject *pSfx = pMission_->sfxObjects(i);
         if (pSfx->isDrawable() && isObjectInsideDrawingArea(pSfx, viewport)) {
             addObjectToDraw(pSfx);
         }
@@ -201,7 +201,7 @@ void MapRenderer::listObjectsToDraw(const Point2D &viewport) {
  * \return bool
  *
  */
-bool MapRenderer::isObjectInsideDrawingArea(MapObject *pObject, const Point2D &viewport) {
+bool MapRenderer::isObjectInsideDrawingArea(fs_knl::MapObject *pObject, const Point2D &viewport) {
     Point2D objectViewport;
     pMission_->get_map()->tileToScreenPoint(pObject->position(), &objectViewport);
 
@@ -220,7 +220,7 @@ bool MapRenderer::isObjectInsideDrawingArea(MapObject *pObject, const Point2D &v
  * \return int number of objects for debug
  *
  */
-int MapRenderer::drawObjectsOnTile(const TilePoint & tilePos, const Point2D &screenPos) {
+int MapRenderer::drawObjectsOnTile(const fs_knl::TilePoint & tilePos, const Point2D &screenPos) {
     int tileKey = tileHashKey(tilePos);
     int nbDrawnObjects = 0;
 
@@ -249,15 +249,15 @@ int MapRenderer::drawObjectsOnTile(const TilePoint & tilePos, const Point2D &scr
  * \return void
  *
  */
-void MapRenderer::addObjectToDraw(MapObject *pObjectToAdd) {
+void MapRenderer::addObjectToDraw(fs_knl::MapObject *pObjectToAdd) {
     int tileKey;
     ObjectToDraw *pNewEntry = pool_.getResource();
     pNewEntry->setObject(pObjectToAdd);
 
-    if (pObjectToAdd->is(MapObject::kNatureVehicle)) {
+    if (pObjectToAdd->is(fs_knl::MapObject::kNatureVehicle)) {
         // vehicle are associated with the tile just above (z+1)
         // because it is bigger than a tile so all tiles below must be drawn first
-        TilePoint vehiclePos( pObjectToAdd->position());
+        fs_knl::TilePoint vehiclePos( pObjectToAdd->position());
         vehiclePos.tz += 1;
         tileKey = tileHashKey(vehiclePos);
     } else {

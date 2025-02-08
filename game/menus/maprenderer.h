@@ -35,16 +35,8 @@
 #include "fs-engine/enginecommon.h"
 #include "fs-utils/log/log.h"
 #include "fs-kernel/model/position.h"
-
-class Mission;
-class Map;
-class MapObject;
-class Vehicle;
-class PedInstance;
-class WeaponInstance;
-class Static;
-class SFXObject;
-class SquadSelection;
+#include "fs-kernel/model/mission.h"
+#include "squadselection.h"
 
 class PoolableResource {
 public:
@@ -71,10 +63,10 @@ public:
         pNext_ = NULL;
     }
 
-    MapObject * getObject() { return pObject_; }
+    fs_knl::MapObject * getObject() { return pObject_; }
     ObjectToDraw * getNext() { return pNext_; }
 
-    void setObject(MapObject *pObj) { pObject_ = pObj; }
+    void setObject(fs_knl::MapObject *pObj) { pObject_ = pObj; }
     void setNext(ObjectToDraw *pNext) {
         pNext_ = pNext;
     }
@@ -85,7 +77,7 @@ public:
 
 
 private:
-    MapObject *pObject_;
+    fs_knl::MapObject *pObject_;
     ObjectToDraw *pNext_;
 };
 
@@ -146,7 +138,7 @@ class MapRenderer {
 public:
     MapRenderer() : pool_(10) {}
 
-    void init(Mission *pMission, SquadSelection *pSelection);
+    void init(fs_knl::Mission *pMission, SquadSelection *pSelection);
 
     void render(const Point2D &worldPos);
 
@@ -160,22 +152,22 @@ private:
      * \param tilePos
      * \return int
      */
-    static int tileHashKey(const TilePoint & tilePos) {
+    static int tileHashKey(const fs_knl::TilePoint & tilePos) {
         return tilePos.tx | (tilePos.ty << 8) | (tilePos.tz << 16);
     }
 
     //! Get the hashkey of the tile for the given object
-    static int tileHashKey(MapObject * m);
+    static int tileHashKey(fs_knl::MapObject * m);
 
     void listObjectsToDraw(const Point2D &viewport);
-    bool isObjectInsideDrawingArea(MapObject *pObject, const Point2D &viewport);
-    int drawObjectsOnTile(const TilePoint & tilePos, const Point2D &screenPos);
-    void addObjectToDraw(MapObject *pObject);
+    bool isObjectInsideDrawingArea(fs_knl::MapObject *pObject, const Point2D &viewport);
+    int drawObjectsOnTile(const fs_knl::TilePoint & tilePos, const Point2D &screenPos);
+    void addObjectToDraw(fs_knl::MapObject *pObject);
     void freeUnreleasedResources();
 
 private:
-    Mission *pMission_;
-    Map *pMap_;
+    fs_knl::Mission *pMission_;
+    fs_knl::Map *pMap_;
     SquadSelection *pSelection_;
 
     Pool<ObjectToDraw> pool_;

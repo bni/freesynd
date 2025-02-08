@@ -76,17 +76,17 @@ void initWeaponConfigFile( ConfigFile &config ) {
 
 TEST_CASE( "Weapon holder", "[kernel][weaponholder]" ) {
     fs_eng::AppContext appCtx;
-    WeaponHolder holder;
+    fs_knl::WeaponHolder holder;
     ConfigFile config;
     initWeaponConfigFile(config);
-    Weapon scannerClass(Weapon::Scanner, config);
-    Weapon energyClass(Weapon::EnergyShield, config);
-    Weapon pistolClass(Weapon::Pistol, config);
-    WeaponInstance scanner(&scannerClass, 0, nullptr);
-    WeaponInstance energy(&energyClass, 1, nullptr);
-    WeaponInstance pistol1(&pistolClass, 2, nullptr);
-    WeaponInstance pistol2(&pistolClass, 3, nullptr, 0);
-    WeaponInstance pistol3(&pistolClass, 4, nullptr);
+    fs_knl::Weapon scannerClass(fs_knl::Weapon::Scanner, config);
+    fs_knl::Weapon energyClass(fs_knl::Weapon::EnergyShield, config);
+    fs_knl::Weapon pistolClass(fs_knl::Weapon::Pistol, config);
+    fs_knl::WeaponInstance scanner(&scannerClass, 0, nullptr);
+    fs_knl::WeaponInstance energy(&energyClass, 1, nullptr);
+    fs_knl::WeaponInstance pistol1(&pistolClass, 2, nullptr);
+    fs_knl::WeaponInstance pistol2(&pistolClass, 3, nullptr, 0);
+    fs_knl::WeaponInstance pistol3(&pistolClass, 4, nullptr);
 
     SECTION( "Add and remove weapons") {
         REQUIRE( holder.numWeapons() == 0);
@@ -135,7 +135,7 @@ TEST_CASE( "Weapon holder", "[kernel][weaponholder]" ) {
         }
 
         SECTION( "Should select Energy by criteria of Medikit or shield") {
-            holder.selectMedikitOrShield(Weapon::EnergyShield);
+            holder.selectMedikitOrShield(fs_knl::Weapon::EnergyShield);
             REQUIRE( holder.isWeaponSelected(&energy) );
         }
 

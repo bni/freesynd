@@ -59,15 +59,15 @@ class GameController : public Singleton < GameController > {
     //*************************************
     // Managers
     //*************************************
-    AgentManager &agents() {
+    fs_knl::AgentManager &agents() {
         return agents_;
     }
 
-    WeaponManager &weaponManager() {
+    fs_knl::WeaponManager &weaponManager() {
         return weaponMgr_;
     }
 
-    ModManager &mods() {
+    fs_knl::ModManager &mods() {
         return mods_;
     }
 
@@ -81,11 +81,11 @@ class GameController : public Singleton < GameController > {
                             int logo, int color);
     
     //! Loads briefing for the given mission id
-    MissionBriefing *loadBriefing(int n);
+    fs_knl::MissionBriefing *loadBriefing(int n);
     //! Loads mission
     bool loadSelectedMission();
     //! Checks if mission is completed and updates game state
-    void handle_mission_end(Mission *p_mission);
+    void handle_mission_end(fs_knl::Mission *p_mission);
 
     //! Save game to a file
     bool saveGameToFile(int fileSlot, std::string name);
@@ -94,7 +94,7 @@ class GameController : public Singleton < GameController > {
 
 private:
     //! Sync the returning agents with the cryo chamber roster
-    void transferAgentToCryoChamber(Mission *pMission);
+    void transferAgentToCryoChamber(fs_knl::Mission *pMission);
     //! Simulates syndicates fighting for countries
     void simulate_enemy_moves();
     // helper method
@@ -115,15 +115,15 @@ private:
     /*!
      * Manager of agent.
      */
-    AgentManager agents_;
+    fs_knl::AgentManager agents_;
     /*! Manager of weapons.*/
-    WeaponManager weaponMgr_;
+    fs_knl::WeaponManager weaponMgr_;
     /*! Manager of mods.*/
-    ModManager mods_;
+    fs_knl::ModManager mods_;
     //! For loading tiles
     fs_eng::TileManager tileMgr_;
     /*! Manager of missions.*/
-    MissionManager missionMgr_;
+    fs_knl::MissionManager missionMgr_;
     /*! A structure to hold player information.*/
     std::unique_ptr<GameSession> session_;
 };

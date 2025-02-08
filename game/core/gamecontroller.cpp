@@ -139,7 +139,7 @@ void GameController::change_user_infos(const char *company_name, const char *pla
     g_Session.setLogoColour(new_color);
 }
 
-MissionBriefing * GameController::loadBriefing(int n) {
+fs_knl::MissionBriefing * GameController::loadBriefing(int n) {
     return missionMgr_.loadBriefing(n);
 }
 
@@ -149,12 +149,12 @@ MissionBriefing * GameController::loadBriefing(int n) {
  */
 bool GameController::loadSelectedMission() {
     Block block = session_->getSelectedBlock();
-    Mission *pMission = missionMgr_.loadMission(block.mis_id, block.paletteId);
+    fs_knl::Mission *pMission = missionMgr_.loadMission(block.mis_id, block.paletteId);
 
     return pMission != nullptr;
 }
 
-void GameController::handle_mission_end(Mission *p_mission) {
+void GameController::handle_mission_end(fs_knl::Mission *p_mission) {
     int elapsed = p_mission->stats()->missionDuration();
     g_Session.updateTime(elapsed);
 
@@ -186,12 +186,12 @@ void GameController::handle_mission_end(Mission *p_mission) {
     }
 }
 
-void GameController::transferAgentToCryoChamber(Mission *pMission) {
+void GameController::transferAgentToCryoChamber(fs_knl::Mission *pMission) {
     // Update for squad
-    for (size_t i = AgentManager::kSlot1; i < AgentManager::kMaxSlot; i++) {
-        PedInstance *pPedAgent = pMission->getSquad()->member(i);
+    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+        fs_knl::PedInstance *pPedAgent = pMission->getSquad()->member(i);
         if (pPedAgent) {
-            Agent *pAg = agents().squadMember(i);
+            fs_knl::Agent *pAg = agents().squadMember(i);
             if (pPedAgent->isDead()) {
                 // an agent died -> remove him from cryo
                 agents().destroyAgentSlot(i);
@@ -205,9 +205,9 @@ void GameController::transferAgentToCryoChamber(Mission *pMission) {
     // Add persuaded agents only in case of mission success
     if (pMission->stats()->agentCaptured() > 0 && pMission->completed()) {
         for (size_t i = pMission->getSquad()->size(); i < pMission->numPeds(); i++) {
-            PedInstance *pPed = pMission->ped(i);
-            if (pPed->objGroupDef() == PedInstance::og_dmAgent) {
-                Agent *pAg = agents().createAgent(false);
+            fs_knl::PedInstance *pPed = pMission->ped(i);
+            if (pPed->objGroupDef() == fs_knl::PedInstance::og_dmAgent) {
+                fs_knl::Agent *pAg = agents().createAgent(false);
                 if (pAg) {
                     pPed->transferWeapons(*pAg);
                     pPed->transferMods(*pAg);
@@ -434,8 +434,8 @@ void GameController::cheatWeaponsAndMods() {
 }
 
 void GameController::cheatEquipAllMods() {
-    for (int agent = 0; agent < AgentManager::MAX_AGENT; agent++) {
-        Agent *pAgent = agents().agent(agent);
+    for (int agent = 0; agent < fs_knl::AgentManager::MAX_AGENT; agent++) {
+        fs_knl::Agent *pAgent = agents().agent(agent);
         if (pAgent) {
             pAgent->clearSlots();
 
@@ -471,31 +471,31 @@ void GameController::cheatAccelerateTime() {
 void GameController::cheatFemaleRecruits() {
     agents().reset(true);
 
-    for (size_t i = 0; i < AgentManager::kMaxSlot; i++)
+    for (size_t i = 0; i < fs_knl::AgentManager::kMaxSlot; i++)
         agents().setSquadMember(i, agents().agent(i));
 }
 
 void GameController::cheatEquipFancyWeapons() {
-    for (int i = 0; i < AgentManager::MAX_AGENT; i++) {
+    for (int i = 0; i < fs_knl::AgentManager::MAX_AGENT; i++) {
         if (agents().agent(i)) {
         agents().agent(i)->destroyAllWeapons();
 #ifdef _DEBUG
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Minigun)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::TimeBomb)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::TimeBomb)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::GaussGun)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::GaussGun)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Flamer)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Flamer)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Uzi)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Uzi)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Persuadatron)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Persuadatron)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::EnergyShield)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::EnergyShield)));
         agents().agent(i)->addWeapon(
-            WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Shotgun)));
+            fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Shotgun)));
 #else
         agents().agent(i)->addWeapon(
                 WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));

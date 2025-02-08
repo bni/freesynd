@@ -101,10 +101,10 @@ DebriefMenu::DebriefMenu(fs_eng::MenuManager *m) : fs_eng::Menu(m, fs_game_menus
  * updates infos based on mission statistics.
  */
 bool DebriefMenu::handleBeforeShow() {
-    Mission *pMission = g_missionCtrl.mission();
+    fs_knl::Mission *pMission = g_missionCtrl.mission();
 
     // update game state and listen for any change
-    ListenerHandle handleResearchEnd = EventManager::listen<ResearchEndEvent>(this, &DebriefMenu::onResearchEndEvent);
+    ListenerHandle handleResearchEnd = EventManager::listen<fs_knl::ResearchEndEvent>(this, &DebriefMenu::onResearchEndEvent);
     g_gameCtrl.handle_mission_end(pMission);
     EventManager::remove_listener(handleResearchEnd);
 
@@ -115,14 +115,14 @@ bool DebriefMenu::handleBeforeShow() {
     return true;
 }
 
-void DebriefMenu::updateStatsFields(Mission *pMission) {
-    MissionStats *pStats = pMission->stats();
+void DebriefMenu::updateStatsFields(fs_knl::Mission *pMission) {
+    fs_knl::MissionStats *pStats = pMission->stats();
 
-    if (pMission->getStatus() == Mission::kMissionStatusFailed) {
+    if (pMission->getStatus() == fs_knl::Mission::kMissionStatusFailed) {
         getStatic(txtStatusId_)->setText("#DEBRIEF_MIS_FAILED");
-    } else if (pMission->getStatus() == Mission::kMissionStatusCompleted) {
+    } else if (pMission->getStatus() == fs_knl::Mission::kMissionStatusCompleted) {
         getStatic(txtStatusId_)->setText("#DEBRIEF_MIS_COMP");
-    } else if (pMission->getStatus() == Mission::kMissionStatusAborted) {
+    } else if (pMission->getStatus() == fs_knl::Mission::kMissionStatusAborted) {
         getStatic(txtStatusId_)->setText("#DEBRIEF_MIS_ABORT");
     }
 
@@ -151,11 +151,11 @@ void DebriefMenu::updateStatsFields(Mission *pMission) {
 
 void DebriefMenu::checkNewWeaponFound() {
 
-    for (size_t i=0; i<AgentManager::kMaxSlot; i++) {
-        Agent *pAgent = g_gameCtrl.agents().squadMember(i);
+    for (size_t i=0; i<fs_knl::AgentManager::kMaxSlot; i++) {
+        fs_knl::Agent *pAgent = g_gameCtrl.agents().squadMember(i);
         if (pAgent) {
             for (int wi=0; wi < pAgent->numWeapons(); wi++) {
-                Weapon *pWeapon = pAgent->weapon(wi)->getClass();
+                fs_knl::Weapon *pWeapon = pAgent->weapon(wi)->getClass();
 
                 if (!g_gameCtrl.weaponManager().isAvailable(pWeapon)) {
                     if (g_Session.researchManager().handleWeaponDiscovered(pWeapon)) {
@@ -188,18 +188,18 @@ void DebriefMenu::handleLeave() {
     getStatic(txtSearchId_)->setText("");
 }
 
-void DebriefMenu::onResearchEndEvent(ResearchEndEvent *pEvt) {
+void DebriefMenu::onResearchEndEvent(fs_knl::ResearchEndEvent *pEvt) {
     LOG(Log::k_FLG_GAME, "DebriefMenu", "onResearchEndEvent", ("Received ResearchEndEvent"))
     // A research has ended, so check which type
-    Research *pRes = pEvt->pResearch;
+    fs_knl::Research *pRes = pEvt->pResearch;
     // Is it equipment or mods research?
-    if (pRes->getType() == Research::EQUIPS) {
+    if (pRes->getType() == fs_knl::Research::EQUIPS) {
         // Get researched weapon type
-        Weapon::WeaponType wt= pRes->getSearchWeapon();
+        fs_knl::Weapon::WeaponType wt= pRes->getSearchWeapon();
         assert(wt);
 
         // Get weapon
-        Weapon *pWeap = g_gameCtrl.weaponManager().getWeapon(wt);
+        fs_knl::Weapon *pWeap = g_gameCtrl.weaponManager().getWeapon(wt);
         assert(pWeap);
 
         // Draw name of it

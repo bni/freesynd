@@ -94,7 +94,7 @@ protected:
     /*! Id of the scroll previous button.*/
     int prevButId_;
     /*! Briefing informations on current mission.*/
-    MissionBriefing *p_briefing_;
+    fs_knl::MissionBriefing *p_briefing_;
     /*! Class that draws the minimap.*/
     BriefMinimapRenderer mm_renderer_;
 };

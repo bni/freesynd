@@ -32,8 +32,6 @@
 #include "minimaprenderer.h"
 #include "squadselection.h"
 
-class Mission;
-class IPAStim;
 
 /*!
  * Gameplay Menu class.
@@ -72,13 +70,13 @@ protected:
      */
     ///@{
     //! Handle when an agent has died
-    void onAgentDiedEvent(AgentDiedEvent *pEvt);
+    void onAgentDiedEvent(fs_knl::AgentDiedEvent *pEvt);
     //! Handle when a shooting weapon was selected or deselected
-    void onShootingWeaponSelectedEvent(ShootingWeaponSelectedEvent *pEvt);
+    void onShootingWeaponSelectedEvent(fs_knl::ShootingWeaponSelectedEvent *pEvt);
     //!
-    void onPoliceWarningEmittedEvent(PoliceWarningEmittedEvent *pEvt);
+    void onPoliceWarningEmittedEvent(fs_knl::PoliceWarningEmittedEvent *pEvt);
     //! When mission ends
-    void onMissionEndedEvent(MissionEndedEvent *pEvt);
+    void onMissionEndedEvent(fs_knl::MissionEndedEvent *pEvt);
     ///@}
 
     //!
@@ -101,11 +99,11 @@ protected:
     void handleWeaponSelection(uint8 weapon_idx, bool ctrl);
 
     //! Deselect agent if he died
-    void updateSelectionForDeadAgent(PedInstance *p_ped);
+    void updateSelectionForDeadAgent(fs_knl::PedInstance *p_ped);
     //! updates visual markers for our agents
     void highlightLeaderMarker();
     //! Set pLocWToSet param with point on the map where player clicked to shoot
-    bool getAimedAt(int x, int y, WorldPoint *pLocWToSet);
+    bool getAimedAt(int x, int y, fs_knl::WorldPoint *pLocWToSet);
     void stopShootingEvent();
     //! Centers the minimap on the selection leader
     void centerMinimapOnLeader();
@@ -123,7 +121,7 @@ protected:
     uint32_t tick_count_, last_animate_tick_;
     int last_motion_tick_, last_motion_x_, last_motion_y_;
     int mission_hint_ticks_, mission_hint_;
-    Mission *mission_;
+    fs_knl::Mission *mission_;
 
     /*! This is a projection in 2D of a point on a the map. This point represents the top
      * left corner of the screen and it moves inside the map's borders.*/
@@ -135,7 +133,7 @@ protected:
     /*! Agent selection manager.*/
     SquadSelection selection_;
     /*! Object mouse cursor is above*/
-    ShootableMapObject *target_;
+    fs_knl::ShootableMapObject *target_;
     //! The palette of colors used for this mission
     fs_eng::Palette missionPalette_;
     /*! This renderer is in charge of drawing the map.*/
