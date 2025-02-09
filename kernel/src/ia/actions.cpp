@@ -1001,7 +1001,7 @@ void ShootAction::fillDamageDesc(PedInstance *pShooter,
         // the weapon is located at half the size of the shooter
         dmg.originLocW.z += pShooter->sizeZ() >> 1;
 
-        switch(pShooter->getDirection()) {
+        switch(pShooter->getDiscreteDirection()) {
         case 0:
             dmg.originLocW.y += 200;
             break;

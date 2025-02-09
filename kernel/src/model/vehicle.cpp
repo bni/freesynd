@@ -81,7 +81,7 @@ void Vehicle::draw(const Point2D &screenPos)
     if (posWithOffs.x < 90 || posWithOffs.y < -20)
         return;
 
-    animation_->draw(posWithOffs, getDirection(4), frame_);
+    animation_->draw(posWithOffs, getDiscreteDirection(4), frame_);
 }
 
 bool Vehicle::animate(uint32_t elapsed)
@@ -419,7 +419,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
     TilePoint closest;
     float closest_dist = 100000;
 
-    uint16_t wrong_dir = (uint16_t)getDirection(4);
+    uint16_t wrong_dir = (uint16_t)getDiscreteDirection(4);
     if (wrong_dir == 0x0)
         wrong_dir = 0x0400;
     else if(wrong_dir == 0x1)

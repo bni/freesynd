@@ -163,7 +163,7 @@ bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
 
     switch (criteria.desc) {
         case WeaponSelectCriteria::kCritWeaponType:
-            for (auto weapon : weapons_) {
+            for (const auto& weapon : weapons_) {
                 if (weapon->isInstanceOf(criteria.criteria.wpn_type)) {
                     if (weapon->usesAmmo()) {
                         if (weapon->ammoRemaining()) {
@@ -178,42 +178,12 @@ bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
             }
 
             break;
-        case WeaponSelectCriteria::kCritDamageStrict:
-            for (auto pWeapon : weapons_) {
-                if (pWeapon->canShoot()
-                    && pWeapon->doesDmgStrict(criteria.criteria.dmg_type))
-                {
-                    if (pWeapon->usesAmmo()) {
-                        if (pWeapon->ammoRemaining()) {
-                            found_weapons.push_back(pWeapon);
-                        }
-                    } else {
-                        found_weapons.push_back(pWeapon);
-                    }
-                }
-            }
-            break;
-        case WeaponSelectCriteria::kCritDamageNonStrict:
-            for (auto pWeapon : weapons_) {
-                if (pWeapon->canShoot()
-                    && pWeapon->doesDmgNonStrict(criteria.criteria.dmg_type))
-                {
-                    if (pWeapon->usesAmmo()) {
-                        if (pWeapon->ammoRemaining()) {
-                            found_weapons.push_back(pWeapon);
-                        }
-                    } else {
-                        found_weapons.push_back(pWeapon);
-                    }
-                }
-            }
-            break;
         case WeaponSelectCriteria::kCritPlayerSelection:
             if (criteria.criteria.wi->canShoot()) {
                 // If the selected weapon was a shooting one
                 // select a shooting weapon for the agent, choosing
                 // first a weapon of same type then any shooting weapon
-                for (auto pWeapon : weapons_) {
+                for (const auto& pWeapon : weapons_) {
                     if (pWeapon->canShoot() && pWeapon->ammoRemaining() > 0)
                     {
                         if (pWeapon->hasSameTypeAs(*(criteria.criteria.wi))) {
@@ -233,7 +203,7 @@ bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
             }
             break;
         case WeaponSelectCriteria::kCritLoadedShoot:
-            for (auto pWeapon : weapons_) {
+            for (const auto& pWeapon : weapons_) {
                 if (pWeapon->canShoot() && pWeapon->ammoRemaining() > 0) {
                     found_weapons.push_back(pWeapon);
                 }
@@ -246,7 +216,7 @@ bool WeaponHolder::selectRequiredWeapon(const WeaponSelectCriteria &criteria) {
     if (!found_weapons.empty()) {
         int best_rank = -1;
         WeaponInstance *weaponToSelect = nullptr;
-        for (auto pWeapon : found_weapons) {
+        for (const auto& pWeapon : found_weapons) {
             if (criteria.use_ranks) {
                 if (best_rank < pWeapon->rank()) {
                     best_rank = pWeapon->rank();

@@ -251,7 +251,8 @@ public:
     void setDirectionTowardPosition(const WorldPoint &pos);
 
     int direction() { return dir_;}
-    int getDirection(int snum = 8);
+    //! Converts a direction into a discrete index. Default is set to 8 for possible directions for Peds.
+    uint8_t getDiscreteDirection(int snum = 8);
 
     void setTimeShowAnim(int t) {
         frame_ = 0;

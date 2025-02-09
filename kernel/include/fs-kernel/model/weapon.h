@@ -315,12 +315,6 @@ public:
         return pWeaponClass_->canShoot();
     }
 
-    bool doesDmgStrict(uint32_t dmg_type) {
-        return pWeaponClass_->dmgType() == dmg_type;
-    }
-    bool doesDmgNonStrict(uint32_t dmg_type) {
-        return (pWeaponClass_->dmgType() & dmg_type) != 0;
-    }
     DamageType dmgType() {
         return pWeaponClass_->dmgType();
     }
@@ -328,9 +322,10 @@ public:
     //! Return true if weapon can be selected
     bool isSelectable();
 
-    //*************************************
-    // Behaviour
-    //*************************************
+    /*!
+     * @name Behaviour
+     */
+    ///@{
     bool isInstanceOf(Weapon::WeaponType weaponType) { return pWeaponClass_->getType() == weaponType; }
     bool hasSameTypeAs(const WeaponInstance & otherWeapon) { return pWeaponClass_->getType() == otherWeapon.getClass()->getType();}
 
@@ -355,6 +350,7 @@ public:
     void fire(Mission *pMission, DamageToInflict &dmg, uint32_t elapsed);
 
     bool consumeAmmoForEnergyShield(uint32_t elapsed);
+    ///@}
 
 protected:
     static uint16_t weaponIdCnt;

@@ -191,27 +191,41 @@ void MapObject::setDirectionTowardPosition(const WorldPoint &pos) {
     this->setDirection(pos.x - thisPedPos.x, pos.y - thisPedPos.y);
 }
 
-/*!
- * @returns direction for selected number of surfaces
+/**
+ * This method takes the continuous directional value `dir_` (ranging from 0 to 255) 
+ * and quantizes it into an integer index among `numDirections` possible directions.
+ * It divides the direction range into equal sectors and assigns the corresponding index.
+ * A special case is handled to ensure continuity between angles close to 0 and 255.
+ * 
+ * @param numDirections Number of discrete directions (must be > 0).
+ * @return int The corresponding direction index, ranging from 0 to `numDirections - 1`.
+ * 
+ * @pre `numDirections > 0`
+ * @post `0 <= return_value < numDirections`
  */
-int MapObject::getDirection(int snum) {
-    assert(snum > 0);
+uint8_t MapObject::getDiscreteDirection(int numDirections) {
+    assert(numDirections > 0);
 
-    int newDirection = 0;
-    int sinc = 256 / snum;
-    int sdec = sinc / 2;
+    uint8_t directionIndex = 0;
+    int sectorSize = 256 / numDirections;
+    int halfSector = sectorSize / 2;
+
     do {
-        int s = newDirection * sinc;
-        if (newDirection == 0) {
-            if ((256 - sdec) <= dir_ || (s + sdec) > dir_)
-                break;
-        } else if ((s - sdec) <= dir_ && (s + sdec) > dir_)
-            break;
-        newDirection++;
-    } while (newDirection < snum);
-    assert(newDirection < snum);
+        int sectorCenter = directionIndex * sectorSize;
 
-    return newDirection;
+        if (directionIndex == 0) {
+            // Handles circular transition between the last and first direction
+            if ((256 - halfSector) <= dir_ || (sectorCenter + halfSector) > dir_)
+                break;
+        } else if ((sectorCenter - halfSector) <= dir_ && (sectorCenter + halfSector) > dir_) {
+            break;
+        }
+
+        directionIndex++;
+    } while (directionIndex < numDirections);
+
+    assert(directionIndex < numDirections);
+    return directionIndex;
 }
 
 /*

@@ -51,7 +51,7 @@ Ped::Ped() {
     memset(walk_fire_anims_, 0, sizeof(walk_fire_anims_));
 }
 
-bool Ped::drawStandFrame(const Point2D &screenPos, int dir, int frame,
+bool Ped::drawStandFrame(const Point2D &screenPos, uint8_t dir, int frame,
                          Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon < NUM_ANIMS);
@@ -59,12 +59,12 @@ bool Ped::drawStandFrame(const Point2D &screenPos, int dir, int frame,
             stand_anims_[weapon] + dir, frame, screenPos);
 }
 
-int Ped::lastStandFrame(int dir, Weapon::WeaponAnimIndex weapon) {
+int Ped::lastStandFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_SpriteMgr.lastFrame(stand_anims_[weapon] + dir);
 }
 
-bool Ped::drawWalkFrame(const Point2D &screenPos, int dir, int frame,
+bool Ped::drawWalkFrame(const Point2D &screenPos, uint8_t dir, int frame,
                         Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon < NUM_ANIMS);
@@ -72,33 +72,33 @@ bool Ped::drawWalkFrame(const Point2D &screenPos, int dir, int frame,
             walk_anims_[weapon] + dir, frame, screenPos);
 }
 
-int Ped::lastWalkFrame(int dir, Weapon::WeaponAnimIndex weapon) {
+int Ped::lastWalkFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_SpriteMgr.lastFrame(walk_anims_[weapon] + dir);
 }
 
-bool Ped::drawStandFireFrame(const Point2D &screenPos, int dir, int frame,
+bool Ped::drawStandFireFrame(const Point2D &screenPos, uint8_t dir, int frame,
         Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_SpriteMgr.drawFrame(
             stand_fire_anims_[weapon] + dir, frame, screenPos);
 }
 
-int Ped::lastStandFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
+int Ped::lastStandFireFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_SpriteMgr.lastFrame(
             stand_fire_anims_[weapon] + dir);
 }
 
-bool Ped::drawWalkFireFrame(const Point2D &screenPos, int dir, int frame,
+bool Ped::drawWalkFireFrame(const Point2D &screenPos, uint8_t dir, int frame,
         Weapon::WeaponAnimIndex weapon) {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_SpriteMgr.drawFrame(
             walk_fire_anims_[weapon] + dir, frame, screenPos);
 }
 
-int Ped::lastWalkFireFrame(int dir, Weapon::WeaponAnimIndex weapon)
+int Ped::lastWalkFireFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon)
 {
     assert(weapon != 0 && weapon < NUM_ANIMS);
     return g_SpriteMgr.lastFrame(walk_fire_anims_[weapon] + dir);
@@ -120,11 +120,11 @@ void Ped::drawDeadAgentFrame(const Point2D &screenPos, int frame) {
     g_SpriteMgr.drawFrame(dead_agent_anim_, frame, screenPos);
 }
 
-void Ped::drawHitFrame(const Point2D &screenPos, int dir, int frame) {
+void Ped::drawHitFrame(const Point2D &screenPos, uint8_t dir, int frame) {
     g_SpriteMgr.drawFrame(hit_anim_ + dir / 2, frame, screenPos);
 }
 
-int Ped::lastHitFrame(int dir) {
+int Ped::lastHitFrame(uint8_t dir) {
     return g_SpriteMgr.lastFrame(hit_anim_ + dir / 2);
 }
 
@@ -137,11 +137,11 @@ int Ped::lastPickupFrame() {
     return g_SpriteMgr.lastFrame(pickup_anim_);
 }
 
-void Ped::drawVaporizeFrame(const Point2D &screenPos, int dir, int frame) {
+void Ped::drawVaporizeFrame(const Point2D &screenPos, uint8_t dir, int frame) {
     g_SpriteMgr.drawFrame(vaporize_anim_ + dir / 2, frame, screenPos);
 }
 
-int Ped::lastVaporizeFrame(int dir) {
+int Ped::lastVaporizeFrame(uint8_t dir) {
     return g_SpriteMgr.lastFrame(vaporize_anim_ + dir / 2);
 }
 
@@ -185,7 +185,7 @@ int Ped::lastPersuadeFrame() {
     return g_SpriteMgr.lastFrame(persuade_anim_);
 }
 
-void PedInstance::setTypeFromValue(uint8 value) {
+void PedInstance::setTypeFromValue(uint8_t value) {
     switch(value) {
     case 0x01:
         type_ = kPedTypeCivilian;
@@ -782,7 +782,7 @@ void PedInstance::draw(const Point2D &screenPos) {
 
     switch(drawnAnim()){
         case PedInstance::ad_HitAnim:
-            ped_->drawHitFrame(posWithOffs, getDirection(), frame_);
+            ped_->drawHitFrame(posWithOffs, getDiscreteDirection(), frame_);
             break;
         case PedInstance::ad_DieAnim:
             ped_->drawDieFrame(posWithOffs, frame_);
@@ -800,19 +800,19 @@ void PedInstance::draw(const Point2D &screenPos) {
             ped_->drawPickupFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_WalkAnim:
-            ped_->drawWalkFrame(posWithOffs, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandAnim:
-            ped_->drawStandFrame(posWithOffs, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_WalkFireAnim:
-            ped_->drawWalkFireFrame(posWithOffs, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFireFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandFireAnim:
-            ped_->drawStandFireFrame(posWithOffs, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFireFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_VaporizeAnim:
-            ped_->drawVaporizeFrame(posWithOffs, getDirection(), frame_);
+            ped_->drawVaporizeFrame(posWithOffs, getDiscreteDirection(), frame_);
             break;
         case PedInstance::ad_SinkAnim:
             ped_->drawSinkFrame(posWithOffs, frame_);
@@ -847,7 +847,7 @@ void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
 
     switch(drawnAnim()) {
         case PedInstance::ad_HitAnim:
-            ped_->drawHitFrame(screenPos, getDirection(), frame_);
+            ped_->drawHitFrame(screenPos, getDiscreteDirection(), frame_);
             break;
         case PedInstance::ad_DieAnim:
             ped_->drawDieFrame(screenPos, frame_);
@@ -865,19 +865,19 @@ void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
             ped_->drawPickupFrame(screenPos, frame_);
             break;
         case PedInstance::ad_WalkAnim:
-            ped_->drawWalkFrame(screenPos, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandAnim:
-            ped_->drawStandFrame(screenPos, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_WalkFireAnim:
-            ped_->drawWalkFireFrame(screenPos, getDirection(), frame_, weapon_idx);
+            ped_->drawWalkFireFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_StandFireAnim:
-            ped_->drawStandFireFrame(screenPos, getDirection(), frame_, weapon_idx);
+            ped_->drawStandFireFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_VaporizeAnim:
-            ped_->drawVaporizeFrame(screenPos, getDirection(), frame_);
+            ped_->drawVaporizeFrame(screenPos, getDiscreteDirection(), frame_);
             break;
         case PedInstance::ad_SinkAnim:
             ped_->drawSinkFrame(screenPos, frame_);
@@ -926,7 +926,7 @@ bool PedInstance::canSelectWeapon(WeaponInstance *pNewWeapon) {
         return canAddUseWeaponAction(pNewWeapon);
     }
 
-    return true;
+    return WeaponHolder::canSelectWeapon(pNewWeapon);
 }
 
 /*!
@@ -990,7 +990,7 @@ void PedInstance::handleWeaponSelected(WeaponInstance * wi, WeaponInstance * pre
  * \param index Index of weapon in the agent inventory.
  * \return the instance of dropped weapon
  */
-WeaponInstance * PedInstance::dropWeapon(uint8 index) {
+WeaponInstance * PedInstance::dropWeapon(uint8_t index) {
     if (isWeaponSelected(weapon(index))) {
         stopUsingWeapon();
     }
@@ -1011,7 +1011,7 @@ WeaponInstance * PedInstance::dropWeapon(uint8 index) {
  *
  */
 void PedInstance::dropAllWeapons() {
-    uint8 twd = g_missionCtrl.mission()->mtsurfaces_[pos_.tx + g_missionCtrl.mission()->mmax_x_ * pos_.ty
+    uint8_t twd = g_missionCtrl.mission()->mtsurfaces_[pos_.tx + g_missionCtrl.mission()->mmax_x_ * pos_.ty
         + g_missionCtrl.mission()->mmax_m_xy * pos_.tz];
 
     while (weapons_.size()) {
@@ -1134,7 +1134,7 @@ bool PedInstance::handleDrawnAnim(int elapsed) {
     bool answer = true;
     switch (curanim) {
         case PedInstance::ad_HitAnim:
-            if (frame_ < ped_->lastHitFrame(getDirection()))
+            if (frame_ < ped_->lastHitFrame(getDiscreteDirection()))
                 answer = false;
             break;
         case PedInstance::ad_DieAnim:
@@ -1157,15 +1157,15 @@ bool PedInstance::handleDrawnAnim(int elapsed) {
         case PedInstance::ad_StandAnim:
             break;
         case PedInstance::ad_WalkFireAnim:
-            if(frame_ < ped_->lastWalkFireFrame(getDirection(), weapon_idx))
+            if(frame_ < ped_->lastWalkFireFrame(getDiscreteDirection(), weapon_idx))
                 answer = false;
             break;
         case PedInstance::ad_StandFireAnim:
-            if(frame_ < ped_->lastStandFireFrame(getDirection(), weapon_idx))
+            if(frame_ < ped_->lastStandFireFrame(getDiscreteDirection(), weapon_idx))
                 answer = false;
             break;
         case PedInstance::ad_VaporizeAnim:
-            if (frame_ < ped_->lastVaporizeFrame(getDirection())) {
+            if (frame_ < ped_->lastVaporizeFrame(getDiscreteDirection())) {
                 answer = false;
             }
             break;
@@ -1429,7 +1429,7 @@ int PedInstance::getDefaultSpeed()
         weight_max += 5;
 
     int weight_inv = 0;
-    for (uint8 i = 0; i < weapons_.size(); ++i)
+    for (uint8_t i = 0; i < weapons_.size(); ++i)
         weight_inv += weapons_[i]->getWeight();
 
     if (weight_inv > weight_max) {
@@ -1683,7 +1683,7 @@ void PedInstance::updatePersuadedRelations(Squad *pSquad) {
         owner_ = NULL;
     } else if (isOurAgent()) {
         // our agent is dead, assign all persuaded to another living agent
-        for (uint8 i = 0; i < AgentManager::kMaxSlot; ++i) {
+        for (uint8_t i = 0; i < AgentManager::kMaxSlot; ++i) {
             PedInstance *pAgent = pSquad->member(i);
             if (pAgent && pAgent->isAlive()) {
                 while(!persuadedSet_.empty()) {

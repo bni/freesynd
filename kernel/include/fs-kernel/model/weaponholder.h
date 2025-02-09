@@ -85,7 +85,23 @@ public:
 
 protected:
     struct WeaponSelectCriteria {
-        union {
+        
+        /*!
+         * @brief The criteria used for searching one or more weapons.
+         */
+        enum CriteriaType {
+            //! Search weapon based on a given type
+            kCritWeaponType,
+            //! Search weapon that has the same type as the current selection
+            kCritPlayerSelection,
+            //! Search weapon who can shoot and has ammo
+            kCritLoadedShoot
+        };
+
+        /*!
+         * @brief For a criteria, this is the attribute to compare to.
+         */
+        union CriteriaValue {
             //! weapon index from weapons_ in mission_
             uint32_t indx;
             //! use only this weapon for attack
@@ -97,18 +113,6 @@ protected:
             uint32_t dmg_type;
         } criteria;
 
-        enum CriteriaType {
-            //! Search weapon based on a given type
-            kCritWeaponType = 3,
-            //! Search weapon that inflicts strict damage
-            kCritDamageStrict = 4,
-            //! Search weapon that inflicts non strict damage
-            kCritDamageNonStrict = 5,
-            //! Search weapon that has the same type as the current selection
-            kCritPlayerSelection = 6,
-            //! Search weapon who can shoot and has ammo
-            kCritLoadedShoot = 7
-        };
         //! Union descriptor
         CriteriaType desc;
         //! Select the final weapon based on the rank attribute

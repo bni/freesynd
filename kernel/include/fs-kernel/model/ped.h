@@ -95,30 +95,30 @@ public:
 
     void setPersuadeAnim(uint32_t anim) { persuade_anim_ = anim; }
 
-    bool drawStandFrame(const Point2D &screenPos, int dir, int frame,
+    bool drawStandFrame(const Point2D &screenPos, uint8_t dir, int frame,
             Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
-    int lastStandFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawWalkFrame(const Point2D &screenPos, int dir, int frame,
+    int lastStandFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
+    bool drawWalkFrame(const Point2D &screenPos, uint8_t dir, int frame,
             Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
-    int lastWalkFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawStandFireFrame(const Point2D &screenPos, int dir, int frame,
+    int lastWalkFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
+    bool drawStandFireFrame(const Point2D &screenPos, uint8_t dir, int frame,
             Weapon::WeaponAnimIndex weapon);
-    int lastStandFireFrame(int dir, Weapon::WeaponAnimIndex weapon);
-    bool drawWalkFireFrame(const Point2D &screenPos, int dir, int frame,
+    int lastStandFireFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
+    bool drawWalkFireFrame(const Point2D &screenPos, uint8_t dir, int frame,
             Weapon::WeaponAnimIndex weapon);
-    int lastWalkFireFrame(int dir, Weapon::WeaponAnimIndex weapon);
+    int lastWalkFireFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
     bool drawDieFrame(const Point2D &screenPos, int frame);
     int lastDieFrame();
 
     void drawDeadFrame(const Point2D &screenPos, int frame);
     void drawDeadAgentFrame(const Point2D &screenPos, int frame);
 
-    void drawHitFrame(const Point2D &screenPos, int dir, int frame);
-    int lastHitFrame(int dir);
+    void drawHitFrame(const Point2D &screenPos, uint8_t dir, int frame);
+    int lastHitFrame(uint8_t dir);
     void drawPickupFrame(const Point2D &screenPos, int frame);
     int lastPickupFrame();
-    void drawVaporizeFrame(const Point2D &screenPos, int dir, int frame);
-    int lastVaporizeFrame(int dir);
+    void drawVaporizeFrame(const Point2D &screenPos, uint8_t dir, int frame);
+    int lastVaporizeFrame(uint8_t dir);
     void drawSinkFrame(const Point2D &screenPos, int frame);
     int lastSinkFrame();
 
@@ -184,14 +184,19 @@ public:
     PedInstance(Ped *ped, uint16_t id, Map *pMap, bool isOur);
     ~PedInstance();
 
-    //*************************************
-    // Properties
-    //*************************************
+    /*!
+     * @name Properties
+     */
+    ///@{
+
     //! Returns true if the agent is one of us.
     bool isOurAgent() { return is_our_; }
     //! Return the type of Ped
     PedType type() { return type_; }
-    void setTypeFromValue(uint8 value);
+
+    ///@}
+
+    void setTypeFromValue(uint8_t value);
     //! Returns the ped's behaviour
     Behaviour & behaviour() { return behaviour_; }
     //! Return true if ped has escaped the map
@@ -203,7 +208,7 @@ public:
     //! Tells the ped not to panic
     void setPanicImmuned() { panicImmuned_ = true; }
 
-    typedef enum {
+    enum AnimationDrawn {
         ad_NoAnimation,
         ad_HitAnim,
         ad_DieAnim,
@@ -223,7 +228,7 @@ public:
         ad_SmokeBurnAnim,
         ad_DeadBurnAnim,
         ad_PersuadedAnim
-    } AnimationDrawn;
+    };
 
     //! MapObject::state_
     enum pedActionStateMasks {
@@ -308,7 +313,7 @@ public:
     //! Adds action to follow a ped
     void addActionFollowPed(PedInstance *pPed);
     //! Adds action to put down weapon on the ground
-    void addActionPutdown(uint8 weaponIndex, bool appendAction);
+    void addActionPutdown(uint8_t weaponIndex, bool appendAction);
     //! Adds action to pick up weapon from the ground
     MovementAction * createActionPickup(WeaponInstance *pWeapon);
     //! Creates actions to walk and enter a given vehicle
@@ -319,7 +324,7 @@ public:
     //! Return true if ped can use a weapon
     bool canAddUseWeaponAction(WeaponInstance *pWeapon = NULL);
     //! Adds action to shoot somewhere
-    uint8 addActionShootAt(const WorldPoint &aimedPt);
+    uint8_t addActionShootAt(const WorldPoint &aimedPt);
     //! Adds action to use medikit
     void addActionUseMedikit(WeaponInstance *pMedikit);
     //! Adds action to use Energy Shield
@@ -339,7 +344,7 @@ public:
     //*************************************
     // Weapon management
     //*************************************
-    WeaponInstance * dropWeapon(uint8 index);
+    WeaponInstance * dropWeapon(uint8_t index);
     void dropAllWeapons();
     bool wePickupWeapon();
 
@@ -406,19 +411,19 @@ public:
     void setDrawnAnim(AnimationDrawn drawn_anim);
     bool handleDrawnAnim(int elapsed);
 
-    uint8 moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
+    uint8_t moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
         int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,
         bool set_dist = false);
 
-    void setAllAdrenaLevels(uint8 amount, uint8 depend, uint8 effect) {
+    void setAllAdrenaLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
         adrenaline_->setLevels256(amount, depend, effect);
     }
 
-    void setAllInteliLevels(uint8 amount, uint8 depend, uint8 effect) {
+    void setAllInteliLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
         intelligence_->setLevels256(amount, depend, effect);
     }
 
-    void setAllPercepLevels(uint8 amount, uint8 depend, uint8 effect) {
+    void setAllPercepLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
         perception_->setLevels256(amount, depend, effect);
     }
     void updtIPATime(int elapsed) {
@@ -613,7 +618,7 @@ public:
     //! Verify if this ped is friend with the given ped
     bool isFriendWith(PedInstance *p);
 
-    typedef enum {
+    enum objGroupDefMasks {
         og_dmUndefined = 0x0,
         og_dmPedestrian = 0x01,
         og_dmCivilian = 0x01,
@@ -621,7 +626,7 @@ public:
         og_dmPolice = 0x04,
         og_dmGuard = 0x08,
         og_dmCriminal = 0x10
-    } objGroupDefMasks;
+    };
 
     //! Returns ped's speed under normal conditions
     int getDefaultSpeed();
@@ -637,11 +642,8 @@ public:
     IPAStim *perception_;
     IPAStim *intelligence_;
 protected:
-    /*!
-     * Called before a weapon is selected to check if weapon can be selected.
-     * \param wi The weapon to select
-     */
-    bool canSelectWeapon(WeaponInstance *pNewWeapon);
+    //! Called before a weapon is selected to check if weapon can be selected.
+    bool canSelectWeapon(WeaponInstance *pNewWeapon) override;
     /*!
      * Called when a weapon has been deselected.
      * \param wi The deselected weapon
