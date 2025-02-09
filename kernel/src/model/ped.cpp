@@ -1118,7 +1118,7 @@ void PedInstance::setDrawnAnim(PedInstance::AnimationDrawn drawn_anim) {
     }
 }
 
-bool PedInstance::handleDrawnAnim(int elapsed) {
+bool PedInstance::handleDrawnAnim(uint32_t elapsed) {
     Weapon::WeaponAnimIndex weapon_idx =
         selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
 

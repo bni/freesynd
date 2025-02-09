@@ -58,22 +58,22 @@ public:
     Ped();
     virtual ~Ped() {}
 
-    void setStandAnim(Weapon::WeaponAnimIndex weapon, int anim) {
+    void setStandAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
         assert(weapon < NUM_ANIMS);
         stand_anims_[weapon] = anim;
     }
 
-    void setWalkAnim(Weapon::WeaponAnimIndex weapon, int anim) {
+    void setWalkAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
         assert(weapon < NUM_ANIMS);
         walk_anims_[weapon] = anim;
     }
 
-    void setStandFireAnim(Weapon::WeaponAnimIndex weapon, int anim) {
+    void setStandFireAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
         assert(weapon < NUM_ANIMS);
         stand_fire_anims_[weapon] = anim;
     }
 
-    void setWalkFireAnim(Weapon::WeaponAnimIndex weapon, int anim) {
+    void setWalkFireAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
         assert(weapon < NUM_ANIMS);
         walk_fire_anims_[weapon] = anim;
     }
@@ -133,10 +133,10 @@ public:
     int lastPersuadeFrame();
 
 protected:
-    int stand_anims_[NUM_ANIMS];
-    int walk_anims_[NUM_ANIMS];
-    int stand_fire_anims_[NUM_ANIMS];
-    int walk_fire_anims_[NUM_ANIMS];
+    uint32_t stand_anims_[NUM_ANIMS];
+    uint32_t walk_anims_[NUM_ANIMS];
+    uint32_t stand_fire_anims_[NUM_ANIMS];
+    uint32_t walk_fire_anims_[NUM_ANIMS];
     unsigned int die_agent_anim_;
     unsigned int dead_agent_anim_;
     unsigned int die_anim_;
@@ -409,7 +409,7 @@ public:
 
     AnimationDrawn drawnAnim(void);
     void setDrawnAnim(AnimationDrawn drawn_anim);
-    bool handleDrawnAnim(int elapsed);
+    bool handleDrawnAnim(uint32_t elapsed);
 
     uint8_t moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
         int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,

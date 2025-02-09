@@ -103,7 +103,7 @@ bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_u
 bool TrainHead::doMove(uint32_t elapsed, [[maybe_unused]] Mission *m)
 {
     bool updated = false;
-    int remainingTime = elapsed;
+    uint32_t remainingTime = elapsed;
 
     while ((!dest_path_.empty()) && remainingTime != 0) {
 
@@ -129,7 +129,7 @@ bool TrainHead::doMove(uint32_t elapsed, [[maybe_unused]] Mission *m)
         }
 
         // Updates the remaining time
-        remainingTime -= availableTimeToNextNode;
+        remainingTime -= static_cast<uint32_t>(availableTimeToNextNode);
 
         // Moves vehicle
         changeTrainAndPassengersPosition(distanceX, distanceY);

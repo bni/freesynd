@@ -39,15 +39,15 @@ using fs_eng::FontManager;
 
 std::string PedTypeAdapter::getName() {
     switch (type_) {
-    case PedInstance::kPedTypeAgent:
+    case fs_knl::PedInstance::kPedTypeAgent:
         return "AGENT";
-    case PedInstance::kPedTypeCivilian:
+    case fs_knl::PedInstance::kPedTypeCivilian:
         return "CIVILIAN";
-    case PedInstance::kPedTypeCriminal:
+    case fs_knl::PedInstance::kPedTypeCriminal:
         return "CRIMINAL";
-    case PedInstance::kPedTypeGuard:
+    case fs_knl::PedInstance::kPedTypeGuard:
         return "GUARD";
-    case PedInstance::kPedTypePolice:
+    case fs_knl::PedInstance::kPedTypePolice:
         return "POLICE";
     default:
         return "UNKOWN";
@@ -55,7 +55,7 @@ std::string PedTypeAdapter::getName() {
 }
 
 std::string VehicleTypeAdapter::getName() {
-    if (type_ == Vehicle::kVehicleTypeTrainHead) {
+    if (type_ == fs_knl::Vehicle::kVehicleTypeTrainHead) {
         return "TRAIN";
     }
 
@@ -87,18 +87,18 @@ SearchMissionMenu::~SearchMissionMenu() {
 }
 
 void SearchMissionMenu::initPedTypeListAndWidget() {
-    pedTypeList_.add(new PedTypeAdapter(PedInstance::kPedTypeAgent));
-    pedTypeList_.add(new PedTypeAdapter(PedInstance::kPedTypeCivilian));
-    pedTypeList_.add(new PedTypeAdapter(PedInstance::kPedTypeCriminal));
-    pedTypeList_.add(new PedTypeAdapter(PedInstance::kPedTypeGuard));
-    pedTypeList_.add(new PedTypeAdapter(PedInstance::kPedTypePolice));
+    pedTypeList_.add(new PedTypeAdapter(fs_knl::PedInstance::kPedTypeAgent));
+    pedTypeList_.add(new PedTypeAdapter(fs_knl::PedInstance::kPedTypeCivilian));
+    pedTypeList_.add(new PedTypeAdapter(fs_knl::PedInstance::kPedTypeCriminal));
+    pedTypeList_.add(new PedTypeAdapter(fs_knl::PedInstance::kPedTypeGuard));
+    pedTypeList_.add(new PedTypeAdapter(fs_knl::PedInstance::kPedTypePolice));
 
     pPedTypeListBox_ = addListBox(20, 84,  70, 120, true);
     pPedTypeListBox_->setModel(&pedTypeList_);
 }
 
 void SearchMissionMenu::initVehicleTypeListAndWidget() {
-    vehicleTypeList_.add(new VehicleTypeAdapter(Vehicle::kVehicleTypeTrainHead));
+    vehicleTypeList_.add(new VehicleTypeAdapter(fs_knl::Vehicle::kVehicleTypeTrainHead));
 
     pVehicleTypeListBox_ = addListBox(110, 84, 70, 120, true);
     pVehicleTypeListBox_->setModel(&vehicleTypeList_);
@@ -106,7 +106,7 @@ void SearchMissionMenu::initVehicleTypeListAndWidget() {
 
 void SearchMissionMenu::initSearchCriterias() {
     searchOnPedType_ = false;
-    pedTypeCriteria_ = PedInstance::kPedTypeAgent;
+    pedTypeCriteria_ = fs_knl::PedInstance::kPedTypeAgent;
     searchOnVehicleType_ = false;
     vehicleTypeCriteria_ = 0;
 }
@@ -118,10 +118,10 @@ bool SearchMissionMenu::handleBeforeShow()
     return true;
 }
 
-bool SearchMissionMenu::matchMissionWithPedType(Mission *pMission) {
+bool SearchMissionMenu::matchMissionWithPedType(fs_knl::Mission *pMission) {
     if (searchOnPedType_) {
         for (size_t pedId = 0; pedId < pMission->numPeds(); pedId++) {
-            PedInstance *pPed = pMission->ped(pedId);
+            fs_knl::PedInstance *pPed = pMission->ped(pedId);
 
             if (pPed->type() == pedTypeCriteria_) {
                 return true;
@@ -133,10 +133,10 @@ bool SearchMissionMenu::matchMissionWithPedType(Mission *pMission) {
     return true;
 }
 
-bool SearchMissionMenu::matchMissionWithVehicleType(Mission *pMission) {
+bool SearchMissionMenu::matchMissionWithVehicleType(fs_knl::Mission *pMission) {
     if (searchOnVehicleType_) {
         for (size_t vId = 0; vId < pMission->numVehicles(); vId++) {
-            Vehicle *pVehicle = pMission->vehicle(vId);
+            fs_knl::Vehicle *pVehicle = pMission->vehicle(vId);
 
             if (pVehicle->getType() == vehicleTypeCriteria_) {
                 return true;
@@ -154,7 +154,7 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx) {
         g_editorCtrl.getMissionResultList().clear();
 
         for (int misId = 1; misId <= 50; misId++) {
-            Mission *pMission = g_missionCtrl.loadMission(misId, 1);
+            fs_knl::Mission *pMission = g_missionCtrl.loadMission(misId, 1);
 
             if (pMission) {
                 bool keepMission = matchMissionWithPedType(pMission);

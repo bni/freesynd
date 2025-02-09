@@ -131,7 +131,7 @@ bool AnimationManager::loadElementsFromCustomFiles() {
  */
 void AnimationManager::loadElementsFromOriginalFiles() {
     size_t size;
-    uint8 *data;
+    uint8_t *data;
 
     // Load Sprite Frame Element
     data = fs_utl::File::loadOriginalFile("HELE-0.ANI", size);
@@ -212,7 +212,7 @@ void AnimationManager::drawSprite(int spriteId, const Point2D &screenPos) {
  * @param screenPos 
  * @return 
  */
-bool AnimationManager::drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos)
+bool AnimationManager::drawFrame(uint32_t animNum, int frameNum, const Point2D &screenPos)
 {
     assert(animNum < index_.size());
 

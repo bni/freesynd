@@ -28,19 +28,17 @@
 #include "fs-engine/menus/menu.h"
 #include "fs-kernel/model/ped.h"
 
-class Mission;
-
 class PedTypeAdapter {
 public:
-    PedTypeAdapter(PedInstance::PedType type) {
+    PedTypeAdapter(fs_knl::PedInstance::PedType type) {
         type_ = type;
     }
 
-    PedInstance::PedType getType() { return type_; }
+    fs_knl::PedInstance::PedType getType() { return type_; }
     std::string getName();
 
 private:
-    PedInstance::PedType type_;
+fs_knl::PedInstance::PedType type_;
 };
 
 class VehicleTypeAdapter {
@@ -72,8 +70,8 @@ protected:
     void initSearchCriterias();
     void initVehicleTypeListAndWidget();
 
-    bool matchMissionWithPedType(Mission *pMission);
-    bool matchMissionWithVehicleType(Mission *pMission);
+    bool matchMissionWithPedType(fs_knl::Mission *pMission);
+    bool matchMissionWithVehicleType(fs_knl::Mission *pMission);
 
 protected:
     int searchButId_;
@@ -84,7 +82,7 @@ protected:
     VectorModel<VehicleTypeAdapter *> vehicleTypeList_;
 
     bool searchOnPedType_;
-    PedInstance::PedType pedTypeCriteria_;
+    fs_knl::PedInstance::PedType pedTypeCriteria_;
 
     bool searchOnVehicleType_;
     uint8 vehicleTypeCriteria_;

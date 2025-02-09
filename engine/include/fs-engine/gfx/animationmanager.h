@@ -70,7 +70,7 @@ public:
     //! Draw a single sprite without animation
     void drawSprite(int spriteId, const Point2D &screenPos);
     //! Draw a frame for a given animation
-    bool drawFrame(unsigned int animNum, int frameNum, const Point2D &screenPos);
+    bool drawFrame(uint32_t animNum, int frameNum, const Point2D &screenPos);
     bool lastFrame(unsigned int animNum, int frameNum);
     int lastFrame(unsigned int animNum);
     int getFrameFromFrameIndx(unsigned int frameIndx);
