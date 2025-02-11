@@ -37,11 +37,9 @@ uint16_t SFXObject::sfxIdCnt = 0;
  * \param type Type of SfxObject (see SFXObject::SfxTypeEnum)
  * \param drawable True means the object will be drawn by default
  * \param t_show
- * \param managed True means object is destroyed by another object than Mission
  */
-SFXObject::SFXObject(Map *pMap, SfxTypeEnum type, bool drawable, int t_show, bool managed) : MapObject(sfxIdCnt++, pMap, kNatureUndefined) {
+SFXObject::SFXObject(Map *pMap, SfxType type, bool drawable, int t_show) : MapObject(sfxIdCnt++, pMap, kNatureUndefined) {
     type_ = type;
-    managed_ = managed;
     draw_all_frames_ = true;
     loopAnimation_ = false;
     setTimeShowAnim(0);
@@ -53,53 +51,53 @@ SFXObject::SFXObject(Map *pMap, SfxTypeEnum type, bool drawable, int t_show, boo
             sfx_life_over_ = true;
             break;
         case SFXObject::sfxt_BulletHit:
-            anim_ = 382;
+            animationId_ = 382;
             break;
         case SFXObject::sfxt_FlamerFire:
-            anim_ = 383;
+            animationId_ = 383;
             setFramesPerSec(12);
             break;
         case SFXObject::sfxt_Smoke:
-            anim_ = 244;
+            animationId_ = 244;
             break;
         case SFXObject::sfxt_Fire_LongSmoke:
             // point of impact for laser
-            anim_ = 389;
+            animationId_ = 389;
             break;
         case SFXObject::sfxt_ExplosionFire:
-            anim_ = 390;
+            animationId_ = 390;
             setFramesPerSec(6);
             break;
         case SFXObject::sfxt_ExplosionBall:
-            anim_ = 391;
+            animationId_ = 391;
             setFramesPerSec(6);
             break;
         case SFXObject::sfxt_LargeFire:
-            anim_ = 243;
+            animationId_ = 243;
             setTimeShowAnim(3000 + t_show);
             break;
         case SFXObject::sfxt_SelArrow:
-            anim_ = 601;
+            animationId_ = 601;
             time_show_anim_ = -1;
             setFramesPerSec(6);
             break;
         case SFXObject::sfxt_AgentFirst:
-            anim_ = 1951;
+            animationId_ = 1951;
             time_show_anim_ = -1;
             setFramesPerSec(4);
             break;
         case SFXObject::sfxt_AgentSecond:
-            anim_ = 1952;
+            animationId_ = 1952;
             time_show_anim_ = -1;
             setFramesPerSec(4);
             break;
         case SFXObject::sfxt_AgentThird:
-            anim_ = 1953;
+            animationId_ = 1953;
             time_show_anim_ = -1;
             setFramesPerSec(4);
             break;
         case SFXObject::sfxt_AgentFourth:
-            anim_ = 1954;
+            animationId_ = 1954;
             time_show_anim_ = -1;
             setFramesPerSec(4);
             break;
@@ -107,7 +105,7 @@ SFXObject::SFXObject(Map *pMap, SfxTypeEnum type, bool drawable, int t_show, boo
 }
 
 void SFXObject::draw(const Point2D &screenPos) {
-    g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
+    g_SpriteMgr.drawFrame(animationId_, frame_, addOffs(screenPos));
 }
 
 bool SFXObject::animate(uint32_t elapsed) {
@@ -125,7 +123,7 @@ bool SFXObject::animate(uint32_t elapsed) {
             pos_.oz = z % 128;
         }
 
-        if (frame_ > g_SpriteMgr.lastFrame(anim_)
+        if (frame_ > g_SpriteMgr.lastFrame(animationId_)
             && !leftTimeShowAnim(elapsed))
         {
             if (loopAnimation_) {

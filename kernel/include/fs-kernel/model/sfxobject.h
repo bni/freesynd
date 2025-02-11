@@ -32,14 +32,15 @@
 namespace fs_knl {
 
 /*!
- * SFXObject map object class.
+ * SFXObject are elements that are small animations with a small lifetime.
+ * Once the lifetime is reached, the object can be destroyed.
  */
 class SFXObject : public MapObject {
 public:
     /*!
      * Type of SfxObject.
      */
-    enum SfxTypeEnum {
+    enum SfxType {
         sfxt_Unknown = 0,
         sfxt_BulletHit = 1,
         sfxt_FlamerFire = 2,
@@ -55,12 +56,11 @@ public:
         sfxt_AgentFourth = 12
     };
 
-    SFXObject(Map *pMap, SfxTypeEnum type, bool drawable = true, int t_show = 0, bool managed = false);
+    SFXObject(Map *pMap, SfxType type, bool drawable = true, int t_show = 0);
     virtual ~SFXObject() {}
 
     bool sfxLifeOver() { return sfx_life_over_; }
-    //! Return true if object is managed by another object
-    bool isManaged() { return managed_; }
+
     //! Set whether animation should loop or not
     void setLoopAnimation(bool flag) { loopAnimation_ = flag; }
     //! Reset animation
@@ -79,16 +79,15 @@ public:
 protected:
     static uint16_t sfxIdCnt;
     /*! The type of SfxObject.*/
-    SfxTypeEnum type_;
-    int anim_;
+    SfxType type_;
+    //! Animation to use for this SfxObject
+    uint32_t animationId_;
     bool sfx_life_over_;
     // to draw all frames or first frame only
     bool draw_all_frames_;
     //! Tells if the animation should restart automatically after ending
     bool loopAnimation_;
-    int elapsed_left_;
-    //! True means the life of the object is managed by something else than gameplaymenu
-    bool managed_;
+    uint32_t elapsed_left_;
 };
 
 }

@@ -259,7 +259,7 @@ public:
         time_show_anim_ = t;
         time_showing_anim_ = 0;
     }
-    bool leftTimeShowAnim(int t) {
+    bool leftTimeShowAnim(uint32_t t) {
         if (time_show_anim_ == -1)
             return true;
         time_showing_anim_ += t;

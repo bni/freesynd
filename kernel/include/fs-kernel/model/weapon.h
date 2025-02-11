@@ -82,10 +82,10 @@ public:
      */
     struct ImpactAnims {
         //! Animation played when impact is on the ground.
-        SFXObject::SfxTypeEnum groundHit;
+        SFXObject::SfxType groundHit;
         //! Animation played when impact is on a living object.
-        SFXObject::SfxTypeEnum objectHit;
-        SFXObject::SfxTypeEnum trace_anim;
+        SFXObject::SfxType objectHit;
+        SFXObject::SfxType trace_anim;
         /*! if weapon can do range damage this is used for range definition
          * with animation.*/
         int rd_anim;

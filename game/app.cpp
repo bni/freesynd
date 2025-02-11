@@ -55,7 +55,7 @@ GameCliParam::GameCliParam():startMission_(-1), cheatCodes_("") {}
 void GameCliParam::addOptions(CLI::App &app) {
     app.add_option("-m,--mission", startMission_, "Jump directly to the specified mission.")
         ->option_text("<id>")->check(CLI::Range(1, 50));
-    app.add_option("-c,--cheat", startMission_, "Set the list of cheatcodes separated by colon.")->option_text("<codes>");
+    app.add_option("-c,--cheat", cheatCodes_, "Set the list of cheatcodes separated by colon.")->option_text("<codes>");
 }
 
 App::App()
@@ -76,28 +76,22 @@ App::~App() {
  * \return True if initialization is ok.
  */
 bool App::doInitialize() {
+    if (!game_ctlr_->initialize()) {
+        return false;
+    }
     // setting the cheat codes
-        if (cliParam_.hasCheatCodes()) {
-            std::string cheatCodes(cliParam_.getCheatCodes());
-            char *cheats = (char *)cheatCodes.c_str();
-            char *token = strtok(cheats, ":");
-            while ( token != NULL ) {
-                LOG(Log::k_FLG_INFO, "Main", "main", ("Cheat code activated : %s", token))
-                //setCheatCode(token);
-                token = strtok(NULL, ":");
-            }
+    if (cliParam_.hasCheatCodes()) {
+        std::string cheatCodes(cliParam_.getCheatCodes());
+        char *cheats = (char *)cheatCodes.c_str();
+        char *token = strtok(cheats, ":");
+        while ( token != NULL ) {
+            LOG(Log::k_FLG_INFO, "Main", "main", ("Cheat code activated : %s", token))
+            game_ctlr_->setCheatCode(token);
+            token = strtok(NULL, ":");
         }
+    }
 
-    return game_ctlr_->initialize();
-}
-
-
-/*!
- * Activate a cheat code with the given name. 
- * \param name The name of a cheat code.
- */
-void App::setCheatCode(const char *name) {
-    game_ctlr_->setCheatCode(name);
+    return true;
 }
 
 /*!

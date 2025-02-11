@@ -70,11 +70,13 @@ public:
     //! Draw a single sprite without animation
     void drawSprite(int spriteId, const Point2D &screenPos);
     //! Draw a frame for a given animation
-    bool drawFrame(uint32_t animNum, int frameNum, const Point2D &screenPos);
-    bool lastFrame(unsigned int animNum, int frameNum);
-    int lastFrame(unsigned int animNum);
+    bool drawFrame(uint32_t animId, int frameId, const Point2D &screenPos);
+    //! Return true if the frameId is the last frame for given animation
+    bool lastFrame(uint32_t animId, int frameId);
+    //! Return the id of the last frame of given animation
+    int lastFrame(uint32_t animId);
     int getFrameFromFrameIndx(unsigned int frameIndx);
-    int getFrameNum(unsigned int animNum);
+    int getFrameNum(uint32_t animNum);
 
 protected:
     bool loadElementsFromCustomFiles();

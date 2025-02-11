@@ -212,14 +212,10 @@ public:
     }
     /*!
      * Removes SfxObject at given position in the list of sfxobjects.
-     * Object is freed only if not managed by another object.
      * \param i position of object in the list.
      */
     void delSfxObject(size_t i) {
-        if (!sfx_objects_[i]->isManaged()) {
-            // object is not managed so delete it
-            delete sfx_objects_[i];
-        }
+        delete sfx_objects_[i];
         sfx_objects_.erase((sfx_objects_.begin() + i));
     }
 

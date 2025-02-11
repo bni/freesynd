@@ -206,23 +206,23 @@ void AnimationManager::drawSprite(int spriteId, const Point2D &screenPos) {
 }
 
 /*!
- * @brief 
- * @param animNum 
- * @param frameNum 
- * @param screenPos 
+ * Draw a given frame that's within the given animation at given screen position.
+ * @param animId The animation id
+ * @param frameId The frame id in the animation 
+ * @param screenPos The position on the screen
  * @return 
  */
-bool AnimationManager::drawFrame(uint32_t animNum, int frameNum, const Point2D &screenPos)
+bool AnimationManager::drawFrame(uint32_t animId, int frameId, const Point2D &screenPos)
 {
-    assert(animNum < index_.size());
+    assert(animId < index_.size());
 
-    GameSpriteFrame *f = &frames_[index_[animNum]];
+    GameSpriteFrame *f = &frames_[index_[animId]];
     if (f == NULL)
         return false;
 
-    while (frameNum) {
+    while (frameId) {
         f = &frames_[f->next_frame_];
-        frameNum--;
+        frameId--;
     }
 
     GameSpriteFrameElement *e = &elements_[f->first_element_];
@@ -233,38 +233,44 @@ bool AnimationManager::drawFrame(uint32_t animNum, int frameNum, const Point2D &
         e = &elements_[e->next_element_];
     }
 
-    return f->next_frame_ == index_[animNum];
+    return f->next_frame_ == index_[animId];
 }
 
-bool AnimationManager::lastFrame(unsigned int animNum, int frameNum)
+/*!
+ * Tells if the 
+ * @param animId 
+ * @param frameId 
+ * @return 
+ */
+bool AnimationManager::lastFrame(uint32_t animId, int frameId)
 {
-    assert(animNum < index_.size());
+    assert(animId < index_.size());
 
-    GameSpriteFrame *f = &frames_[index_[animNum]];
-    while (frameNum) {
+    GameSpriteFrame *f = &frames_[index_[animId]];
+    while (frameId) {
         f = &frames_[f->next_frame_];
-        frameNum--;
+        frameId--;
     }
 
-    return f->next_frame_ == index_[animNum];
+    return f->next_frame_ == index_[animId];
 }
 
-int AnimationManager::lastFrame(unsigned int animNum)
+int AnimationManager::lastFrame(uint32_t animId)
 {
-    int frameNum = 0;
-    assert(animNum < index_.size());
+    int frameId = 0;
+    assert(animId < index_.size());
 
-    GameSpriteFrame *f = &frames_[index_[animNum]];
-    while (f->next_frame_ != index_[animNum]) {
+    GameSpriteFrame *f = &frames_[index_[animId]];
+    while (f->next_frame_ != index_[animId]) {
         f = &frames_[f->next_frame_];
-        frameNum++;
+        frameId++;
     }
-    return frameNum;
+    return frameId;
 }
 
 int AnimationManager::getFrameFromFrameIndx(unsigned int frameIndx)
 {
-    int frameNum = 0;
+    int frameId = 0;
 
     GameSpriteFrame *f = &frames_[frameIndx];
     while (1) {
@@ -276,27 +282,32 @@ int AnimationManager::getFrameFromFrameIndx(unsigned int frameIndx)
     while (1) {
         f = &frames_[f->next_frame_];
         if (f->next_frame_ == frameIndx)
-            return frameNum;
-        frameNum++;
+            return frameId;
+        frameId++;
     }
 }
 
-int AnimationManager::getFrameNum(unsigned int animNum)
+/*!
+ * @brief 
+ * @param animId 
+ * @return 
+ */
+int AnimationManager::getFrameNum(uint32_t animId)
 {
-    assert(animNum < index_.size());
-    int frameNum = 1;
+    assert(animId < index_.size());
+    int frameId = 1;
 
-    GameSpriteFrame *f = &frames_[index_[animNum]];
+    GameSpriteFrame *f = &frames_[index_[animId]];
     bool passedStart = false;
     while (1) {
         if (f->flags_ == 0x0100) {
             if (passedStart)
-                return frameNum;
+                return frameId;
             else
                 passedStart = true;
         }
         f = &frames_[f->next_frame_];
-        frameNum++;
+        frameId++;
     }
 }
 

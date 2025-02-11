@@ -76,8 +76,6 @@ class App : public fs_eng::BaseApp {
     App();
     virtual ~App();
 
-    void setCheatCode(const char *name);
-
 #ifdef _DEBUG
 public:
     uint8 debug_breakpoint_trigger_;

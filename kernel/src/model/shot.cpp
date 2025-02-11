@@ -208,7 +208,7 @@ void InstantImpactShot::diffuseImpact(Mission *pMission, const WorldPoint &origi
  * Some weapons can have no animations for an impact.
  */
 void InstantImpactShot::createImpactAnimation(Mission *pMission, ShootableMapObject * pTargetHit, const WorldPoint impactPosW) {
-    SFXObject::SfxTypeEnum impactAnimId =
+    SFXObject::SfxType impactAnimId =
         (pTargetHit != NULL ?
             dmg_.pWeapon->getClass()->impactAnims()->objectHit :
             dmg_.pWeapon->getClass()->impactAnims()->groundHit);
