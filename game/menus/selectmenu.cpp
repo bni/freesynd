@@ -460,7 +460,6 @@ void SelectMenu::toggleAgent(int n)
         if (a->isActive() && nactive == 1)
             return;
         a->setActive(!a->isActive());
-        dirtyAgentSelector();
     }
 }
 
@@ -694,8 +693,6 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
 
             // redraw agent display
             addDirtyRect(158, 110, 340, 260);
-            // redraw agent buttons
-            dirtyAgentSelector();
         }
 
     } else if (actionId == pModsLBox_->getId()) {

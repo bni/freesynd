@@ -97,7 +97,7 @@ public:
     int getHeight() { return height_; }
 
     void setVisible(bool visible);
-    bool isVisible() { return visible_; }
+    bool isVisible() const { return visible_; }
 
 protected:
     void redraw();
@@ -147,7 +147,7 @@ public:
     virtual ~MenuText() {}
 
     //! Draw the widget on screen
-    void draw();
+    void draw() override;
 
     void setLocation(int x, int y);
 
@@ -156,7 +156,7 @@ public:
     std::string& getText() { return text_; }
 
     void setHighlighted(bool highlighted);
-    bool isHighlighted() { return highlighted_; }
+    bool isHighlighted() const { return highlighted_; }
 
     /*! Returns the font size. */
     MenuFont * getFont() { return pFont_; }
@@ -235,7 +235,7 @@ public:
     bool isHotKeyDefined() { return hotKeyCode_ != kKeyCode_Unknown; }
 
     //! Draw the widget on screen
-    void draw();
+    void draw() override;
 
     void handleMouseDown(Point2D point, int button) override;
 

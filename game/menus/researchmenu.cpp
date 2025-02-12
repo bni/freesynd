@@ -96,7 +96,6 @@ ResearchMenu::~ResearchMenu() {
  * Shows either the mods list box or equips list box.
  */
 void ResearchMenu::showDetailsList() {
-    addDirtyRect(500, 105,  125, 235);
     getOption(cancelDescId_)->setVisible(false);
     pSelectedWeapon_ = NULL;
     pSelectedMod_ = NULL;
@@ -122,7 +121,6 @@ void ResearchMenu::hideDetailsList() {
  * Shows either the search field list box for Equips or Mods.
  */
 void ResearchMenu::showFieldList() {
-    addDirtyRect(15, 80,  130, 130);
 
     if (tab_ == TAB_EQUIPS) {
         pFieldEquipLBox_->setVisible(true);
@@ -190,7 +188,6 @@ void ResearchMenu::showResInfo() {
 }
 
 void ResearchMenu::showResGraph(fs_knl::Research *pRes) {
-    redrawGraph();
     pResForGraph_ = pRes;
     getOption(researchId_)->setVisible(false);
     getOption(incrFundId_)->setVisible(true);
@@ -241,9 +238,6 @@ bool ResearchMenu::handleTick(uint32_t elapsed)
 {
     if (g_Session.updateTime(elapsed)) {
         updateClock();
-        if (pResForGraph_) {
-            redrawGraph();
-        }
     }
 
     return true;
@@ -378,14 +372,10 @@ void ResearchMenu::handleAction(const int actionId, void *ctx)
     } else if (actionId == incrFundId_) {
         if (pResForGraph_->incrFunding()) {
             getStatic(fundCurrLblId_)->setTextFormated("%d", pResForGraph_->getCurrFunding());
-            // redraw graph
-            redrawGraph();
         }
     } else if (actionId == decrFundId_) {
         if (pResForGraph_->decrFunding()) {
             getStatic(fundCurrLblId_)->setTextFormated("%d", pResForGraph_->getCurrFunding());
-            // redraw graph
-            redrawGraph();
         }
     }
 }
@@ -400,7 +390,6 @@ void ResearchMenu::onResearchEndEvent(fs_knl::ResearchEndEvent *pEvt) {
     // If current graph was for this research, make it disappear
     if (pResForGraph_ && pResForGraph_->getId() == pEvt->pResearch->getId()) {
         pResForGraph_ = NULL;
-        redrawGraph();
         getStatic(fundCurrLblId_)->setVisible(false);
         getStatic(searchTitleLblId_)->setText("");
     }

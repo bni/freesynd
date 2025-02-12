@@ -33,7 +33,7 @@ public:
     FontMenu(fs_eng::MenuManager *m);
 
     bool handleBeforeShow() override;
-    void handleRender(DirtyList &dirtyList) override;
+    void handleRender() override;
     void handleLeave() override;
 
     void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;

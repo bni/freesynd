@@ -52,9 +52,6 @@ protected:
     void showMainPanel();
     void hideMainPanel();
 
-    void redrawLogo() { addDirtyRect(28, 22, 150, 110); }
-    void redrawPanel() { addDirtyRect(278, 20, 340 , 135); }
-
 protected:
     /*!
      * This enum identifies the panel which is currently displayed.

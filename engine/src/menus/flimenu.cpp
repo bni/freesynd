@@ -148,8 +148,6 @@ bool FliMenu::handleTick(uint32_t elapsed)
                 menu_manager_->fonts().introFont()->setPalette(fliPlayer_.getPalette());
             }
 
-            // Add a dirty rect just to start the render routine
-            addDirtyRect(0, 0, 1, 1);
             // If we're at the first frame, then play music if defined
             if (frameIndex == 1 && desc.song != MusicManager::kMusicSongNoSong) {
                 g_MusicMgr.playSong(desc.song);

@@ -53,7 +53,7 @@ AnimMenu::AnimMenu(MenuManager * m)
     txtFrameId_ = addStatic(300, 350, "0", FontManager::SIZE_2, true);
 }
 
-void AnimMenu::handleRender(DirtyList &dirtyList)
+void AnimMenu::handleRender()
 {
     //g_Screen.drawRect(150, 110, 350, 150);
     g_System.drawRect({150, 110}, 350, 150, menu_manager_->kMenuColorBlack);

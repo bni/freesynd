@@ -90,9 +90,7 @@ bool BriefMenu::handleTick(uint32_t elapsed)
         updateClock();
     }
 
-    if (mm_renderer_.handleTick(elapsed)) {
-        redrawMiniMap();
-    }
+    mm_renderer_.handleTick(elapsed);
 
     return true;
 }
@@ -177,20 +175,6 @@ bool BriefMenu::handleBeforeShow() {
     }
 
     return true;
-}
-
-/*!
- * Helpfull method to order minimap redraw by inserting a dirty rect.
- */
-void BriefMenu::redrawMiniMap() {
-    addDirtyRect(kMiniMapScreenPos.x, kMiniMapScreenPos.y, kMiniMapWidth, kMiniMapHeight);
-}
-
-/*!
- * Helpfull method to order briefing redraw by inserting a dirty rect.
- */
-void BriefMenu::redrawBriefing() {
-    addDirtyRect(22, 86, 474, 256);
 }
 
 /*!
@@ -288,7 +272,6 @@ void BriefMenu::update_briefing_text()
     getOption(prevButId_)->setVisible(start_line_ != 0);
     // Next button is visible only if there are line after the lines currently displayed
     getOption(nextButId_)->setVisible(line_count >= (start_line_ + kMaxLinePerPage));
-    redrawBriefing();
 }
 
 void BriefMenu::handleRender() {
@@ -352,7 +335,6 @@ void BriefMenu::handleAction(const int actionId, void *ctx) {
                 mm_renderer_.setDrawEnemies(true);
                 getOption(enhButId_)->setWidgetEnabled(false);
             }
-            redrawMiniMap();
 
             getStatic(txtMoneyId_)->setTextFormated("%d", g_Session.getMoney());
             if (g_Session.getSelectedBlock().enhanceLevel < p_briefing_->nb_enhts()) {
@@ -397,8 +379,7 @@ bool BriefMenu::handleMouseDown(Point2D point, int button) {
         } else if (point.y >= 300 && point.y < 340) {
              mm_renderer_.scrollDown();
         }
-        // Redraw map
-        redrawMiniMap();
+
         return true;
     }
 

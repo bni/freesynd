@@ -135,19 +135,15 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
         if (tempColourId_ < 0) {
             tempColourId_ = g_LogoMgr.kMaxColour - 1;
         }
-        redrawPanel();
     } else if (actionId == rightColButId_) {
         tempColourId_ = (tempColourId_ + 1) % g_LogoMgr.kMaxColour;
-        redrawPanel();
     } else if (actionId == leftLogoButId_) {
         tempLogo_--;
         if (tempLogo_ < 0 ) {
             tempLogo_ = g_LogoMgr.numLogos() - 1;
         }
-        redrawPanel();
     } else if (actionId == rightLogoButId_) {
         tempLogo_ = (tempLogo_ + 1) % g_LogoMgr.numLogos();
-        redrawPanel();
     } else if (actionId == okButId_) {
         if (currPanel_ == kConfPanelLogo) {
             toAcceptColourId_ = tempColourId_;
@@ -157,7 +153,6 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
         } else {
             getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
         }
-        redrawLogo();
         showMainPanel();
     } else if (actionId == cancelButId_) {
         showMainPanel();
@@ -184,7 +179,6 @@ bool ConfMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
             } else {
                 getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
             }
-            redrawLogo();
             showMainPanel();
             return true;
         }
@@ -222,7 +216,6 @@ void ConfMenu::showMainPanel() {
         captureInputBy(NULL);
     }
 
-    redrawPanel();
     currPanel_ = kConfPanelMain;
 }
 
@@ -233,8 +226,6 @@ void ConfMenu::hideMainPanel() {
 
     getOption(acceptButId_)->setWidgetEnabled(false);
     getOption(menuButId_)->setWidgetEnabled(false);
-
-    redrawPanel();
 }
 
 void ConfMenu::showLogoPanel() {

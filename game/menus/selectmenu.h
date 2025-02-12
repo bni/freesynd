@@ -60,9 +60,6 @@ protected:
     void drawSelectedWeaponInfos(int x, int y);
     void drawSelectedModInfos(int x, int y);
 
-    //! Utility method to force redraw of agent selectors
-    void dirtyAgentSelector() { addDirtyRect(16, 80, 130, 155); }
-
     void toggleAgent(int n);
     void updateAcceptEnabled();
 

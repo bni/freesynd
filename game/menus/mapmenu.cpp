@@ -240,8 +240,6 @@ void MapMenu::handleBlockSelected() {
         getOption(decrTaxButId_)->setVisible(false);
         getOption(incrTaxButId_)->setVisible(false);
     }
-
-    /*addDirtyRect(192, 310, 260, 70);*/
 }
 
 bool MapMenu::handleTick(uint32_t elapsed) {

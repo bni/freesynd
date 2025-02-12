@@ -420,7 +420,7 @@ void MenuManager::renderMenu() {
         if (current_->doNeedBackground()) {
            pBackgroundTexture_->renderFullTextureStrech(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
         }
-        current_->render(dirtyList_);
+        current_->render();
         // flush dirty list
         dirtyList_.flush();
     }

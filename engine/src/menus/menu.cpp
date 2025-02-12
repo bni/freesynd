@@ -64,8 +64,9 @@ SpriteManager & Menu::menuSprites() {
 /*!
  * Adds a dirty rect the size of the screen.
  */
+[[deprecated]]
 void Menu::needRendering() {
-    menu_manager_->addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
+    //menu_manager_->addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 }
 
 /*!
@@ -79,19 +80,16 @@ void Menu::addDirtyRect(int x, int y, int width, int height) {
     menu_manager_->addRect(x, y, width, height);
 }
 
-void Menu::render(DirtyList &dirtyList)
+void Menu::render()
 {
-
-    for (std::list < MenuText >::iterator it = statics_.begin();
-        it != statics_.end(); it++) {
-        MenuText & m = *it;
-        if ( m.isVisible() && dirtyList.intersectsList(m.getX(), m.getY(), m.getWidth(), m.getHeight()) ) {
-            m.draw();
+    for (auto& menuText : statics_) {
+        if ( menuText.isVisible() ) {
+            menuText.draw();
         }
     }
 
-    for (const auto& action : actions_) {
-        if ( action->isVisible() && dirtyList.intersectsList(action->getX(), action->getY(), action->getWidth(), action->getHeight())) {
+    for (auto& action : actions_) {
+        if ( action->isVisible() ) {
             action->draw();
         }
     }

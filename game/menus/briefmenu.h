@@ -55,8 +55,6 @@ protected:
     static const int kMaxLinePerPage;
 
     void updateClock();
-    void redrawMiniMap();
-    void redrawBriefing();
 
     bool handleMouseDown(Point2D point, int button) override;
     //! Return the zoom level from the enhancement level

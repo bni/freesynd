@@ -32,7 +32,7 @@ class AnimMenu : public fs_eng::Menu {
 public:
     AnimMenu(fs_eng::MenuManager *m);
 
-    void handleRender(DirtyList &dirtyList) override;
+    void handleRender() override;
     void handleLeave() override;
 
 protected:

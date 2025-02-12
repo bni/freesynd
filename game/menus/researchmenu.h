@@ -58,8 +58,6 @@ protected:
     //! Draws infos on the selected mod
     void drawSelectedModInfos(int x, int y);
 
-    void redrawGraph() { addDirtyRect(200, 110, 250, 250); }
-
     void onResearchEndEvent(fs_knl::ResearchEndEvent *pEvt);
 
 protected:

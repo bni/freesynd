@@ -126,7 +126,7 @@ public:
     virtual bool handleBeforeShow() { return true; }
 
     //! Main render function
-    void render(DirtyList &dirtyList);
+    void render();
 
     //! Callback function : Children can re-implement
     /*!
@@ -164,6 +164,7 @@ public:
     bool isPaused() { return paused_; }
 
     MenuManager *getMenuManager() { return menu_manager_; }
+    [[deprecated]]
     void addDirtyRect(int x, int y, int width, int height);
 
 protected:

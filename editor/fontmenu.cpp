@@ -64,7 +64,7 @@ void FontMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
     panelId_ = actionId;
 }
 
-void FontMenu::handleRender(DirtyList &dirtyList) {
+void FontMenu::handleRender() {
     g_System.drawRect({10, 70}, 490, 300, defaultColor_);
 
     if (panelId_ == idButtonSprites_) {

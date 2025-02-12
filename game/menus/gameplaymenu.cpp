@@ -741,8 +741,6 @@ void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button)
             }
         }
     }
-    // redraw weapon selector
-    addDirtyRect(0, 207, 128, 64);
 }
 
 void GameplayMenu::setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int percentage)
@@ -1317,9 +1315,6 @@ void GameplayMenu::selectAgent(size_t agentNo, bool addToGroup) {
         centerMinimapOnLeader();
         highlightLeaderMarker();
         g_SoundMgr.play(fs_eng::SPEECH_SELECTED);
-
-        // redraw agent selectors
-        addDirtyRect((agentNo % 2) * 65, (agentNo / 2) * 90 , 64, 46);
     }
 }
 
@@ -1335,8 +1330,6 @@ void GameplayMenu::selectAllAgents() {
     updateSelectAll();
     if (isButtonSelectAllPressed_ != prv_state) {
         g_SoundMgr.play(fs_eng::SPEECH_SELECTED);
-        // redraw all agent selectors
-        addDirtyRect(0, 0, 128, 180);
     }
 }
 
