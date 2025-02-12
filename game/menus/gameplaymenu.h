@@ -42,7 +42,7 @@ public:
     //! Update the menu state
     bool handleTick(uint32_t elapsed) override;
     bool handleBeforeShow() override;
-    void handleRender(DirtyList &dirtyList) override;
+    void handleRender() override;
     void handleLeave() override;
 
 protected:

@@ -168,7 +168,7 @@ void DebriefMenu::checkNewWeaponFound() {
     }
 }
 
-void DebriefMenu::handleRender(DirtyList &dirtyList) {
+void DebriefMenu::handleRender() {
     // Display team logo
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 

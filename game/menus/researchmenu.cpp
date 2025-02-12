@@ -273,7 +273,7 @@ bool ResearchMenu::handleBeforeShow() {
     return true;
 }
 
-void ResearchMenu::handleRender(DirtyList &dirtyList)
+void ResearchMenu::handleRender()
 {
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 

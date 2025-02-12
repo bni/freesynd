@@ -262,7 +262,7 @@ void BriefMenu::update_briefing_text()
         a_page_[i].erase();
     }
 
-    for (int lvl = 0; lvl <= g_Session.getSelectedBlock().infoLevel; lvl++) {
+    for (uint8_t lvl = 0; lvl <= g_Session.getSelectedBlock().infoLevel; lvl++) {
         std::string brief(p_briefing_->briefing(lvl));
         std::string line;
 
@@ -291,7 +291,7 @@ void BriefMenu::update_briefing_text()
     redrawBriefing();
 }
 
-void BriefMenu::handleRender(DirtyList &dirtyList) {
+void BriefMenu::handleRender() {
 
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
@@ -300,9 +300,8 @@ void BriefMenu::handleRender(DirtyList &dirtyList) {
     printf("---------------------------");
     printf("start time %i.%i\n", SDL_GetTicks()/1000, SDL_GetTicks()%1000);
 #endif
-    if (dirtyList.intersectsList(22, 86, 460, 220)) {
-        render_briefing_text();
-    }
+    render_briefing_text();
+    
 #ifdef EXECUTION_SPEED_TIME
     printf("+++++++++++++++++++++++++++");
     printf("end time %i.%i\n", SDL_GetTicks()/1000, SDL_GetTicks()%1000);

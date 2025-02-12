@@ -34,7 +34,8 @@ public:
     ConfMenu(fs_eng::MenuManager *m);
     ~ConfMenu();
 
-    virtual void handleRender(DirtyList &dirtyList) override;
+    //! @copydoc Menu::handleRender()
+    virtual void handleRender() override;
     bool handleBeforeShow() override;
     void handleLeave() override;
 

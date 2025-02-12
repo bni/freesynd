@@ -365,7 +365,7 @@ bool SelectMenu::handleBeforeShow() {
     return true;
 }
 
-void SelectMenu::handleRender(DirtyList &dirtyList) {
+void SelectMenu::handleRender() {
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
     // write team member icons and health

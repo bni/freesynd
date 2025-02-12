@@ -41,7 +41,8 @@ public:
 
     bool handleTick(uint32_t elapsed) override;
     bool handleBeforeShow() override;
-    void handleRender(DirtyList &dirtyList) override;
+    //! @copydoc Menu::handleRender()
+    void handleRender() override;
     void handleLeave() override;
     void handleAction(const int actionId, void *ctx) override;
 

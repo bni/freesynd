@@ -36,7 +36,7 @@ public:
     DebriefMenu(fs_eng::MenuManager *m);
 
     bool handleBeforeShow() override;
-    void handleRender(DirtyList &dirtyList) override;
+    void handleRender() override;
     void handleLeave() override;
 
     void updateStatsFields(fs_knl::Mission *pMission);

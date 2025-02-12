@@ -44,7 +44,7 @@ public:
     void handleAction(const int actionId, void *ctx) override;
 
 protected:
-    void handleRender(DirtyList &dirtyList) override;
+    void handleRender() override;
     bool handleUnMappedKey(const fs_eng::FS_Key key) override;
     bool handleMouseDown(Point2D point, int button) override;
     //! Utility method to draw the mission selector

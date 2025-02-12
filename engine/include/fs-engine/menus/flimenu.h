@@ -91,7 +91,7 @@ public:
     void clearFliDescList();
 
 protected:
-    void handleRender(DirtyList &dirtyList) override;
+    void handleRender() override;
 
     bool handleMouseDown(Point2D point, int button) override;
 

@@ -409,7 +409,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
     return true;
 }
 
-void GameplayMenu::handleRender(DirtyList &dirtyList) {
+void GameplayMenu::handleRender() {
     map_renderer_.render(displayOriginPt_);
     g_System.drawRect({0,0}, 129, fs_eng::kScreenHeight, menu_manager_->kMenuColorBlack);
     agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);

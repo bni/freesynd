@@ -86,7 +86,7 @@ void ConfMenu::createPanels() {
     pCompNameTF_ = addTextField(312, 79, 255, 21, FontManager::SIZE_2, GameSession::kNameMaxSize);
 }
 
-void ConfMenu::handleRender(DirtyList &dirtyList) {
+void ConfMenu::handleRender() {
     // Draw the current logo
     g_LogoMgr.draw({28, 22}, toAcceptLogo_, toAcceptColourId_, true);
 

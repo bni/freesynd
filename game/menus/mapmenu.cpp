@@ -375,7 +375,7 @@ void MapMenu::buildMapOfCountriesPerColor() {
     }
 }
 
-void MapMenu::handleRender(DirtyList &dirtyList) {
+void MapMenu::handleRender() {
     // Draws all countries
     for (auto const& [color, countries] : countriesPerColor_) {
         // We are using color modulation to draw each country with the right color

@@ -172,7 +172,7 @@ protected:
     /*!
         * Called each time a menu is rendered.
         */
-    virtual void handleRender([[maybe_unused]] DirtyList &dirtyList) {}
+    virtual void handleRender() {}
 
     //! Handle mouse down event.
     /*!

@@ -96,7 +96,7 @@ void Menu::render(DirtyList &dirtyList)
         }
     }
 
-    handleRender(dirtyList);
+    handleRender();
 }
 
 /*!

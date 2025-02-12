@@ -196,7 +196,7 @@ bool FliMenu::handleTick(uint32_t elapsed)
     return true;
 }
 
-void FliMenu::handleRender(DirtyList &dirtyList)
+void FliMenu::handleRender()
 {
     if (isFrameLoaded_) {
         fliPlayer_.renderFrame();
@@ -231,7 +231,7 @@ bool FliMenu::handleMouseDown(Point2D point, int button)
 /*!
  * Ends the animation.
  */
-bool FliMenu::handleUnMappedKey(const FS_Key key) {
+bool FliMenu::handleUnMappedKey([[maybe_unused]] const FS_Key key) {
     if (fliIndex_ > 0) {
         FliDesc desc = fliList_.at(fliIndex_ - 1);
         if ((playingFli_ && desc.skipable) || (!playingFli_ && desc.waitKeyPressed)) {
