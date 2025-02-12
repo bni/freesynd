@@ -80,7 +80,7 @@ public:
     //! Destroy an agent from squad and cryo chamber
     void destroyAgentSlot(size_t squadSlot);
 
-    Agent *agent(int n) {
+    Agent *agent(uint8_t n) {
         assert(n < MAX_AGENT);
         return agents_.get(n);
     }

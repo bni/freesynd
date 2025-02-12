@@ -246,9 +246,12 @@ void GameplayMenu::initWorldCoords()
 {
     // get the leader position on the map
     fs_knl::PedInstance *p_leader = selection_.leader();
+    fs_knl::TilePoint leaderPos(p_leader->tileX(),
+                                p_leader->tileY(),
+                                mission_->mmax_z_ + 1,
+                                0, 0);
     Point2D start;
-    mission_->get_map()->tileToScreenPoint(p_leader->tileX(),
-        p_leader->tileY(), mission_->mmax_z_ + 1, 0, 0, &start);
+    mission_->get_map()->tileToScreenPoint(leaderPos, &start);
     start.x -= (fs_eng::kScreenWidth - 129) / 2;
     start.y -= fs_eng::kScreenHeight / 2;
 
@@ -274,9 +277,12 @@ void GameplayMenu::initWorldCoords()
         mpt.ty = mission_->maxY();
 
     // recalculating new screen coords
+    fs_knl::TilePoint newPoint(mpt.tx,
+                                mpt.ty,
+                                mission_->mmax_z_ + 1, 
+                                0, 0);
     Point2D msp;
-    mission_->get_map()->tileToScreenPoint(mpt.tx, mpt.ty,
-        mission_->mmax_z_ + 1, 0, 0, &msp);
+    mission_->get_map()->tileToScreenPoint(newPoint, &msp);
     displayOriginPt_.x = msp.x;
     displayOriginPt_.y = msp.y;
 }
@@ -352,7 +358,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
     }
 
     if (tick_count_ - last_animate_tick_ > 33) {
-        int diff = tick_count_ - last_animate_tick_;
+        uint32_t diff = tick_count_ - last_animate_tick_;
         last_animate_tick_ = tick_count_;
 
         for (size_t i = 0; i < mission_->numSfxObjects(); i++) {

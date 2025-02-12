@@ -40,7 +40,7 @@ public:
     Map(fs_eng::TileManager *tileManager, uint16_t anId);
     ~Map();
 
-    bool loadMap(uint8 *mapData);
+    bool loadMap(uint8_t *mapData);
 
     uint16_t id() { return id_; }
     int width() { return map_width_; }
@@ -54,7 +54,6 @@ public:
     void clip(TilePoint *point);
 
     //! Converts a Map tile position to a screen position
-    void tileToScreenPoint(int x, int y, int z, int pX, int pY, Point2D *pScp);
     void tileToScreenPoint(const TilePoint &tPt, Point2D *pScp);
     //! Converts a screen position in pixel into a Map tile position
     TilePoint screenToTilePoint(int x, int y);
@@ -67,7 +66,7 @@ public:
     fs_eng::TileManager * getTileManager() { return tileManager_; }
     fs_eng::Tile * getTileAt(int x, int y, int z);
     int tileAt(int x, int y, int z);
-    void patchMap(int x, int y, int z, uint8 tileNum);
+    void patchMap(int x, int y, int z, uint8_t tileNum);
     //! Return true if tile at given position is traversable by car
     bool isTileWalkableByCar(int x, int y, int z);
 
@@ -87,11 +86,11 @@ protected:
 class MiniMap {
 public:
     /*! Constant for the minimap overlay : no overlay */
-    static const uint8 kOverlayNone;
+    static const uint8_t kOverlayNone;
     /*! Constant for the minimap overlay : the agent is our. */
-    static const uint8 kOverlayOurAgent;
+    static const uint8_t kOverlayOurAgent;
     /*! Constant for the minimap overlay : this is an enemy agent. */
-    static const uint8 kOverlayEnemyAgent;
+    static const uint8_t kOverlayEnemyAgent;
 
     MiniMap(Map *p_map);
     ~MiniMap();
@@ -100,7 +99,7 @@ public:
     int max_x() { return mmax_x_;}
     /*! Returns the map height in tiles.*/
     int max_y() { return mmax_y_;}
-    uint8 getColourAt(int x, int y);
+    uint8_t getColourAt(int x, int y);
 
     //! Defines a source on the minimap for the signal
     void setTarget(MapObject *pTarget);
@@ -112,7 +111,7 @@ public:
 private:
     /* An array with the same size of the real map but containing
      a color for each type of tile. */
-    uint8 *a_minimap_;
+    uint8_t *a_minimap_;
     /* Size of the minimap (same as the map).*/
     int mmax_x_;
     /* Height of the minimap (same as the map).*/

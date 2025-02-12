@@ -125,7 +125,7 @@ void AgentManager::loadAgents() {
 }
 
 void AgentManager::destroy() {
-    for (int i = 0; i != MAX_AGENT; ++i) {
+    for (uint8_t i = 0; i != MAX_AGENT; ++i) {
         if (agents_.get(i)) {
             delete agents_.get(i);
             agents_.setAt(i, NULL);
@@ -141,7 +141,7 @@ void AgentManager::reset(bool onlyWomen) {
     destroy();
 
     // Then recreate the first 8 available agents
-    for (size_t i = 0; i < 8; i++) {
+    for (uint8_t i = 0; i < 8; i++) {
         Agent * pAgent = new Agent(g_AgentNames[nextName_], onlyWomen ? true : ((i % 2) == 0));
         pAgent->addWeapon(WeaponInstance::createInstance(pWeaponManager_->getWeapon(Weapon::Pistol)));
 
@@ -157,7 +157,7 @@ void AgentManager::reset(bool onlyWomen) {
 void AgentManager::destroyAgentSlot(size_t squadSlot) {
     Agent *p_agent = squadMember(squadSlot);
     setSquadMember(squadSlot, NULL);
-    for (int inc = 0; inc < AgentManager::MAX_AGENT; inc++) {
+    for (uint8_t inc = 0; inc < AgentManager::MAX_AGENT; inc++) {
         if (agent(inc) == p_agent) {
             delete agents_.get(inc);
             agents_.setAt(inc, NULL);
@@ -168,7 +168,7 @@ void AgentManager::destroyAgentSlot(size_t squadSlot) {
 
 bool AgentManager::saveToFile(fs_utl::PortableFile &file) {
     file.write32(nextName_);
-    for (int i=0; i<AgentManager::MAX_AGENT; i++) {
+    for (uint8_t i=0; i<AgentManager::MAX_AGENT; i++) {
         Agent *pAgent = agents_.get(i);
         // This flag tells if there is an agent on this slot
         file.write8b(pAgent != 0);
@@ -188,7 +188,7 @@ bool AgentManager::saveToFile(fs_utl::PortableFile &file) {
 
 bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::FormatVersion& v) {
     nextName_ = infile.read32();
-    for (int i=0; i<AgentManager::MAX_AGENT; i++) {
+    for (uint8_t i=0; i<AgentManager::MAX_AGENT; i++) {
         bool isAgent = infile.read8b();
         if (isAgent) {
             Agent *pAgent = agents_.get(i);
@@ -199,9 +199,9 @@ bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Form
             pAgent->loadFromFile(infile, v);
 
             // Mods
-            int nb = infile.read32();
-            for (int mIndex = 0; mIndex < nb; mIndex++) {
-                int type = infile.read32();
+            uint32_t nb = infile.read32();
+            for (uint32_t mIndex = 0; mIndex < nb; mIndex++) {
+                uint32_t type = infile.read32();
                 Mod::EModType mt = Mod::Unknown;
                 Mod::EModVersion mv = Mod::MOD_V1;
                 switch (type) {
@@ -214,7 +214,7 @@ bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Form
                     default: mt = Mod::Unknown;
                 }
 
-                int ver = infile.read32();
+                uint32_t ver = infile.read32();
                 switch (ver) {
                     case 0: mv = Mod::MOD_V1;break;
                     case 1: mv = Mod::MOD_V2;break;
@@ -228,8 +228,8 @@ bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Form
             }
             // Weapons
             nb = infile.read32();
-            for (int wIndex = 0; wIndex < nb; wIndex++) {
-                int type = infile.read32();
+            for (uint32_t wIndex = 0; wIndex < nb; wIndex++) {
+                uint32_t type = infile.read32();
                 Weapon::WeaponType wt = Weapon::Unknown;
                 switch (type) {
                     case Weapon::Persuadatron:
@@ -294,7 +294,7 @@ bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Form
     for (size_t squadInd=0; squadInd<kMaxSlot; squadInd++) {
         int id = infile.read32();
         if (id != 0) {
-            for (int iAgnt=0; iAgnt<MAX_AGENT; iAgnt++) {
+            for (uint8_t iAgnt=0; iAgnt<MAX_AGENT; iAgnt++) {
                 Agent *pAgent = agent(iAgnt);
                 if (pAgent && pAgent->getId() == id) {
                     setSquadMember(squadInd, pAgent);
@@ -310,7 +310,7 @@ bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Form
 
 Agent* AgentManager::createAgent(bool onlyWomen)
 {
-    for (int i = 0; i < MAX_AGENT; i++) {
+    for (uint8_t i = 0; i < MAX_AGENT; i++) {
         if (agents_.get(i) == NULL) {
             Agent * pAgent = new Agent(g_AgentNames[rand() % g_NumAgentNames],
                 onlyWomen ? true : ((rand() % 2) == 0));
@@ -336,7 +336,7 @@ bool AgentManager::isSquadSlotActive(size_t slotId) {
 //! Return the slot that holds the given agent or -1 if ni agent is found
 int AgentManager::getSquadSlotForAgent(Agent *pAgent) {
     if (pAgent) {
-        for (size_t i=0; i<kMaxSlot; i++) {
+        for (uint8_t i=0; i<kMaxSlot; i++) {
             if (pAgent == a_squad_[i]) {
                 return i;
             }

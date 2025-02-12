@@ -46,7 +46,7 @@ Map::~Map()
     delete[] a_tiles_;
 }
 
-bool Map::loadMap(uint8 * mapData)
+bool Map::loadMap(uint8_t * mapData)
 {
     LOG(Log::k_FLG_GFX, "Map", "loadMap", ("Loading Map %d.", id_));
     max_x_ = fs_utl::READ_LE_UINT32(mapData + 0);
@@ -67,7 +67,7 @@ bool Map::loadMap(uint8 * mapData)
             int idx = h * max_x_ + w;
 
             for (int z = 0; z < max_z_; z++) {
-                uint8 tileNum = *(mapData + 12 + lookup[idx] + z);
+                uint8_t tileNum = *(mapData + 12 + lookup[idx] + z);
                 a_tiles_[idx * z_real + z] = tileManager_->getTile(tileNum);
 
             }
@@ -152,19 +152,15 @@ float scaleyPx = 256.0f;
 float scaleyPy = 256.0f;
 
 
-void Map::tileToScreenPoint(int x, int y, int z, int pX, int pY, Point2D *pScp)
-{
-    float fx = x + pX / scalexPx;
-    float fy = y + pY / scalexPy;
+void Map::tileToScreenPoint(const TilePoint &tPt, Point2D *pScp) {
+    //tileToScreenPoint(tPt.tx, tPt.ty, tPt.tz, tPt.ox, tPt.oy, pScp);
+    float fx = tPt.tx + tPt.ox / scalexPx;
+    float fy = tPt.ty + tPt.oy / scalexPy;
 
     pScp->x = (int) ((max_x_ * fs_eng::Tile::kTileWidth / 2) + (fx - fy) * fs_eng::Tile::kTileWidth / 2
                   + fs_eng::Tile::kTileWidth / 2);
 
     pScp->y = (int) ((max_z_ + 1) * fs_eng::Tile::kTileHeight / 3 + (fx + fy) * fs_eng::Tile::kTileHeight / 3);
-}
-
-void Map::tileToScreenPoint(const TilePoint &tPt, Point2D *pScp) {
-    tileToScreenPoint(tPt.tx, tPt.ty, tPt.tz, tPt.ox, tPt.oy, pScp);
 }
 
 /*!
@@ -244,7 +240,7 @@ int Map::tileAt(int x, int y, int z)
     return a_tiles_[(y * max_x_ + x) * max_z_ + z]->id();
 }
 
-void Map::patchMap(int x, int y, int z, uint8 tileNum)
+void Map::patchMap(int x, int y, int z, uint8_t tileNum)
 {
     assert((x >= 0 && x < max_x_)
         && (y >= 0 && y < max_y_)
@@ -264,7 +260,7 @@ void Map::patchMap(int x, int y, int z, uint8 tileNum)
 bool Map::isTileWalkableByCar(int x, int y, int z)
 {
     fs_eng::Tile *pTile = getTileAt(x, y, z);
-    uint8 tileId = pTile->id();
+    int tileId = pTile->id();
 
     if(tileId == 80) {
         fs_eng::Tile::EType near_type = getTileAt(x, y - 1, z)->type();
@@ -305,9 +301,9 @@ bool Map::isTileWalkableByCar(int x, int y, int z)
     return  pTile->isRoad();
 }
 
-const uint8 MiniMap::kOverlayNone = 0;
-const uint8 MiniMap::kOverlayOurAgent = 1;
-const uint8 MiniMap::kOverlayEnemyAgent = 2;
+const uint8_t MiniMap::kOverlayNone = 0;
+const uint8_t MiniMap::kOverlayOurAgent = 1;
+const uint8_t MiniMap::kOverlayEnemyAgent = 2;
 
 /*!
  * Construct the minimap from the given map.
@@ -315,7 +311,7 @@ const uint8 MiniMap::kOverlayEnemyAgent = 2;
  */
 MiniMap::MiniMap(Map *p_map) {
     // walkdata based colours
-    uint8 minimap_colours_[] = {
+    uint8_t minimap_colours_[] = {
         8,  7,  7,  7,
         7,  7, 10, 10,
        10, 10,  0, 10,
@@ -326,7 +322,7 @@ MiniMap::MiniMap(Map *p_map) {
     mmax_x_ = p_map->maxX();
     mmax_y_ = p_map->maxY();
 
-    a_minimap_ = (uint8 *)( malloc(mmax_x_ * mmax_y_) );
+    a_minimap_ = (uint8_t *)( malloc(mmax_x_ * mmax_y_) );
     if(a_minimap_ == NULL) {
         FSERR(Log::k_FLG_MEM, "MiniMap", "MiniMap", ("memory allocation failed"));
         return;
@@ -352,7 +348,7 @@ MiniMap::~MiniMap() {
  * \param x
  * \param y
  */
-uint8 MiniMap::getColourAt(int x, int y) {
+uint8_t MiniMap::getColourAt(int x, int y) {
 
     if (x < 0 || y < 0 || x >= mmax_x_ || y >= mmax_y_)
         return 0;
