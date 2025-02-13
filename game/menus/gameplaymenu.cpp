@@ -399,7 +399,6 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
     updateIPALevelMeters(elapsed);
 
     if (change) {
-        needRendering();
         // force target to update
         handleMouseMotion({last_motion_x_, last_motion_y_}, 0);
     }
@@ -1118,9 +1117,6 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
 #endif
 
 #endif //_DEBUG
-
-    if (change)
-        needRendering();
 
     return consumed;
 }

@@ -61,25 +61,6 @@ SpriteManager & Menu::menuSprites() {
     return menu_manager_->menuSprites();
 }
 
-/*!
- * Adds a dirty rect the size of the screen.
- */
-[[deprecated]]
-void Menu::needRendering() {
-    //menu_manager_->addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
-}
-
-/*!
- * Adds a dirty rect.
- * \param x
- * \param y
- * \param width
- * \param height
- */
-void Menu::addDirtyRect(int x, int y, int width, int height) {
-    menu_manager_->addRect(x, y, width, height);
-}
-
 void Menu::render()
 {
     for (auto& menuText : statics_) {

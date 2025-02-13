@@ -102,13 +102,6 @@ public:
     // Change the menu
     void gotoMenu(int menuId);
 
-    /*!
-     * Adds a new dirty rectangle
-     */
-    void addRect(int x, int y, int width, int height) {
-        dirtyList_.addRect(x, y, width, height);
-    }
-
     //! Return the color at given index for the current palette
     void getColorFromMenuPalette(const int colorIndex, fs_eng::FSColor &color);
     //! Returns the palette for menus
@@ -180,8 +173,6 @@ private:
     int nextMenuId_;
     /** This flag prevents the input events from being processed.*/
     bool drop_events_;
-    /*! Dirty rects list. */
-    DirtyList   dirtyList_;
 
     /*! Sprite manager for menu sprites.*/
     SpriteManager menuSprites_;

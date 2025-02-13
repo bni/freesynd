@@ -246,7 +246,6 @@ bool SelectMenu::handleTick(uint32_t elapsed)
     // Updates the moving agent selector
     if (timerSelector_.update(elapsed)) {
         dashOffset_ = (dashOffset_ + 1) % (2*kSegmentSize);
-        needRendering();
     }
 
     // Update the clock
@@ -482,7 +481,6 @@ void SelectMenu::handleMouseMotion(Point2D point, uint32_t state)
 {
     if (weapon_dragged_) {
         weapon_pos_ = point;
-        needRendering();
     }
 }
 
@@ -539,7 +537,6 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
         }
         if (point.y > 150 && point.y < 162) {
             sel_all_ = !sel_all_;
-            needRendering();
         }
         if (point.y >= 162 && point.y <= 228) {
             if (point.x >= 82) {
@@ -576,7 +573,6 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
                 if (newId != selectedWInstId_) { // Do something only if a different weapon is selected
                     selectedWInstId_ = newId;
                     pSelectedWeap_ = wi->getClass();
-                    addDirtyRect(500, 105,  125, 235);
                     // 3/ see if reload button should be displayed,
                     // if weapon is not researched it will not be reloadable
                     bool displayReload = wi->needsReloading()
@@ -614,7 +610,6 @@ void SelectMenu::handleClickOnAgentSelector(const int agent_no, int button) {
         } else {
             getStatic(txtAgentId_)->setText("");
         }
-        needRendering();
     }
 }
 
@@ -633,7 +628,6 @@ void SelectMenu::showModWeaponPanel() {
 }
 
 void SelectMenu::showItemList() {
-    addDirtyRect(500, 105,  125, 235);
     pSelectedMod_ = NULL;
     pSelectedWeap_ = NULL;
     selectedWInstId_ = 0;
@@ -690,9 +684,6 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
             getStatic(txtAgentId_)->setTextFormated("#SELECT_SUBTITLE", pNewAgent->getName());
             pTeamLBox_->setSquadLine(cur_agent_, pPair->first);
             updateAcceptEnabled();
-
-            // redraw agent display
-            addDirtyRect(158, 110, 340, 260);
         }
 
     } else if (actionId == pModsLBox_->getId()) {
@@ -738,7 +729,6 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
                     getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
                 }
             }
-            needRendering();
         } else if (pSelectedMod_) {
             if (sel_all_) {
                 for (size_t n = 0; n < fs_knl::AgentManager::kMaxSlot; n++) {
@@ -763,7 +753,6 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
         }
 
     } else if (actionId == sellButId_ && selectedWInstId_) {
-        addDirtyRect(360, 305, 135, 70);
         fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
         fs_knl::WeaponInstance *pWi = selected->removeWeaponAtIndex(selectedWInstId_ - 1);
         g_Session.increaseMoney(pWi->getClass()->cost());

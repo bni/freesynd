@@ -100,9 +100,6 @@ public:
     bool isVisible() const { return visible_; }
 
 protected:
-    void redraw();
-
-protected:
     /*! lower left coordinates of the widget.*/
     int x_, y_;
     /*! Width of the widget. */

@@ -414,7 +414,6 @@ bool MapMenu::handleMouseDown(Point2D point, int button) {
                         g_Session.setSelectedBlockId(i);
 
                         handleBlockSelected();
-                        needRendering();
                      }
                 return true;
             }
@@ -442,7 +441,6 @@ void MapMenu::handleAction(const int actionId, void *ctx) {
 
     if (refresh) {
         handleBlockSelected();
-        needRendering();
     }
 }
 
@@ -487,10 +485,6 @@ bool MapMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
         if (blk.status == BLK_FINISHED) {
             consumed = g_Session.addToTaxRate(-10);
         }
-    }
-
-    if (consumed) {
-        needRendering();
     }
 
     handleBlockSelected();

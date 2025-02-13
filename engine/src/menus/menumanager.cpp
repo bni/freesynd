@@ -117,7 +117,6 @@ const char* MenuFactory::getLeaveAnimation([[maybe_unused]] int menuId) {
  */
 MenuManager::MenuManager(MenuFactory *pFactory)
         : pFactory_(pFactory),
-          dirtyList_(fs_eng::kScreenWidth, fs_eng::kScreenHeight),
           menuSprites_(true, SpriteManager::kMenuSpritesTextureWidth), fonts_(), logoManager_() {
     pFactory_->setMenuManager(this);
     drop_events_ = false;
@@ -311,7 +310,6 @@ void MenuManager::showNextMenu() {
 
     nextMenuId_ = -1;
 
-    dirtyList_.flush();
     if (!current_->handleBeforeShow()) {
         // There was a problem during initialization
         // Display the error to the player
@@ -345,9 +343,6 @@ void MenuManager::showNextMenu() {
         uint32_t state = g_System.getMousePos(point);
         current_->mouseMotionEvent(point, state);
     }
-
-    // Adds a dirty rect to force menu rendering
-    addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
 
     // reopen the event processing
     drop_events_ = false;
@@ -414,15 +409,11 @@ void MenuManager::copyFromBackground(Point2D pos, int width, int height) {
  * and if it needs to be refreshed.
  */
 void MenuManager::renderMenu() {
-    // TODO : refactor dirty rect management
-    addRect(0, 0, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
-    if (current_ && !dirtyList_.isEmpty()) {
+    if (current_) {
         if (current_->doNeedBackground()) {
            pBackgroundTexture_->renderFullTextureStrech(fs_eng::kScreenWidth, fs_eng::kScreenHeight);
         }
         current_->render();
-        // flush dirty list
-        dirtyList_.flush();
     }
 }
 

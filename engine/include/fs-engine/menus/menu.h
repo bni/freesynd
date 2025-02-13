@@ -164,8 +164,6 @@ public:
     bool isPaused() { return paused_; }
 
     MenuManager *getMenuManager() { return menu_manager_; }
-    [[deprecated]]
-    void addDirtyRect(int x, int y, int width, int height);
 
 protected:
 
@@ -184,8 +182,6 @@ protected:
     virtual void handleMouseMotion([[maybe_unused]] Point2D point, [[maybe_unused]] uint32_t state) {}
     //! Handle key that where pressed but not assigned to any actions
     virtual bool handleUnMappedKey([[maybe_unused]] const FS_Key key) { return false;}
-
-    void needRendering();
 
     //! Convenient method to return the menu font with the given size
     MenuFont * getMenuFont(FontManager::EFontSize size);

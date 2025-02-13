@@ -34,16 +34,6 @@ namespace fs_eng {
 
 int Widget::widgetCnt = 0;
 
-/*!
- * Utility method to add a dirty rect to the menu.
- * Adds rect only if widget is visible.
- */
-void Widget::redraw() {
-    if (visible_) {
-        getPeer()->addDirtyRect(x_, y_, width_, height_);
-    }
-}
-
 void Widget::setLocation(int x, int y) {
     x_ = x;
     y_ = y;
@@ -51,9 +41,6 @@ void Widget::setLocation(int x, int y) {
 
 void Widget::setVisible(bool visible) {
     if (visible != visible_) {
-        // forcing widget update, if it becomes invisible widget erased,
-        // if becomes visible widget is drawn
-        getPeer()->addDirtyRect(x_, y_, width_, height_);
         visible_ = visible;
     }
 }
@@ -126,7 +113,6 @@ void MenuText::updateText(const char *text, bool resolve) {
  */
 void MenuText::setText(const char *text, bool resolve) {
     updateText(text, resolve);
-    redraw();
 }
 
 /*!
@@ -168,7 +154,6 @@ void MenuText::setLocation(int x, int y) {
 
 void MenuText::setHighlighted(bool highlighted) {
     highlighted_ = highlighted;
-    redraw();
 }
 
 /*!
@@ -191,7 +176,6 @@ bool ActionWidget::isMouseOver(Point2D point) {
 void ActionWidget::setWidgetEnabled(bool enabled) {
     if (enabled != enabled_) {
         enabled_ = enabled;
-        redraw();
     }
 }
 
@@ -294,11 +278,9 @@ void Option::executeAction() {
 
 void Option::handleFocusGained() {
     text_.setHighlighted(true);
-    redraw();
 }
 void Option::handleFocusLost() {
     text_.setHighlighted(false);
-    redraw();
 }
 
 void Option::handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] int button) {
@@ -336,7 +318,6 @@ void ToggleAction::setSelected(bool isSelected) {
     selected_ = isSelected;
     // When a ToggleAction is selected it lighted
     text_.setHighlighted(selected_);
-    redraw();
 }
 
 void ToggleAction::executeAction() {
@@ -386,7 +367,6 @@ void ListBox::setModel(SequenceModel *pModel) {
 void ListBox::handleModelChanged() {
     labels_.clear();
     pModel_->getLabels(labels_);
-    redraw();
 }
 
 //! Draw the widget on screen
@@ -407,18 +387,15 @@ void ListBox::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state) 
             if (pModel_->getElement(i)) {
                 // If line contains something, highlight it
                 if (focusedLine_ != (int)i) {
-                    redraw();
                     focusedLine_ = i;
                 }
             } else {
                 if (focusedLine_ != -1) {
-                    redraw();
                     focusedLine_ = -1;
                 }
             }
         }  else if (focusedLine_ != -1) {
             // A line was highlighted but not anymore
-            redraw();
             focusedLine_ = -1;
         }
     }
@@ -437,7 +414,6 @@ void ListBox::handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] i
 
 void ListBox::handleFocusLost() {
     focusedLine_ = -1;
-    redraw();
 }
 
 const int TeamListBox::LINE_OFFSET = 20;
@@ -496,18 +472,15 @@ void TeamListBox::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t sta
             if (pModel_->getElement(i)) {
                 // If line contains something, highlight it
                 if (focusedLine_ != i) {
-                    redraw();
                     focusedLine_ = i;
                 }
             } else {
                 if (focusedLine_ != -1) {
-                    redraw();
                     focusedLine_ = -1;
                 }
             }
         }  else if (focusedLine_ != -1) {
             // A line was highlighted but not anymore
-            redraw();
             focusedLine_ = -1;
         }
     }
@@ -516,7 +489,6 @@ void TeamListBox::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t sta
 void TeamListBox::setSquadLine(int squadSlot, unsigned int line) {
     if (pModel_ && line < pModel_->size() && squadSlot >= 0 && squadSlot < 4) {
         squadLines_[squadSlot] = line;
-        redraw();
     }
 }
 
@@ -567,7 +539,6 @@ void TextField::handleCaptureGained() {
     g_System.startReceiveText();
 
     setHighlighted(true);
-    redraw();
 }
 
 void TextField::handleCaptureLost() {
@@ -576,7 +547,6 @@ void TextField::handleCaptureLost() {
     isInEdition_ = false;
     caretPosition_ = 0;
     setHighlighted(false);
-    redraw();
 }
 
 /*!
@@ -713,8 +683,6 @@ bool TextField::handleKey(FS_Key key) {
         return false;
     }
 
-    if (needRedraw)
-        redraw();
     return true;
 }
 
@@ -753,14 +721,11 @@ void TextField::handleMouseDown(Point2D point, [[maybe_unused]] int button) {
             }
         }
     }
-
-    redraw();
 }
 
 void TextField::setText(const char* text) {
     // don't allow resolve in case user has enter "#" in the text
     text_.setText(text, false);
-    redraw();
 }
 
 void TextField::drawCaret() {
