@@ -46,7 +46,7 @@ MainMenu::MainMenu(fs_eng::MenuManager * m):fs_eng::Menu(m, fs_game_menus::kMenu
     registerHotKey(fs_eng::kKeyCode_F3, id);
     resetButId_ = addOption(201, 232, 300, 25, "#MAIN_RESET", FontManager::SIZE_3, fs_game_menus::kMenuIdMain, true, false);
     registerHotKey(fs_eng::kKeyCode_F4, resetButId_);
-    quitButId_ = addOption(201, 266, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
+    quitButId_ = addOption(201, 266, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, kMenuIdNoMenu, true, false);
     registerHotKey(fs_eng::kKeyCode_F5, quitButId_);
 }
 

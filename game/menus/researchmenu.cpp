@@ -63,11 +63,11 @@ ResearchMenu::ResearchMenu(fs_eng::MenuManager * m):
     pModsLBox_->setModel(g_gameCtrl.mods().getAvalaibleMods());
 
     // Close Mods/Equips details button
-    cancelDescId_ = addOption(500, 320,  127, 22,  "#MENU_CANCEL_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
+    cancelDescId_ = addOption(500, 320,  127, 22,  "#MENU_CANCEL_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
     // Start research button
-    researchId_ = addOption(16, 158, 129, 25,  "#RES_RES_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
+    researchId_ = addOption(16, 158, 129, 25,  "#RES_RES_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
     // Close search details button
-    cancelSearchId_ = addOption(16, 184, 129, 25,  "#MENU_CANCEL_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
+    cancelSearchId_ = addOption(16, 184, 129, 25,  "#MENU_CANCEL_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
 
     fieldTxtId_ = addStatic(20, 86, "", FontManager::SIZE_1, true);    // Search name
     fundMinLblId_ = addStatic(20, 105, "#RES_MIN_FUND_LBL", FontManager::SIZE_1, false);    // Funding Minimun label
@@ -77,9 +77,9 @@ ResearchMenu::ResearchMenu(fs_eng::MenuManager * m):
     getStatic(fundMaxLblId_)->setVisible(false);
     fundMaxTxtId_ = addStatic(20, 143, "", FontManager::SIZE_1, true);    // Search maximum
 
-    incrFundId_ = addOption(16, 210, 129, 25,  "#RES_INC_FUND_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
+    incrFundId_ = addOption(16, 210, 129, 25,  "#RES_INC_FUND_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
     registerHotKey(fs_eng::kKeyCode_Up, incrFundId_);
-    decrFundId_ = addOption(16, 260, 129, 25,  "#RES_DEC_FUND_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
+    decrFundId_ = addOption(16, 260, 129, 25,  "#RES_DEC_FUND_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
     registerHotKey(fs_eng::kKeyCode_Down, decrFundId_);
     fundCurrLblId_ = addStatic(16, 242, 129, "", FontManager::SIZE_2, true);    // Current Funding label
     searchTitleLblId_ = addStatic(158, 86, "", FontManager::SIZE_2, true);    // Current search title

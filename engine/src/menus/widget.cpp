@@ -270,7 +270,7 @@ void Option::executeAction() {
         getPeer()->handleAction(getId(), NULL);
     }
 
-    if (to_ != -1) {
+    if (to_ != Menu::kMenuIdNoMenu) {
         getPeer()->getMenuManager()->gotoMenu(to_);
         return;
     }

@@ -36,7 +36,7 @@
 
 namespace fs_eng {
 
-const int Menu::MENU_NO_MENU = -1;
+const int Menu::kMenuIdNoMenu = -1;
 const int Menu::kMenuIdLogout = 6;
 const int Menu::kMenuIdFliTransition = 99;
 const int Menu::kMouseLeftButton = 1;
@@ -187,7 +187,7 @@ int Menu::addImageOption(int x, int y, int dark_widget, int light_widget, bool v
 
     actions_.push_back(
                 std::make_unique<Option>(this, x, y, spr->width() * 2, spr->height() * 2, "",
-                    getMenuFont(FontManager::SIZE_1), MENU_NO_MENU, visible, true, dark_widget, light_widget));
+                    getMenuFont(FontManager::SIZE_1), kMenuIdNoMenu, visible, true, dark_widget, light_widget));
 
     return actions_.back()->getId();
 }

@@ -29,7 +29,7 @@
 #include "fs-engine/enginecommon.h"
 
 namespace fs_eng {
-LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, MENU_NO_MENU, true),
+LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, kMenuIdNoMenu, true),
 timerLogout_(2000)
 {
     isCachable_ = false;

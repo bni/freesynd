@@ -45,7 +45,7 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_
 
     addStatic(201, 235, 100, "MISSIONS", FontManager::SIZE_3, false);
     addOption(210, 260, 130, 25, "- SEARCH", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis, true, false);
-    quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, MENU_NO_MENU, true, false);
+    quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, kMenuIdNoMenu, true, false);
 }
 
 void MainMenu::handleAction(const int actionId, void *ctx)

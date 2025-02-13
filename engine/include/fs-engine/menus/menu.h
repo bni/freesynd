@@ -57,7 +57,9 @@ public:
         //! Show the game cursor
         kGameplayCursor
     };
-    static const int MENU_NO_MENU;
+    //! Used to point to no menu
+    static const int kMenuIdNoMenu;
+    //! Id of the LogOut Menu
     static const int kMenuIdLogout;
     //! Id of the Fli transition menu
     static const int kMenuIdFliTransition;

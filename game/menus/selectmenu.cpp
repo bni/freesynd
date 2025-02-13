@@ -72,13 +72,13 @@ SelectMenu::SelectMenu(fs_eng::MenuManager * m):
     pModsLBox_->setModel(g_gameCtrl.mods().getAvalaibleMods());
 
     cancelButId_ = addOption(500, 270,  127, 22, "#MENU_CANCEL_BUT",
-        FontManager::SIZE_2, MENU_NO_MENU, false);
+        FontManager::SIZE_2, kMenuIdNoMenu, false);
     reloadButId_ = addOption(500, 295,  127, 22, "#SELECT_RELOAD_BUT",
-        FontManager::SIZE_2, MENU_NO_MENU, false);
+        FontManager::SIZE_2, kMenuIdNoMenu, false);
     purchaseButId_ = addOption(500, 320,  127, 22, "#SELECT_BUY_BUT",
-        FontManager::SIZE_2, MENU_NO_MENU, false);
+        FontManager::SIZE_2, kMenuIdNoMenu, false);
     sellButId_ = addOption(500, 320,  127, 22, "#SELECT_SELL_BUT",
-        FontManager::SIZE_2, MENU_NO_MENU, false);
+        FontManager::SIZE_2, kMenuIdNoMenu, false);
 
     // Agent name selected
     txtAgentId_ = addStatic(158, 86, "", FontManager::SIZE_2, true);

@@ -45,9 +45,9 @@ ConfMenu::ConfMenu(fs_eng::MenuManager *m) :
 
     panelMsgId_ = addStatic(280, 32, 330, "#CONF_MAIN_MSG", FontManager::SIZE_2, true);
 
-    logoButId_ = addOption(325, 65, 240, 20, "#CONF_COL_LOGO_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
-    compNameButId_ = addOption(325, 90, 240, 20, "#CONF_COM_NAME_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
-    userNameButId_ = addOption(325, 115, 240, 20, "#CONF_YOUR_NAME_BUT", FontManager::SIZE_2, MENU_NO_MENU, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
+    logoButId_ = addOption(325, 65, 240, 20, "#CONF_COL_LOGO_BUT", FontManager::SIZE_2, kMenuIdNoMenu, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
+    compNameButId_ = addOption(325, 90, 240, 20, "#CONF_COM_NAME_BUT", FontManager::SIZE_2, kMenuIdNoMenu, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
+    userNameButId_ = addOption(325, 115, 240, 20, "#CONF_YOUR_NAME_BUT", FontManager::SIZE_2, kMenuIdNoMenu, true, false, fs_eng::Sprite::MSPR_BULLET_D, fs_eng::Sprite::MSPR_BULLET_L);
     // Accept button
     acceptButId_ = addOption(17, 347, 128, 25, "#MENU_ACC_BUT", FontManager::SIZE_2, fs_game_menus::kMenuIdMain);
     // Main menu button
@@ -56,8 +56,8 @@ ConfMenu::ConfMenu(fs_eng::MenuManager *m) :
     createPanels();
 
     // Sub panel Ok and Cancel buttons
-    okButId_ = addOption(291, 122, 125, 23, "#CONF_OK_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
-    cancelButId_ = addOption(476, 122, 123, 23, "#MENU_CANCEL_BUT", FontManager::SIZE_2, MENU_NO_MENU, false);
+    okButId_ = addOption(291, 122, 125, 23, "#CONF_OK_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
+    cancelButId_ = addOption(476, 122, 123, 23, "#MENU_CANCEL_BUT", FontManager::SIZE_2, kMenuIdNoMenu, false);
 
     toAcceptCmpNameTxtId_ = addStatic(32, 93, "", FontManager::SIZE_1, false);
     toAcceptUsrNameTxtId_ = addStatic(32, 115, "", FontManager::SIZE_1, false);

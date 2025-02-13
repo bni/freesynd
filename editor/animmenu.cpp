@@ -107,8 +107,6 @@ bool AnimMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
 
         sprintf(tmp, "%d", frameId_);
         getStatic(txtFrameId_)->setText(tmp);
-
-        needRendering();
     }
 
     return change;
