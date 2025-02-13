@@ -325,12 +325,12 @@ void ResearchMenu::handleLeave() {
     getStatic(searchTitleLblId_)->setText("");
 }
 
-void ResearchMenu::handleAction(const int actionId, void *ctx)
+void ResearchMenu::handleAction(const ActionDesc &action)
 {
     // Field list box : Equips or Mods
-    if (actionId == pFieldEquipLBox_->getId() || actionId == pFieldModsLBox_->getId()) {
+    if (action.id == pFieldEquipLBox_->getId() || action.id == pFieldModsLBox_->getId()) {
         // get selected field
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         pSelectedRes_ = static_cast<fs_knl::Research *> (pPair->second);
 
         // Hide list
@@ -338,42 +338,42 @@ void ResearchMenu::handleAction(const int actionId, void *ctx)
         // Show Research and Cancel buttons
         showResInfo();
 
-    } else if (actionId == pModsLBox_->getId()) {  // Selection of an avalaible mod
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+    } else if (action.id == pModsLBox_->getId()) {  // Selection of an avalaible mod
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         pSelectedMod_ = static_cast<Mod *> (pPair->second);
         hideDetailsList();
         getOption(cancelDescId_)->setVisible(true);
 
-    } else if (actionId == pEquipsLBox_->getId()) { // Selection of an avalaible weapon
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+    } else if (action.id == pEquipsLBox_->getId()) { // Selection of an avalaible weapon
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         pSelectedWeapon_ = static_cast<fs_knl::Weapon *> (pPair->second);
         hideDetailsList();
         getOption(cancelDescId_)->setVisible(true);
 
-    } else if (actionId == modsButId_) {
+    } else if (action.id == modsButId_) {
         if (tab_ != TAB_MODS) {
             tab_ = TAB_MODS;
             showFieldList();
             showDetailsList();
         }
-    } else if (actionId == equipButId_) {
+    } else if (action.id == equipButId_) {
         if (tab_ != TAB_EQUIPS) {
             tab_ = TAB_EQUIPS;
             showFieldList();
             showDetailsList();
         }
-    } else if (actionId == cancelDescId_) {
+    } else if (action.id == cancelDescId_) {
         showDetailsList();
-    } else if (actionId == cancelSearchId_) {
+    } else if (action.id == cancelSearchId_) {
         showFieldList();
-    } else if (actionId == researchId_) {
+    } else if (action.id == researchId_) {
         g_Session.researchManager().start(pSelectedRes_);
         showResGraph(pSelectedRes_);
-    } else if (actionId == incrFundId_) {
+    } else if (action.id == incrFundId_) {
         if (pResForGraph_->incrFunding()) {
             getStatic(fundCurrLblId_)->setTextFormated("%d", pResForGraph_->getCurrFunding());
         }
-    } else if (actionId == decrFundId_) {
+    } else if (action.id == decrFundId_) {
         if (pResForGraph_->decrFunding()) {
             getStatic(fundCurrLblId_)->setTextFormated("%d", pResForGraph_->getCurrFunding());
         }

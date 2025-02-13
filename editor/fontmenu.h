@@ -36,7 +36,7 @@ public:
     void handleRender() override;
     void handleLeave() override;
 
-    void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 private:
     void displayObjects();

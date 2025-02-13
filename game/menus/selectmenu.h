@@ -45,7 +45,7 @@ public:
     bool handleBeforeShow() override;
     void handleRender() override;
     void handleLeave() override;
-    void handleAction(const int actionId, void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 protected:
     void handleMouseMotion(Point2D point, uint32_t state) override;

@@ -71,7 +71,3 @@ ListMissionMenu::ListMissionMenu(MenuManager * m):
     addOption(17, 347, 128, 25, "BACK", FontManager::SIZE_2, fs_edit_menus::kMenuIdSrchMis);
 }
 
-void ListMissionMenu::handleAction(const int actionId, void *ctx)
-{
-
-}

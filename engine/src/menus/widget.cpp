@@ -267,7 +267,7 @@ void Option::draw() {
  */
 void Option::executeAction() {
     if (getPeer() && this->isVisible()) {
-        getPeer()->handleAction(getId(), NULL);
+        getPeer()->handleAction({getId(), NULL});
     }
 
     if (to_ != Menu::kMenuIdNoMenu) {
@@ -406,7 +406,7 @@ void ListBox::handleMouseDown([[maybe_unused]] Point2D point, [[maybe_unused]] i
         if (getPeer()) {
             // call the peer handleAction method giving the index of pressed line.
             std::pair<int, void *> tuple = std::make_pair(focusedLine_, pModel_->getElement(focusedLine_));
-            getPeer()->handleAction(getId(), &tuple);
+            getPeer()->handleAction({ getId(), &tuple });
 
         }
     }

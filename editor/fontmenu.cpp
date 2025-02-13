@@ -60,8 +60,8 @@ void FontMenu::handleLeave() {
     g_System.hideCursor();
 }
 
-void FontMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
-    panelId_ = actionId;
+void FontMenu::handleAction(const ActionDesc &action) {
+    panelId_ = action.id;
 }
 
 void FontMenu::handleRender() {

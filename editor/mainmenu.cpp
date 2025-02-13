@@ -48,8 +48,8 @@ MainMenu::MainMenu(MenuManager * m):Menu(m, fs_edit_menus::kMenuIdMain, fs_edit_
     quitButId_ = addOption(201, 300, 300, 25, "#MAIN_QUIT", FontManager::SIZE_3, kMenuIdNoMenu, true, false);
 }
 
-void MainMenu::handleAction(const int actionId, void *ctx)
+void MainMenu::handleAction(const ActionDesc &action)
 {
-    if (actionId == quitButId_)
+    if (action.id == quitButId_)
         menu_manager_->gotoMenu(Menu::kMenuIdLogout);
 }

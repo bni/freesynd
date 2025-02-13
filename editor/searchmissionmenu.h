@@ -63,7 +63,7 @@ public:
     ~SearchMissionMenu();
 
     bool handleBeforeShow() override;
-    void handleAction(const int actionId, void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 protected:
     void initPedTypeListAndWidget();

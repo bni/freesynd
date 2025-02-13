@@ -423,15 +423,15 @@ bool MapMenu::handleMouseDown(Point2D point, int button) {
     return false;
 }
 
-void MapMenu::handleAction(const int actionId, void *ctx) {
+void MapMenu::handleAction(const ActionDesc &action) {
     bool refresh = false;
-    if ( actionId == incrTaxButId_ ) {
+    if ( action.id == incrTaxButId_ ) {
         if (g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
             refresh = g_Session.addToTaxRate(10);
         } else {
             refresh = g_Session.addToTaxRate(1);
         }
-    } else if ( actionId == decrTaxButId_ ) {
+    } else if ( action.id == decrTaxButId_ ) {
         if (g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
             refresh = g_Session.addToTaxRate(-10);
         } else {

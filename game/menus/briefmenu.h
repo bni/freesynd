@@ -44,7 +44,7 @@ public:
     //! @copydoc Menu::handleRender()
     void handleRender() override;
     void handleLeave() override;
-    void handleAction(const int actionId, void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 protected:
     /*! Origin of the minimap on the screen.*/

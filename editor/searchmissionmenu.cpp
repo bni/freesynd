@@ -148,8 +148,8 @@ bool SearchMissionMenu::matchMissionWithVehicleType(fs_knl::Mission *pMission) {
     return true;
 }
 
-void SearchMissionMenu::handleAction(const int actionId, void *ctx) {
-    if (actionId == searchButId_) {
+void SearchMissionMenu::handleAction(const ActionDesc &action) {
+    if (action.id == searchButId_) {
         // first clear result list
         g_editorCtrl.getMissionResultList().clear();
 
@@ -172,14 +172,14 @@ void SearchMissionMenu::handleAction(const int actionId, void *ctx) {
         }
 
         menu_manager_->gotoMenu(fs_edit_menus::kMenuIdListMis);
-    } else if (actionId == pPedTypeListBox_->getId()) {
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+    } else if (action.id == pPedTypeListBox_->getId()) {
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         PedTypeAdapter *pType = static_cast<PedTypeAdapter *> (pPair->second);
 
         searchOnPedType_ = true;
         pedTypeCriteria_ = pType->getType();
-    } else if (actionId == pVehicleTypeListBox_->getId()) {
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+    } else if (action.id == pVehicleTypeListBox_->getId()) {
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         VehicleTypeAdapter *pType = static_cast<VehicleTypeAdapter *> (pPair->second);
 
         searchOnVehicleType_ = true;

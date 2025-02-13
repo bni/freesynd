@@ -651,20 +651,20 @@ void SelectMenu::showItemList() {
     }
 }
 
-void SelectMenu::handleAction(const int actionId, void *ctx)
+void SelectMenu::handleAction(const ActionDesc &action)
 {
-    if (actionId == teamButId_) {
+    if (action.id == teamButId_) {
         tab_ = TAB_TEAM;
         showItemList();
-    } else if (actionId == modsButId_) {
+    } else if (action.id == modsButId_) {
         tab_ = TAB_MODS;
         showItemList();
-    } else if (actionId == equipButId_) {
+    } else if (action.id == equipButId_) {
         tab_ = TAB_EQUIPS;
         showItemList();
-    } else if (actionId == pTeamLBox_->getId()) {
+    } else if (action.id == pTeamLBox_->getId()) {
         // get the selected agent from the team listbox
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         fs_knl::Agent *pNewAgent = static_cast<fs_knl::Agent *> (pPair->second);
 
         bool found = false;
@@ -686,17 +686,17 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
             updateAcceptEnabled();
         }
 
-    } else if (actionId == pModsLBox_->getId()) {
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+    } else if (action.id == pModsLBox_->getId()) {
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         pSelectedMod_ = static_cast<Mod *> (pPair->second);
         showModWeaponPanel();
-    } else if (actionId == pWeaponsLBox_->getId()) {
-        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (ctx);
+    } else if (action.id == pWeaponsLBox_->getId()) {
+        std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
         pSelectedWeap_ = static_cast<fs_knl::Weapon *> (pPair->second);
         showModWeaponPanel();
-    } else if (actionId == cancelButId_) {
+    } else if (action.id == cancelButId_) {
         showItemList();
-    } else if (actionId == reloadButId_) {
+    } else if (action.id == reloadButId_) {
         fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
         fs_knl::WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
         int rldCost = pSelectedWeap_->calculateReloadingCost(wi->ammoRemaining());
@@ -707,7 +707,7 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
             getOption(reloadButId_)->setVisible(false);
             getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
         }
-    } else if (actionId == purchaseButId_) {
+    } else if (action.id == purchaseButId_) {
         // Buying weapon
         if (pSelectedWeap_) {
             if (sel_all_) {
@@ -752,7 +752,7 @@ void SelectMenu::handleAction(const int actionId, void *ctx)
             showItemList();
         }
 
-    } else if (actionId == sellButId_ && selectedWInstId_) {
+    } else if (action.id == sellButId_ && selectedWInstId_) {
         fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
         fs_knl::WeaponInstance *pWi = selected->removeWeaponAtIndex(selectedWInstId_ - 1);
         g_Session.increaseMoney(pWi->getClass()->cost());

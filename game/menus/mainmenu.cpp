@@ -50,10 +50,10 @@ MainMenu::MainMenu(fs_eng::MenuManager * m):fs_eng::Menu(m, fs_game_menus::kMenu
     registerHotKey(fs_eng::kKeyCode_F5, quitButId_);
 }
 
-void MainMenu::handleAction(const int actionId, void *ctx)
+void MainMenu::handleAction(const ActionDesc &action)
 {
-    if (actionId == resetButId_)
+    if (action.id == resetButId_)
         g_gameCtrl.reset();
-    if (actionId == quitButId_)
+    if (action.id == quitButId_)
         menu_manager_->gotoMenu(Menu::kMenuIdLogout);
 }

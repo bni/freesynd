@@ -305,8 +305,8 @@ void BriefMenu::handleLeave() {
     p_briefing_ = NULL;
 }
 
-void BriefMenu::handleAction(const int actionId, void *ctx) {
-    if (actionId == infosButId_) {
+void BriefMenu::handleAction(const ActionDesc &action) {
+    if (action.id == infosButId_) {
         // Buy some informations
         if (g_Session.getSelectedBlock().infoLevel < p_briefing_->nb_infos()) {
             g_Session.decreaseMoney(p_briefing_->infoCost(g_Session.getSelectedBlock().infoLevel));
@@ -324,7 +324,7 @@ void BriefMenu::handleAction(const int actionId, void *ctx) {
         }
     }
 
-    if (actionId == enhButId_) {
+    if (action.id == enhButId_) {
         // Buy some map enhancement
         if (g_Session.getSelectedBlock().enhanceLevel < p_briefing_->nb_enhts()) {
             g_Session.decreaseMoney(p_briefing_->enhanceCost(g_Session.getSelectedBlock().enhanceLevel));
@@ -345,13 +345,13 @@ void BriefMenu::handleAction(const int actionId, void *ctx) {
         }
     }
 
-    if (actionId == nextButId_) {
+    if (action.id == nextButId_) {
         // Next page
         start_line_ += kMaxLinePerPage;
         update_briefing_text();
     }
 
-    if (actionId == prevButId_) {
+    if (action.id == prevButId_) {
         // Previous page
         start_line_ -= kMaxLinePerPage;
         update_briefing_text();

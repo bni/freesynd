@@ -151,14 +151,20 @@ public:
 
     virtual bool handleTick([[maybe_unused]] uint32_t elapsed) { return true; }
 
-    //! Callback function : Childs can reimplement
+    //! A structure to hold infos on the action to handle
+    struct ActionDesc {
+        //! Id of the action
+        int id;
+        //! A pointer to a context specific to the action
+        void *ctx;
+    };
+
     /*!
      * Called when an action widget has been activated.
-     * \param actionId The id of the actionWidget that was activated.
-     * \param ctx A pointer to a context specific to the action
-     * \param modKeys The state of all modifiers buttons
+     * Callback function : Childs can reimplement
+     * \param action Infos on the action that was activated.
      */
-    virtual void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) {}
+    virtual void handleAction([[maybe_unused]] const ActionDesc &action) {}
 
     void selectToggleAction(int id) { group_.selectButton(id); }
 

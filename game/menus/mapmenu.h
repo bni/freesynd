@@ -41,7 +41,7 @@ public:
 
     bool handleTick(uint32_t elapsed) override;
     bool handleBeforeShow() override;
-    void handleAction(const int actionId, void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 protected:
     void handleRender() override;

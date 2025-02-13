@@ -32,7 +32,7 @@ public:
 
     bool handleBeforeShow() override;
 
-    void handleAction([[maybe_unused]] const int actionId, [[maybe_unused]] void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 private:
     void updateSoundIntroLabel();

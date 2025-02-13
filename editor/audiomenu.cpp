@@ -84,30 +84,30 @@ bool AudioMenu::handleBeforeShow() {
     return true;
 }
 
-void AudioMenu::handleAction(const int actionId, [[maybe_unused]] void *ctx) {
-    if ( actionId == idButtonSoundGameDown_ ) {
+void AudioMenu::handleAction(const ActionDesc &action) {
+    if ( action.id == idButtonSoundGameDown_ ) {
         if (currentSoundGame_ > 0) {
             --currentSoundGame_;
             updateSoundGameLabel();
         }
-    } else if (actionId == idButtonSoundGameUp_) {
+    } else if (action.id == idButtonSoundGameUp_) {
         if (currentSoundGame_ < (maxNbSoundGame_)) {
             ++currentSoundGame_;
             updateSoundGameLabel();
         }
-    } else if ( actionId == idButtonSoundIntroDown_ ) {
+    } else if ( action.id == idButtonSoundIntroDown_ ) {
         if (currentSoundIntro_ > 0) {
             --currentSoundIntro_;
             updateSoundIntroLabel();
         }
-    } else if (actionId == idButtonSoundIntroUp_) {
+    } else if (action.id == idButtonSoundIntroUp_) {
         if (currentSoundIntro_ < (maxNbSoundGame_)) {
             ++currentSoundIntro_;
             updateSoundIntroLabel();
         }
-    } else if (actionId == idButtonSoundIntroPlay_) {
+    } else if (action.id == idButtonSoundIntroPlay_) {
         g_SoundMgr.playIntro(currentSoundIntro_);
-    } else if (actionId == idButtonSoundGamePlay_) {
+    } else if (action.id == idButtonSoundGamePlay_) {
         g_SoundMgr.play(currentSoundGame_);
     }
 }

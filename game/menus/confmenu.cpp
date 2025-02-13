@@ -123,28 +123,28 @@ void ConfMenu::handleLeave() {
     showMainPanel();
 }
 
-void ConfMenu::handleAction(const int actionId, void *ctx) {
-    if (actionId == logoButId_) {
+void ConfMenu::handleAction(const ActionDesc &action) {
+    if (action.id == logoButId_) {
         showLogoPanel();
-    } else if (actionId == userNameButId_) {
+    } else if (action.id == userNameButId_) {
         showUserNamePanel();
-    } else if (actionId == compNameButId_) {
+    } else if (action.id == compNameButId_) {
         showCompanyNamePanel();
-    } else if (actionId == leftColButId_) {
+    } else if (action.id == leftColButId_) {
         tempColourId_--;
         if (tempColourId_ < 0) {
             tempColourId_ = g_LogoMgr.kMaxColour - 1;
         }
-    } else if (actionId == rightColButId_) {
+    } else if (action.id == rightColButId_) {
         tempColourId_ = (tempColourId_ + 1) % g_LogoMgr.kMaxColour;
-    } else if (actionId == leftLogoButId_) {
+    } else if (action.id == leftLogoButId_) {
         tempLogo_--;
         if (tempLogo_ < 0 ) {
             tempLogo_ = g_LogoMgr.numLogos() - 1;
         }
-    } else if (actionId == rightLogoButId_) {
+    } else if (action.id == rightLogoButId_) {
         tempLogo_ = (tempLogo_ + 1) % g_LogoMgr.numLogos();
-    } else if (actionId == okButId_) {
+    } else if (action.id == okButId_) {
         if (currPanel_ == kConfPanelLogo) {
             toAcceptColourId_ = tempColourId_;
             toAcceptLogo_ = tempLogo_;
@@ -154,9 +154,9 @@ void ConfMenu::handleAction(const int actionId, void *ctx) {
             getStatic(toAcceptCmpNameTxtId_)->setText(pCompNameTF_->getText().c_str(), false);
         }
         showMainPanel();
-    } else if (actionId == cancelButId_) {
+    } else if (action.id == cancelButId_) {
         showMainPanel();
-    } else if (actionId == acceptButId_) {
+    } else if (action.id == acceptButId_) {
         // Effectively change the user's informations
         g_gameCtrl.change_user_infos(getStatic(toAcceptCmpNameTxtId_)->getText().c_str(),
             getStatic(toAcceptUsrNameTxtId_)->getText().c_str(),

@@ -93,15 +93,15 @@ void LoadSaveMenu::handleLeave() {
     editNameId_ = -1;
 }
 
-void LoadSaveMenu::handleAction(const int actionId, void *ctx) {
-    if (actionId == loadButId_) {
+void LoadSaveMenu::handleAction(const ActionDesc &action) {
+    if (action.id == loadButId_) {
         if (editNameId_ != -1) {
             if (g_gameCtrl.loadGameFromFile(editNameId_)) {
                 editNameId_ = -1;
                 menu_manager_->gotoMenu(fs_game_menus::kMenuIdMain);
             }
         }
-    } else if (actionId == saveButId_) {
+    } else if (action.id == saveButId_) {
         if (editNameId_ != -1 && pTextFields_[editNameId_]->getText().size() != 0) {
             if (g_gameCtrl.saveGameToFile(editNameId_, pTextFields_[editNameId_]->getText())) {
                 editNameId_ = -1;

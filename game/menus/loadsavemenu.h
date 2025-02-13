@@ -36,7 +36,7 @@ public:
     bool handleBeforeShow() override;
     void handleLeave() override;
 
-    void handleAction(const int actionId, void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
     bool handleMouseDown(Point2D point, int button) override;
 

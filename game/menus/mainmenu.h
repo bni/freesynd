@@ -33,7 +33,7 @@ class MainMenu : public fs_eng::Menu {
 public:
     MainMenu(fs_eng::MenuManager *m);
 
-    void handleAction(const int actionId, void *ctx) override;
+    void handleAction(const ActionDesc &action) override;
 
 protected:
     /*! Id of the reset button.*/
