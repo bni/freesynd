@@ -74,7 +74,7 @@ struct CallbackContainer : CallbackContainerBase
     EventID                                 event_id;
 
     std::vector<ListenerHandle>             sparse;
-    std::vector<std::uint32_t>              dense;
+    std::vector<size_t>              dense;
     std::queue<std::uint32_t>               free_sparse_indices;
 
     template<typename T_Function>
@@ -169,7 +169,7 @@ template<typename T>
 template<typename T_Function>
 inline auto CallbackContainer<T>::add_callback(T_Function callback) -> ListenerHandle
 {
-    std::uint32_t sparse_index;
+    size_t sparse_index;
 
     if (free_sparse_indices.empty())
     {
@@ -197,7 +197,7 @@ inline void CallbackContainer<T>::remove_callback(const ListenerHandle& handle)
     sparse[handle.m_sparse_index].m_version++;
 
     std::uint32_t remove_index = sparse[handle.m_sparse_index].m_dense_index;
-    std::uint32_t last_index = callbacks.size() - 1;
+    size_t last_index = callbacks.size() - 1;
 
     dense[remove_index] = dense[last_index];
     sparse[dense[remove_index]].m_dense_index = remove_index;
