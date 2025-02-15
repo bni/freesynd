@@ -523,7 +523,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
 
             // if agent is in selected group we will update all groups IPA
             if (selection_.isAgentSelected(ipa_chng_.agent_used)) {
-                for (uint8 i = 0; i < fs_knl::AgentManager::kMaxSlot; ++i) {
+                for (uint8 i = 0; i < fs_knl::Squad::kMaxSlot; ++i) {
                     if (selection_.isAgentSelected(i)) {
                         setIPAForAgent(i, (IPAStim::IPAType)ipa_chng_.ipa_chng,
                             percent);
@@ -764,7 +764,7 @@ void GameplayMenu::setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int pe
 
 void GameplayMenu::updateIPALevelMeters(int elapsed)
 {
-    for (size_t agent = 0; agent < fs_knl::AgentManager::kMaxSlot; ++agent) {
+    for (size_t agent = 0; agent < fs_knl::Squad::kMaxSlot; ++agent) {
         fs_knl::PedInstance *ped = mission_->getSquad()->member(agent);
         if (ped && ped->isAlive())
             ped->updtIPATime(elapsed);
@@ -1335,7 +1335,7 @@ void GameplayMenu::selectAllAgents() {
  */
 void GameplayMenu::highlightLeaderMarker()
 {
-    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
         // draw animation only for leader
         mission_->sfxObjects(4 + i)->setDrawAllFrames(selection_.getLeaderSlot() == i);
     }
@@ -1347,7 +1347,7 @@ void GameplayMenu::highlightLeaderMarker()
  *
  */
 void GameplayMenu::updateMarkersPosition() {
-    for (size_t i = 0; i < fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i = 0; i < fs_knl::Squad::kMaxSlot; i++) {
         if (mission_->sfxObjects(i + 4)->isDrawable()) {
             fs_knl::PedInstance *pAgent = mission_->getSquad()->member(i);
             if (pAgent != NULL && pAgent->isAlive()) {
@@ -1373,7 +1373,7 @@ void GameplayMenu::updateSelectionForDeadAgent(fs_knl::PedInstance *pPed) {
     // if selection is empty after agent's death
     // selects the first selectable agent
     if (selection_.size() == 0) {
-        for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+        for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
             if (selection_.selectAgent(i, false)) {
                 // Agent has been selected -> quit
                 break;
@@ -1403,7 +1403,7 @@ void GameplayMenu::centerMinimapOnLeader() {
 void GameplayMenu::updateSelectAll() {
     uint8 nbAgentAlive = 0;
     // count the number of remaining agents
-    for (size_t indx = 0; indx < fs_knl::AgentManager::kMaxSlot; indx++) {
+    for (size_t indx = 0; indx < fs_knl::Squad::kMaxSlot; indx++) {
         fs_knl::PedInstance *pAgent = mission_->getSquad()->member(indx);
         if (pAgent && pAgent->isAlive()) {
             nbAgentAlive++;

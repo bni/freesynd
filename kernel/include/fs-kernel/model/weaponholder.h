@@ -59,6 +59,9 @@ public:
     //! Removes the given weapon from the inventory.
     void removeWeapon(WeaponInstance *w);
 
+    // Return true if the weapon holder has a weapon of given type
+    bool hasWeapon(const Weapon::WeaponType &weaponType);
+
     //! Selects the weapon at given index in the inventory
     void selectWeapon(size_t n);
     //! Selects the weapon in the inventory

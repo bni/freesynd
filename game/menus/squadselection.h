@@ -23,7 +23,6 @@
 
 #include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/position.h"
-#include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/mission.h"
 
@@ -72,10 +71,10 @@ class SquadSelection {
              */
             Iterator& operator++()
             {
-                while (idx_ < fs_knl::AgentManager::kMaxSlot)
+                while (idx_ < fs_knl::Squad::kMaxSlot)
                 {
                     idx_ += 1;
-                    if (idx_ < fs_knl::AgentManager::kMaxSlot && pSel_->isAgentSelected(idx_)) {
+                    if (idx_ < fs_knl::Squad::kMaxSlot && pSel_->isAgentSelected(idx_)) {
                         break;
                     }
                 }
@@ -120,7 +119,7 @@ class SquadSelection {
      */
     Iterator begin() {
 
-        for (size_t idx=0; idx < fs_knl::AgentManager::kMaxSlot; idx++)
+        for (size_t idx=0; idx < fs_knl::Squad::kMaxSlot; idx++)
         {
             if (isAgentSelected(idx)) {
                 return Iterator(idx, this);

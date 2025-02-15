@@ -27,7 +27,6 @@
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/mission.h"
-#include "fs-kernel/mgr/agentmanager.h"
 
 namespace fs_knl {
 /*!
@@ -254,7 +253,7 @@ void ObjEvacuate::evaluate(Mission *pMission) {
         }
     }
 
-    for (size_t indx = AgentManager::kSlot1; indx < AgentManager::kMaxSlot; indx++) {
+    for (size_t indx = Squad::kSlot1; indx < Squad::kMaxSlot; indx++) {
         PedInstance *pAgent = pMission->getSquad()->member(indx);
         if (pAgent && pAgent->isAlive()) {
             if (!pAgent->isCloseTo(objectiveLocw_, 512)) {

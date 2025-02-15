@@ -108,11 +108,6 @@ const char * const g_AgentNames[] = {
 const int g_NumAgentNames = (sizeof(g_AgentNames) / sizeof(char *)) - 1; // minus one accounts for the NULL at the end of the names list
 
 int const AgentManager::MAX_AGENT = 18;
-const size_t AgentManager::kMaxSlot = 4;
-const size_t AgentManager::kSlot1 = 0;
-const size_t AgentManager::kSlot2 = 1;
-const size_t AgentManager::kSlot3 = 2;
-const size_t AgentManager::kSlot4 = 3;
 
 AgentManager::AgentManager() {
     nextName_ = 0;
@@ -147,7 +142,7 @@ void AgentManager::reset(bool onlyWomen) {
 
         agents_.setAt(i, pAgent);
         // Adds the first 4 agents to the squad
-        if (i < kMaxSlot) {
+        if (i < Squad::kMaxSlot) {
             setSquadMember(i, pAgent);
         }
         nextName_++;
@@ -178,7 +173,7 @@ bool AgentManager::saveToFile(fs_utl::PortableFile &file) {
     }
 
     // save current squad
-    for (size_t i=0; i<kMaxSlot; i++) {
+    for (size_t i=0; i<Squad::kMaxSlot; i++) {
         Agent *pAgent = squadMember(i);
         int id = pAgent ? pAgent->getId() : 0;
         file.write32(id);
@@ -291,7 +286,7 @@ bool AgentManager::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Form
     }
 
     // Read squad
-    for (size_t squadInd=0; squadInd<kMaxSlot; squadInd++) {
+    for (size_t squadInd=0; squadInd<Squad::kMaxSlot; squadInd++) {
         int id = infile.read32();
         if (id != 0) {
             for (uint8_t iAgnt=0; iAgnt<MAX_AGENT; iAgnt++) {
@@ -322,21 +317,21 @@ Agent* AgentManager::createAgent(bool onlyWomen)
 }
 
 void AgentManager::clearSquad() {
-    for (size_t s=0; s<kMaxSlot; s++) {
+    for (size_t s=0; s<Squad::kMaxSlot; s++) {
         a_squad_[s] = NULL;
     }
 }
 
 //! Returns true if the slot holds an agent and if he's active
 bool AgentManager::isSquadSlotActive(size_t slotId) {
-    assert(slotId < kMaxSlot);
+    assert(slotId < Squad::kMaxSlot);
     return a_squad_[slotId] && a_squad_[slotId]->isActive();
 }
 
 //! Return the slot that holds the given agent or -1 if ni agent is found
 int AgentManager::getSquadSlotForAgent(Agent *pAgent) {
     if (pAgent) {
-        for (uint8_t i=0; i<kMaxSlot; i++) {
+        for (uint8_t i=0; i<Squad::kMaxSlot; i++) {
             if (pAgent == a_squad_[i]) {
                 return i;
             }

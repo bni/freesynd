@@ -28,9 +28,7 @@
 #include "fs-engine/sound/soundmanager.h"
 #include "fs-engine/events/event.h"
 #include "fs-kernel/model/weapon.h"
-#include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/model/ped.h"
-//#include "core/gamecontroller.h"
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/train.h"
 #include "fs-kernel/model/squad.h"
@@ -378,7 +376,7 @@ TriggerAction::TriggerAction(int32_t range, const WorldPoint &loc) :
  * \param pPed The ped executing the action.
  */
 bool TriggerAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
-    for (uint8 i = 0; i < AgentManager::kMaxSlot; ++i) {
+    for (uint8 i = 0; i < Squad::kMaxSlot; ++i) {
         PedInstance *pAgent = pMission->getSquad()->member(i);
         if(pAgent && pAgent->isAlive() && pAgent->isCloseTo(centerLoc_, range_)) {
             setSucceeded();

@@ -368,10 +368,10 @@ void SelectMenu::handleRender() {
     g_LogoMgr.draw({18, 14}, g_Session.getLogo(), g_Session.getLogoColour(), true);
 
     // write team member icons and health
-    fs_knl::Agent *t1 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot1);
-    fs_knl::Agent *t2 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot2);
-    fs_knl::Agent *t3 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot3);
-    fs_knl::Agent *t4 = g_gameCtrl.agents().squadMember(fs_knl::AgentManager::kSlot4);
+    fs_knl::Agent *t1 = g_gameCtrl.agents().squadMember(fs_knl::Squad::kSlot1);
+    fs_knl::Agent *t2 = g_gameCtrl.agents().squadMember(fs_knl::Squad::kSlot2);
+    fs_knl::Agent *t3 = g_gameCtrl.agents().squadMember(fs_knl::Squad::kSlot3);
+    fs_knl::Agent *t4 = g_gameCtrl.agents().squadMember(fs_knl::Squad::kSlot4);
     if (t1) {
         if (t1->isActive()) {
             menuSprites().drawSprite(fs_eng::Sprite::MSPR_SELECT_1, 20, 84, false, true);
@@ -450,7 +450,7 @@ void SelectMenu::toggleAgent(int n)
 {
     int nactive = 0;
     // count the number of active agents
-    for (size_t i = 0; i < fs_knl::AgentManager::kMaxSlot; i++)
+    for (size_t i = 0; i < fs_knl::Squad::kMaxSlot; i++)
         if (g_gameCtrl.agents().isSquadSlotActive(i))
             nactive++;
     fs_knl::Agent *a = g_gameCtrl.agents().squadMember(n);
@@ -468,7 +468,7 @@ void SelectMenu::toggleAgent(int n)
 void SelectMenu::updateAcceptEnabled() {
     // Player cannot start mission if no agent has been activated
     bool found = false;
-    for (size_t i=0; i<fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i=0; i<fs_knl::Squad::kMaxSlot; i++) {
         if (g_gameCtrl.agents().isSquadSlotActive(i)) {
             found = true;
             break;
@@ -530,9 +530,9 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
     if (point.x >= 20 && point.x <= 140) {
         if (point.y >= 84 && point.y <= 150) {
             if (point.x >= 82) {
-                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot2, button);
+                handleClickOnAgentSelector(fs_knl::Squad::kSlot2, button);
             } else {
-                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot1, button);
+                handleClickOnAgentSelector(fs_knl::Squad::kSlot1, button);
             }
         }
         if (point.y > 150 && point.y < 162) {
@@ -540,9 +540,9 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
         }
         if (point.y >= 162 && point.y <= 228) {
             if (point.x >= 82) {
-                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot4, button);
+                handleClickOnAgentSelector(fs_knl::Squad::kSlot4, button);
             } else {
-                handleClickOnAgentSelector(fs_knl::AgentManager::kSlot3, button);
+                handleClickOnAgentSelector(fs_knl::Squad::kSlot3, button);
             }
         }
     }
@@ -669,7 +669,7 @@ void SelectMenu::handleAction(const ActionDesc &action)
 
         bool found = false;
         // check if selected agent is already part of the mission squad
-        for (size_t j = 0; j < fs_knl::AgentManager::kMaxSlot; j++) {
+        for (size_t j = 0; j < fs_knl::Squad::kMaxSlot; j++) {
             if (g_gameCtrl.agents().squadMember(j) == pNewAgent) {
                 found = true;
                 break;
@@ -711,7 +711,7 @@ void SelectMenu::handleAction(const ActionDesc &action)
         // Buying weapon
         if (pSelectedWeap_) {
             if (sel_all_) {
-                for (size_t n = 0; n < fs_knl::AgentManager::kMaxSlot; n++) {
+                for (size_t n = 0; n < fs_knl::Squad::kMaxSlot; n++) {
                     fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(n);
                     if (selected && selected->numWeapons() < 8
                         && g_Session.canAfford(pSelectedWeap_->cost())) {
@@ -731,7 +731,7 @@ void SelectMenu::handleAction(const ActionDesc &action)
             }
         } else if (pSelectedMod_) {
             if (sel_all_) {
-                for (size_t n = 0; n < fs_knl::AgentManager::kMaxSlot; n++) {
+                for (size_t n = 0; n < fs_knl::Squad::kMaxSlot; n++) {
                     fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(n);
                     if (selected && selected->canHaveMod(pSelectedMod_)
                         && g_Session.canAfford(pSelectedMod_->cost())) {

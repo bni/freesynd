@@ -151,7 +151,7 @@ void DebriefMenu::updateStatsFields(fs_knl::Mission *pMission) {
 
 void DebriefMenu::checkNewWeaponFound() {
 
-    for (size_t i=0; i<fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i=0; i<fs_knl::Squad::kMaxSlot; i++) {
         fs_knl::Agent *pAgent = g_gameCtrl.agents().squadMember(i);
         if (pAgent) {
             for (int wi=0; wi < pAgent->numWeapons(); wi++) {

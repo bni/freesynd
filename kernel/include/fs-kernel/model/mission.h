@@ -128,9 +128,9 @@ public:
     };
 
     //! Bit mask for methods on checking on blockers
-    static const uint8 kBMaskBlockerTargetOutOfMap;
-    static const uint8 kBMaskBlockerTargetObjectUpdated;
-    static const uint8 kBMaskBlockerTargetPosUpdated;
+    static const uint8_t kBMaskBlockerTargetOutOfMap;
+    static const uint8_t kBMaskBlockerTargetObjectUpdated;
+    static const uint8_t kBMaskBlockerTargetPosUpdated;
 
     Mission(const LevelData::MapInfos & map_infos, Map *pMap);
     virtual ~Mission();
@@ -282,19 +282,19 @@ public:
     // Methods for shooting verification
     //*************************************
     //! Check if a tile is blocking the line between originLoc and pTargetPosW
-    uint8 checkBlockedByTile(const WorldPoint & originLoc, WorldPoint *pTargetPosW, bool updateLoc, double distanceMax, double *pFinalDest = NULL);
+    uint8_t checkBlockedByTile(const WorldPoint & originLoc, WorldPoint *pTargetPosW, bool updateLoc, double distanceMax, double *pFinalDest = NULL);
     //! Check if an object is blocking the line between originLoc and pTargetPosW
     MapObject * checkBlockedByObject(WorldPoint * originLoc, WorldPoint * pTargetPosW,
         double *dist, const ShootableMapObject *pOrigin);
     //! Check if tile or object blocks the line between originLoc and pTarget
-    uint8 checkIfBlockersInShootingLine(const WorldPoint & originLoc, ShootableMapObject **pTarget,
+    uint8_t checkIfBlockersInShootingLine(const WorldPoint & originLoc, ShootableMapObject **pTarget,
         WorldPoint *pTargetPosW = NULL, bool setBlocker = false,
         bool checkTileOnly = false, double maxr = -1.0, double * distTo = NULL, const ShootableMapObject *pOrigin = NULL);
     //! Returns the distance between a ped and a object if a path exists between the two
-    uint8 getPathLengthBetween(PedInstance *pPed, ShootableMapObject* objectToReach, double distanceMax, double *length);
+    uint8_t getPathLengthBetween(PedInstance *pPed, ShootableMapObject* objectToReach, double distanceMax, double *length);
 
     //! map-tile surfaces : x + y * mmax_x_ + z * mmax_m_xy
-    uint8 *mtsurfaces_;
+    uint8_t *mtsurfaces_;
     // map-directions points
     floodPointDesc *mdpoints_;
     // for copy in pathfinding

@@ -20,10 +20,15 @@
 
 #include "fs-kernel/model/squad.h"
 
-#include "fs-kernel/mgr/agentmanager.h"
 #include "fs-kernel/model/ped.h"
 
 namespace fs_knl {
+
+const size_t Squad::kMaxSlot = 4;
+const size_t Squad::kSlot1 = 0;
+const size_t Squad::kSlot2 = 1;
+const size_t Squad::kSlot3 = 2;
+const size_t Squad::kSlot4 = 3;
 
 //! Default constructor
 Squad::Squad() {
@@ -31,8 +36,8 @@ Squad::Squad() {
 }
 
 void Squad::clear() {
-    for (size_t s = 0; s < AgentManager::kMaxSlot; s++) {
-        a_members_[s] = NULL;
+    for (size_t s = 0; s < kMaxSlot; s++) {
+        members_[s] = nullptr;
     }
     size_ = 0;
 }
@@ -43,13 +48,13 @@ void Squad::clear() {
 * \param pPedAgent The new agent
 */
 void Squad::setMember(size_t slotId, PedInstance *pPedAgent) {
-    assert(slotId < AgentManager::kMaxSlot);
-    a_members_[slotId] = pPedAgent;
+    assert(slotId < kMaxSlot);
+    members_[slotId] = pPedAgent;
 
     // recount the number of agent
     size_ = 0;
-    for (size_t i=0; i < AgentManager::kMaxSlot; i++) {
-        if (a_members_[i]) {
+    for (const auto& agent : members_) {
+        if (agent) {
             size_++;
         }
     }
@@ -57,21 +62,18 @@ void Squad::setMember(size_t slotId, PedInstance *pPedAgent) {
 
 //! Returns the agent on the given slot
 PedInstance * Squad::member(size_t slotId) {
-    assert(slotId < AgentManager::kMaxSlot);
-    return a_members_[slotId];
+    assert(slotId < kMaxSlot);
+    return members_[slotId];
 }
 
 /*!
  * Returns true if one living agent has a scanner.
  */
 bool Squad::hasScanner() {
-    for (size_t indx = AgentManager::kSlot1; indx < AgentManager::kMaxSlot; indx++) {
-        PedInstance *pAgent = a_members_[indx];
+    for (const auto& pAgent : members_) {
         if (pAgent && pAgent->isAlive()) {
-            for (uint8 windx=0; windx<pAgent->numWeapons(); windx++) {
-                if (pAgent->weapon(windx)->isInstanceOf(Weapon::Scanner)) {
-                    return true;
-                }
+            if (pAgent->hasWeapon(Weapon::Scanner)) {
+                return true;
             }
         }
     }
@@ -85,8 +87,7 @@ bool Squad::hasScanner() {
  * \return true if at least one agent is alive.
  */
 bool Squad::isAllDead() {
-    for (size_t indx = AgentManager::kSlot1; indx < AgentManager::kMaxSlot; indx++) {
-        PedInstance *pAgent = a_members_[indx];
+    for (const auto& pAgent : members_) {
         if (pAgent && pAgent->isAlive()) {
             return false;
         }
@@ -104,8 +105,8 @@ void Squad::getPositionInSquadFormation(size_t slotId, TilePoint *pPosition) {
     //int soy = ((i + 1) % 2) * (i - 1) * 8;
 
     //this should be removed if non-tile position needed
-    pPosition->ox = 63 + 128 * (slotId % 2);
-    pPosition->oy = 63 + 128 * (slotId >> 1);
+    pPosition->ox = 63 + 128 * (static_cast<int>(slotId) % 2);
+    pPosition->oy = 63 + 128 * (static_cast<int>(slotId) >> 1);
 }
 
 }

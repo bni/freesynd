@@ -66,7 +66,7 @@ void AgentSelectorRenderer::scanCoordsForIPA(int x, int y, SelectorEvent & evt)
 {
     IPAStim::IPAType types[] = {IPAStim::Adrenaline, IPAStim::Perception, IPAStim::Intelligence};
     // For each agent
-    for(size_t a = 0; a < fs_knl::AgentManager::kMaxSlot; ++a)
+    for(size_t a = 0; a < fs_knl::Squad::kMaxSlot; ++a)
     {
         int barLeft = getIpaBarLeftForAgent(a);
         if(x >= barLeft && x <= barLeft + kIpaBarWidth)
@@ -208,7 +208,7 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
  * Draw all elements for the agent selectors.
  */
 void AgentSelectorRenderer::render(SquadSelection & selection, fs_knl::Squad * pSquad, const fs_eng::Palette &palette) {
-    for (size_t a = 0; a < fs_knl::AgentManager::kMaxSlot; a++) {
+    for (size_t a = 0; a < fs_knl::Squad::kMaxSlot; a++) {
         fs_knl::PedInstance * pAgent = pSquad->member(a);
         drawSelectorForAgent(a, pAgent, selection.isAgentSelected(a), palette);
     }

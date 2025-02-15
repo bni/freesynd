@@ -43,7 +43,7 @@ void SquadSelection::setSquad(fs_knl::Squad *pSquad) {
     clear();
     pSquad_ = pSquad;
 
-    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
         // try to select agent. if true means agent has been selected
         if (selectAgent(i, false)) {
             break;
@@ -65,7 +65,7 @@ void SquadSelection::clear() {
 size_t SquadSelection::size() {
     size_t agents = 0;
 
-    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
         if (isAgentSelected(i)) {
             agents++;
         }
@@ -105,7 +105,7 @@ bool SquadSelection::selectAgent(size_t agentNo, bool addToGroup) {
  * \param p_ped The agent to deselect.
  */
 void SquadSelection::deselectAgent(fs_knl::PedInstance *p_ped) {
-    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
         if (pSquad_->member(i) == p_ped) {
             selected_agents_ &= ~(1 << i);
             // check if leader was deselected
@@ -122,7 +122,7 @@ void SquadSelection::deselectAgent(fs_knl::PedInstance *p_ped) {
 void SquadSelection::selectAllAgents(bool b_selectAll) {
     if (b_selectAll) {
         // Select all agents
-        for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+        for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
             if (isAgentSelectable(i)) {
                 selected_agents_ |= (1 << i);
             }
@@ -149,7 +149,7 @@ void SquadSelection::checkLeader(size_t agentNo) {
     if (agentNo == leader_) {
         // The leader has been deselected
         // find another leader among the remaining selection
-        for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+        for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
             if (isAgentSelectable(i) && leader_ != i) {
                 leader_ = i;
                 break;

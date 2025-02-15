@@ -21,6 +21,8 @@
 #ifndef CORE_SQUAD_H_
 #define CORE_SQUAD_H_
 
+#include <array>
+
 #include "fs-utils/common.h"
 #include "fs-kernel/model/position.h"
 
@@ -36,6 +38,17 @@ class PedInstance;
  */
 class Squad {
 public:
+    /*! Total number of slots on a squad.*/
+    static const size_t kMaxSlot;
+    /*! Id of slot 1.*/
+    static const size_t kSlot1;
+    /*! Id of slot 2.*/
+    static const size_t kSlot2;
+    /*! Id of slot 3.*/
+    static const size_t kSlot3;
+    /*! Id of slot 4.*/
+    static const size_t kSlot4;
+    
     //! Default constructor
     Squad();
 
@@ -57,7 +70,7 @@ private:
     /*!
      * Selected agents for the next mission. Up to 4 agents.
      */
-    PedInstance *a_members_[4];
+    std::array<PedInstance *, 4> members_;
     /*!
      * The number of active agents on the squad (dead or alive).
      */

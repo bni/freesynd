@@ -40,9 +40,9 @@
 
 namespace fs_knl {
 
-const uint8 Mission::kBMaskBlockerTargetOutOfMap = 0x20;
-const uint8 Mission::kBMaskBlockerTargetObjectUpdated = 0x02;
-const uint8 Mission::kBMaskBlockerTargetPosUpdated = 0x04;
+const uint8_t Mission::kBMaskBlockerTargetOutOfMap = 0x20;
+const uint8_t Mission::kBMaskBlockerTargetObjectUpdated = 0x02;
+const uint8_t Mission::kBMaskBlockerTargetPosUpdated = 0x04;
 
 /*!
  * Initialize the statistics.
@@ -411,7 +411,7 @@ bool Mission::setSurfaces() {
 
     clrSurfaces();
     int mmax_m_all = mmax_x_ * mmax_y_ * mmax_z_;
-    mtsurfaces_ = (uint8 *)malloc(mmax_m_all * sizeof(uint8));
+    mtsurfaces_ = (uint8_t *)malloc(mmax_m_all * sizeof(uint8_t));
     mdpoints_ = (floodPointDesc *)malloc(mmax_m_all * sizeof(floodPointDesc));
     mdpoints_cp_ = (floodPointDesc *)malloc(mmax_m_all * sizeof(floodPointDesc));
     if(mtsurfaces_ == NULL || mdpoints_ == NULL || mdpoints_cp_ == NULL) {
@@ -420,7 +420,7 @@ bool Mission::setSurfaces() {
         return false;
     }
     mmax_m_xy = mmax_x_ * mmax_y_;
-    memset((void *)mtsurfaces_, 0, mmax_m_all * sizeof(uint8));
+    memset((void *)mtsurfaces_, 0, mmax_m_all * sizeof(uint8_t));
     memset((void *)mdpoints_, 0, mmax_m_all * sizeof(floodPointDesc));
     for (int ix = 0; ix < mmax_x_; ++ix) {
         for (int iy = 0; iy < mmax_y_; ++iy) {
@@ -483,8 +483,8 @@ bool Mission::setSurfaces() {
                 z = stodef.z;
                 //if (x == 50 && y / mmax_x_ == 27 && z / mmax_m_xy == 2)
                     //x = 50;
-                uint8 this_s = mtsurfaces_[x + y + z];
-                uint8 upper_s = 0;
+                uint8_t this_s = mtsurfaces_[x + y + z];
+                uint8_t upper_s = 0;
                 floodPointDesc *cfp = &(mdpoints_[x + y + z]);
                 int zm = z - mmax_m_xy;
                 // if current is 0x00 or 0x10 tile we will use lower tile
@@ -2551,7 +2551,7 @@ MapObject * Mission::checkBlockedByObject(WorldPoint * pStartPt, WorldPoint * pE
  *      - 4b(16): blocker tile, "pTargetLoc" is set
  *      - 5b(32): out of visible reach
  */
-uint8 Mission::checkBlockedByTile(const WorldPoint & originPosW, WorldPoint *pTargetPosW,
+uint8_t Mission::checkBlockedByTile(const WorldPoint & originPosW, WorldPoint *pTargetPosW,
                                   bool updateLoc, double distanceMax, double *pInitialDistance) {
     // TODO: some objects mid point is higher then map z
     assert(distanceMax >= 0);
@@ -2573,7 +2573,7 @@ uint8 Mission::checkBlockedByTile(const WorldPoint & originPosW, WorldPoint *pTa
     double distanceToTarget = 0;
     distanceToTarget = sqrt((double)((tmpTargetWLoc.x - cx) * (tmpTargetWLoc.x - cx) + (tmpTargetWLoc.y - cy) * (tmpTargetWLoc.y - cy)
         + (tmpTargetWLoc.z - cz) * (tmpTargetWLoc.z - cz)));
-    uint8 block_mask = 1;
+    uint8_t block_mask = 1;
 
     if (pInitialDistance)
         *pInitialDistance = distanceToTarget;
@@ -2704,7 +2704,7 @@ uint8 Mission::checkBlockedByTile(const WorldPoint & originPosW, WorldPoint *pTa
  * NOTE: only if "pn" or "t" are not null, variables are set
 
 */
-uint8 Mission::checkIfBlockersInShootingLine(const WorldPoint & originLoc, ShootableMapObject ** pTarget,
+uint8_t Mission::checkIfBlockersInShootingLine(const WorldPoint & originLoc, ShootableMapObject ** pTarget,
     WorldPoint *pTargetPosW, bool setBlocker, bool checkTileOnly, double maxr,
     double * distTo, const ShootableMapObject *pOrigin)
 {
@@ -2717,7 +2717,7 @@ uint8 Mission::checkIfBlockersInShootingLine(const WorldPoint & originLoc, Shoot
         tmpPosW = *pTargetPosW;
     }
 
-    uint8 bfBlockerFound = checkBlockedByTile(originLoc, &tmpPosW, true, maxr, distTo);
+    uint8_t bfBlockerFound = checkBlockedByTile(originLoc, &tmpPosW, true, maxr, distTo);
     if (bfBlockerFound == kBMaskBlockerTargetOutOfMap) {
         // coords are out of map limits
         return bfBlockerFound;
@@ -2782,11 +2782,11 @@ uint8 Mission::checkIfBlockersInShootingLine(const WorldPoint & originLoc, Shoot
  * \param length The returned length if the path exists
  * \return 0 if a path exists, else path does not exist so length is not set.
  */
-uint8 Mission::getPathLengthBetween(PedInstance *pPed, ShootableMapObject* objectToReach, double maxLength, double *length) {
+uint8_t Mission::getPathLengthBetween(PedInstance *pPed, ShootableMapObject* objectToReach, double maxLength, double *length) {
     WorldPoint cur_xyz(pPed->position());
     cur_xyz.z += (pPed->sizeZ() >> 1);
     // TODO : it's not inRangeCPos that must be called but a method for path calculation
-    uint8 res = checkIfBlockersInShootingLine(cur_xyz, &objectToReach, NULL, false, true, maxLength, length, pPed);
+    uint8_t res = checkIfBlockersInShootingLine(cur_xyz, &objectToReach, NULL, false, true, maxLength, length, pPed);
     return res == 1 ? 0 : 1;
 }
 
@@ -3054,7 +3054,7 @@ bool Mission::getShootableTile(TilePoint *pLocT)
 
 bool Mission::isTileSolid(int x, int y, int z, int ox, int oy, int oz) {
     bool solid = true;
-    uint8 twd = mtsurfaces_[x + y * mmax_x_ + z * mmax_m_xy];
+    uint8_t twd = mtsurfaces_[x + y * mmax_x_ + z * mmax_m_xy];
     switch (twd) {
         case 0x00:
         case 0x0C:

@@ -89,6 +89,20 @@ void WeaponHolder::removeWeapon(WeaponInstance *wi) {
     }
 }
 
+/*!
+ * Return true if the owner has this type of weapon
+ * @param weaponType 
+ * @return 
+ */
+bool WeaponHolder::hasWeapon(const Weapon::WeaponType &weaponType) {
+    for (const auto& pWeapon : weapons_) {
+        if (pWeapon->isInstanceOf(weaponType)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void WeaponHolder::transferWeapons(WeaponHolder &anotherHolder) {
     while (numWeapons()) {
         WeaponInstance *wi = removeWeaponAtIndex(0);

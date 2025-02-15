@@ -1683,7 +1683,7 @@ void PedInstance::updatePersuadedRelations(Squad *pSquad) {
         owner_ = NULL;
     } else if (isOurAgent()) {
         // our agent is dead, assign all persuaded to another living agent
-        for (uint8_t i = 0; i < AgentManager::kMaxSlot; ++i) {
+        for (uint8_t i = 0; i < Squad::kMaxSlot; ++i) {
             PedInstance *pAgent = pSquad->member(i);
             if (pAgent && pAgent->isAlive()) {
                 while(!persuadedSet_.empty()) {

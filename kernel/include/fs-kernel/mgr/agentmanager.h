@@ -30,6 +30,7 @@
 #include "fs-utils/io/portablefile.h"
 #include "fs-utils/misc/singleton.h"
 #include "fs-kernel/model/agent.h"
+#include "fs-kernel/model/squad.h"
 
 namespace fs_knl {
 
@@ -51,16 +52,6 @@ class AgentManager : public Singleton < AgentManager > {
 public:
     /*! Max number of agents in cryo chamber.*/
     static const int MAX_AGENT;
-    /*! Total number of slots on a squad.*/
-    static const size_t kMaxSlot;
-    /*! Id of slot 1.*/
-    static const size_t kSlot1;
-    /*! Id of slot 2.*/
-    static const size_t kSlot2;
-    /*! Id of slot 3.*/
-    static const size_t kSlot3;
-    /*! Id of slot 4.*/
-    static const size_t kSlot4;
 
     AgentManager();
     ~AgentManager() {}
@@ -99,13 +90,13 @@ public:
      * \param a The new agent
      */
     void setSquadMember(size_t slotId, Agent *pAgent) {
-        assert(slotId < kMaxSlot);
+        assert(slotId < Squad::kMaxSlot);
         a_squad_[slotId] = pAgent;
     }
 
     //! Returns the agent on the given squad slot
     Agent * squadMember(size_t slotId) {
-        assert(slotId < kMaxSlot);
+        assert(slotId < Squad::kMaxSlot);
         return a_squad_[slotId];
     }
 

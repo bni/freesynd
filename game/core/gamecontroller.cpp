@@ -188,7 +188,7 @@ void GameController::handle_mission_end(fs_knl::Mission *p_mission) {
 
 void GameController::transferAgentToCryoChamber(fs_knl::Mission *pMission) {
     // Update for squad
-    for (size_t i = fs_knl::AgentManager::kSlot1; i < fs_knl::AgentManager::kMaxSlot; i++) {
+    for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
         fs_knl::PedInstance *pPedAgent = pMission->getSquad()->member(i);
         if (pPedAgent) {
             fs_knl::Agent *pAg = agents().squadMember(i);
@@ -471,7 +471,7 @@ void GameController::cheatAccelerateTime() {
 void GameController::cheatFemaleRecruits() {
     agents().reset(true);
 
-    for (size_t i = 0; i < fs_knl::AgentManager::kMaxSlot; i++)
+    for (size_t i = 0; i < fs_knl::Squad::kMaxSlot; i++)
         agents().setSquadMember(i, agents().agent(i));
 }
 

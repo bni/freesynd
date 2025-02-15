@@ -18,61 +18,13 @@
  * 
  */
 #include <catch2/catch_test_macros.hpp>
+
 #include "fs-kernel/model/weaponholder.h"
 #include "fs-engine/appcontext.h"
 
-void initWeaponConfigFile( ConfigFile &config ) {
-    config.add("weapon.1.name", "WEAPON_PISTOL");
-    config.add("weapon.1.icon.small", 15);
-    config.add("weapon.1.icon.big", 65);
-    config.add("weapon.1.cost", 0);
-    config.add("weapon.1.ammo.nb", 13);
-    config.add("weapon.1.ammo.price", 0);
-    config.add("weapon.1.range", 1280);
-    config.add("weapon.1.rank", 1);
-    config.add("weapon.1.anim", 368);
-    config.add("weapon.1.ammopershot", 1);
-    config.add("weapon.1.timeforshot", 200);
-    config.add("weapon.1.timereload", 600);
-    config.add("weapon.1.damagerange", 0);
-    config.add("weapon.1.shotangle", 5.0);
-    config.add("weapon.1.shotaccuracy", 0.9);
-    config.add("weapon.1.shotspeed", 0);
-    config.add("weapon.1.dmg_per_shot", 2);
-    config.add("weapon.1.ammo.impactNb", 1);
-    config.add("weapon.1.weight", 1);
+#include "testcase.h"
 
-    config.add("weapon.12.name", "scanner");
-    config.add("weapon.12.icon.small", 26);
-    config.add("weapon.12.icon.big", 76);
-    config.add("weapon.12.cost", 1000);
-    config.add("weapon.12.range", 256);
-    config.add("weapon.12.anim", 379);
-    config.add("weapon.12.timeforshot", 1);
-    config.add("weapon.12.timereload", 1);
-    config.add("weapon.12.weight", 1);
 
-    config.add("weapon.9.name", "WEAPON_SCANNER");
-    config.add("weapon.9.icon.small", 23);
-    config.add("weapon.9.icon.big", 73);
-    config.add("weapon.9.cost", 500);
-    config.add("weapon.9.range", 4096);
-    config.add("weapon.9.anim", 376);
-    config.add("weapon.9.weight", 1);
-
-    config.add("weapon.13.name", "WEAPON_ENERGY_SHIELD");
-    config.add("weapon.13.icon.small", 28);
-    config.add("weapon.13.icon.big", 78);
-    config.add("weapon.13.cost", 8000);
-    config.add("weapon.13.ammo.nb", 200);
-    config.add("weapon.13.ammo.price", 15);
-    config.add("weapon.13.range", 768);
-    config.add("weapon.13.anim", 381);
-    config.add("weapon.13.ammopershot", 1);
-    config.add("weapon.13.timeforshot", 75);
-    config.add("weapon.13.ammo.impactNb", 1);
-    config.add("weapon.13.weight", 8);
-}
 
 TEST_CASE( "Weapon holder", "[kernel][weaponholder]" ) {
     fs_eng::AppContext appCtx;
@@ -107,6 +59,16 @@ TEST_CASE( "Weapon holder", "[kernel][weaponholder]" ) {
 
         holder.removeWeaponAtIndex(0);
         REQUIRE( holder.numWeapons() == 0 );
+    }
+
+    SECTION( "has weapons") {
+        REQUIRE_FALSE( holder.hasWeapon(fs_knl::Weapon::Scanner) );
+
+        holder.addWeapon(&pistol1);
+        REQUIRE_FALSE( holder.hasWeapon(fs_knl::Weapon::Scanner) );
+
+        holder.addWeapon(&scanner);
+        REQUIRE( holder.hasWeapon(fs_knl::Weapon::Scanner) );
     }
 
     SECTION( "Select weapon") {

@@ -154,7 +154,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
         gamdata.location == LevelData::kPeopleLocAboveWalkSurf)
         return NULL;
 
-    bool isOurAgent = ped_idx < AgentManager::kMaxSlot;
+    bool isOurAgent = ped_idx < Squad::kMaxSlot;
     if (isOurAgent && !g_agentMgr.isSquadSlotActive(ped_idx)) {
         // Creates agent only if he's active
         return NULL;
