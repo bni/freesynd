@@ -109,4 +109,17 @@ void Squad::getPositionInSquadFormation(size_t slotId, TilePoint *pPosition) {
     pPosition->oy = 63 + 128 * (static_cast<int>(slotId) >> 1);
 }
 
+/*!
+ * Advance the iterator if the current element does not match the criteria
+ */
+void Squad::SquadIterator::advanceIfNeeded() {
+    while (current != end) {
+        if (*current == nullptr || (checkHealth_ && !(*current)->isAlive())) {
+            ++current;
+        } else {
+            break;
+        }
+    }
+}
+
 }

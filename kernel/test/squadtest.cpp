@@ -85,4 +85,36 @@ TEST_CASE( "Squad", "[kernel][squad]" ) {
         agent3.addWeapon(&scanner);
         REQUIRE( cut.hasScanner() );
     }
+
+    SECTION( "Non null Iterator") {
+        cut.setMember(1, &agent2);
+        cut.setMember(2, &agent4);
+
+        int nbFound = 0;
+        for (auto& agent : cut) {
+            REQUIRE( agent != nullptr );
+            nbFound++;
+        }
+
+        REQUIRE( nbFound == 2 );
+    }
+
+    SECTION( "Alive Iterator") {
+        cut.setMember(1, &agent2);
+        cut.setMember(2, &agent4);
+        cut.setMember(3, &agent1);
+        agent2.setHealth(0);
+
+        size_t i = 0;
+        int nbFound = 0;
+        for (auto it = cut.alive_begin(); it != cut.alive_end(); ++it) {
+            fs_knl::PedInstance *pAgent = *it;
+            REQUIRE( pAgent != nullptr );
+            REQUIRE( pAgent->isAlive() );
+            REQUIRE( pAgent != &agent2 );
+            nbFound++;
+        }
+
+        REQUIRE( nbFound == 2 );
+    }
 }

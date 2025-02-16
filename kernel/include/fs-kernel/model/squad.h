@@ -66,6 +66,81 @@ public:
     size_t size() { return size_; }
 
     void getPositionInSquadFormation(size_t slotId, TilePoint *pPosition);
+
+    /*!
+     * A SquadIterator is use to facilitate iterating over the squad elements.
+     * The default behaviour for this iterator is to return non null elements.
+     * When setting checkHealth to true, this iterator return also only alive elements.
+     */
+    class SquadIterator {
+        public:
+            
+            /*!
+            * Constructor for the SquadIterator
+            * @param begin The beginning of the element list
+            * @param anEnd The end of the element list
+            * @param checkHealth Set to true to return only alive elements
+            */
+            explicit SquadIterator(std::array<PedInstance *, 4>::iterator begin, 
+                                    std::array<PedInstance *, 4>::iterator anEnd,
+                                    bool checkHealth) : 
+                        current(begin), end(anEnd), checkHealth_(checkHealth) {
+                // in case the first element is not ok
+                advanceIfNeeded();
+            }
+    
+            //! Return the current element
+            PedInstance *& operator*() {
+                return *current;
+            }
+    
+            //! Increment to the next element
+            SquadIterator& operator++() {
+                ++current;
+                advanceIfNeeded();
+
+                return *this;
+            }
+    
+            //! Equality check
+            bool operator==(const SquadIterator& other) const {
+                return current == other.current;
+            }
+    
+            //! Inequality check
+            bool operator!=(const SquadIterator& other) const {
+                return current != other.current;
+            }
+        
+        private:
+            //! Find the next matching element
+            void advanceIfNeeded();
+
+        private:
+            //! The current element of the iterator
+            std::array<PedInstance *, 4>::iterator current;
+            //! The end of iterator
+            std::array<PedInstance *, 4>::iterator end;
+            //! True means checking health
+            bool checkHealth_;
+        };
+    
+        //! Return the default begin iterator
+        SquadIterator begin() {
+            return SquadIterator(members_.begin(), members_.end(), false);
+        }
+        //! Return the default end iterator
+        SquadIterator end() {
+            return SquadIterator(members_.end(), members_.end(), false);
+        }
+        //! Return the begin iterator for alive elements
+        SquadIterator alive_begin() {
+            return SquadIterator(members_.begin(), members_.end(), true);
+        }
+        //! Return the end iterator for alive elements
+        SquadIterator alive_end() {
+            return SquadIterator(members_.end(), members_.end(), true);
+        }
 private:
     /*!
      * Selected agents for the next mission. Up to 4 agents.

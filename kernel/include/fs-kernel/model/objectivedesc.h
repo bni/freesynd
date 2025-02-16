@@ -86,6 +86,7 @@ public:
      * This method declares the objective as 'started'.
      * Then calls handleStart() to give the class the ability
      * to customize the start phase.
+     * Only start objectives can be evaluated.
      */
     void start() {
         status = kStarted;
@@ -93,12 +94,12 @@ public:
     }
 
     /*!
-     * This method is call to evaluate the status of the objective in the
+     * @brief This method is called to evaluate the status of the objective in the
      * current mission.
-     * Subclasses must implements this method.
      */
-    virtual void evaluate(Mission *pMission) = 0;
+    void evaluate(Mission *pMission);
 
+    //! Convenient method to end an objective in failure
     void forceEnd() {
         endObjective(false);
     }
@@ -108,6 +109,13 @@ protected:
      * Subclasses should implements this method to do specific tasks on starting.
      */
     virtual void handleStart() {}
+
+    /*!
+     * This method is calle to evaluate the status of the objective in the
+     * current mission.
+     * Subclasses must implements this method.
+     */
+    virtual void doEvaluate(Mission *pMission) = 0;
 
     /*!
      * A common method to end objective.
@@ -145,7 +153,8 @@ class ObjEliminate : public ObjectiveDesc {
 public:
     ObjEliminate(PedInstance::objGroupDefMasks subtype);
 
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 
 protected:
     /*! The group to eliminate.*/
@@ -180,7 +189,8 @@ class ObjPersuade : public TargetObjective {
 public:
     ObjPersuade(MapObject * pMapObject);
 
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 };
 
 /*!
@@ -190,7 +200,8 @@ class ObjAssassinate : public TargetObjective {
 public:
     ObjAssassinate(MapObject * pMapObject);
 
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 };
 
 /*!
@@ -200,7 +211,8 @@ class ObjProtect : public TargetObjective {
 public:
     ObjProtect(MapObject * pMapObject);
 
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 };
 
 /*!
@@ -209,8 +221,8 @@ public:
 class ObjDestroyVehicle : public TargetObjective {
 public:
     ObjDestroyVehicle(MapObject * pVehicle);
-
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 };
 
 /*!
@@ -220,7 +232,8 @@ class ObjUseVehicle : public TargetObjective {
 public:
     ObjUseVehicle(MapObject * pVehicle);
 
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 };
 
 /*!
@@ -230,7 +243,8 @@ class ObjTakeWeapon : public TargetObjective {
 public:
     ObjTakeWeapon(MapObject * pWeapon);
 
-    void evaluate(Mission *pMission);
+protected:
+    void doEvaluate(Mission *pMission) override;
 };
 
 /*!
@@ -257,10 +271,9 @@ class ObjEvacuate : public LocationObjective {
 public:
     ObjEvacuate(int x, int y, int z, std::vector <PedInstance *> &lstOfPeds);
 
-    void evaluate(Mission *pMission) override;
-
 protected:
     void handleStart() override;
+    void doEvaluate(Mission *pMission) override;
 
 private:
     std::vector <PedInstance *> pedsToEvacuate;

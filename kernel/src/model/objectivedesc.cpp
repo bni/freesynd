@@ -29,14 +29,33 @@
 #include "fs-kernel/model/mission.h"
 
 namespace fs_knl {
+
+/*!
+ * Evaluate the objective. By default, only started objectives can
+ * be evaluated. Moreover, this method checks that not all squad is dead.
+ * If so, the objective is failed.
+ * @param pMission 
+ */
+void ObjectiveDesc::evaluate(Mission *pMission) {
+    if ( status == kStarted) {
+        if (pMission->getSquad()->isAllDead()) {
+            endObjective(false);
+        } else {
+            doEvaluate(pMission);
+        }
+    }
+}
+
 /*!
  * A common method to end targeted objective.
  * \param succeeded True means objective is completed with success.
  */
 void ObjectiveDesc::endObjective(bool succeeded) {
-    status = succeeded ? kCompleted : kFailed;
+    if ( status == kStarted) {
+        status = succeeded ? kCompleted : kFailed;
 
-    EventManager::fire<ObjectiveEndedEvent>(succeeded);
+        EventManager::fire<ObjectiveEndedEvent>(succeeded);
+    }
 }
 
 /*!
@@ -55,7 +74,7 @@ ObjPersuade::ObjPersuade(MapObject * pMapObject) : TargetObjective(pMapObject) {
  * \param evt
  * \param pMission
  */
-void ObjPersuade::evaluate([[maybe_unused]] Mission *pMission) {
+void ObjPersuade::doEvaluate([[maybe_unused]] Mission *pMission) {
     PedInstance *p = static_cast<PedInstance *>(p_target_);
     if (p->isDead())
     {
@@ -75,7 +94,7 @@ ObjAssassinate::ObjAssassinate(MapObject * pMapObject) : TargetObjective(pMapObj
  * \param evt
  * \param pMission
  */
-void ObjAssassinate::evaluate([[maybe_unused]] Mission *pMission) {
+void ObjAssassinate::doEvaluate([[maybe_unused]] Mission *pMission) {
     PedInstance *p = static_cast<PedInstance *>(p_target_);
     if (p->isDead()) {
         // Target is dead -> objective is completed
@@ -94,7 +113,7 @@ ObjProtect::ObjProtect(MapObject * pMapObject) : TargetObjective(pMapObject) {
  * \param evt
  * \param pMission
  */
-void ObjProtect::evaluate([[maybe_unused]] Mission *pMission) {
+void ObjProtect::doEvaluate([[maybe_unused]] Mission *pMission) {
     PedInstance *p = static_cast<PedInstance *>(p_target_);
     if (p->isDead()) {
         // Target is dead -> objective is failed
@@ -118,7 +137,7 @@ ObjDestroyVehicle::ObjDestroyVehicle(MapObject * pVehicle) : TargetObjective(pVe
  * \param evt
  * \param pMission
  */
-void ObjDestroyVehicle::evaluate([[maybe_unused]] Mission *pMission) {
+void ObjDestroyVehicle::doEvaluate([[maybe_unused]] Mission *pMission) {
     Vehicle *pVehicle = static_cast<Vehicle *>(p_target_);
 
     if (pVehicle->isDead()) {
@@ -139,7 +158,7 @@ ObjUseVehicle::ObjUseVehicle(MapObject * pVehicle) : TargetObjective(pVehicle) {
  * \param evt
  * \param pMission
  */
-void ObjUseVehicle::evaluate([[maybe_unused]] Mission *pMission) {
+void ObjUseVehicle::doEvaluate([[maybe_unused]] Mission *pMission) {
     GenericCar *pVehicle = static_cast<GenericCar *>(p_target_);
 
     if (pVehicle->isDead()) {
@@ -166,7 +185,7 @@ ObjTakeWeapon::ObjTakeWeapon(MapObject * pWeapon) : TargetObjective(pWeapon) {
  * \param evt
  * \param pMission
  */
-void ObjTakeWeapon::evaluate([[maybe_unused]] Mission *pMission) {
+void ObjTakeWeapon::doEvaluate([[maybe_unused]] Mission *pMission) {
     WeaponInstance *pWeapon = static_cast<WeaponInstance *>(p_target_);
 
     if (pWeapon->isDead()) {
@@ -200,7 +219,7 @@ ObjEliminate::ObjEliminate(PedInstance::objGroupDefMasks subtype) :
  * Evaluate the objective.
  * \param pMission
  */
-void ObjEliminate::evaluate(Mission *pMission) {
+void ObjEliminate::doEvaluate(Mission *pMission) {
     for (size_t i = pMission->getSquad()->size(); i< pMission->numPeds(); i++) {
         PedInstance *pPed = pMission->ped(i);
 
@@ -236,30 +255,27 @@ void ObjEvacuate::handleStart() {
  * Evaluate the objective.
  * \param pMission
  */
-void ObjEvacuate::evaluate(Mission *pMission) {
+void ObjEvacuate::doEvaluate(Mission *pMission) {
     // evacuating people
-    for (std::vector<PedInstance *>::iterator it_p
-        = pedsToEvacuate.begin();
-        it_p != pedsToEvacuate.end(); it_p++)
-    {
-        if ((*it_p)->health() < 0) {
+    for (const auto &ped : pedsToEvacuate) {
+        if (ped->isDead()) {
             // One of the peds is dead, objective is failed
             endObjective(false);
+            return;
         }
 
-        if (!(*it_p)->isCloseTo(objectiveLocw_, 512)) {
+        if (!ped->isCloseTo(objectiveLocw_, 512)) {
             // one of the peds is not yet in the evacuation perimeter
             return;
         }
     }
 
-    for (size_t indx = Squad::kSlot1; indx < Squad::kMaxSlot; indx++) {
-        PedInstance *pAgent = pMission->getSquad()->member(indx);
-        if (pAgent && pAgent->isAlive()) {
-            if (!pAgent->isCloseTo(objectiveLocw_, 512)) {
-                // one of the peds is not yet in the evacuation perimeter
-                return;
-            }
+    Squad *pSquad = pMission->getSquad();
+    for (auto it = pSquad->alive_begin(); it != pSquad->alive_end(); ++it) {
+        PedInstance *pAgent = *it;
+        if (!pAgent->isCloseTo(objectiveLocw_, 512)) {
+            // one of the peds is not yet in the evacuation perimeter
+            return;
         }
     }
 
