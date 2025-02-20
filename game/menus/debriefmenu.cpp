@@ -27,6 +27,7 @@
 #include "fs-engine/menus/menumanager.h"
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/ped.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/events/event.h"
 #include "fs-utils/log/log.h"
@@ -150,18 +151,15 @@ void DebriefMenu::updateStatsFields(fs_knl::Mission *pMission) {
 }
 
 void DebriefMenu::checkNewWeaponFound() {
+    fs_knl::Squad *pSquad = g_missionCtrl.mission()->getSquad();
+    for (auto &pAgent : *pSquad) {
+        for (size_t wi=0; wi < pAgent->numWeapons(); wi++) {
+            fs_knl::Weapon *pWeapon = pAgent->weapon(wi)->getClass();
 
-    for (size_t i=0; i<fs_knl::Squad::kMaxSlot; i++) {
-        fs_knl::Agent *pAgent = g_gameCtrl.agents().squadMember(i);
-        if (pAgent) {
-            for (int wi=0; wi < pAgent->numWeapons(); wi++) {
-                fs_knl::Weapon *pWeapon = pAgent->weapon(wi)->getClass();
-
-                if (!g_gameCtrl.weaponManager().isAvailable(pWeapon)) {
-                    if (g_Session.researchManager().handleWeaponDiscovered(pWeapon)) {
-                        getStatic(txtNewWeap1Id_)->setText("#DEBRIEF_WEAP_FOUND1");
-                        getStatic(txtNewWeap2Id_)->setText("#DEBRIEF_WEAP_FOUND2");
-                    }
+            if (!g_gameCtrl.weaponManager().isAvailable(pWeapon)) {
+                if (g_Session.researchManager().handleWeaponDiscovered(pWeapon)) {
+                    getStatic(txtNewWeap1Id_)->setText("#DEBRIEF_WEAP_FOUND1");
+                    getStatic(txtNewWeap2Id_)->setText("#DEBRIEF_WEAP_FOUND2");
                 }
             }
         }

@@ -376,9 +376,9 @@ TriggerAction::TriggerAction(int32_t range, const WorldPoint &loc) :
  * \param pPed The ped executing the action.
  */
 bool TriggerAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
-    for (uint8 i = 0; i < Squad::kMaxSlot; ++i) {
-        PedInstance *pAgent = pMission->getSquad()->member(i);
-        if(pAgent && pAgent->isAlive() && pAgent->isCloseTo(centerLoc_, range_)) {
+    for (auto it = pMission->getSquad()->alive_begin(); it != pMission->getSquad()->alive_end(); ++it) {
+        fs_knl::PedInstance *pAgent = *it;
+        if(pAgent->isCloseTo(centerLoc_, range_)) {
             setSucceeded();
             return true;
         }
