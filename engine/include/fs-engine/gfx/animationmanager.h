@@ -32,39 +32,37 @@ namespace fs_eng {
  * Each frame has a widht and height and points to the next frame.
  * A frame is composed of several elements called GameSpriteElement.
  */
-class GameSpriteFrame {
-public:
-    GameSpriteFrame() : first_element_(0), width_(0), height_(0), flags_(0),
-            next_frame_(0) {}
+struct GameSpriteFrame {
+    GameSpriteFrame() : firstElement(0), width(0), height(0), flags(0),
+            nextFrame(0) {}
     //! The first element that composes the frame
-    size_t first_element_;
+    size_t firstElement;
     //! Width of the frame
-    int width_;
+    int width;
     //! Height of the frame
-    int height_;
+    int height;
     //! Seems to be 0x0100 when it is the first frame of an animation.
-    int flags_;
+    int flags;
     // Index of the next frame in the animation. The last frame points to the first frame.
-    size_t next_frame_;
+    size_t nextFrame;
 };
 
 /*!
  * Each frame is composed of a set of GameSpriteFrameElement.
  */
-class GameSpriteFrameElement {
-public:
-    GameSpriteFrameElement() : sprite_(0), off_x_(0), off_y_(0),
-            flipped_(false), next_element_(0) {}
+struct GameSpriteFrameElement {
+    GameSpriteFrameElement() : sprite(0), off_x(0), off_y(0),
+            flipped(false), nextElement(0) {}
     //! An element is a sprite
-    int sprite_;
+    int sprite;
     //! An offset to use when drawing the sprite on screen
-    int off_x_;
+    int off_x;
     //! An offset to use when drawing the sprite on screen
-    int off_y_;
+    int off_y;
     //! True means the element is flipped when drawn
-    bool flipped_;
+    bool flipped;
     //! Index of the next element
-    size_t next_element_;
+    size_t nextElement;
 };
 
 /*!
@@ -80,15 +78,15 @@ public:
     void addFrameElement(GameSpriteFrameElement element);
     //! Adds a new frame to the list
     void addFrame(GameSpriteFrame frame);
-    //! Adds a new animation
-    void addAnimation(size_t index);
+    //! Adds a new animation pointing to a frame
+    void addAnimation(uint16_t firstFrameIndex);
     //! Check that resources have been loaded well
     void checkLoadIsOk();
 
     //! Sets the palette used for a mission
     bool setPalette(const fs_eng::Palette &missionPalette);
-
-    int numAnims() { return (int) index_.size(); }
+    //! Returns the number of loaded animations
+    size_t getNumAnims() { return firstFramePerAnim_.size(); }
     //! Draw a single sprite without animation
     void drawSprite(int spriteId, const Point2D &screenPos);
     //! Draw a frame for a given animation
@@ -96,9 +94,8 @@ public:
     //! Return true if the frameId is the last frame for given animation
     bool lastFrame(uint16_t animId, int frameId);
     //! Return the id of the last frame of given animation
-    int lastFrame(uint16_t animId);
+    uint8_t lastFrame(uint16_t animId);
     int getFrameFromFrameIndx(uint16_t frameIndx);
-    int getFrameNum(uint16_t animNum);
 
 protected:
     //! Size for the texture for storing animation sprites
@@ -110,7 +107,7 @@ protected:
      * the corresponding element is the index of the first frame
      * store in frames_ vector.
      */
-    std::vector<size_t> index_;
+    std::vector<uint16_t> firstFramePerAnim_;
     //! A list of all the frames
     std::vector<GameSpriteFrame> frames_;
     //! A list of all elements

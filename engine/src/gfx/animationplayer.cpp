@@ -20,6 +20,7 @@
 
 #include "fs-engine/gfx/animationplayer.h"
 
+#include "fs-utils/log/log.h"
 #include "fs-engine/gfx/animationmanager.h"
 
 namespace fs_eng {
@@ -28,7 +29,7 @@ AnimationPlayer::AnimationPlayer() : spentTime_(0) {
     // add a default animation to say
     addAnimation({
         .spriteAnimationBase = 0,
-        .framePerSec = 0,
+        .framePerSec = 1,
         .mode = kAnimationModeNoAnimation,
         .maxPlayTime = 0
     });
@@ -42,7 +43,11 @@ AnimationPlayer::~AnimationPlayer() {}
  * @param animation 
  */
 void AnimationPlayer::addAnimation(MapObjectAnimation animation) {
-    animations_.push_back(animation);
+    if (animation.framePerSec != 0) {
+        animations_.push_back(animation);
+    } else {
+        FSERR(Log::k_FLG_GAME, "AnimationPlayer","addAnimation", ("Cannot add animation with zero framePerSec"))
+    }
 }
 
 /*!
@@ -54,7 +59,7 @@ void AnimationPlayer::addAnimation(MapObjectAnimation animation) {
  */
 bool AnimationPlayer::play(const uint16_t mapObjectAnimationId, const uint8_t startFrame) {
     if (mapObjectAnimationId < animations_.size()) {
-        currentAnimation_ = animations_[mapObjectAnimationId];
+        loadAnimation(mapObjectAnimationId);
         frame_ = startFrame;
         lastFrame_ = g_AnimMgr.lastFrame(currentAnimation_.spriteAnimationBase);
         isPlaying_ = true;
@@ -69,6 +74,10 @@ bool AnimationPlayer::play(const uint16_t mapObjectAnimationId, const uint8_t st
     }
 }
 
+void AnimationPlayer::loadAnimation(const uint16_t mapObjectAnimationId) {
+    currentAnimation_ = animations_[mapObjectAnimationId];
+}
+
 /*!
  * Updates the animation
  * @param elapsed Time in milliseconds since the last execution
@@ -79,18 +88,17 @@ bool AnimationPlayer::handleTick(uint32_t elapsed) {
         bool maxTimeReached = (currentAnimation_.maxPlayTime != 0) ?
                                 spentTime_.update(elapsed) : false;
         // This is the time to display one frame in milliseconds
-        int frameTics = 1000 / currentAnimation_.framePerSec;
+        uint32_t frameTics = 1000 / currentAnimation_.framePerSec;
         // Adding carry and elapsed to get total elapsed time
-        int totalElapsed = elapsed + elapsedCarry_;
+        uint32_t totalElapsed = elapsed + elapsedCarry_;
         // Get new value for elapsedCarry to store remaining time to 
         // get to next frame.
         elapsedCarry_ = totalElapsed % frameTics;
         
-        // La valeur calculée est ajoutée à la frame actuelle.
         // Compute the new frame based on the number of periods
         // of frameTics contained in totalElapsed
         // Number of frames is added to current frame rank
-        frame_ += (totalElapsed / frameTics);
+        frame_ += (uint8_t) (totalElapsed / frameTics);
 
         // Check if we reached end of animation
         if (frame_ > lastFrame_ || maxTimeReached) {
@@ -100,7 +108,7 @@ bool AnimationPlayer::handleTick(uint32_t elapsed) {
                     return true;
                 } else {
                     // just looping through animation
-                    frame_ %= (lastFrame_ + 1u);
+                    frame_ %= static_cast< uint8_t >(lastFrame_ + 1);
                 }
             } else if (currentAnimation_.mode == kAnimationModeSingle) {
                 reset();
@@ -116,6 +124,9 @@ bool AnimationPlayer::handleTick(uint32_t elapsed) {
     return false;
 }
 
+/*!
+ * @brief 
+ */
 void AnimationPlayer::reset() {
     lastFrame_ = 0;
     frame_ = 0;

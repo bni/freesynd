@@ -58,7 +58,7 @@ void AnimMenu::handleRender()
     //g_Screen.drawRect(150, 110, 350, 150);
     g_System.drawRect({150, 110}, 350, 150, menu_manager_->kMenuColorBlack);
     Point2D pos = {310, 180};
-    g_SpriteMgr.drawFrame(animId_, frameId_, pos);
+    g_AnimMgr.drawFrame(animId_, frameId_, pos);
 
 }
 
@@ -74,7 +74,7 @@ void AnimMenu::displayFont() {
 bool AnimMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     bool change = false;
     if (key.keyCode == fs_eng::kKeyCode_Up) {
-        if (animId_ < g_SpriteMgr.numAnims() - 1) {
+        if (animId_ < g_AnimMgr.getNumAnims() - 1) {
             animId_++;
             frameId_ = 0;
             change = true;
@@ -87,14 +87,14 @@ bool AnimMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
         }
     } else if (key.keyCode == fs_eng::kKeyCode_Right) {
         frameId_++;
-        if (frameId_ > g_SpriteMgr.lastFrame(animId_)) {
+        if (frameId_ > g_AnimMgr.lastFrame(animId_)) {
             frameId_ = 0;
         }
         change = true;
     } else if (key.keyCode == fs_eng::kKeyCode_Left) {
         frameId_--;
         if (frameId_ < 0) {
-            frameId_ = g_SpriteMgr.lastFrame(animId_);
+            frameId_ = g_AnimMgr.lastFrame(animId_);
         }
         change = true;
     }

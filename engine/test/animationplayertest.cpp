@@ -33,20 +33,27 @@ public:
     bool isCurrentAnimationSetToNoAnimation() { 
         return currentAnimation_.mode == fs_eng::kAnimationModeNoAnimation;
     }
+protected:
+    void loadAnimation(const uint16_t mapObjectAnimationId) override {
+        AnimationPlayer::loadAnimation(mapObjectAnimationId);
+        if (mapObjectAnimationId == 2) {
+            currentAnimation_.spriteAnimationBase += 1;
+        }
+    }
 };
 
 void addFrameElement(fs_eng::AnimationManager &animMgr, int sprite, int next) {
     fs_eng::GameSpriteFrameElement element;
-    element.sprite_ = sprite;
-    element.next_element_ = next;
+    element.sprite = sprite;
+    element.nextElement = next;
     animMgr.addFrameElement(element);
 }
 
 void addFrame(fs_eng::AnimationManager &animMgr, bool isFirst, size_t nextFrame) {
     fs_eng::GameSpriteFrame frame;
-    frame.flags_ = isFirst ? 0x0100 : 0;
-    frame.first_element_ = 0;
-    frame.next_frame_ = nextFrame;
+    frame.flags = isFirst ? 0x0100 : 0;
+    frame.firstElement = 0;
+    frame.nextFrame = nextFrame;
     animMgr.addFrame(frame);
 }
 
@@ -64,12 +71,16 @@ void initAnimationManager(fs_eng::AnimationManager &animMgr) {
     addFrame(animMgr, true, 9);  // Frame 8 -> anim 4
     addFrame(animMgr, false, 10);// Frame 9
     addFrame(animMgr, false, 8); // Frame 10
+    addFrame(animMgr, true, 12);  // Frame 11 -> anim 5
+    addFrame(animMgr, false, 13);// Frame 12
+    addFrame(animMgr, false, 11); // Frame 13
     // Add animations
     animMgr.addAnimation(0);  // First animation does serve
     animMgr.addAnimation(1);  // Anim 1
     animMgr.addAnimation(4);  // Anim 2
     animMgr.addAnimation(6);  // Anim 3
     animMgr.addAnimation(8);  // Anim 4
+    animMgr.addAnimation(11);  // Anim 5
 }
 
 void initAnimationPlayer(fs_eng::AnimationPlayer &animPlayer) {
@@ -129,7 +140,7 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
         SECTION( "Should play single no end animation") {
             cut.play(2);
             // Animation 3 must have 2 frames
-            REQUIRE( cut.getSpriteAnimationId() == 4 );
+            REQUIRE( cut.getSpriteAnimationId() == 5 );
             REQUIRE( cut.getCurrentFrameId() == 0 );
 
             // Not enough time to change frame
@@ -144,7 +155,7 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
 
             // We hit last frame, does change anymore
             REQUIRE_FALSE( cut.handleTick(400) );
-            REQUIRE( cut.getSpriteAnimationId() == 4 );
+            REQUIRE( cut.getSpriteAnimationId() == 5 );
             REQUIRE( cut.getCurrentFrameId() == 2 );
         }
 

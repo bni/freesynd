@@ -45,15 +45,15 @@ void OriginalFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
     for (unsigned int i = 0; i < size / kNbOf8bitsblockInElementStruct; i++) {
         GameSpriteFrameElement e;
         uint8_t *elementStart = data + i * kNbOf8bitsblockInElementStruct;
-        e.sprite_ = fs_utl::READ_LE_UINT16(elementStart);
-        assert(e.sprite_ % 6 == 0);
-        e.sprite_ /= 6;
-        e.off_x_ = fs_utl::READ_LE_INT16(elementStart + 2);
-        e.off_y_ = fs_utl::READ_LE_INT16(elementStart + 4);
-        e.flipped_ =
+        e.sprite = fs_utl::READ_LE_UINT16(elementStart);
+        assert(e.sprite % 6 == 0);
+        e.sprite /= 6;
+        e.off_x = fs_utl::READ_LE_INT16(elementStart + 2);
+        e.off_y = fs_utl::READ_LE_INT16(elementStart + 4);
+        e.flipped =
             (fs_utl::READ_LE_UINT16(elementStart + 6)) != 0 ? true : false;
-        e.next_element_ = fs_utl::READ_LE_UINT16(elementStart + 8);
-        assert(e.next_element_ < size / kNbOf8bitsblockInElementStruct);
+        e.nextElement = fs_utl::READ_LE_UINT16(elementStart + 8);
+        assert(e.nextElement < size / kNbOf8bitsblockInElementStruct);
         pAnimMgr.addFrameElement(e);
     }
     delete[] data;
@@ -66,12 +66,12 @@ void OriginalFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
     for (size_t i = 0; i < size / kNbOf8bitsblockInFrameStruct; i++) {
         uint8_t *elementStart = data + i * kNbOf8bitsblockInFrameStruct;
         GameSpriteFrame frame;
-        frame.first_element_ = fs_utl::READ_LE_UINT16(elementStart);
-        frame.width_ = *(elementStart + 2);
-        frame.height_ = *(elementStart + 3);
-        frame.flags_ = fs_utl::READ_LE_UINT16(elementStart + 4);
-        frame.next_frame_ = fs_utl::READ_LE_UINT16(elementStart + 6);
-        assert(frame.next_frame_ < size / kNbOf8bitsblockInFrameStruct);
+        frame.firstElement = fs_utl::READ_LE_UINT16(elementStart);
+        frame.width = *(elementStart + 2);
+        frame.height = *(elementStart + 3);
+        frame.flags = fs_utl::READ_LE_UINT16(elementStart + 4);
+        frame.nextFrame = fs_utl::READ_LE_UINT16(elementStart + 6);
+        assert(frame.nextFrame < size / kNbOf8bitsblockInFrameStruct);
         pAnimMgr.addFrame(frame);
     }
     delete[] data;
@@ -103,9 +103,9 @@ void CustomFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
         char flipped;
         if (*line == '#')
             continue;
-        sscanf(line, "%i %i %i %c %lu", &element.sprite_, &element.off_x_,
-            &element.off_y_, &flipped, &element.next_element_);
-        element.flipped_ = (flipped == 'f');
+        sscanf(line, "%i %i %i %c %lu", &element.sprite, &element.off_x,
+            &element.off_y, &flipped, &element.nextElement);
+        element.flipped = (flipped == 'f');
         pAnimMgr.addFrameElement(element);
     }
     
@@ -130,8 +130,8 @@ void CustomFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
         GameSpriteFrame frame;
         if (*line == '#')
             continue;
-        sscanf(line, "%lu %i %i %i %lu", &frame.first_element_,
-            &frame.width_, &frame.height_, &frame.flags_, &frame.next_frame_);
+        sscanf(line, "%lu %i %i %i %lu", &frame.firstElement,
+            &frame.width, &frame.height, &frame.flags, &frame.nextFrame);
         
         pAnimMgr.addFrame(frame);
     }
@@ -144,10 +144,10 @@ void CustomFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
     }
 
     while (fgets(line, 1024, fp)) {
-        size_t index;
+        uint16_t index;
         if (*line == '#')
             continue;
-        sscanf(line, "%lu", &index);
+        sscanf(line, "%hu", &index);
         
         pAnimMgr.addAnimation(index);
     }

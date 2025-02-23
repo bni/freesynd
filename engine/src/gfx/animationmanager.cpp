@@ -53,25 +53,25 @@ void AnimationManager::checkLoadIsOk() {
 
     // Check consistency of resources
     for (auto &element : elements_) {
-        if (element.next_element_ >= elements_.size()) {
+        if (element.nextElement >= elements_.size()) {
             throw InitializationFailedException(
                 "GameSpriteFrameElement references an element out of limits");
         }
     }
 
     for (auto &frame : frames_) {
-        if (frame.next_frame_ >= frames_.size()) {
+        if (frame.nextFrame >= frames_.size()) {
             throw InitializationFailedException(
                 "GameSpriteFrame references a frame out of limits");
         }
 
-        if (frame.first_element_ >= elements_.size()) {
+        if (frame.firstElement >= elements_.size()) {
             throw InitializationFailedException(
                 "GameSpriteFrame references an element out of limits");
         }
     }
 
-    for (auto &index : index_) {
+    for (auto &index : firstFramePerAnim_) {
         if (index >= frames_.size()) {
             throw InitializationFailedException(
                 "Animation references a frame out of limits");
@@ -80,7 +80,7 @@ void AnimationManager::checkLoadIsOk() {
 
     LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frame elements", elements_.size()))
     LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frames", frames_.size()))
-    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("index contains %i animations", index_.size()))
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("index contains %i animations", firstFramePerAnim_.size()))
 }
 
 void AnimationManager::addFrameElement(GameSpriteFrameElement element) {
@@ -92,12 +92,12 @@ void AnimationManager::addFrameElement(GameSpriteFrameElement element) {
  * @param frame GameSpriteFrame to add
  */
 void AnimationManager::addFrame(GameSpriteFrame frame) {
-    assert(frame.first_element_ < elements_.size());
+    assert(frame.firstElement < elements_.size());
     frames_.push_back(frame);
 }
-void AnimationManager::addAnimation(size_t index) {
-    assert(index < frames_.size());
-    index_.push_back(index);
+void AnimationManager::addAnimation(uint16_t firstFrameIndex) {
+    assert(firstFrameIndex < frames_.size());
+    firstFramePerAnim_.push_back(firstFrameIndex);
 }
 
 bool AnimationManager::setPalette(const fs_eng::Palette &missionPalette) {
@@ -122,26 +122,26 @@ void AnimationManager::drawSprite(int spriteId, const Point2D &screenPos) {
  */
 bool AnimationManager::drawFrame(uint16_t animId, int frameId, const Point2D &screenPos)
 {
-    assert(animId < index_.size());
+    assert(animId < firstFramePerAnim_.size());
 
-    GameSpriteFrame *f = &frames_[index_[animId]];
+    GameSpriteFrame *f = &frames_[firstFramePerAnim_[animId]];
     if (f == NULL)
         return false;
 
     while (frameId) {
-        f = &frames_[f->next_frame_];
+        f = &frames_[f->nextFrame];
         frameId--;
     }
 
-    GameSpriteFrameElement *e = &elements_[f->first_element_];
+    GameSpriteFrameElement *e = &elements_[f->firstElement];
     while (1) {
-        spritesManager_.drawSprite(e->sprite_, screenPos.x + e->off_x_, screenPos.y + e->off_y_, e->flipped_);
-        if (e->next_element_ == 0)
+        spritesManager_.drawSprite(e->sprite, screenPos.x + e->off_x, screenPos.y + e->off_y, e->flipped);
+        if (e->nextElement == 0)
             break;
-        e = &elements_[e->next_element_];
+        e = &elements_[e->nextElement];
     }
 
-    return f->next_frame_ == index_[animId];
+    return f->nextFrame == firstFramePerAnim_[animId];
 }
 
 /*!
@@ -152,25 +152,25 @@ bool AnimationManager::drawFrame(uint16_t animId, int frameId, const Point2D &sc
  */
 bool AnimationManager::lastFrame(uint16_t animId, int frameId)
 {
-    assert(animId < index_.size());
+    assert(animId < firstFramePerAnim_.size());
 
-    GameSpriteFrame *f = &frames_[index_[animId]];
+    GameSpriteFrame *f = &frames_[firstFramePerAnim_[animId]];
     while (frameId) {
-        f = &frames_[f->next_frame_];
+        f = &frames_[f->nextFrame];
         frameId--;
     }
 
-    return f->next_frame_ == index_[animId];
+    return f->nextFrame == firstFramePerAnim_[animId];
 }
 
-int AnimationManager::lastFrame(uint16_t animId)
+uint8_t AnimationManager::lastFrame(uint16_t animId)
 {
-    int frameId = 0;
-    assert(animId < index_.size());
+    uint8_t frameId = 0;
+    assert(animId < firstFramePerAnim_.size());
 
-    GameSpriteFrame *f = &frames_[index_[animId]];
-    while (f->next_frame_ != index_[animId]) {
-        f = &frames_[f->next_frame_];
+    GameSpriteFrame *f = &frames_[firstFramePerAnim_[animId]];
+    while (f->nextFrame != firstFramePerAnim_[animId]) {
+        f = &frames_[f->nextFrame];
         frameId++;
     }
     return frameId;
@@ -182,39 +182,15 @@ int AnimationManager::getFrameFromFrameIndx(uint16_t frameIndx)
 
     GameSpriteFrame *f = &frames_[frameIndx];
     while (1) {
-        f = &frames_[f->next_frame_];
-        if (f->flags_ == 0x0100)
+        f = &frames_[f->nextFrame];
+        if (f->flags == 0x0100)
             break;
     }
 
     while (1) {
-        f = &frames_[f->next_frame_];
-        if (f->next_frame_ == frameIndx)
+        f = &frames_[f->nextFrame];
+        if (f->nextFrame == frameIndx)
             return frameId;
-        frameId++;
-    }
-}
-
-/*!
- * @brief 
- * @param animId 
- * @return 
- */
-int AnimationManager::getFrameNum(uint16_t animId)
-{
-    assert(animId < index_.size());
-    int frameId = 1;
-
-    GameSpriteFrame *f = &frames_[index_[animId]];
-    bool passedStart = false;
-    while (1) {
-        if (f->flags_ == 0x0100) {
-            if (passedStart)
-                return frameId;
-            else
-                passedStart = true;
-        }
-        f = &frames_[f->next_frame_];
         frameId++;
     }
 }

@@ -57,7 +57,7 @@ struct MapObjectAnimation {
      */
     uint16_t spriteAnimationBase;
     //! set the animation speed
-    int framePerSec;
+    uint8_t framePerSec;
     //! How to play the animation
     AnimationMode mode;
     /*!
@@ -74,7 +74,7 @@ struct MapObjectAnimation {
 class AnimationPlayer {
 public:
     AnimationPlayer();
-    ~AnimationPlayer();
+    virtual ~AnimationPlayer();
 
     //! Adds a animation description in the player
     void addAnimation(MapObjectAnimation animation);
@@ -84,6 +84,8 @@ public:
     bool handleTick(uint32_t elapsed);
 
 protected:
+    //! loads the animation to play. Subclass can alter the loaded animation
+    virtual void loadAnimation(const uint16_t mapObjectAnimationId);
     //! Reset the player
     void reset();
 protected:
@@ -101,7 +103,7 @@ protected:
     uint8_t lastFrame_;
     
     //! Contains the non used remaining time from the previous iteration.
-    int elapsedCarry_;
+    uint32_t elapsedCarry_;
     /*!
      * When MapObjectAnimation::maxPlayTime is set, this field
      * is used to count time used to display the animation.
