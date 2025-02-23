@@ -31,17 +31,16 @@
 namespace fs_knl {
 
 MapObject::MapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
+    id_(anId), pMap_(pMap), nature_(aNature),
     size_x_(1), size_y_(1), size_z_(2),
+    dir_(0),
     frame_(0), elapsed_carry_(0),
     frames_per_sec_(8),
-    dir_(0),
     time_show_anim_(-1), time_showing_anim_(-1),
     is_frame_drawn_(false),
-    state_(0xFFFFFFFF)
+    state_(0xFFFFFFFF),
+    animationPlayer_()
 {
-    nature_ = aNature;
-    id_ = anId;
-    pMap_ = pMap;
     isDrawable_ = true;
 }
 
@@ -122,6 +121,18 @@ bool MapObject::animate(uint32_t elapsed)
     frame_ %= frames_per_sec_ << 3;
     return changed;
 }
+
+/*!
+ * Calls first the method doUpdateState() to let the object compute
+ * its state and then update the animation.
+ * If animation has ended calls handleAnimationEnded()
+ * @param elapsed Number of ticks since the last iteration
+ */
+void MapObject::animate2(uint32_t elapsed) {
+    doUpdateState(elapsed);
+    animationPlayer_.handleTick(elapsed);
+}
+
 
 void MapObject::setDirection(int dir) {
     assert(dir >= 0);
@@ -337,7 +348,7 @@ bool MapObject::isBlocker(WorldPoint * pStartPt, WorldPoint * pEndPt,
         d_s[2] = d_l[2];
 
     // TODO: another look at this function later
-    uint8 indx = 0;
+    uint8_t indx = 0;
     // longest non-zero distance to start
     if (d_s[0] != 0.0) {
         if (d_s[1] != 0) {
@@ -435,7 +446,7 @@ bool MapObject::isBlocker(WorldPoint * pStartPt, WorldPoint * pEndPt,
     return true;
 }
 
-void MapObject::offzOnStairs(uint8 twd) {
+void MapObject::offzOnStairs(uint8_t twd) {
     switch (twd) {
         case 0x01:
             pos_.oz = 127 - (pos_.oy >> 1);

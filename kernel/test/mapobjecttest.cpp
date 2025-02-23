@@ -24,9 +24,19 @@
 
 class MapObjectTest : public fs_knl::MapObject {
 public:
-    MapObjectTest(uint16_t id, ObjectNature nature): fs_knl::MapObject(id, nullptr, nature) {}
+    MapObjectTest(uint16_t id, ObjectNature nature): fs_knl::MapObject(id, nullptr, nature) {
+        doUpdateState_ = 0;
+    }
     virtual ~MapObjectTest() {}
     void draw(const Point2D &screenPos) override {}
+
+    uint32_t doUpdateStateValue() { return doUpdateState_; }
+protected:
+    void doUpdateState([[maybe_unused]] uint32_t elapsed) {
+        doUpdateState_ = elapsed;
+    }
+protected:
+    uint32_t doUpdateState_;
 };
 
 TEST_CASE( "Map Object", "[kernel][mapobject]" ) {
@@ -64,5 +74,12 @@ TEST_CASE( "Map Object", "[kernel][mapobject]" ) {
         REQUIRE( cut.getDiscreteDirection(4) == 3);
         cut.setDirection(255);
         REQUIRE( cut.getDiscreteDirection(4) == 0);
+    }
+
+    SECTION( "Animate") {
+        SECTION( "should call doUpdateState()") {
+            cut.animate2(32);
+            REQUIRE( cut.doUpdateStateValue() == 32 );
+        }
     }
 }

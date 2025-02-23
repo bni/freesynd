@@ -31,6 +31,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-engine/enginecommon.h"
+#include "fs-engine/gfx/animationplayer.h"
 #include "fs-kernel/model/position.h"
 #include "fs-kernel/model/damage.h"
 
@@ -59,6 +60,10 @@ public:
     MapObject(uint16_t id, Map *pMap, ObjectNature nature);
     virtual ~MapObject() {}
 
+    /**
+     * @name Inner attributes
+     */
+    ///@{
     //! Return the nature of the object
     ObjectNature nature() { return nature_; }
     //! Return true the object has the same nature as the given one
@@ -69,24 +74,17 @@ public:
     //! Return the object's id
     uint16_t id() const { return id_; }
 
-    //! Set if MapObject is visible on screen
-    void setDrawable(bool drawable) {
-        isDrawable_ = drawable;
-    }
-
-    //! Returns true is Object is visible on screen
-    bool isDrawable() {
-        return isDrawable_;
-    }
-
     //!Sets the current map
     void setMap(Map *pMap) {
         pMap_ = pMap;
     }
+    ///@}
 
-    virtual void draw(const Point2D &screenPos) = 0;
-
-    const TilePoint & position()const { return pos_; }
+    /**
+     * @name Position
+     */
+    ///@{
+    const TilePoint & position() const { return pos_; }
 
     void setPosition(int tile_x, int tile_y, int tile_z, int off_x = 0,
             int off_y = 0, int off_z = 0) {
@@ -110,6 +108,8 @@ public:
         setPosition(pos.x / 256, pos.y / 256, pos.z / 128, pos.x % 256,
                     pos.y % 256, pos.z % 128 );
     }
+
+    void offzOnStairs(uint8_t twd);
 
     int tileX() const { return pos_.tx; }
     int tileY() const { return pos_.ty; }
@@ -206,43 +206,12 @@ public:
     bool isBehindObjectOnSameTile(MapObject *pOther) {
         return pos_.ox < pOther->position().ox || pos_.oy < pOther->position().oy;
     }
+    ///@}
 
-    /** \brief Animates the object
-     * SubClasses can implement this method.
-     * \param elapsed int Time elapsed since last animation
-     * \return virtual bool True mean the object has changed
-     *
+    /**
+     * @name Direction
      */
-    virtual bool animate(uint32_t elapsed);
-
-    void setFramesPerSec(int framesPerSec)
-    {
-        frames_per_sec_ = framesPerSec;
-    }
-    int getFramesPerSec() { return frames_per_sec_; }
-
-    typedef struct{
-        // 0 - can go; 1 - wait; 2 - stop
-        char wayFree;
-        int tilex;
-        int tiley;
-        int tilez;
-        //! create range by x, should be 0 if not used
-        int xadj;
-        //! create range by y, should be 0 if not used
-        int yadj;
-        MapObject * pathBlocker;
-    }FreeWay;
-
-    virtual bool isPathBlocker() {
-        return false;
-    }
-
-    void setFrame(int frame) { frame_ = frame;}
-    void setFrameFromObject(MapObject *m) {
-        frame_ = m->frame_;
-    }
-
+    ///@{
     void setDirection(int dir);
     void setDirection(int posx, int posy, int * dir = NULL);
     //! Set this ped's direction so that he looks at the given object.
@@ -253,12 +222,43 @@ public:
     int direction() { return dir_;}
     //! Converts a direction into a discrete index. Default is set to 8 for possible directions for Peds.
     uint8_t getDiscreteDirection(int snum = 8);
+    ///@}
 
+    /**
+     * @name Path management
+     */
+    ///@{
+    struct FreeWay {
+        // 0 - can go; 1 - wait; 2 - stop
+        char wayFree;
+        int tilex;
+        int tiley;
+        int tilez;
+        //! create range by x, should be 0 if not used
+        int xadj;
+        //! create range by y, should be 0 if not used
+        int yadj;
+        MapObject * pathBlocker;
+    };
+
+    virtual bool isPathBlocker() {
+        return false;
+    }
+    ///@}
+
+    bool isBlocker(WorldPoint * pStartPt, WorldPoint * pEndPt,
+        double * inc_xyz);
+
+    /**
+     * @name Animation
+     */
+    ///@{
     void setTimeShowAnim(int t) {
         frame_ = 0;
         time_show_anim_ = t;
         time_showing_anim_ = 0;
     }
+
     bool leftTimeShowAnim(uint32_t t) {
         if (time_show_anim_ == -1)
             return true;
@@ -266,32 +266,80 @@ public:
         return time_show_anim_ > time_showing_anim_;
     }
 
-    bool isBlocker(WorldPoint * pStartPt, WorldPoint * pEndPt,
-               double * inc_xyz);
+    void setFrame(int frame) { frame_ = frame;}
+    void setFrameFromObject(MapObject *m) {
+        frame_ = m->frame_;
+    }
+
+    void setFramesPerSec(int framesPerSec)
+    {
+        frames_per_sec_ = framesPerSec;
+    }
+    int getFramesPerSec() { return frames_per_sec_; }
 
     void setStateMasks(unsigned int state) {
         state_ = state;
     }
     unsigned int stateMasks() { return state_; }
 
-    void offzOnStairs(uint8 twd);
+    /** \brief Animates the object
+     * SubClasses can implement this method.
+     * \param elapsed int Time elapsed since last animation
+     * \return virtual bool True mean the object has changed
+     *
+     */
+    virtual bool animate(uint32_t elapsed);
+
+    /*!
+     * @brief Animates the object
+     */
+    void animate2(uint32_t elapsed);
+    ///@}
+
+    /**
+     * @name Draw object
+     */
+    ///@{
+    //! Set if MapObject is visible on screen
+    void setDrawable(bool drawable) {
+        isDrawable_ = drawable;
+    }
+
+    //! Returns true is Object is visible on screen
+    bool isDrawable() {
+        return isDrawable_;
+    }
+
+    /*!
+     * Draw this object at the given screen position.
+     * Subclasses need to implement this method
+     * @param screenPos Position on the screen
+     */
+    virtual void draw(const Point2D &screenPos) = 0;
+    ///@}
 
 protected:
     Point2D addOffs(const Point2D &screenPos);
 
+    //! Subclasses reimplement this to update their internal state
+    virtual void doUpdateState([[maybe_unused]] uint32_t elapsed) {}
+
+
 protected:
-    //! the nature of this object
-    ObjectNature nature_;
     //! Id of the object. Id is unique within a nature
     uint16_t id_;
+    //! A pointer to the map that the object is on
+    Map *pMap_;
+    //! the nature of this object
+    ObjectNature nature_;
     /*!
      * Tile based coordinates.
      */
     TilePoint pos_;
     //! these are not true sizes, but halfs of full size by respective coord
     int size_x_, size_y_, size_z_;
-    //! A pointer to the map that the object is on
-    Map *pMap_;
+    //! objects direction
+    int dir_;
     //! animation frame changing
     int frame_;
     /*!
@@ -301,8 +349,6 @@ protected:
     int elapsed_carry_;
     //! how often this frame should be drawn per seccond
     int frames_per_sec_;
-    //! objects direction
-    int dir_;
     //! looped animations, time to show them is set here, if = -1 show forever
     int time_show_anim_;
     //! looped animations, playing time
@@ -313,6 +359,7 @@ protected:
      */
     bool is_frame_drawn_;
     uint32_t state_;
+    fs_eng::AnimationPlayer animationPlayer_;
 
 private:
     //! Object should be drawn only if visible

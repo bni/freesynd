@@ -27,6 +27,7 @@
 
 #include "fs-engine/events/event.h"
 #include "fs-engine/events/default_events.h"
+#include "fs-engine/gfx/animationloader.h"
 
 #ifdef HAVE_SDL_MIXER
 
@@ -132,7 +133,10 @@ bool BaseApp::initialize() {
 
         menus_.initialize(isLoadIntroResources());
 
-        animationManager_.load();
+        // TODO : add a parameter somewhere to load custom files
+        OriginalFilesAnimationLoader loader;
+        loader.loadAnimations(animationManager_);
+        animationManager_.checkLoadIsOk();
 
         soundManager_.initialize(system_->getAudio(), param.isSoundDisabled(), isLoadIntroResources());
 

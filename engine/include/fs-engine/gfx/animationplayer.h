@@ -1,0 +1,114 @@
+/*
+ *  FreeSynd - a remake of the classic Bullfrog game "Syndicate".
+ *
+ *   Copyright (C) 2024-2025  Benoit Blancard <benblan@users.sourceforge.net>
+ *
+ *   This program is free software: you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License as 
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *  See the GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <https://www.gnu.org/licenses/>. 
+ * 
+ */
+
+#ifndef GFX_ANIMATIONPLAYER_H
+#define GFX_ANIMATIONPLAYER_H
+
+#include <vector>
+
+#include "fs-utils/common.h"
+#include "fs-utils/misc/timer.h"
+
+namespace fs_eng {
+
+/*!
+ * Tells how to manage the end of the animation.
+ */
+enum AnimationMode {
+    //! Animation is ended when the last frame is played
+    kAnimationModeSingle,
+    //! Animation stays on the last frame without terminating
+    kAnimationModeSingleNoEnd,
+    //! Animation loops to first frame
+    kAnimationModeLoop,
+    //! When there is no animation
+    kAnimationModeNoAnimation
+};
+
+/*!
+ * A MapObjectAnimation describes how to play an animation.
+ * It can be a single execution or a loop. It also specifies
+ * the speed to play animation and if the animation has a 
+ * maximum duration no matter the mode used.
+ * A MapObjectAnimation points to an animation store in AnimationManager.
+ * This can be a base animation and subclasses can change this if there
+ * are animations that change based on some attributes (direction or weapon)
+ */
+struct MapObjectAnimation {
+    /*!
+     * The id of an animation in AnimationManager.
+     */
+    uint16_t spriteAnimationBase;
+    //! set the animation speed
+    int framePerSec;
+    //! How to play the animation
+    AnimationMode mode;
+    /*!
+     * When non zero, give the maximum an animation 
+     * can be played in any given mode. Expressed in milliseconds.
+     */
+    uint32_t maxPlayTime;
+};
+
+/*!
+ * The AnimationPlayer is in charge of storing all MapObjectAnimation
+ * used for a object and playing the current animation.
+ */
+class AnimationPlayer {
+public:
+    AnimationPlayer();
+    ~AnimationPlayer();
+
+    //! Adds a animation description in the player
+    void addAnimation(MapObjectAnimation animation);
+    //! Plays a given animation
+    bool play(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0);
+    //! Updates the current animation
+    bool handleTick(uint32_t elapsed);
+
+protected:
+    //! Reset the player
+    void reset();
+protected:
+    //! List of registered animations
+    std::vector<MapObjectAnimation> animations_;
+    //! Flag to track is animation should be updated
+    bool isPlaying_;
+    //! The current animation being played
+    MapObjectAnimation currentAnimation_;
+    //! The current frame. It's an increment from zero (not an id)
+    uint8_t frame_;
+    /*! 
+     * The order of the last frame
+     */
+    uint8_t lastFrame_;
+    
+    //! Contains the non used remaining time from the previous iteration.
+    int elapsedCarry_;
+    /*!
+     * When MapObjectAnimation::maxPlayTime is set, this field
+     * is used to count time used to display the animation.
+     * When max time is reached, animation is stopped.
+     */
+    fs_utl::Timer spentTime_;
+};
+
+}
+#endif // GFX_ANIMATIONPLAYER_H

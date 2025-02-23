@@ -44,152 +44,60 @@ AnimationManager::~AnimationManager()
  * \return bool return true if everything is ok.
  *
  */
-void AnimationManager::load()
-{
+void AnimationManager::checkLoadIsOk() {
     if (!spritesManager_.loaded()) {
         LOG(Log::k_FLG_GFX, "AnimationManager", "load", ("Loading game sprites ..."))
         fs_eng::Palette emptyPalette;
         spritesManager_.loadSprites("hspr-0.tab", "hspr-0.dat", emptyPalette);
+    }
 
-        if (!loadElementsFromCustomFiles()) {
-            // If we could not load custom file
-            // we try loading from original files
-            loadElementsFromOriginalFiles();
+    // Check consistency of resources
+    for (auto &element : elements_) {
+        if (element.next_element_ >= elements_.size()) {
+            throw InitializationFailedException(
+                "GameSpriteFrameElement references an element out of limits");
         }
     }
+
+    for (auto &frame : frames_) {
+        if (frame.next_frame_ >= frames_.size()) {
+            throw InitializationFailedException(
+                "GameSpriteFrame references a frame out of limits");
+        }
+
+        if (frame.first_element_ >= elements_.size()) {
+            throw InitializationFailedException(
+                "GameSpriteFrame references an element out of limits");
+        }
+    }
+
+    for (auto &index : index_) {
+        if (index >= frames_.size()) {
+            throw InitializationFailedException(
+                "Animation references a frame out of limits");
+        }
+    }
+
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frame elements", elements_.size()))
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frames", frames_.size()))
+    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("index contains %i animations", index_.size()))
+}
+
+void AnimationManager::addFrameElement(GameSpriteFrameElement element) {
+    elements_.push_back(element);
 }
 
 /*!
- * @brief Load animations from files made by us
- * @return true if loading is ok
+ * All elements must have been added first
+ * @param frame GameSpriteFrame to add
  */
-bool AnimationManager::loadElementsFromCustomFiles() {
-    FILE *fp = fs_utl::File::openOriginalFile("HELE-0.TXT");
-    if (!fp) {
-        return false;
-    }
-
-    char line[1024];
-    while (fgets(line, 1024, fp)) {
-        GameSpriteFrameElement e;
-        char flipped;
-        if (*line == '#')
-            continue;
-        sscanf(line, "%i %i %i %c %lu", &e.sprite_, &e.off_x_, &e.off_y_,
-                &flipped, &e.next_element_);
-        e.flipped_ = (flipped == 'f');
-        elements_.push_back(e);
-    }
-    for (unsigned int i = 0; i < elements_.size(); i++)
-        assert(elements_[i].next_element_ < elements_.size());
-    fclose(fp);
-
-    for (unsigned int i = 0; i < elements_.size(); i++) {
-        int esprite = elements_[i].sprite_;
-        if (esprite) {
-            char tmp[1024];
-            sprintf(tmp, "sprites/%i.png", esprite);
-            spritesManager_.sprite(esprite)->loadSpriteFromPNG(tmp);
-        }
-    }
-
-    fp = fs_utl::File::openOriginalFile("HFRA-0.TXT");
-    if (fp) {
-        while (fgets(line, 1024, fp)) {
-            GameSpriteFrame f;
-            if (*line == '#')
-                continue;
-            sscanf(line, "%lu %i %i %i %lu", &f.first_element_, &f.width_,
-                    &f.height_, &f.flags_, &f.next_frame_);
-            assert(f.first_element_ < elements_.size());
-            frames_.push_back(f);
-        }
-        for (unsigned int i = 0; i < frames_.size(); i++)
-            assert(frames_[i].next_frame_ < frames_.size());
-        fclose(fp);
-    }
-
-    fp = fs_utl::File::openOriginalFile("HSTA-0.TXT");
-    if (fp) {
-        while (fgets(line, 1024, fp)) {
-            size_t index;
-            if (*line == '#')
-                continue;
-            sscanf(line, "%lu", &index);
-            assert(index < frames_.size());
-            index_.push_back(index);
-        }
-        fclose(fp);
-    }
-
-    return true;
+void AnimationManager::addFrame(GameSpriteFrame frame) {
+    assert(frame.first_element_ < elements_.size());
+    frames_.push_back(frame);
 }
-
-/*!
- * @brief Load animations from original game files
- * @return true if loading is ok
- */
-void AnimationManager::loadElementsFromOriginalFiles() {
-    size_t size;
-    uint8_t *data;
-
-    // Load Sprite Frame Element
-    data = fs_utl::File::loadOriginalFile("HELE-0.ANI", size);
-    assert(size % 10 == 0);
-    for (unsigned int i = 0; i < size / 10; i++) {
-        GameSpriteFrameElement e;
-        e.sprite_ = data[i * 10] | (data[i * 10 + 1] << 8);
-        assert(e.sprite_ % 6 == 0);
-        e.sprite_ /= 6;
-        e.off_x_ = data[i * 10 + 2] | (data[i * 10 + 3] << 8);
-        e.off_y_ = data[i * 10 + 4] | (data[i * 10 + 5] << 8);
-        e.flipped_ =
-            (data[i * 10 + 6] | (data[i * 10 + 7] << 8)) !=
-            0 ? true : false;
-        e.next_element_ = data[i * 10 + 8] | (data[i * 10 + 9] << 8);
-        if (e.off_x_ & (1 << 15))
-            e.off_x_ = -(65536 - e.off_x_);
-        if (e.off_y_ & (1 << 15))
-            e.off_y_ = -(65536 - e.off_y_);
-        assert(e.next_element_ < size / 10);
-        elements_.push_back(e);
-    }
-    delete[] data;
-
-    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frame elements", (int)elements_.size()))
-
-    // Load sprite frame
-    data = fs_utl::File::loadOriginalFile("HFRA-0.ANI", size);
-    if (size % 8 != 0) {
-        throw InitializationFailedException("Erroc in reading file HFRA-0.ANI");
-    }
-    for (unsigned int i = 0; i < size / 8; i++) {
-        GameSpriteFrame f;
-        f.first_element_ = data[i * 8] | (data[i * 8 + 1] << 8);
-        assert(f.first_element_ < elements_.size());
-        f.width_ = data[i * 8 + 2];
-        f.height_ = data[i * 8 + 3];
-        f.flags_ = data[i * 8 + 4] | (data[i * 8 + 5] << 8);
-        f.next_frame_ = data[i * 8 + 6] | (data[i * 8 + 7] << 8);
-        assert(f.next_frame_ < size / 8);
-        frames_.push_back(f);
-    }
-    delete[] data;
-
-    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("loaded %i frames", (int)frames_.size()))
-
-    // Load index
-    data = fs_utl::File::loadOriginalFile("HSTA-0.ANI", size);
-    if (size % 2 != 0) {
-        throw InitializationFailedException("Erroc in reading file HSTA-0.ANI");
-    }
-    for (unsigned int i = 0; i < size / 2; i++) {
-        index_.push_back(data[i * 2] | (data[i * 2 + 1] << 8));
-        assert(index_[i] < frames_.size());
-    }
-    delete[] data;
-
-    LOG(Log::k_FLG_SND, "AnimationManager", "load", ("index contains %i animations", (int)index_.size()))
+void AnimationManager::addAnimation(size_t index) {
+    assert(index < frames_.size());
+    index_.push_back(index);
 }
 
 bool AnimationManager::setPalette(const fs_eng::Palette &missionPalette) {
@@ -212,7 +120,7 @@ void AnimationManager::drawSprite(int spriteId, const Point2D &screenPos) {
  * @param screenPos The position on the screen
  * @return 
  */
-bool AnimationManager::drawFrame(uint32_t animId, int frameId, const Point2D &screenPos)
+bool AnimationManager::drawFrame(uint16_t animId, int frameId, const Point2D &screenPos)
 {
     assert(animId < index_.size());
 
@@ -237,12 +145,12 @@ bool AnimationManager::drawFrame(uint32_t animId, int frameId, const Point2D &sc
 }
 
 /*!
- * Tells if the 
- * @param animId 
- * @param frameId 
- * @return 
+ * Tells if the frame is the last in the given animation
+ * @param animId The animation id
+ * @param frameId The id of the frame
+ * @return True if the frame is the last one.
  */
-bool AnimationManager::lastFrame(uint32_t animId, int frameId)
+bool AnimationManager::lastFrame(uint16_t animId, int frameId)
 {
     assert(animId < index_.size());
 
@@ -255,7 +163,7 @@ bool AnimationManager::lastFrame(uint32_t animId, int frameId)
     return f->next_frame_ == index_[animId];
 }
 
-int AnimationManager::lastFrame(uint32_t animId)
+int AnimationManager::lastFrame(uint16_t animId)
 {
     int frameId = 0;
     assert(animId < index_.size());
@@ -268,7 +176,7 @@ int AnimationManager::lastFrame(uint32_t animId)
     return frameId;
 }
 
-int AnimationManager::getFrameFromFrameIndx(unsigned int frameIndx)
+int AnimationManager::getFrameFromFrameIndx(uint16_t frameIndx)
 {
     int frameId = 0;
 
@@ -292,7 +200,7 @@ int AnimationManager::getFrameFromFrameIndx(unsigned int frameIndx)
  * @param animId 
  * @return 
  */
-int AnimationManager::getFrameNum(uint32_t animId)
+int AnimationManager::getFrameNum(uint16_t animId)
 {
     assert(animId < index_.size());
     int frameId = 1;

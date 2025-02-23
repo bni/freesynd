@@ -33,10 +33,12 @@ set(HEADER_LIST
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/logomanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/sprite.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/spritemanager.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/animationloader.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/animationmanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/tile.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/tilemanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/fstexture.h"
+    "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/gfx/animationplayer.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/audio.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/musicmanager.h"
     "${Freesynd_SOURCE_DIR}/engine/include/fs-engine/sound/sound.h"
@@ -62,7 +64,9 @@ set(SOURCE_LIST
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/fontmanager.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/sprite.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/spritemanager.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/gfx/animationloader.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/animationmanager.cpp"
+    "${Freesynd_SOURCE_DIR}/engine/src/gfx/animationplayer.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/logomanager.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/tile.cpp"
     "${Freesynd_SOURCE_DIR}/engine/src/gfx/tilemanager.cpp"
@@ -161,3 +165,6 @@ source_group(
   TREE "${PROJECT_SOURCE_DIR}/engine/include"
   FILES ${HEADER_LIST})
 
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
