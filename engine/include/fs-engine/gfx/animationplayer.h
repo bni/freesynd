@@ -34,12 +34,8 @@ namespace fs_eng {
 enum AnimationMode {
     //! Animation is ended when the last frame is played
     kAnimationModeSingle,
-    //! Animation stays on the last frame without terminating
-    kAnimationModeSingleNoEnd,
     //! Animation loops to first frame
     kAnimationModeLoop,
-    //! When there is no animation
-    kAnimationModeNoAnimation
 };
 
 /*!
@@ -53,9 +49,9 @@ enum AnimationMode {
  */
 struct MapObjectAnimation {
     /*!
-     * The id of an animation in AnimationManager.
+     * The index of an animation in AnimationManager.
      */
-    uint16_t spriteAnimationBase;
+    uint16_t framesAnimation;
     //! set the animation speed
     uint8_t framePerSec;
     //! How to play the animation
@@ -77,7 +73,11 @@ public:
     virtual ~AnimationPlayer();
 
     //! Adds a animation description in the player
-    void addAnimation(MapObjectAnimation animation);
+    uint16_t addAnimation(MapObjectAnimation animation);
+    uint16_t addAnimation(uint16_t spriteAnimationBase, 
+                        AnimationMode mode = kAnimationModeSingle,
+                        uint8_t framePerSec = 8,
+                        uint32_t maxPlayTime = 0 );
     //! Plays a given animation
     bool play(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0);
     //! Updates the current animation

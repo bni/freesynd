@@ -28,16 +28,22 @@ public:
     ~TestAnimationPlayer() {}
 
     size_t getNumberOfAnimations() { return animations_.size(); }
-    uint16_t getSpriteAnimationId() { return currentAnimation_.spriteAnimationBase; }
+    uint16_t getSpriteAnimationId() { return currentAnimation_.framesAnimation; }
     uint16_t getCurrentFrameId() { return frame_; }
-    bool isCurrentAnimationSetToNoAnimation() { 
-        return currentAnimation_.mode == fs_eng::kAnimationModeNoAnimation;
+    bool isPlaying() { 
+        return isPlaying_;
     }
+
+    uint16_t animation1;
+    uint16_t animation2;
+    uint16_t animation3;
+    uint16_t animation4;
+
 protected:
     void loadAnimation(const uint16_t mapObjectAnimationId) override {
         AnimationPlayer::loadAnimation(mapObjectAnimationId);
-        if (mapObjectAnimationId == 2) {
-            currentAnimation_.spriteAnimationBase += 1;
+        if (mapObjectAnimationId == animation2) {
+            currentAnimation_.framesAnimation += 1;
         }
     }
 };
@@ -75,39 +81,36 @@ void initAnimationManager(fs_eng::AnimationManager &animMgr) {
     addFrame(animMgr, false, 13);// Frame 12
     addFrame(animMgr, false, 11); // Frame 13
     // Add animations
-    animMgr.addAnimation(0);  // First animation does serve
-    animMgr.addAnimation(1);  // Anim 1
-    animMgr.addAnimation(4);  // Anim 2
-    animMgr.addAnimation(6);  // Anim 3
-    animMgr.addAnimation(8);  // Anim 4
-    animMgr.addAnimation(11);  // Anim 5
+    animMgr.addFramesAnimation(0);  // First animation does serve
+    animMgr.addFramesAnimation(1);  // Anim 1
+    animMgr.addFramesAnimation(4);  // Anim 2
+    animMgr.addFramesAnimation(6);  // Anim 3
+    animMgr.addFramesAnimation(8);  // Anim 4
+    animMgr.addFramesAnimation(11);  // Anim 5
 }
 
-void initAnimationPlayer(fs_eng::AnimationPlayer &animPlayer) {
-    animPlayer.addAnimation(
-        { 
-            .spriteAnimationBase = 1,
+void initAnimationPlayer(TestAnimationPlayer &animPlayer) {
+    animPlayer.animation1 = animPlayer.addAnimation(1, fs_eng::kAnimationModeSingle, 3);
+    
+    animPlayer.animation2 = animPlayer.addAnimation(
+        {
+            .framesAnimation = 4,
             .framePerSec = 3,
-            .mode = fs_eng::kAnimationModeSingle
+            .mode = fs_eng::kAnimationModeSingle,
+            // play animation for 1500ms
+            .maxPlayTime = 1500
         });
 
-    animPlayer.addAnimation(
+    animPlayer.animation3 = animPlayer.addAnimation(
         {
-            .spriteAnimationBase = 4,
-            .framePerSec = 3,
-            .mode = fs_eng::kAnimationModeSingleNoEnd
-        });
-
-    animPlayer.addAnimation(
-        {
-        .spriteAnimationBase = 3,
+        .framesAnimation = 3,
         .framePerSec = 5,
         .mode = fs_eng::kAnimationModeLoop
     });
 
-    animPlayer.addAnimation(
+    animPlayer.animation4 = animPlayer.addAnimation(
         {
-            .spriteAnimationBase = 2,
+            .framesAnimation = 2,
             .framePerSec = 5,
             .mode = fs_eng::kAnimationModeLoop,
             .maxPlayTime = 500
@@ -122,10 +125,10 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
         initAnimationManager(animMgr);
         initAnimationPlayer(cut);
 
-        REQUIRE( cut.getNumberOfAnimations() == 5 );
+        REQUIRE( cut.getNumberOfAnimations() == 4 );
 
         SECTION( "Should play single animation from given frame") {
-            cut.play(1, 1);
+            cut.play(cut.animation1, 1);
             // Animation 1 should have 3 frames
             REQUIRE( cut.getSpriteAnimationId() == 1 );
             REQUIRE( cut.getCurrentFrameId() == 1 );
@@ -134,33 +137,42 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
             REQUIRE( cut.getCurrentFrameId() == 2 );
             // Last frame -> animation should end
             REQUIRE( cut.handleTick(400) );
-            REQUIRE( cut.isCurrentAnimationSetToNoAnimation() );
+            REQUIRE_FALSE( cut.isPlaying() );
+            REQUIRE( cut.getCurrentFrameId() == 2 );
         }
 
-        SECTION( "Should play single no end animation") {
-            cut.play(2);
-            // Animation 3 must have 2 frames
+        SECTION( "Should play single with time") {
+            cut.play(cut.animation2);
+            // Animation 2 must have 3 frames
+            // and frameAnimation is 5 because we added 1 in loadAnimation()
             REQUIRE( cut.getSpriteAnimationId() == 5 );
             REQUIRE( cut.getCurrentFrameId() == 0 );
 
-            // Not enough time to change frame
-            REQUIRE_FALSE( cut.handleTick(200) );
+            // Not enough time to change frame : Frame 1 arrives at 333ms
+            REQUIRE_FALSE( cut.handleTick(200) ); // Total elapsed : 200ms
             REQUIRE( cut.getCurrentFrameId() == 0 );
 
-            REQUIRE_FALSE( cut.handleTick(200) );
+            // Change to frame 1
+            REQUIRE_FALSE( cut.handleTick(200) ); // Total elapsed : 400ms
             REQUIRE( cut.getCurrentFrameId() == 1 );
 
-            REQUIRE_FALSE( cut.handleTick(400) );
+            // Change to frame 2: Frame 2 arrives at 666ms
+            REQUIRE_FALSE( cut.handleTick(400) ); // Total elapsed : 800ms
             REQUIRE( cut.getCurrentFrameId() == 2 );
 
-            // We hit last frame, does change anymore
-            REQUIRE_FALSE( cut.handleTick(400) );
-            REQUIRE( cut.getSpriteAnimationId() == 5 );
+            // We pass over last frame (999ms) but still under maxPlayTime (1500ms)
+            REQUIRE_FALSE( cut.handleTick(400) ); // Total elapsed : 1200ms
+            REQUIRE( cut.isPlaying() ); // still playing
+            REQUIRE( cut.getCurrentFrameId() == 2 );
+
+            // We pass over max time -> should end
+            REQUIRE( cut.handleTick(400) ); // Total elapsed : 1600ms
+            REQUIRE_FALSE( cut.isPlaying() ); // still playing
             REQUIRE( cut.getCurrentFrameId() == 2 );
         }
 
         SECTION( "Should play loop animation") {
-            cut.play(3);
+            cut.play(cut.animation3);
             // Animation 3 must have 2 frames
             REQUIRE( cut.getSpriteAnimationId() == 3 );
             REQUIRE( cut.getCurrentFrameId() == 0 );
@@ -176,7 +188,7 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
         }
 
         SECTION( "Should play loop animation with time") {
-            cut.play(4);
+            cut.play(cut.animation4);
             // Animation 2 must have 2 frames
             REQUIRE( cut.getSpriteAnimationId() == 2 );
 
@@ -188,7 +200,7 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
 
             // Time is exceeded so it's the end of animation
             REQUIRE( cut.handleTick(200) );
-            REQUIRE( cut.isCurrentAnimationSetToNoAnimation() );
+            REQUIRE_FALSE( cut.isPlaying() );
         }
     }
 }

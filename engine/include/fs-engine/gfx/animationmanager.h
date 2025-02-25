@@ -79,7 +79,7 @@ public:
     //! Adds a new frame to the list
     void addFrame(GameSpriteFrame frame);
     //! Adds a new animation pointing to a frame
-    void addAnimation(uint16_t firstFrameIndex);
+    void addFramesAnimation(uint16_t firstFrameIndex);
     //! Check that resources have been loaded well
     void checkLoadIsOk();
 

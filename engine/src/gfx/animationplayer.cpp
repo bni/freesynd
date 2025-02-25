@@ -20,34 +20,47 @@
 
 #include "fs-engine/gfx/animationplayer.h"
 
+#include <cassert>
+
 #include "fs-utils/log/log.h"
 #include "fs-engine/gfx/animationmanager.h"
 
 namespace fs_eng {
 
 AnimationPlayer::AnimationPlayer() : spentTime_(0) {
-    // add a default animation to say
-    addAnimation({
-        .spriteAnimationBase = 0,
-        .framePerSec = 1,
-        .mode = kAnimationModeNoAnimation,
-        .maxPlayTime = 0
-    });
     reset();
 }
 
 AnimationPlayer::~AnimationPlayer() {}
 
 /*!
- * @brief 
+ * Adds a new animation.
  * @param animation 
+ * @return position of the animation in the list of animation
  */
-void AnimationPlayer::addAnimation(MapObjectAnimation animation) {
-    if (animation.framePerSec != 0) {
-        animations_.push_back(animation);
-    } else {
-        FSERR(Log::k_FLG_GAME, "AnimationPlayer","addAnimation", ("Cannot add animation with zero framePerSec"))
-    }
+uint16_t AnimationPlayer::addAnimation(MapObjectAnimation animation) {
+    assert(animation.framePerSec != 0);
+    
+    animations_.push_back(animation);
+    return static_cast<uint16_t> (animations_.size() - 1);
+}
+
+/*!
+ * Builds an animation and adds it to the list
+ * @param framesAnimation 
+ * @param mode 
+ * @param framePerSec 
+ * @param maxPlayTime 
+ * @return position of the animation in the list of animation
+ */
+uint16_t AnimationPlayer::addAnimation(uint16_t framesAnimation, AnimationMode mode, uint8_t framePerSec, uint32_t maxPlayTime ) {
+    MapObjectAnimation animation {
+        .framesAnimation = framesAnimation,
+        .framePerSec = framePerSec,
+        .mode = mode,
+        .maxPlayTime = maxPlayTime
+    };
+    return addAnimation(animation);
 }
 
 /*!
@@ -61,8 +74,9 @@ bool AnimationPlayer::play(const uint16_t mapObjectAnimationId, const uint8_t st
     if (mapObjectAnimationId < animations_.size()) {
         loadAnimation(mapObjectAnimationId);
         frame_ = startFrame;
-        lastFrame_ = g_AnimMgr.lastFrame(currentAnimation_.spriteAnimationBase);
+        lastFrame_ = g_AnimMgr.lastFrame(currentAnimation_.framesAnimation);
         isPlaying_ = true;
+        elapsedCarry_ = 0;
         if (currentAnimation_.maxPlayTime) {
             spentTime_.reset(currentAnimation_.maxPlayTime);
         }
@@ -101,23 +115,23 @@ bool AnimationPlayer::handleTick(uint32_t elapsed) {
         frame_ += (uint8_t) (totalElapsed / frameTics);
 
         // Check if we reached end of animation
-        if (frame_ > lastFrame_ || maxTimeReached) {
-            if (currentAnimation_.mode == kAnimationModeLoop) {
-                if (maxTimeReached) {
-                    reset();
-                    return true;
-                } else {
-                    // just looping through animation
-                    frame_ %= static_cast< uint8_t >(lastFrame_ + 1);
-                }
-            } else if (currentAnimation_.mode == kAnimationModeSingle) {
-                reset();
-                return true;
-            } else if (currentAnimation_.mode == kAnimationModeSingleNoEnd) {
-                // do nothing
+        if (frame_ > lastFrame_) {
+            if (currentAnimation_.mode == kAnimationModeSingle) {
                 frame_ = lastFrame_;
-                isPlaying_ = false;
+                if (currentAnimation_.maxPlayTime == 0) {
+                    isPlaying_ = false;
+                    return true;
+                }
+            } else if (currentAnimation_.mode == kAnimationModeLoop) {
+                // just looping through animation
+                frame_ %= static_cast< uint8_t >(lastFrame_ + 1);
             }
+            
+        }
+        
+        if (maxTimeReached) {
+            isPlaying_ = false;
+            return true;
         }
     }
     // We have not reached the end of animation
@@ -131,7 +145,10 @@ void AnimationPlayer::reset() {
     lastFrame_ = 0;
     frame_ = 0;
     elapsedCarry_ = 0;
-    currentAnimation_ = animations_[0];
+    currentAnimation_.framesAnimation = 0;
+    currentAnimation_.mode = kAnimationModeSingle;
+    currentAnimation_.maxPlayTime = 0;
+    currentAnimation_.framePerSec = 0;
     isPlaying_ = false;
 }
 }

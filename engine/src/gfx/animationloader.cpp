@@ -82,7 +82,7 @@ void OriginalFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
         throw InitializationFailedException("Error in reading file HSTA-0.ANI");
     }
     for (size_t i = 0; i < size / kNbOf8bitsblockInIndexStruct; i++) {
-        pAnimMgr.addAnimation(fs_utl::READ_LE_UINT16(data + i*kNbOf8bitsblockInIndexStruct));
+        pAnimMgr.addFramesAnimation(fs_utl::READ_LE_UINT16(data + i*kNbOf8bitsblockInIndexStruct));
     }
     delete[] data;
 }
@@ -149,7 +149,7 @@ void CustomFilesAnimationLoader::loadAnimations(AnimationManager &pAnimMgr) {
             continue;
         sscanf(line, "%hu", &index);
         
-        pAnimMgr.addAnimation(index);
+        pAnimMgr.addFramesAnimation(index);
     }
     fclose(fp);
 }

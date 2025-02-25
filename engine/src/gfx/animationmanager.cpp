@@ -95,7 +95,8 @@ void AnimationManager::addFrame(GameSpriteFrame frame) {
     assert(frame.firstElement < elements_.size());
     frames_.push_back(frame);
 }
-void AnimationManager::addAnimation(uint16_t firstFrameIndex) {
+
+void AnimationManager::addFramesAnimation(uint16_t firstFrameIndex) {
     assert(firstFrameIndex < frames_.size());
     firstFramePerAnim_.push_back(firstFrameIndex);
 }
