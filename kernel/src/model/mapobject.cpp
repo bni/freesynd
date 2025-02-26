@@ -39,7 +39,7 @@ MapObject::MapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
     time_show_anim_(-1), time_showing_anim_(-1),
     is_frame_drawn_(false),
     state_(0xFFFFFFFF),
-    animationPlayer_()
+    animationPlayer_(createAnimationPlayer())
 {
     isDrawable_ = true;
 }
@@ -130,7 +130,9 @@ bool MapObject::animate(uint32_t elapsed)
  */
 void MapObject::animate2(uint32_t elapsed) {
     doUpdateState(elapsed);
-    animationPlayer_.handleTick(elapsed);
+    if (animationPlayer_->handleTick(elapsed)) {
+        handleAnimationEnded();
+    }
 }
 
 

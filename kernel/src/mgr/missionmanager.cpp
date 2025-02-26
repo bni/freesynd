@@ -548,21 +548,19 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
     int hp = fs_utl::READ_LE_INT16(gamdata.health);
     int dir = gamdata.orientation >> 5;
 
-    int cur_anim = fs_utl::READ_LE_UINT16(gamdata.index_current_anim) - dir;
-    VehicleAnimation *vehicleanim = new VehicleAnimation();
-    vehicleanim->set_base_anims(cur_anim);
+    uint16_t cur_anim = fs_utl::READ_LE_UINT16(gamdata.index_current_anim) - dir;
 
     Vehicle *pVehicle = NULL;
     if (gamdata.sub_type == Vehicle::kVehicleTypeTrainHead) {
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create Train Head %d", id))
-        pVehicle = new TrainHead(id, Vehicle::kVehicleTypeTrainHead, pMap, vehicleanim, hp, gamdata.orientation == 192);
+        pVehicle = new TrainHead(id, Vehicle::kVehicleTypeTrainHead, pMap, hp, gamdata.orientation == 192);
     } else if (gamdata.sub_type == Vehicle::kVehicleTypeTrainBody) {
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create Train Body %d", id))
-        pVehicle = new TrainBody(id, Vehicle::kVehicleTypeTrainBody, pMap, vehicleanim, hp, gamdata.orientation == 192);
+        pVehicle = new TrainBody(id, Vehicle::kVehicleTypeTrainBody, pMap, hp, gamdata.orientation == 192);
     } else {
         // standard car
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create generic car %d", id))
-        pVehicle = new GenericCar(vehicleanim, id, gamdata.sub_type, pMap);
+        pVehicle = new GenericCar(id, gamdata.sub_type, pMap);
         pVehicle->setHealth(hp);
         pVehicle->setStartHealth(hp);
 
@@ -571,10 +569,10 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
                 // large armored damaged
                 // it is actually base animation and they have 8 directions
                 //setVehicleBaseAnim(vehicleanim, cur_anim - 12 + (dir >> 1));
-                vehicleanim->set_base_anims(cur_anim - 12 + (dir >> 1));
+                pVehicle->setAnimations(cur_anim - 12 + (dir >> 1));
+                pVehicle->playAnimation(pVehicle->burntAnimation());
                 pVehicle->setStartHealth(0);
                 pVehicle->setHealth(-1);
-                vehicleanim->set_animation_type(VehicleAnimation::kBurntAnim);
                 break;
             // remaining cases are just here to detect unknown vehicle types
             case 0x01: // large armored
@@ -583,6 +581,8 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
             case 0x1C: // small armored vehicle
             case 0x24: // police vehicle
             case 0x28: // medical vehicle
+                pVehicle->setAnimations(cur_anim);
+                pVehicle->playAnimation(pVehicle->regularAnimation());
                 break;
             default:
         #if _DEBUG

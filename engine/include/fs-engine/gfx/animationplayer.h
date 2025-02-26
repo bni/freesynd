@@ -25,6 +25,7 @@
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/timer.h"
+#include "fs-engine/enginecommon.h"
 
 namespace fs_eng {
 
@@ -83,6 +84,18 @@ public:
     //! Updates the current animation
     bool handleTick(uint32_t elapsed);
 
+    /*!
+     * Return true if the current animation id is the same as given in param
+     * @param mapObjectAnimationId id to test
+     * @return true if it's the same
+     */
+    bool isCurrentAnimation(const uint16_t mapObjectAnimationId) {
+        return mapObjectAnimationId == currentAnimationId_;
+    }
+
+    // Draw the current animation at given position
+    void draw(const Point2D &screenPos, uint16_t animOffset);
+
 protected:
     //! loads the animation to play. Subclass can alter the loaded animation
     virtual void loadAnimation(const uint16_t mapObjectAnimationId);
@@ -93,6 +106,8 @@ protected:
     std::vector<MapObjectAnimation> animations_;
     //! Flag to track is animation should be updated
     bool isPlaying_;
+    //! Save the current animation id
+    uint16_t currentAnimationId_;
     //! The current animation being played
     MapObjectAnimation currentAnimation_;
     //! The current frame. It's an increment from zero (not an id)

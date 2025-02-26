@@ -30,8 +30,8 @@
 
 namespace fs_knl {
 
-TrainBody::TrainBody(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
-    Vehicle(anId, aType, pMap, pAnimation) {
+TrainBody::TrainBody(uint16_t anId, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis) :
+    Vehicle(anId, aType, pMap) {
 
     setHealth(startHp);
     setStartHealth(startHp);
@@ -79,8 +79,8 @@ void TrainBody::changeTrainAndPassengersPosition(int distanceX, int distanceY) {
     }
 }
 
-TrainHead::TrainHead(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation, int startHp, bool isMoveOnXAxis) :
-    TrainBody(anId, aType, pMap, pAnimation, startHp, isMoveOnXAxis) {}
+TrainHead::TrainHead(uint16_t anId, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis) :
+    TrainBody(anId, aType, pMap, startHp, isMoveOnXAxis) {}
 
 TrainHead::~TrainHead() {
 

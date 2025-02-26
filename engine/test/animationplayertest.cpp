@@ -132,6 +132,7 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
             // Animation 1 should have 3 frames
             REQUIRE( cut.getSpriteAnimationId() == 1 );
             REQUIRE( cut.getCurrentFrameId() == 1 );
+            REQUIRE( cut.isCurrentAnimation(cut.animation1) );
 
             REQUIRE_FALSE( cut.handleTick(400) );
             REQUIRE( cut.getCurrentFrameId() == 2 );
@@ -147,6 +148,7 @@ TEST_CASE( "AnimationPlayer", "[engine][animationplayer]" ) {
             // and frameAnimation is 5 because we added 1 in loadAnimation()
             REQUIRE( cut.getSpriteAnimationId() == 5 );
             REQUIRE( cut.getCurrentFrameId() == 0 );
+            REQUIRE( cut.isCurrentAnimation(cut.animation2) );
 
             // Not enough time to change frame : Frame 1 arrives at 333ms
             REQUIRE_FALSE( cut.handleTick(200) ); // Total elapsed : 200ms

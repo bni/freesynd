@@ -28,6 +28,7 @@
 
 #include <math.h>
 #include <list>
+#include <memory>
 
 #include "fs-utils/common.h"
 #include "fs-engine/enginecommon.h"
@@ -294,6 +295,16 @@ public:
      * @brief Animates the object
      */
     void animate2(uint32_t elapsed);
+
+    /*!
+     * Convenient method to play an animation using AnimationPlayer
+     * @param mapObjectAnimationId The animation id to play
+     * @param startFrame The starting frame
+     * @return True if animation has been found
+     */
+    bool playAnimation(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0) { 
+        return animationPlayer_->play(mapObjectAnimationId, startFrame); 
+    }
     ///@}
 
     /**
@@ -323,7 +334,15 @@ protected:
 
     //! Subclasses reimplement this to update their internal state
     virtual void doUpdateState([[maybe_unused]] uint32_t elapsed) {}
-
+    //! Subclasse reimplement this method to react to the end of an animation
+    virtual void handleAnimationEnded() {}
+    /*!
+     * Creates a new instance of AnimationPlayer.
+     * Subclasses can implement to set a different class
+     */
+    virtual std::unique_ptr<fs_eng::AnimationPlayer> createAnimationPlayer() {
+        return std::make_unique<fs_eng::AnimationPlayer>();
+    }
 
 protected:
     //! Id of the object. Id is unique within a nature
@@ -359,7 +378,8 @@ protected:
      */
     bool is_frame_drawn_;
     uint32_t state_;
-    fs_eng::AnimationPlayer animationPlayer_;
+    //! Animation player is used to store and play animation for this object
+    std::unique_ptr<fs_eng::AnimationPlayer> animationPlayer_;
 
 private:
     //! Object should be drawn only if visible

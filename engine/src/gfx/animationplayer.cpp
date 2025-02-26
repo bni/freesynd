@@ -73,6 +73,7 @@ uint16_t AnimationPlayer::addAnimation(uint16_t framesAnimation, AnimationMode m
 bool AnimationPlayer::play(const uint16_t mapObjectAnimationId, const uint8_t startFrame) {
     if (mapObjectAnimationId < animations_.size()) {
         loadAnimation(mapObjectAnimationId);
+        currentAnimationId_ = mapObjectAnimationId;
         frame_ = startFrame;
         lastFrame_ = g_AnimMgr.lastFrame(currentAnimation_.framesAnimation);
         isPlaying_ = true;
@@ -145,10 +146,20 @@ void AnimationPlayer::reset() {
     lastFrame_ = 0;
     frame_ = 0;
     elapsedCarry_ = 0;
+    currentAnimationId_ = 0;
     currentAnimation_.framesAnimation = 0;
     currentAnimation_.mode = kAnimationModeSingle;
     currentAnimation_.maxPlayTime = 0;
     currentAnimation_.framePerSec = 0;
     isPlaying_ = false;
+}
+
+/*!
+ * Draw the current animation.
+ * @param screenPos Position on the screen
+ * @param animOffset An offset to apply to current animationId to get animation to draw
+ */
+void AnimationPlayer::draw(const Point2D &screenPos, uint16_t animOffset) {
+    g_AnimMgr.drawFrame(currentAnimation_.framesAnimation + animOffset, frame_, screenPos);
 }
 }

@@ -35,46 +35,6 @@
 namespace fs_knl {
 
 /*!
- * This class holds informations about the animation of a vehicle.
- */
-class VehicleAnimation {
-public:
-    /*!
-     * This enumeration lists the type of animations.
-     */
-    enum AnimationType {
-        //! Vehicule under normal condition
-        kNormalAnim,
-        //! Burning vehicle
-        kOnFireAnim,
-        //! Burnt vehicle
-        kBurntAnim,
-    } ;
-
-    VehicleAnimation();
-    virtual ~VehicleAnimation() {}
-
-    //! Draw the vehicle
-    void draw(const Point2D &screenPos, int dir, int frame);
-
-    void set_base_anims(int anims);
-    //void setAnimsBurning(int anims) { anims_burning_ = anims; }
-    //void setAnimsBurnt(int anims) { anims_burnt_ = anims; }
-    //! Sets the current animation for the vehicle
-    void set_animation_type(AnimationType anim) {
-        vehicle_anim_ = anim;
-    }
-    //! Returns the current vehicle animation
-    AnimationType animation_type() {
-        return vehicle_anim_;
-    }
-protected:
-    int anims_, anims_burning_, anims_burnt_;
-    //! Current type of animation
-    AnimationType vehicle_anim_;
-};
-
-/*!
  * Generic class for all transports.
  * Transport can be driven or not.
  */
@@ -90,16 +50,18 @@ public:
     static const uint8_t kVehicleTypePolice;
     static const uint8_t kVehicleTypeMedics;
 
-    Vehicle(uint16_t anId, uint8_t aType, Map *pMap, VehicleAnimation *pAnimation) : ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle) {
+    Vehicle(uint16_t anId, uint8_t aType, Map *pMap) :
+        ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle) {
         type_ = aType;
-        animation_ = pAnimation;
     }
 
-    virtual ~Vehicle() {
-        delete animation_;
-    }
+    virtual ~Vehicle() {}
 
-    bool animate(uint32_t elapsed) override;
+    //! Animation used when the vehicle is ok
+    uint16_t regularAnimation() { return regularAnimation_; }
+    //! Animation used when the vehicle is burnt
+    uint16_t burntAnimation() { return burntAnimation_; }
+
     void draw(const Point2D &screenPos) override;
 
     //! Return type of vehicle
@@ -128,11 +90,24 @@ public:
     //! Returns true if the vehicle contains peds considered hostile by the given ped
     bool containsHostilesForPed(PedInstance *p, unsigned int hostile_desc_alt);
 
+    /*!
+     * @brief Build vehicle animations using the base animation.
+     */
+    void setAnimations(uint16_t baseSpriteAnimationId);
+
+protected:
+    void doUpdateState([[maybe_unused]] uint32_t elapsed) override;
+    void handleAnimationEnded() override;
+
 protected:
     /*! The passengers of the vehicle.*/
     std::list <PedInstance *> passengers_;
-    /*! Animation for vehicle.*/
-    VehicleAnimation *animation_;
+    //! Animation used when the vehicle is ok
+    uint16_t regularAnimation_;
+    //! Animation used when the vehicle is burning
+    uint16_t burningAnimation_;
+    //! Animation used after the vehicle has finished burning
+    uint16_t burntAnimation_;
 
 private:
     /*! Type of vehicle.*/
@@ -145,7 +120,7 @@ private:
 class GenericCar : public Vehicle
 {
 public:
-    GenericCar(VehicleAnimation *pAnimation, uint16_t id, uint8_t aType, Map *pMap);
+    GenericCar(uint16_t id, uint8_t aType, Map *pMap);
     virtual ~GenericCar() {}
 
     //! See ShootableMovableMapObject::initMovementToDestination()

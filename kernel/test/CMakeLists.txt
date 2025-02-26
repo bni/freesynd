@@ -22,6 +22,7 @@ add_executable(test-kernel
     mapobjecttest.cpp
     weaponholdertest.cpp
     squadtest.cpp
+    vehicletest.cpp
     objectivedesctest.cpp)
 
 target_link_libraries(test-kernel PRIVATE Catch2::Catch2WithMain Freesynd::Kernel Freesynd::Utils Freesynd::Engine)

@@ -46,31 +46,6 @@ const uint8_t Vehicle::kVehicleTypeSmallArmored = 0x1C;
 const uint8_t Vehicle::kVehicleTypePolice = 0x24;
 const uint8_t Vehicle::kVehicleTypeMedics = 0x28;
 
-VehicleAnimation::VehicleAnimation() {
-    vehicle_anim_ = kNormalAnim;
-}
-
-void VehicleAnimation::draw(const Point2D &screenPos, int dir, int frame)
-{
-    switch (vehicle_anim_) {
-        case kNormalAnim:
-            g_SpriteMgr.drawFrame(anims_ + dir * 2, frame, screenPos);
-            break;
-        case kOnFireAnim:
-            g_SpriteMgr.drawFrame(anims_burning_ + dir, frame, screenPos);
-            break;
-        case kBurntAnim:
-            g_SpriteMgr.drawFrame(anims_burnt_ + dir, frame, screenPos);
-            break;
-    }
-}
-
-void VehicleAnimation::set_base_anims(int anims) {
-    anims_ = anims;
-    anims_burning_ = anims + 8;
-    anims_burnt_ = anims + 12;
-}
-
 void Vehicle::draw(const Point2D &screenPos)
 {
     Point2D posWithOffs = screenPos;
@@ -81,28 +56,20 @@ void Vehicle::draw(const Point2D &screenPos)
     if (posWithOffs.x < 90 || posWithOffs.y < -20)
         return;
 
-    animation_->draw(posWithOffs, getDiscreteDirection(4), frame_);
+    //offset anim depends on direction
+    // for regular animation there is an empty animation between
+    // each animation so we skip one out of 2
+    uint16_t offsetAnim = getDiscreteDirection(4);
+    if (animationPlayer_->isCurrentAnimation(regularAnimation_)) {
+        offsetAnim *= 2;
+    }
+    animationPlayer_->draw(posWithOffs, offsetAnim);
 }
 
-bool Vehicle::animate(uint32_t elapsed)
-{
-    bool updated = false;
-
+void Vehicle::doUpdateState(uint32_t elapsed) {
     if (health_ > 0) {
-        updated = doMove(elapsed, NULL);
+        doMove(elapsed, NULL);
     }
-
-    if (animation_->animation_type() == VehicleAnimation::kOnFireAnim) {
-        if (leftTimeShowAnim(elapsed))
-            updated |= MapObject::animate(elapsed);
-        else {
-            animation_->set_animation_type(VehicleAnimation::kBurntAnim);
-            frame_ = 0;
-            updated = true;
-        }
-    }
-
-    return updated;
 }
 
 /**
@@ -166,9 +133,29 @@ bool Vehicle::containsHostilesForPed(PedInstance* p,
     return false;
 }
 
-GenericCar::GenericCar(VehicleAnimation * pAnimation, uint16_t anId, uint8_t aType, Map *pMap):
-    Vehicle(anId, aType, pMap, pAnimation)
-{
+/*!
+ * Initialize the animations to use for this vehicle
+ * @param baseSpriteAnimationId the base animation id to use
+ */
+void Vehicle::setAnimations(uint16_t baseSpriteAnimationId) {
+    regularAnimation_ = animationPlayer_->addAnimation(baseSpriteAnimationId);
+
+    burningAnimation_ = 
+        animationPlayer_->addAnimation(baseSpriteAnimationId + 8,
+                                       fs_eng::kAnimationModeLoop, 8, 10000);
+
+    burntAnimation_ = animationPlayer_->addAnimation(baseSpriteAnimationId + 12);
+}
+
+void Vehicle::handleAnimationEnded() {
+    if (animationPlayer_->isCurrentAnimation(burningAnimation_)) {
+        // At the end of burning animation, there is the burnt animation
+        animationPlayer_->play(burntAnimation_);
+    }
+}
+
+GenericCar::GenericCar(uint16_t anId, uint8_t aType, Map *pMap):
+    Vehicle(anId, aType, pMap) {
     pDriver_ = NULL;
     hold_on_.wayFree = 0;
 }
@@ -797,13 +784,14 @@ void GenericCar::handleHit(DamageToInflict &d) {
     decreaseHealth(d.dvalue);
     if (health_ == 0) {
         clearDestination();
-        switch ((unsigned int)d.dtype) {
+        switch (d.dtype) {
             case kDmgTypeBullet:
             case kDmgTypeLaser:
             case kDmgTypeBurn:
             case kDmgTypeExplosion:
-                animation_->set_animation_type(VehicleAnimation::kOnFireAnim);
-                setTimeShowAnim(10000);
+                animationPlayer_->play(burningAnimation_);
+                break;
+            default:
                 break;
         }
         pDriver_ = NULL;
