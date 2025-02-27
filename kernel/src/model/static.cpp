@@ -53,7 +53,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
     switch(gamdata->sub_type) {
         case 0x01:
             // phone booth
-            s = new EtcObj(id, pMap, curanim, curanim, curanim);
+            s = new EtcObj(id, pMap, curanim);
             s->setSizeX(128);
             s->setSizeY(128);
             s->setSizeZ(128);
@@ -232,7 +232,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x16:
             // TODO: set state if damaged trees exist
-            s = new Tree(id, pMap, curanim, curanim + 1, curanim + 2);
+            s = new Tree(id, pMap, curanim);
             s->setSizeX(64);
             s->setSizeY(64);
             s->setSizeZ(256);
@@ -241,14 +241,14 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x19:
             // trash bin
-            s = new EtcObj(id, pMap, curanim, curanim, curanim);
+            s = new EtcObj(id, pMap, curanim);
             s->setSizeX(64);
             s->setSizeY(64);
             s->setSizeZ(96);
             break;
         case 0x1A:
             // mail box
-            s = new EtcObj(id, pMap, curanim, curanim, curanim);
+            s = new EtcObj(id, pMap, curanim);
             s->setSizeX(64);
             s->setSizeY(64);
             s->setSizeZ(96);
@@ -260,7 +260,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x1F:
             // advertisement on wall
-            s = new EtcObj(id, pMap, curanim, curanim, curanim, smt_Advertisement);
+            s = new EtcObj(id, pMap, curanim, smt_Advertisement);
             s->setExcludedFromBlockers(true);
             break;
 
@@ -852,40 +852,29 @@ bool LargeDoor::isPathBlocker()
 }
 
 
-Tree::Tree(uint16_t anId, Map *pMap, int anim, int burningAnim, int damagedAnim) :
-        Static(anId, pMap, Static::smt_Tree), anim_(anim), burning_anim_(burningAnim),
-        damaged_anim_(damagedAnim) {
-    state_ = Static::stttree_Healthy;
+/*!
+ * @brief 
+ * @param anId 
+ * @param pMap 
+ * @param baseAnim 
+ */
+Tree::Tree(uint16_t anId, Map *pMap, uint16_t baseAnim) :
+        Static(anId, pMap, Static::smt_Tree) {
+    idleAnim_ = animationPlayer_->addAnimation(baseAnim);
+    burningAnim_ = animationPlayer_->addAnimation(baseAnim + 1);
+    burntAnim_ = animationPlayer_->addAnimation(baseAnim + 2, fs_eng::kAnimationModeSingle, 2, 10000);
+    animationPlayer_->play(idleAnim_);
 }
 
-void Tree::draw(const Point2D &screenPos)
-{
+void Tree::draw(const Point2D &screenPos) {
     Point2D posWithOffs = addOffs(screenPos);
-    switch (state_) {
-        case Static::stttree_Healthy:
-            g_SpriteMgr.drawFrame(anim_, frame_, posWithOffs);
-            break;
-        case Static::stttree_Burning:
-            g_SpriteMgr.drawFrame(burning_anim_, frame_, posWithOffs);
-            break;
-        case Static::stttree_Damaged:
-            g_SpriteMgr.drawFrame(damaged_anim_, frame_, posWithOffs);
-            break;
-    }
+    animationPlayer_->draw(posWithOffs, 0);
 }
 
-bool Tree::animate(uint32_t elapsed) {
-
-    if (state_ == Static::stttree_Burning) {
-        if (!(leftTimeShowAnim(elapsed))) {
-            state_ = Static::stttree_Damaged;
-            frame_ = 0;
-            setFramesPerSec(2);
-            return true;
-        }
+void Tree::handleAnimationEnded() {
+    if (animationPlayer_->isCurrentAnimation(burningAnim_)) {
+        animationPlayer_->play(burntAnim_);
     }
-
-    return MapObject::animate(elapsed);
 }
 
 /*!
@@ -897,8 +886,7 @@ void Tree::handleHit(DamageToInflict &d) {
         (d.dtype == kDmgTypeLaser || d.dtype == kDmgTypeBurn || d.dtype == kDmgTypeExplosion)) {
         decreaseHealth(d.dvalue);
         if (isDead()) {
-            state_ = Static::stttree_Burning;
-            setTimeShowAnim(10000);
+            animationPlayer_->play(burningAnim_);
             setExcludedFromBlockers(true);
         }
     }
@@ -927,8 +915,8 @@ void WindowObj::draw(const Point2D &screenPos)
 }
 
 /*!
- * Implementation for the Tree. Tree burns only when hit by laser of fire.
- * \param d Damage information
+ * @brief 
+ * @param d 
  */
 void WindowObj::handleHit(DamageToInflict &d) {
     if (isAlive() &&
@@ -943,22 +931,39 @@ void WindowObj::handleHit(DamageToInflict &d) {
     }
 }
 
-EtcObj::EtcObj(uint16_t anId, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType aType) :
-        Static(anId, pMap, aType), anim_(anim), burning_anim_(burningAnim),
-        damaged_anim_(damagedAnim) {}
-
-void EtcObj::draw(const Point2D &screenPos)
-{
-    g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
+/*!
+ * Constructor
+ * @param anId 
+ * @param pMap 
+ * @param baseAnim 
+ * @param aType 
+ */
+EtcObj::EtcObj(uint16_t anId, Map *pMap, uint16_t baseAnim, StaticType aType) :
+        Static(anId, pMap, aType) {
+    fs_eng::AnimationMode mode = aType == Static::smt_Advertisement ?
+            fs_eng::kAnimationModeLoop : fs_eng::kAnimationModeSingle;
+    idleAnim_ = animationPlayer_->addAnimation(baseAnim, mode);
+    animationPlayer_->play(idleAnim_);
 }
 
-NeonSign::NeonSign(uint16_t anId, Map *pMap, int anim) : Static(anId, pMap, Static::smt_NeonSign) {
-    anim_ = anim;
+void EtcObj::draw(const Point2D &screenPos) {
+    animationPlayer_->draw(addOffs(screenPos), 0);
+}
+
+/*!
+ * @brief Constructor of the class
+ * @param anId 
+ * @param pMap 
+ * @param anim 
+ */
+NeonSign::NeonSign(uint16_t anId, Map *pMap, uint16_t anim) : Static(anId, pMap, Static::smt_NeonSign) {
+    uint16_t animation = animationPlayer_->addAnimation(anim, fs_eng::kAnimationModeLoop);
+    animationPlayer_->play(animation);
 }
 
 void NeonSign::draw(const Point2D &screenPos)
 {
-    g_SpriteMgr.drawFrame(anim_, frame_, addOffs(screenPos));
+    animationPlayer_->draw(addOffs(screenPos), 0);
 }
 
 Semaphore::Semaphore(uint16_t anId, Map *pMap, int anim, int damagedAnim) :

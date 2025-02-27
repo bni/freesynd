@@ -380,8 +380,20 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         for (size_t i = 0; i < mission_->numWeaponsOnGround(); i++)
             change |= mission_->weaponOnGround(i)->animate(diff);
 
-        for (size_t i = 0; i < mission_->numStatics(); i++)
-            change |= mission_->statics(i)->animate(diff);
+        for (size_t i = 0; i < mission_->numStatics(); i++) {
+            // TODO : Temporary, remove when full refactor of animation is complete
+            switch(mission_->statics(i)->type()) {
+                case fs_knl::Static::smt_Tree:
+                case fs_knl::Static::smt_None:
+                case fs_knl::Static::smt_Advertisement:
+                case fs_knl::Static::smt_NeonSign:
+                    mission_->statics(i)->animate2(elapsed);
+                    break;
+                default:
+                    change |= mission_->statics(i)->animate(diff);
+                    break;
+            }
+        }
 
         for (size_t i = 0; i < mission_->numPrjShots(); i++) {
             change |= mission_->prjShots(i)->animate(diff, mission_);

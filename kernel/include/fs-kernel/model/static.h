@@ -63,12 +63,6 @@ public:
         sttdoor_Opening
     };
 
-    enum stateTrees {
-        stttree_Healthy = 0,
-        stttree_Burning,
-        stttree_Damaged
-    };
-
     //semaphore, 4 animations + damaged
     enum stateSemaphores {
         sttsem_Stt0 = 0,
@@ -164,15 +158,20 @@ protected:
  */
 class Tree : public Static {
 public:
-    Tree(uint16_t id, Map *pMap, int anim, int burningAnim, int damagedAnim);
+    Tree(uint16_t id, Map *pMap, uint16_t baseAnim);
     virtual ~Tree() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(uint32_t elapsed) override;
+    
     void handleHit(DamageToInflict &d)override;
 
 protected:
-    int anim_, burning_anim_, damaged_anim_;
+    void handleAnimationEnded() override;
+
+protected:
+    uint16_t idleAnim_;
+    uint16_t burningAnim_;
+    uint16_t burntAnim_;
 };
 
 /*!
@@ -197,13 +196,13 @@ protected:
  */
 class EtcObj : public Static {
 public:
-    EtcObj(uint16_t id, Map *pMap, int anim, int burningAnim, int damagedAnim, StaticType type = smt_None);
+    EtcObj(uint16_t id, Map *pMap, uint16_t baseAnim, StaticType type = smt_None);
     virtual ~EtcObj() {}
 
     void draw(const Point2D &screenPos) override;
 
 protected:
-    int anim_, burning_anim_, damaged_anim_;
+    uint16_t idleAnim_;
 };
 
 /*!
@@ -211,13 +210,10 @@ protected:
  */
 class NeonSign : public Static {
 public:
-    NeonSign(uint16_t id, Map *pMap, int anim);
+    NeonSign(uint16_t id, Map *pMap, uint16_t anim);
     virtual ~NeonSign() {}
 
     void draw(const Point2D &screenPos) override;
-
-protected:
-    int anim_;
 };
 
 /*!
