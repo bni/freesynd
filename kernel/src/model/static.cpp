@@ -60,7 +60,8 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x05:// 1040-1043, 1044 - damaged
             // crossroad things
-            s = new Semaphore(id, pMap, 1040, 1044);
+            //s = new Semaphore(id, pMap, 1040, 1044);
+            s = new Semaphore(id, pMap);
             s->setSizeX(48);
             s->setSizeY(48);
             s->setSizeZ(48);
@@ -70,7 +71,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x06:
             // crossroad things
-            s = new Semaphore(id, pMap, 1040, 1044);
+            s = new Semaphore(id, pMap);
             s->setSizeX(48);
             s->setSizeY(48);
             s->setSizeZ(48);
@@ -80,7 +81,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x07:
             // crossroad things
-            s = new Semaphore(id, pMap, 1040, 1044);
+            s = new Semaphore(id, pMap);
             s->setSizeX(48);
             s->setSizeY(48);
             s->setSizeZ(48);
@@ -90,7 +91,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             break;
         case 0x08:
             // crossroad things
-            s = new Semaphore(id, pMap, 1040, 1044);
+            s = new Semaphore(id, pMap);
             s->setSizeX(48);
             s->setSizeY(48);
             s->setSizeZ(48);
@@ -961,23 +962,24 @@ NeonSign::NeonSign(uint16_t anId, Map *pMap, uint16_t anim) : Static(anId, pMap,
     animationPlayer_->play(animation);
 }
 
-void NeonSign::draw(const Point2D &screenPos)
-{
+void NeonSign::draw(const Point2D &screenPos) {
     animationPlayer_->draw(addOffs(screenPos), 0);
 }
 
-Semaphore::Semaphore(uint16_t anId, Map *pMap, int anim, int damagedAnim) :
-        Static(anId, pMap, Static::smt_Semaphore), anim_(anim),
-        damaged_anim_(damagedAnim), elapsed_left_smaller_(0),
-        elapsed_left_bigger_(0), up_down_(1)
-{
-    setFramesPerSec(2);
+Semaphore::Semaphore(uint16_t anId, Map *pMap) :
+        Static(anId, pMap, Static::smt_Semaphore),
+        elapsed_left_smaller_(0), elapsed_left_bigger_(0), up_down_(1), colorTimer_(500) {
+    //setFramesPerSec(2);
+    // regular animation
+    playAnimation(animationPlayer_->addAnimation(1040));
+    // damaged animation
+    damagedAnim_ = animationPlayer_->addAnimation(1044, fs_eng::kAnimationModeSingle, 2);
 }
 
-bool Semaphore::animate(uint32_t elapsed) {
+void Semaphore::doUpdateState(uint32_t elapsed) {
     if (state_ == Static::sttsem_Damaged) {
         if (elapsed_left_bigger_ == 0)
-            return false;
+            return;
         int chng = (elapsed + elapsed_left_smaller_) >> 1;
         elapsed_left_smaller_ = elapsed & 2;
         elapsed_left_bigger_ -= chng;
@@ -988,7 +990,7 @@ bool Semaphore::animate(uint32_t elapsed) {
         int z = pos_.tz * 128 + pos_.oz - chng;
         pos_.tz = z / 128;
         pos_.oz = z % 128;
-        return true;
+        return;
     }
 
     int chng = (elapsed + elapsed_left_smaller_) >> 2;
@@ -1007,7 +1009,7 @@ bool Semaphore::animate(uint32_t elapsed) {
 
     chng = (elapsed + elapsed_left_bigger_) >> 6;
     elapsed_left_bigger_ = elapsed & 63;
-    if (chng) {
+    if (colorTimer_.update(elapsed)) {
         // Direction is used as storage for animation change, not my idea
         dir_ += chng;
         dir_ &= 0xFF;
@@ -1016,8 +1018,6 @@ bool Semaphore::animate(uint32_t elapsed) {
         if (state_ > Static::sttsem_Stt3)
             state_ = Static::sttsem_Stt0;
     }
-
-    return MapObject::animate(elapsed);
 }
 
 /*!
@@ -1049,9 +1049,10 @@ void Semaphore::handleHit(DamageToInflict &d) {
     }
 }
 
-void Semaphore::draw(const Point2D &screenPos)
-{
-    g_SpriteMgr.drawFrame(anim_ +  state_, frame_, addOffs(screenPos));
+void Semaphore::draw(const Point2D &screenPos) {
+    g_SpriteMgr.drawFrame(1040 +  state_, 0, addOffs(screenPos));
+    //animationPlayer_->draw(addOffs(screenPos), state_);
+    //g_AnimMgr.drawSprite()
 }
 
 AnimWindow::AnimWindow(uint16_t anId, Map *pMap, int anim) : Static(anId, pMap, smt_AnimatedWindow) {

@@ -30,6 +30,7 @@
 #include <list>
 
 #include "fs-kernel/model/mapobject.h"
+#include "fs-utils/misc/timer.h"
 
 namespace fs_knl {
 
@@ -222,16 +223,18 @@ public:
  */
 class Semaphore : public Static {
 public:
-    Semaphore(uint16_t id, Map *pMap, int anim, int damagedAnim);
+    Semaphore(uint16_t id, Map *pMap);
     virtual ~Semaphore() {}
 
-    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
     void handleHit(DamageToInflict &d) override;
 
 protected:
-    int anim_, damaged_anim_;
+    void doUpdateState(uint32_t elapsed) override;
+
+protected:
+    uint16_t damagedAnim_;
     /*! used to make animation of movement up/down,
      * when damaged, stores time not consumed for movement down
      */
@@ -242,6 +245,7 @@ protected:
     int elapsed_left_bigger_;
     //! switch for moving up or down
     int up_down_;
+    fs_utl::Timer colorTimer_;
 };
 
 /*!
