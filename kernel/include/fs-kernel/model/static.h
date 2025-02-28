@@ -57,7 +57,7 @@ public:
         smt_NeonSign
     };
 
-    enum stateDoors {
+    enum StateDoors {
         sttdoor_Closed = 0,
         sttdoor_Closing,
         sttdoor_Open,
@@ -65,7 +65,7 @@ public:
     };
 
     //semaphore, 4 animations + damaged
-    enum stateSemaphores {
+    enum StateSemaphores {
         sttsem_Stt0 = 0,
         sttsem_Stt1,
         sttsem_Stt2,
@@ -73,14 +73,14 @@ public:
         sttsem_Damaged
     };
 
-    enum stateWindows {
+    enum StateWindows {
         sttwnd_Closed = 0,
         sttwnd_Open,
         sttwnd_Breaking,
         sttwnd_Damaged
     };
 
-    enum stateAnimatedWindows {
+    enum StateAnimatedWindows {
         sttawnd_LightOff = 0,
         sttawnd_LightSwitching,
         sttawnd_PedAppears,
@@ -133,7 +133,7 @@ public:
 
     void draw(const Point2D &screenPos) override;
     bool animate(uint32_t elapsed) override;
-    bool isPathBlocker();
+    bool isPathBlocker() override;
 
 protected:
     int anim_, closing_anim_, open_anim_, opening_anim_;
@@ -149,7 +149,7 @@ public:
 
     void draw(const Point2D &screenPos) override;
     bool animate(uint32_t elapsed) override;
-    bool isPathBlocker();
+    bool isPathBlocker() override;
 
 protected:
     int anim_, closing_anim_, opening_anim_;
@@ -176,20 +176,25 @@ protected:
 };
 
 /*!
- * Window map object class.
+ * WindowObj represents simple windows that are open or close.
+ * It can be broken with bullet or explosion.
  */
 class WindowObj : public Static {
 public:
-    WindowObj(uint16_t id, Map *pMap, int anim, int openAnim, int breakingAnim,
-              int damagedAnim);
+    WindowObj(uint16_t id, Map *pMap, StateWindows state, uint16_t anim);
     virtual ~WindowObj() {}
 
-    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
     void handleHit(DamageToInflict &d) override;
 
 protected:
-    int anim_, open_anim_, breaking_anim_, damaged_anim_;
+    void handleAnimationEnded() override;
+
+protected:
+    //! Animation for when window is breaking
+    uint16_t breakingAnim_;
+    //! After window wa broken, it is damaged
+    uint16_t damagedAnim_;
 };
 
 /*!

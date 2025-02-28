@@ -58,44 +58,16 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s->setSizeY(128);
             s->setSizeZ(128);
             break;
-        case 0x05:// 1040-1043, 1044 - damaged
-            // crossroad things
-            //s = new Semaphore(id, pMap, 1040, 1044);
-            s = new Semaphore(id, pMap);
-            s->setSizeX(48);
-            s->setSizeY(48);
-            s->setSizeZ(48);
-            s->state_ = sttsem_Stt0;
-            s->setHealth(1);
-            s->setStartHealth(1);
-            break;
+        case 0x05:
         case 0x06:
-            // crossroad things
-            s = new Semaphore(id, pMap);
-            s->setSizeX(48);
-            s->setSizeY(48);
-            s->setSizeZ(48);
-            s->state_ = sttsem_Stt1;
-            s->setHealth(1);
-            s->setStartHealth(1);
-            break;
         case 0x07:
-            // crossroad things
-            s = new Semaphore(id, pMap);
-            s->setSizeX(48);
-            s->setSizeY(48);
-            s->setSizeZ(48);
-            s->state_ = sttsem_Stt2;
-            s->setHealth(1);
-            s->setStartHealth(1);
-            break;
         case 0x08:
             // crossroad things
             s = new Semaphore(id, pMap);
             s->setSizeX(48);
             s->setSizeY(48);
             s->setSizeZ(48);
-            s->state_ = sttsem_Stt3;
+            s->state_ = sttsem_Stt0 + (gamdata->sub_type - 0x05);
             s->setHealth(1);
             s->setStartHealth(1);
             break;
@@ -187,9 +159,8 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             //s = new EtcObj(m, bas, curanim, curanim);
             //printf("0x11 anim %X\n", curanim);
             break;
-        case 0x12:
-            // open window
-            s = new WindowObj(id, pMap, curanim - 2, curanim, curanim + 2, curanim + 4);
+        case 0x12:  // open window
+            s = new WindowObj(id, pMap, Static::sttwnd_Open, curanim - 2);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
                 s->setSizeX(96);
@@ -203,11 +174,9 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             }
             s->setHealth(1);
             s->setStartHealth(1);
-            s->state_ = Static::sttwnd_Open;
             break;
-        case 0x13:
-            // closed window
-            s = new WindowObj(id, pMap, curanim, curanim + 2, curanim + 4, curanim + 6);
+        case 0x13: // closed window
+            s = new WindowObj(id, pMap, Static::sttwnd_Closed, curanim);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
                 s->setSizeX(96);
@@ -221,15 +190,12 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             }
             s->setHealth(1);
             s->setStartHealth(1);
-            s->state_ = Static::sttwnd_Closed;
             break;
-        case 0x15:
-            // damaged window
-            s = new WindowObj(id, pMap, curanim - 6, curanim - 4, curanim - 2, curanim);
+        case 0x15: // damaged window
+            s = new WindowObj(id, pMap, Static::sttwnd_Damaged, curanim - 6);
             s->setExcludedFromBlockers(true);
             s->setHealth(0);
             s->setStartHealth(1);
-            s->state_ = Static::sttwnd_Damaged;
             break;
         case 0x16:
             // TODO: set state if damaged trees exist
@@ -240,39 +206,33 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s->setHealth(1);
             s->setStartHealth(1);
             break;
-        case 0x19:
-            // trash bin
+        case 0x19: // trash bin
             s = new EtcObj(id, pMap, curanim);
             s->setSizeX(64);
             s->setSizeY(64);
             s->setSizeZ(96);
             break;
-        case 0x1A:
-            // mail box
+        case 0x1A: // mail box
             s = new EtcObj(id, pMap, curanim);
             s->setSizeX(64);
             s->setSizeY(64);
             s->setSizeZ(96);
             break;
-        case 0x1C:
-            // ???? what is this?
+        case 0x1C: // ???? what is this?
             //s = new EtcObj(m, curanim, curanim, curanim);
             //printf("0x1C anim %X\n", curanim);
             break;
-        case 0x1F:
-            // advertisement on wall
+        case 0x1F: // advertisement on wall
             s = new EtcObj(id, pMap, curanim, smt_Advertisement);
             s->setExcludedFromBlockers(true);
             break;
 
-        case 0x20:
-            // window without light
+        case 0x20: // window without light
             s = new AnimWindow(id, pMap, curanim);
             s->setStateMasks(sttawnd_LightOff);
             s->setTimeShowAnim(30000 + (rand() % 30000));
             break;
-        case 0x21:
-            // window light turns on
+        case 0x21: // window light turns on
             s = new AnimWindow(id, pMap, curanim - 2);
             s->setTimeShowAnim(1000 + (rand() % 1000));
             s->setStateMasks(sttawnd_LightSwitching);
@@ -893,26 +853,40 @@ void Tree::handleHit(DamageToInflict &d) {
     }
 }
 
-WindowObj::WindowObj(uint16_t anId, Map *pMap, int anim, int openAnim, int breakingAnim,
-                     int damagedAnim) :
-        Static(anId, pMap, Static::smt_Window), anim_(anim), open_anim_(openAnim),
-        breaking_anim_(breakingAnim), damaged_anim_(damagedAnim) {}
-
-bool WindowObj::animate(uint32_t elapsed) {
-    bool updated = MapObject::animate(elapsed);
-
-    if (state_ == Static::sttwnd_Breaking
-        && frame_ >= g_SpriteMgr.lastFrame(breaking_anim_)
-    ) {
-        state_ = sttwnd_Damaged;
-        updated = true;
+/*!
+ * Constructor for the class
+ * @param anId 
+ * @param pMap 
+ * @param state Initial state for the window
+ * @param anim base animation. Other animations are always 2 after
+ */
+WindowObj::WindowObj(uint16_t anId, Map *pMap, StateWindows state, uint16_t anim):
+        Static(anId, pMap, Static::smt_Window) {
+    state_ = state;
+    // We don't need to retain the id of the open/close anim as we
+    // never come back to them after we move to breaking/damage anim
+    if (state == Static::sttwnd_Open) {
+        playAnimation(animationPlayer_->addAnimation(anim + 2));
+    } else if (state == Static::sttwnd_Closed) {
+        playAnimation(animationPlayer_->addAnimation(anim));
     }
-    return updated;
+    breakingAnim_ = animationPlayer_->addAnimation(anim + 4, fs_eng::kAnimationModeSingle, 6);
+    damagedAnim_ = animationPlayer_->addAnimation(anim + 6);
+
+    if (state == Static::sttwnd_Damaged) {
+        playAnimation(damagedAnim_);
+    }
 }
 
-void WindowObj::draw(const Point2D &screenPos)
-{
-    g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
+void WindowObj::handleAnimationEnded() {
+    if (animationPlayer_->isCurrentAnimation(breakingAnim_)) {
+        animationPlayer_->play(damagedAnim_);
+        state_ = sttwnd_Damaged;
+    }
+}
+
+void WindowObj::draw(const Point2D &screenPos) {
+    animationPlayer_->draw(addOffs(screenPos), 0);
 }
 
 /*!
@@ -926,8 +900,7 @@ void WindowObj::handleHit(DamageToInflict &d) {
         if (isDead()) {
             state_ = Static::sttwnd_Breaking;
             setExcludedFromBlockers(true);
-            frame_ = 0;
-            setFramesPerSec(6);
+            playAnimation(breakingAnim_);
         }
     }
 }
@@ -968,16 +941,13 @@ void NeonSign::draw(const Point2D &screenPos) {
 
 Semaphore::Semaphore(uint16_t anId, Map *pMap) :
         Static(anId, pMap, Static::smt_Semaphore),
-        elapsed_left_smaller_(0), elapsed_left_bigger_(0), up_down_(1), colorTimer_(500) {
-    //setFramesPerSec(2);
+        elapsed_left_smaller_(0), elapsed_left_bigger_(0), up_down_(1), colorTimer_(700) {
     // regular animation
     playAnimation(animationPlayer_->addAnimation(1040));
-    // damaged animation
-    damagedAnim_ = animationPlayer_->addAnimation(1044, fs_eng::kAnimationModeSingle, 2);
 }
 
 void Semaphore::doUpdateState(uint32_t elapsed) {
-    if (state_ == Static::sttsem_Damaged) {
+    if (isDead()) {
         if (elapsed_left_bigger_ == 0)
             return;
         int chng = (elapsed + elapsed_left_smaller_) >> 1;
@@ -1007,13 +977,7 @@ void Semaphore::doUpdateState(uint32_t elapsed) {
         pos_.oz = oz;
     }
 
-    chng = (elapsed + elapsed_left_bigger_) >> 6;
-    elapsed_left_bigger_ = elapsed & 63;
     if (colorTimer_.update(elapsed)) {
-        // Direction is used as storage for animation change, not my idea
-        dir_ += chng;
-        dir_ &= 0xFF;
-        state_ = dir_ >> 6;
         state_++;
         if (state_ > Static::sttsem_Stt3)
             state_ = Static::sttsem_Stt0;
@@ -1050,9 +1014,7 @@ void Semaphore::handleHit(DamageToInflict &d) {
 }
 
 void Semaphore::draw(const Point2D &screenPos) {
-    g_SpriteMgr.drawFrame(1040 +  state_, 0, addOffs(screenPos));
-    //animationPlayer_->draw(addOffs(screenPos), state_);
-    //g_AnimMgr.drawSprite()
+    animationPlayer_->draw(addOffs(screenPos), state_);
 }
 
 AnimWindow::AnimWindow(uint16_t anId, Map *pMap, int anim) : Static(anId, pMap, smt_AnimatedWindow) {
