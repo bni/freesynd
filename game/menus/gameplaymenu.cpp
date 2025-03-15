@@ -389,6 +389,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
                 case fs_knl::Static::smt_NeonSign:
                 case fs_knl::Static::smt_Semaphore:
                 case fs_knl::Static::smt_Window:
+                case fs_knl::Static::smt_AnimatedWindow:
                     mission_->statics(i)->animate2(elapsed);
                     break;
                 default:

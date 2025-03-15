@@ -35,6 +35,8 @@ namespace fs_knl {
 
 const int Static::kStaticOrientation1 = 0;
 const int Static::kStaticOrientation2 = 2;
+const uint16_t Semaphore::kSemaphoreMaxColorAnim = 4;
+const uint16_t Semaphore::kSemaphoreDamagedOffset = 4;
 
 Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
 {
@@ -63,11 +65,11 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
         case 0x07:
         case 0x08:
             // crossroad things
-            s = new Semaphore(id, pMap);
+            s = new Semaphore(id, pMap, gamdata->sub_type - 0x05);
             s->setSizeX(48);
             s->setSizeY(48);
             s->setSizeZ(48);
-            s->state_ = sttsem_Stt0 + (gamdata->sub_type - 0x05);
+            //s->state_ = sttsem_Stt0 + (gamdata->sub_type - 0x05);
             s->setHealth(1);
             s->setStartHealth(1);
             break;
@@ -231,12 +233,15 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s = new AnimWindow(id, pMap, curanim);
             s->setStateMasks(sttawnd_LightOff);
             s->setTimeShowAnim(30000 + (rand() % 30000));
+            s->playAnimation(((AnimWindow *) s)->animLigthOff_, 0, 30000 + (rand() % 30000));
+            printf("AnimWindow without light %d anim %d\n", id, curanim);
             break;
         case 0x21: // window light turns on
             s = new AnimWindow(id, pMap, curanim - 2);
             s->setTimeShowAnim(1000 + (rand() % 1000));
             s->setStateMasks(sttawnd_LightSwitching);
-
+            s->playAnimation(((AnimWindow *) s)->animLigthSwitching_, 0, 1000 + (rand() % 1000));
+            printf("AnimWindow light turns on %d anim %d\n", id, curanim);
             // NOTE : 0x22 should have existed but it doesn't appear anywhere
 
         case 0x23:
@@ -245,25 +250,31 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s = new AnimWindow(id, pMap, 1959 + ((gamdata->orientation & 0x40) >> 5));
             s->setStateMasks(sttawnd_ShowPed);
             s->setTimeShowAnim(15000 + (rand() % 5000));
+            s->playAnimation(((AnimWindow *) s)->animShowPed_, 0, 15000 + (rand() % 5000));
+            printf("AnimWindow with person non animated %d anim %d\n", id, curanim);
             break;
         case 0x24:
             // window with person's shadow, hides, actually animation
             // is of ped standing, but I will ignore it
             s = new AnimWindow(id, pMap, 1959 + 8 + ((gamdata->orientation & 0x40) >> 5));
             s->setStateMasks(sttawnd_PedDisappears);
+            s->playAnimation(((AnimWindow *) s)->animPedDisappears_);
+            printf("AnimWindow with ped disappear %d anim %d\n", id, curanim);
             break;
         case 0x25:
             s = new AnimWindow(id, pMap, curanim);
-
+            printf("AnimWindow with other %d anim %d\n", id, curanim);
             // NOTE : orientation, I assume, plays role of hidding object,
             // orientation 0x40, 0x80 are drawn (gamdata->desc always 7)
             // window without light
             s->setTimeShowAnim(30000 + (rand() % 30000));
-            if (gamdata->orientation == 0x40 || gamdata->orientation == 0x80)
+            if (gamdata->orientation == 0x40 || gamdata->orientation == 0x80) {
                 s->setStateMasks(sttawnd_LightOff);
-            else
+                s->playAnimation(((AnimWindow *) s)->animLigthOff_, 0, 30000 + (rand() % 30000));
+            } else {
                 s->setStateMasks(sttawnd_LightOn);
-
+                s->playAnimation(((AnimWindow *) s)->animLightOn_, 0, 30000 + (rand() % 30000));
+            }
             break;
 
         case 0x26:
@@ -306,6 +317,10 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
 
         s->setPosition(gamdata->mapposx[1], gamdata->mapposy[1],
             z, gamdata->mapposx[0], gamdata->mapposy[0], oz);
+
+        if (s->type() == Static::smt_AnimatedWindow) {
+            printf("-> position %d, %d, %d\n", s->position().tx, s->position().ty, s->position().tz);
+        }
 
         //s->setMainType(gamdata->sub_type);
 #if 0
@@ -939,9 +954,16 @@ void NeonSign::draw(const Point2D &screenPos) {
     animationPlayer_->draw(addOffs(screenPos), 0);
 }
 
-Semaphore::Semaphore(uint16_t anId, Map *pMap) :
+/*!
+ * Constructor
+ * @param anId 
+ * @param pMap 
+ * @param animationOffset offset to the base animation which is 1040. Should not be higher than 4
+ */
+Semaphore::Semaphore(uint16_t anId, Map *pMap, uint16_t animationOffset) :
         Static(anId, pMap, Static::smt_Semaphore),
-        elapsed_left_smaller_(0), elapsed_left_bigger_(0), up_down_(1), colorTimer_(700) {
+        elapsed_left_smaller_(0), elapsed_left_bigger_(0), up_down_(1),
+        colorTimer_(700), animOffset_(animationOffset) {
     // regular animation
     playAnimation(animationPlayer_->addAnimation(1040));
 }
@@ -978,9 +1000,9 @@ void Semaphore::doUpdateState(uint32_t elapsed) {
     }
 
     if (colorTimer_.update(elapsed)) {
-        state_++;
-        if (state_ > Static::sttsem_Stt3)
-            state_ = Static::sttsem_Stt0;
+        animOffset_++;
+        if (animOffset_ > kSemaphoreMaxColorAnim)
+            animOffset_ = 0;
     }
 }
 
@@ -993,7 +1015,7 @@ void Semaphore::handleHit(DamageToInflict &d) {
         (d.dtype == kDmgTypeLaser || d.dtype == kDmgTypeExplosion)) {
         decreaseHealth(d.dvalue);
         if (isDead()) {
-            state_ = Static::sttsem_Damaged;
+            animOffset_ = kSemaphoreDamagedOffset;
             // To make this thing reach the ground need to get solid surface 0x0F
             Mission * pMission = g_missionCtrl.mission();
             int z = pos_.tz;
@@ -1014,22 +1036,90 @@ void Semaphore::handleHit(DamageToInflict &d) {
 }
 
 void Semaphore::draw(const Point2D &screenPos) {
-    animationPlayer_->draw(addOffs(screenPos), state_);
+    animationPlayer_->draw(addOffs(screenPos), animOffset_);
 }
 
-AnimWindow::AnimWindow(uint16_t anId, Map *pMap, int anim) : Static(anId, pMap, smt_AnimatedWindow) {
+AnimWindow::AnimWindow(uint16_t anId, Map *pMap, uint16_t anim) : Static(anId, pMap, smt_AnimatedWindow) {
     setExcludedFromBlockers(true);
     setFramesPerSec(4);
     anim_ = anim;
+    animLigthOff_ = animationPlayer_->addAnimation(anim);
+    animLigthSwitching_ = animationPlayer_->addAnimation(anim + 2);
+    animPedAppears_ = animationPlayer_->addAnimation(anim + 4);
+    animShowPed_ = animationPlayer_->addAnimation(anim + 6);
+    animPedDisappears_ = animationPlayer_->addAnimation(anim + 8);
+    animLightOn_ = animationPlayer_->addAnimation(anim);
 }
 
-void AnimWindow::draw(const Point2D &screenPos)
-{
+void AnimWindow::draw(const Point2D &screenPos) {
     // When light is on, don't draw window
     // because lighted window is part of the map
-    if (state_ == Static::sttawnd_LightOn)
+    if (animationPlayer_->isCurrentAnimation(animLightOn_))
         return;
-    g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
+    //g_SpriteMgr.drawFrame(anim_ + (state_ << 1), frame_, addOffs(screenPos));
+    animationPlayer_->draw(addOffs(screenPos), 0);
+}
+
+void AnimWindow::handleAnimationEnded() {
+    int logId = 7;
+    if (animationPlayer_->isCurrentAnimation(animLigthOff_)) {
+        // decide to start switching lights on
+        // or continue being in dark
+        if (rand() % 100 > 60) {
+            if (logId == id())
+                printf("AnimWindow %d : end light off -> keep\n", id());
+            animationPlayer_->play(animLigthOff_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+        } else {
+            if (logId == id())
+                printf("AnimWindow %d : end light off -> lightswitching\n", id());
+            animationPlayer_->play(animLigthSwitching_, 0, static_cast<uint32_t> (1000 + (rand() % 1000)));
+        }
+    } else if (animationPlayer_->isCurrentAnimation(animLigthSwitching_)) {
+        if (logId == id())
+            printf("AnimWindow %d : end light switching -> light on\n", id());
+        animationPlayer_->play(animLightOn_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+    } else if (animationPlayer_->isCurrentAnimation(animPedAppears_)) {
+        if (logId == id())
+            printf("AnimWindow %d : end ped appears -> show ped\n", id());
+        animationPlayer_->play(animShowPed_, 0, static_cast<uint32_t> (15000 + (rand() % 15000)));
+    } else if (animationPlayer_->isCurrentAnimation(animShowPed_)) {
+        // continue showing ped or hide it
+        if (rand() % 100 > 50) {
+            if (logId == id())
+                printf("AnimWindow %d : end show ped -> keep\n", id());
+            animationPlayer_->play(animShowPed_, 0, static_cast<uint32_t> (15000 + (rand() % 5000)));
+        } else {
+            if (logId == id())
+                printf("AnimWindow %d : end show ped -> ped disappears\n", id());
+            animationPlayer_->play(animPedDisappears_);
+        }
+    } else if (animationPlayer_->isCurrentAnimation(animPedDisappears_)) {
+        if (logId == id())
+            printf("AnimWindow %d : end ped disappears -> lighton\n", id());
+        animationPlayer_->play(animLightOn_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+    } else if (animationPlayer_->isCurrentAnimation(animLightOn_)) {
+        // we will continue showing lightson or switch
+        // lights off or show ped
+        int rnd_v = rand() % 100;
+        if (rnd_v > 80) {
+            if (logId == id())
+                printf("AnimWindow %d : end light on -> keep\n", id());
+            animationPlayer_->play(animLightOn_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+        } else if (rnd_v > 60) {
+            if (logId == id())
+                printf("AnimWindow %d : end light on -> ped appears\n", id());
+            frame_ = 0;
+            animationPlayer_->play(animPedAppears_);
+        } else if (rnd_v > 10) {
+            if (logId == id())
+                printf("AnimWindow %d : end light on -> light off\n", id());
+            animationPlayer_->play(animLigthOff_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+        } else {
+            if (logId == id())
+                printf("AnimWindow %d : end light on -> light swithcing\n", id());
+            animationPlayer_->play(animLigthSwitching_, 0, static_cast<uint32_t> (1000 + (rand() % 1000)));
+        }
+    }
 }
 
 bool AnimWindow::animate(uint32_t elapsed)
@@ -1055,9 +1145,11 @@ bool AnimWindow::animate(uint32_t elapsed)
             }
             break;
         case Static::sttawnd_PedAppears:
+            printf("PEd appears %d\n", id());
             if (frame_ >= g_SpriteMgr.lastFrame(anim_
                 + (Static::sttawnd_PedAppears << 1)))
             {
+                printf("Ped changes %d\n", id());
                 state_ = Static::sttawnd_ShowPed;
                 setTimeShowAnim(15000 + (rand() % 15000));
             }

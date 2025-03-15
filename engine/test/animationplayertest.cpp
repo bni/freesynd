@@ -40,8 +40,8 @@ public:
     uint16_t animation4;
 
 protected:
-    void loadAnimation(const uint16_t mapObjectAnimationId) override {
-        AnimationPlayer::loadAnimation(mapObjectAnimationId);
+    void loadAnimation(const uint16_t mapObjectAnimationId, uint32_t newMaxPlayTime) override {
+        AnimationPlayer::loadAnimation(mapObjectAnimationId, newMaxPlayTime);
         if (mapObjectAnimationId == animation2) {
             currentAnimation_.framesAnimation += 1;
         }

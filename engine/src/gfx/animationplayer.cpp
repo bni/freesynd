@@ -68,11 +68,12 @@ uint16_t AnimationPlayer::addAnimation(uint16_t framesAnimation, AnimationMode m
  * but we can specify the starting frame.
  * @param mapObjectAnimationId Id of registered animation
  * @param startFrame Starting frame
+ * @param newMaxPlayTime If non zero, overrides default maxPlayTime of the animation
  * @return True if animation of given id has been found
  */
-bool AnimationPlayer::play(const uint16_t mapObjectAnimationId, const uint8_t startFrame) {
+bool AnimationPlayer::play(uint16_t mapObjectAnimationId, uint8_t startFrame, uint32_t newMaxPlayTime) {
     if (mapObjectAnimationId < animations_.size()) {
-        loadAnimation(mapObjectAnimationId);
+        loadAnimation(mapObjectAnimationId, newMaxPlayTime);
         currentAnimationId_ = mapObjectAnimationId;
         frame_ = startFrame;
         lastFrame_ = g_AnimMgr.lastFrame(currentAnimation_.framesAnimation);
@@ -89,8 +90,13 @@ bool AnimationPlayer::play(const uint16_t mapObjectAnimationId, const uint8_t st
     }
 }
 
-void AnimationPlayer::loadAnimation(const uint16_t mapObjectAnimationId) {
+void AnimationPlayer::loadAnimation(const uint16_t mapObjectAnimationId, uint32_t newMaxPlayTime) {
     currentAnimation_ = animations_[mapObjectAnimationId];
+    if (newMaxPlayTime != 0) {
+        // We can override maxPlayTime at run time.
+        // This allows for randomizing this value
+        currentAnimation_.maxPlayTime = newMaxPlayTime;
+    }
 }
 
 /*!

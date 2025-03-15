@@ -300,9 +300,10 @@ public:
      * Convenient method to play an animation using AnimationPlayer
      * @param mapObjectAnimationId The animation id to play
      * @param startFrame The starting frame
+     * @param newMaxPlayTime Overrides maxTime
      * @return True if animation has been found
      */
-    bool playAnimation(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0) { 
+    bool playAnimation(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0, uint32_t newMaxPlayTime = 0) { 
         return animationPlayer_->play(mapObjectAnimationId, startFrame); 
     }
     ///@}

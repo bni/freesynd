@@ -80,7 +80,7 @@ public:
                         uint8_t framePerSec = 8,
                         uint32_t maxPlayTime = 0 );
     //! Plays a given animation
-    bool play(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0);
+    bool play(uint16_t mapObjectAnimationId, uint8_t startFrame = 0, uint32_t newMaxPlayTime = 0);
     //! Updates the current animation
     bool handleTick(uint32_t elapsed);
 
@@ -93,12 +93,14 @@ public:
         return mapObjectAnimationId == currentAnimationId_;
     }
 
+    uint16_t currentAnimationId() { return currentAnimationId_; }
+
     // Draw the current animation at given position
     void draw(const Point2D &screenPos, uint16_t animOffset);
 
 protected:
     //! loads the animation to play. Subclass can alter the loaded animation
-    virtual void loadAnimation(const uint16_t mapObjectAnimationId);
+    virtual void loadAnimation(const uint16_t mapObjectAnimationId, uint32_t newMaxPlayTime);
     //! Reset the player
     void reset();
 protected:

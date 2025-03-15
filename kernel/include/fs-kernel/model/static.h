@@ -64,15 +64,6 @@ public:
         sttdoor_Opening
     };
 
-    //semaphore, 4 animations + damaged
-    enum StateSemaphores {
-        sttsem_Stt0 = 0,
-        sttsem_Stt1,
-        sttsem_Stt2,
-        sttsem_Stt3,
-        sttsem_Damaged
-    };
-
     enum StateWindows {
         sttwnd_Closed = 0,
         sttwnd_Open,
@@ -225,10 +216,13 @@ public:
 /*!
  * Semaphore map object class.
  * That thing that bounces on crossroad.
+ * For animation, there are 4 animations when the semaphore is up
+ * and 1 animation when the semaphore has been damaged. We cycle through
+ * the animation by incrementing animOffset_.
  */
 class Semaphore : public Static {
 public:
-    Semaphore(uint16_t id, Map *pMap);
+    Semaphore(uint16_t id, Map *pMap, uint16_t animationOffset);
     virtual ~Semaphore() {}
 
     void draw(const Point2D &screenPos) override;
@@ -239,7 +233,11 @@ protected:
     void doUpdateState(uint32_t elapsed) override;
 
 protected:
-    uint16_t damagedAnim_;
+    //! Number of animations when semaphore is on
+    static const uint16_t kSemaphoreMaxColorAnim;
+    //! Offset for the damaged animation relative to the base animation
+    static const uint16_t kSemaphoreDamagedOffset;
+
     /*! used to make animation of movement up/down,
      * when damaged, stores time not consumed for movement down
      */
@@ -250,7 +248,10 @@ protected:
     int elapsed_left_bigger_;
     //! switch for moving up or down
     int up_down_;
+    //! Timer to control the change of light for the semaphore
     fs_utl::Timer colorTimer_;
+    //! Use to cycle through different animations including damaged.
+    uint16_t animOffset_;
 };
 
 /*!
@@ -258,14 +259,23 @@ protected:
  */
 class AnimWindow : public Static {
 public:
-    AnimWindow(uint16_t id, Map *pMap, int anim);
+    AnimWindow(uint16_t id, Map *pMap, uint16_t anim);
     virtual ~AnimWindow() {}
 
     bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
 
 protected:
+    void handleAnimationEnded() override;
+
+public:
     int anim_;
+    uint16_t animLigthOff_;
+    uint16_t animLigthSwitching_;
+    uint16_t animLightOn_;
+    uint16_t animPedAppears_;
+    uint16_t animShowPed_;
+    uint16_t animPedDisappears_;
 };
 
 }
