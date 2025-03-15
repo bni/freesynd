@@ -606,9 +606,7 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
 
         // TODO: the size should be adjusted on orientation/direction change
         // and it should be different per vehicle type
-        pVehicle->setSizeX(256);
-        pVehicle->setSizeY(256);
-        pVehicle->setSizeZ(192);
+        pVehicle->setSize(256, 256, 192);
 
         int oz = gamdata.mapposz[0] & 0x7F;
         pVehicle->setPosition(gamdata.mapposx[1], gamdata.mapposy[1],

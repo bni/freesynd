@@ -193,9 +193,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
     int z = fs_utl::READ_LE_UINT16(gamdata.mapposz) >> 7;
     // some peds have z = 0 - map paraguay
     int oz = gamdata.mapposz[0] & 0x7F;
-    newped->setSizeX(32);
-    newped->setSizeY(32);
-    newped->setSizeZ(256);
+    newped->setSize(32, 32, 256);
     //printf("x %i y %i z %i ox %i oy %i oz %i\n", gamdata.mapposx[1], gamdata.mapposy[1], z, gamdata.mapposx[0], gamdata.mapposy[0], oz);
     newped->setPosition(gamdata.mapposx[1], gamdata.mapposy[1],
                         z, gamdata.mapposx[0],

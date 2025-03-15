@@ -56,9 +56,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
         case 0x01:
             // phone booth
             s = new EtcObj(id, pMap, curanim);
-            s->setSizeX(128);
-            s->setSizeY(128);
-            s->setSizeZ(128);
+            s->setSize(128, 128, 128);
             break;
         case 0x05:
         case 0x06:
@@ -66,9 +64,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
         case 0x08:
             // crossroad things
             s = new Semaphore(id, pMap, gamdata->sub_type - 0x05);
-            s->setSizeX(48);
-            s->setSizeY(48);
-            s->setSizeZ(48);
+            s->setSize(48, 48, 48);
             //s->state_ = sttsem_Stt0 + (gamdata->sub_type - 0x05);
             s->setHealth(1);
             s->setStartHealth(1);
@@ -82,25 +78,19 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s = new NeonSign(id, pMap, curanim);
             s->setFrame(g_SpriteMgr.getFrameFromFrameIndx(curframe));
             s->setExcludedFromBlockers(true);
-            s->setSizeX(32);
-            s->setSizeY(1);
-            s->setSizeZ(48);
+            s->setSize(32, 1, 48);
             break;
         case 0x0C: // closed door
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80
                 || gamdata->orientation == 0x7E || gamdata->orientation == 0xFE) {
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(256);
-                s->setSizeY(1);
-                s->setSizeZ(196);
+                s->setSize(256, 1, 196);
             } else {
                 baseanim++;
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(1);
-                s->setSizeY(256);
-                s->setSizeZ(196);
+                s->setSize(1, 256, 196);
             }
             break;
         case 0x0D: // closed door
@@ -108,16 +98,12 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
                 || gamdata->orientation == 0x7E || gamdata->orientation == 0xFE) {
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(256);
-                s->setSizeY(1);
-                s->setSizeZ(196);
+                s->setSize(256, 1, 196);
             } else {
                 baseanim++;
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(1);
-                s->setSizeY(256);
-                s->setSizeZ(196);
+                s->setSize(1, 256, 196);
             }
             break;
         case 0x0E: // opening doors, not open
@@ -125,16 +111,12 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
                 || gamdata->orientation == 0x7E || gamdata->orientation == 0xFE) {
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(256);
-                s->setSizeY(1);
-                s->setSizeZ(196);
+                s->setSize(256, 1, 196);
             } else {
                 baseanim++;
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(1);
-                s->setSizeY(256);
-                s->setSizeZ(196);
+                s->setSize(1, 256, 196);
             }
             s->state_ = sttdoor_Opening;
             break;
@@ -143,16 +125,12 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
                 || gamdata->orientation == 0x7E || gamdata->orientation == 0xFE) {
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(256);
-                s->setSizeY(1);
-                s->setSizeZ(196);
+                s->setSize(256, 1, 196);
             } else {
                 baseanim++;
                 s = new Door(id, pMap, baseanim, baseanim + 2, baseanim + 4, baseanim + 6);
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(1);
-                s->setSizeY(256);
-                s->setSizeZ(196);
+                s->setSize(1, 256, 196);
             }
             s->state_ = sttdoor_Opening;
             break;
@@ -165,14 +143,10 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s = new WindowObj(id, pMap, Static::sttwnd_Open, curanim - 2);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(96);
-                s->setSizeY(4);
-                s->setSizeZ(96);
+                s->setSize(96, 4, 96);
             } else {
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(4);
-                s->setSizeY(96);
-                s->setSizeZ(96);
+                s->setSize(4, 96, 96);
             }
             s->setHealth(1);
             s->setStartHealth(1);
@@ -181,14 +155,10 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s = new WindowObj(id, pMap, Static::sttwnd_Closed, curanim);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(96);
-                s->setSizeY(4);
-                s->setSizeZ(96);
+                s->setSize(96, 4, 96);
             } else {
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(4);
-                s->setSizeY(96);
-                s->setSizeZ(96);
+                s->setSize(4, 96, 96);
             }
             s->setHealth(1);
             s->setStartHealth(1);
@@ -202,23 +172,17 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
         case 0x16:
             // TODO: set state if damaged trees exist
             s = new Tree(id, pMap, curanim);
-            s->setSizeX(64);
-            s->setSizeY(64);
-            s->setSizeZ(256);
+            s->setSize(64, 64, 256);
             s->setHealth(1);
             s->setStartHealth(1);
             break;
         case 0x19: // trash bin
             s = new EtcObj(id, pMap, curanim);
-            s->setSizeX(64);
-            s->setSizeY(64);
-            s->setSizeZ(96);
+            s->setSize(64, 64, 96);
             break;
         case 0x1A: // mail box
             s = new EtcObj(id, pMap, curanim);
-            s->setSizeX(64);
-            s->setSizeY(64);
-            s->setSizeZ(96);
+            s->setSize(64, 64, 96);
             break;
         case 0x1C: // ???? what is this?
             //s = new EtcObj(m, curanim, curanim, curanim);
@@ -284,14 +248,10 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s = new LargeDoor(id, pMap, curanim, curanim + 1, curanim + 2);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
-                s->setSizeX(384);
-                s->setSizeY(64);
-                s->setSizeZ(192);
+                s->setSize(384, 64, 192);
             } else {
                 s->setOrientation(kStaticOrientation2);
-                s->setSizeX(64);
-                s->setSizeY(384);
-                s->setSizeZ(192);
+                s->setSize(64, 384, 192);
             }
             break;
 #ifdef _DEBUG

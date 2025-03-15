@@ -132,10 +132,12 @@ public:
     int sizeY() { return size_y_;}
     int sizeZ() { return size_z_;}
 
-    void setSizeX(int size_x) { size_x_ = size_x;}
-    void setSizeY(int size_y) { size_y_ = size_y;}
-    void setSizeZ(int size_z) { size_z_ = size_z;}
-
+    void setSize(int sizeX, int sizeY, int sizeZ) { 
+        size_x_ = sizeX;
+        size_y_ = sizeY;
+        size_z_ = sizeZ;
+    }
+    
     /*!
      *
      */
