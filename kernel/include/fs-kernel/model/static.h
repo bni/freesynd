@@ -71,14 +71,6 @@ public:
         sttwnd_Damaged
     };
 
-    enum StateAnimatedWindows {
-        sttawnd_LightOff = 0,
-        sttawnd_LightSwitching,
-        sttawnd_PedAppears,
-        sttawnd_ShowPed,
-        sttawnd_PedDisappears,
-        sttawnd_LightOn
-    };
 public:
     static Static *loadInstance(uint8_t *data, uint16_t id, Map *pMap);
     virtual ~Static() {}
@@ -255,26 +247,50 @@ protected:
 };
 
 /*!
- * AnimatedWindow map object class.
+ * AnimatedWindow has multiple animations.
  */
 class AnimWindow : public Static {
 public:
     AnimWindow(uint16_t id, Map *pMap, uint16_t anim);
     virtual ~AnimWindow() {}
 
-    bool animate(uint32_t elapsed) override;
     void draw(const Point2D &screenPos) override;
+
+    void playLightOffAnimation() {
+        animationPlayer_->play(animLigthOff_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+    }
+
+    void playLightSwitchingAnimation() {
+        animationPlayer_->play(animLigthSwitching_, 0, static_cast<uint32_t> (1000 + (rand() % 1000)));
+    }
+
+    void playShowPedAnimation() {
+        animationPlayer_->play(animShowPed_, 0, static_cast<uint32_t> (15000 + (rand() % 5000)));
+    }
+
+    void playedDisappearAnimation() {
+        animationPlayer_->play(animPedDisappears_);
+    }
+
+    void playLightOnAnimation() {
+        animationPlayer_->play(animLightOn_, 0, static_cast<uint32_t> (30000 + (rand() % 30000)));
+    }
 
 protected:
     void handleAnimationEnded() override;
 
 public:
-    int anim_;
+    //! Id of the light off animation
     uint16_t animLigthOff_;
+    //! Id of the light switching animation
     uint16_t animLigthSwitching_;
+    //! This is special as there is no animation for this
     uint16_t animLightOn_;
+    //! Id of the ped appearing animation
     uint16_t animPedAppears_;
+    //! Id of the ped showed animation
     uint16_t animShowPed_;
+    //! Id of the ped disappearing animation
     uint16_t animPedDisappears_;
 };
 
