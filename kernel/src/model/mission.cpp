@@ -318,22 +318,33 @@ void Mission::updateStats()
     }
 }
 
-void Mission::addWeaponToGround(WeaponInstance * w)
+/*!
+ * Add the given weapon to the list of weapons on the ground.
+ * Start the animation of the weapon
+ * @param pWeapon Weapon to drop on ground
+ */
+void Mission::addWeaponToGround(WeaponInstance * pWeapon)
 {
     for (unsigned int i = 0; i < weaponsOnGround_.size(); i++) {
         // TODO : check if == operator is used correctly (see  == in WeaponInstance)
-        if (weaponsOnGround_[i] == w)
+        if (weaponsOnGround_[i] == pWeapon)
             return;
     }
-    weaponsOnGround_.push_back(w);
+    weaponsOnGround_.push_back(pWeapon);
+    pWeapon->playOnGroundAnimation();
 }
 
+/*!
+ * Remove the weapon from the list of weapons on the ground.
+ * @param pWeapon 
+ */
 void Mission::removeWeaponOnGround(WeaponInstance *pWeapon) {
     for (unsigned int i = 0; i < weaponsOnGround_.size(); i++) {
         if (weaponsOnGround_[i] == pWeapon) {
             weaponsOnGround_.erase(weaponsOnGround_.begin() + i);
         }
     }
+    pWeapon->resetAnimation();
 }
 
 MapObject * Mission::findObjectWithNatureAtPos(int tilex, int tiley, int tilez,

@@ -272,15 +272,16 @@ WeaponInstance::WeaponInstance(Weapon * pWeaponClass, uint16_t anId, Map *pMap, 
     pOwner_ = NULL;
     activated_ = false;
     if (pWeaponClass->getType() == Weapon::TimeBomb
-        || pWeaponClass->getType() == Weapon::Flamer)
-    {
-        size_x_ = 32;
-        size_y_ = 32;
-        size_z_ = 32;
+        || pWeaponClass->getType() == Weapon::Flamer) {
+        setSize(32, 32, 32);
     }
     health_ = 1;
     start_health_ = 1;
     pFlamerShot_ = NULL;
+
+    onGroundAnim_ = animationPlayer_->addAnimation(
+                                        pWeaponClass_->onGroundAnimationId(),
+                                        fs_eng::kAnimationModeLoop);
 }
 
 /*!
@@ -291,27 +292,17 @@ bool WeaponInstance::isSelectable() {
     return pWeaponClass_->getType() != Weapon::Scanner;
 }
 
-bool WeaponInstance::animate(uint32_t elapsed) {
+void WeaponInstance::doUpdateState(uint32_t elapsed) {
+    if (isInstanceOf(Weapon::TimeBomb) && activated_) {
+        if (bombSoundTimer.update(elapsed)) {
+            g_SoundMgr.play(fs_eng::TIMEBOMB);
+        }
 
-    if (activated_) {
-        if (isInstanceOf(Weapon::TimeBomb)) {
-            if (bombSoundTimer.update(elapsed)) {
-                g_SoundMgr.play(fs_eng::TIMEBOMB);
-            }
-
-            if (bombExplosionTimer.update(elapsed)) {
-                DamageToInflict dmg;
-                fire(g_missionCtrl.mission(), dmg, elapsed);
-                return true;
-            }
+        if (bombExplosionTimer.update(elapsed)) {
+            DamageToInflict dmg;
+            fire(g_missionCtrl.mission(), dmg, elapsed);
         }
     }
-
-    if (isDrawable()) {
-        return MapObject::animate(elapsed);
-    }
-
-    return false;
 }
 
 /**
@@ -351,7 +342,7 @@ bool WeaponInstance::consumeAmmoForEnergyShield(uint32_t elapsed) {
 }
 
 void WeaponInstance::draw(const Point2D &screenPos) {
-    g_SpriteMgr.drawFrame(pWeaponClass_->anim(), frame_, addOffs(screenPos));
+    animationPlayer_->draw(addOffs(screenPos), 0);
 }
 
 /*!

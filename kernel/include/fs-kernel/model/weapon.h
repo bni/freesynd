@@ -98,7 +98,8 @@ public:
     const char *getName() { return name_.c_str(); }
     int getSmallIconId() { return small_icon_; }
     int getBigIconId() { return big_icon_; }
-    int anim() { return anim_; }
+    //! Return the id of animation when the weapon is on the ground on a map
+    int onGroundAnimationId() { return anim_; }
 
     int cost() { return cost_; }
     //! Return the maximum ammo that the weapon can hold
@@ -285,10 +286,14 @@ public:
 
     ~WeaponInstance() {};
 
-    //*************************************
-    // Properties
-    //*************************************
+    /*!
+     * @name Properties
+     */
+    ///@{
     Weapon *getClass() const { return pWeaponClass_; }
+
+    bool isInstanceOf(Weapon::WeaponType weaponType) { return pWeaponClass_->getType() == weaponType; }
+    bool hasSameTypeAs(const WeaponInstance & otherWeapon) { return pWeaponClass_->getType() == otherWeapon.getClass()->getType();}
 
     /*! Sets the owner of the weapon. */
     void setOwner(PedInstance *pOwner) { pOwner_ = pOwner; }
@@ -321,28 +326,20 @@ public:
 
     //! Return true if weapon can be selected
     bool isSelectable();
+    ///@}
 
     /*!
      * @name Behaviour
      */
     ///@{
-    bool isInstanceOf(Weapon::WeaponType weaponType) { return pWeaponClass_->getType() == weaponType; }
-    bool hasSameTypeAs(const WeaponInstance & otherWeapon) { return pWeaponClass_->getType() == otherWeapon.getClass()->getType();}
-
     bool needsReloading() {
         return pWeaponClass_->ammoCapacity() > ammo_remaining_;
     }
 
     void reload() { ammo_remaining_ = pWeaponClass_->ammoCapacity(); }
 
-    //! Plays the weapon's sound.
-    void playSound();
-
     void activate();
     void deactivate();
-
-    bool animate(uint32_t elapsed) override;
-    void draw(const Point2D &screenPos) override;
 
     void handleHit(DamageToInflict & d);
 
@@ -351,6 +348,24 @@ public:
 
     bool consumeAmmoForEnergyShield(uint32_t elapsed);
     ///@}
+
+    /*!
+     * @name Animation
+     */
+    ///@{
+    void draw(const Point2D &screenPos) override;
+    
+    //! Start the animation when a weapon is dropped by owner
+    void playOnGroundAnimation() {
+        animationPlayer_->play(onGroundAnim_);
+    }
+    //! Plays the weapon's sound.
+    void playSound();
+    ///@}
+
+protected:
+    void doUpdateState(uint32_t elapsed) override;
+    //void handleAnimationEnded() override;
 
 protected:
     static uint16_t weaponIdCnt;
@@ -370,6 +385,8 @@ protected:
     bool activated_;
 
     FlamerShot *pFlamerShot_;
+    //! On ground Animation
+    uint16_t onGroundAnim_;
 };
 
 }

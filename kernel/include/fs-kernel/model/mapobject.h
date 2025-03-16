@@ -306,7 +306,14 @@ public:
      * @return True if animation has been found
      */
     bool playAnimation(const uint16_t mapObjectAnimationId, const uint8_t startFrame = 0, uint32_t newMaxPlayTime = 0) { 
-        return animationPlayer_->play(mapObjectAnimationId, startFrame); 
+        return animationPlayer_->play(mapObjectAnimationId, startFrame, newMaxPlayTime); 
+    }
+
+    /*!
+     * Convenient method to reset current animation
+     */
+    void resetAnimation() {
+        animationPlayer_->reset();
     }
     ///@}
 
