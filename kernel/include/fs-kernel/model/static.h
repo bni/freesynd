@@ -58,17 +58,17 @@ public:
     };
 
     enum StateDoors {
-        sttdoor_Closed = 0,
-        sttdoor_Closing,
-        sttdoor_Open,
-        sttdoor_Opening
+        kStateDoorClosed = 0,
+        kStateDoorClosing,
+        kStateDoorOpen,
+        kStateDoorOpening
     };
 
     enum StateWindows {
-        sttwnd_Closed = 0,
-        sttwnd_Open,
-        sttwnd_Breaking,
-        sttwnd_Damaged
+        kStateWindowClosed = 0,
+        kStateWindowOpen,
+        kStateWindowBreaking,
+        kStateWindowDamaged
     };
 
 public:
@@ -107,35 +107,54 @@ protected:
 };
 
 /*!
- * Door map object class.
+ * Door are one tile doors. It can be open or closed when a Ped is in front.
  */
 class Door : public Static {
 public:
-    Door(uint16_t id, Map *pMap, int anim, int closingAnim, int openAnim, int openingAnim);
+    Door(uint16_t id, Map *pMap, uint16_t baseAnim, Static::StateDoors initialState);
     virtual ~Door() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(uint32_t elapsed) override;
+
     bool isPathBlocker() override;
 
 protected:
-    int anim_, closing_anim_, open_anim_, opening_anim_;
+    void doUpdateState(uint32_t elapsed) override;
+    void handleAnimationEnded() override;
+
+protected:
+    //! Id of the closed door animation
+    uint16_t closedAnim_;
+    //! Id of the closing door animation
+    uint16_t closingAnim_;
+    //! Id of the opened door animation
+    uint16_t openedAnim_;
+    //! Id of the opening door animation
+    uint16_t openingAnim_;
 };
 
 /*!
- * LargeDoor map object class.
+ * LargeDoor are portal on the roads.
  */
 class LargeDoor : public Static {
 public:
-    LargeDoor(uint16_t id, Map *pMap, int anim, int closingAnim, int openingAnim);
+    LargeDoor(uint16_t id, Map *pMap, uint16_t baseAnim);
     virtual ~LargeDoor() {}
 
     void draw(const Point2D &screenPos) override;
-    bool animate(uint32_t elapsed) override;
     bool isPathBlocker() override;
 
 protected:
-    int anim_, closing_anim_, opening_anim_;
+    void doUpdateState(uint32_t elapsed) override;
+    void handleAnimationEnded() override;
+
+protected:
+    //! Id of the closed door animation (default animation)
+    uint16_t closedAnim_;
+    //! Id of the closing door animation
+    uint16_t closingAnim_;
+    //! Id of the opening door animation
+    uint16_t openingAnim_;
 };
 /*!
  * Tree map object class.
