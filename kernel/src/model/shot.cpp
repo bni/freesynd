@@ -404,7 +404,7 @@ void Explosion::getAllShootablesWithinRange(Mission *pMission,
 }
 
 ProjectileShot::ProjectileShot(const DamageToInflict &dmg) : Shot(dmg) {
-    elapsed_ = -1;
+    startMove_ = false;
     curPosW_ = dmg.originLocW;
     currentDistance_ = 0;
     lifeOver_ = false;
@@ -434,11 +434,11 @@ ProjectileShot::ProjectileShot(const DamageToInflict &dmg) : Shot(dmg) {
     }
 }
 
-bool ProjectileShot::animate(int elapsed, Mission *pMission) {
-    if (elapsed_ == -1) {
+bool ProjectileShot::animate(uint32_t elapsed, Mission *pMission) {
+    if (!startMove_) {
         // It's the first time the animate method is called since shot
         // was created : start counting
-        elapsed_ = 0;
+        startMove_ = true;
         return false;
     }
 
@@ -455,9 +455,8 @@ bool ProjectileShot::animate(int elapsed, Mission *pMission) {
  * \param pMission Mission data
  * \return True if projectile has reached its target or max distance.
  */
-bool ProjectileShot::moveProjectile(int elapsed, Mission *pMission) {
+bool ProjectileShot::moveProjectile(uint32_t elapsed, Mission *pMission) {
     bool endMove = false;
-    elapsed_ += elapsed;
 
     // Distance crossed in the elapsed time
     double inc_dist = speed_ * (double)elapsed / 1000;

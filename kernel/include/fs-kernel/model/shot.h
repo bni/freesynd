@@ -117,19 +117,19 @@ class ProjectileShot: public Shot {
     explicit ProjectileShot(const DamageToInflict &dmg);
 
     //! Animate the shot
-    virtual bool animate(int elapsed, Mission *m);
+    virtual bool animate(uint32_t elapsed, Mission *m);
 
     //! Returns true if shot can be destroyed
     bool isLifeOver() { return lifeOver_; }
 
  protected:
     //! Update projectile position
-    virtual bool moveProjectile(int elapsed, Mission *pMission);
+    virtual bool moveProjectile(uint32_t elapsed, Mission *pMission);
     virtual void drawTrace(Mission *pMission) = 0;
  protected:
     /*! This tells if the shot object shot be destroyed.*/
     bool lifeOver_;
-    int elapsed_;
+    bool startMove_;
     /*! Projectile speed.*/
     double speed_;
 
