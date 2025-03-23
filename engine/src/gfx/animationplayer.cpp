@@ -146,18 +146,26 @@ bool AnimationPlayer::handleTick(uint32_t elapsed) {
 }
 
 /*!
- * @brief 
+ * Used to rewind an already loaded animation to first frame.
+ * Animation is stopped and must be started again to be animated
  */
-void AnimationPlayer::reset() {
+void AnimationPlayer::resetAnimation() {
     lastFrame_ = 0;
     frame_ = 0;
     elapsedCarry_ = 0;
+    isPlaying_ = false;
+}
+
+/*!
+ * @brief 
+ */
+void AnimationPlayer::reset() {
+    resetAnimation();
     currentAnimationId_ = 0;
     currentAnimation_.framesAnimation = 0;
     currentAnimation_.mode = kAnimationModeSingle;
     currentAnimation_.maxPlayTime = 0;
     currentAnimation_.framePerSec = 0;
-    isPlaying_ = false;
 }
 
 /*!

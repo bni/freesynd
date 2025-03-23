@@ -313,8 +313,9 @@ public:
      * Convenient method to reset current animation
      */
     void resetAnimation() {
-        animationPlayer_->reset();
+        animationPlayer_->resetAnimation();
     }
+
     ///@}
 
     /**

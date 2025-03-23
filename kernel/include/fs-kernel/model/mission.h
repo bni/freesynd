@@ -209,6 +209,9 @@ public:
 
     void addSfxObject(SFXObject *so) {
         sfx_objects_.push_back(so);
+        if (so->isDrawable()) {
+            so->playMainAnimation();
+        }
     }
     /*!
      * Removes SfxObject at given position in the list of sfxobjects.

@@ -36,108 +36,77 @@ uint16_t SFXObject::sfxIdCnt = 0;
  * \param pMap a pointer to the map
  * \param type Type of SfxObject (see SFXObject::SfxTypeEnum)
  * \param drawable True means the object will be drawn by default
- * \param t_show
+ * \param addShow Used for fire animation to add randomized time to animation
  */
-SFXObject::SFXObject(Map *pMap, SfxType type, bool drawable, int t_show) : MapObject(sfxIdCnt++, pMap, kNatureUndefined) {
-    type_ = type;
-    draw_all_frames_ = true;
-    loopAnimation_ = false;
-    setTimeShowAnim(0);
+SFXObject::SFXObject(Map *pMap, SfxType type, bool drawable, uint32_t addShow) : 
+        MapObject(sfxIdCnt++, pMap, kNatureUndefined), type_(type), sfx_life_over_(false), elapsed_left_(0) {
     setDrawable(drawable);
-    reset();
+    
     switch(type) {
         case SFXObject::sfxt_Unknown:
             FSERR(Log::k_FLG_UI, "SFXObject", "SFXObject", ("Sfx object of type Unknown created"));
             sfx_life_over_ = true;
             break;
         case SFXObject::sfxt_BulletHit:
-            animationId_ = 382;
+            animationId_ = animationPlayer_->addAnimation(382);
             break;
         case SFXObject::sfxt_FlamerFire:
-            animationId_ = 383;
-            setFramesPerSec(12);
+            animationId_ = animationPlayer_->addAnimation(383, fs_eng::kAnimationModeLoop, 12);
             break;
         case SFXObject::sfxt_Smoke:
-            animationId_ = 244;
+            animationId_ = animationPlayer_->addAnimation(244);
             break;
         case SFXObject::sfxt_Fire_LongSmoke:
             // point of impact for laser
-            animationId_ = 389;
+            animationId_ = animationPlayer_->addAnimation(389);
             break;
         case SFXObject::sfxt_ExplosionFire:
-            animationId_ = 390;
-            setFramesPerSec(6);
+            animationId_ = animationPlayer_->addAnimation(390, fs_eng::kAnimationModeSingle, 6);
             break;
         case SFXObject::sfxt_ExplosionBall:
-            animationId_ = 391;
-            setFramesPerSec(6);
+            animationId_ = animationPlayer_->addAnimation(391, fs_eng::kAnimationModeSingle, 6);
             break;
         case SFXObject::sfxt_LargeFire:
-            animationId_ = 243;
-            setTimeShowAnim(3000 + t_show);
+            animationId_ = animationPlayer_->addAnimation(243, fs_eng::kAnimationModeLoop, 8, 3000 + addShow);
             break;
         case SFXObject::sfxt_SelArrow:
-            animationId_ = 601;
-            time_show_anim_ = -1;
-            setFramesPerSec(6);
+            animationId_ = animationPlayer_->addAnimation(601, fs_eng::kAnimationModeSingle, 6);
             break;
         case SFXObject::sfxt_AgentFirst:
-            animationId_ = 1951;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
+            animationId_ = animationPlayer_->addAnimation(1951, fs_eng::kAnimationModeLoop, 4);
             break;
         case SFXObject::sfxt_AgentSecond:
-            animationId_ = 1952;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
+            animationId_ = animationPlayer_->addAnimation(1952, fs_eng::kAnimationModeLoop, 4);
             break;
         case SFXObject::sfxt_AgentThird:
-            animationId_ = 1953;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
+            animationId_ = animationPlayer_->addAnimation(1953, fs_eng::kAnimationModeLoop, 4);
             break;
         case SFXObject::sfxt_AgentFourth:
-            animationId_ = 1954;
-            time_show_anim_ = -1;
-            setFramesPerSec(4);
+            animationId_ = animationPlayer_->addAnimation(1954, fs_eng::kAnimationModeLoop, 4);
             break;
     }
 }
 
 void SFXObject::draw(const Point2D &screenPos) {
-    g_SpriteMgr.drawFrame(animationId_, frame_, addOffs(screenPos));
+    animationPlayer_->draw(addOffs(screenPos), 0);
 }
 
-bool SFXObject::animate(uint32_t elapsed) {
-
-    if (is_frame_drawn_) {
-        bool changed = draw_all_frames_ ? MapObject::animate(elapsed) : false;
-        if (type_ == SFXObject::sfxt_ExplosionBall) {
-            int z = pos_.tz * 128 + pos_.oz;
-            // 250 per sec
-            z += ((elapsed + elapsed_left_) >> 2);
-            elapsed_left_ = elapsed &3;
-            if (z > (pMap_->maxZ() - 1) * 128)
-                z = (pMap_->maxZ() - 1) * 128;
-            pos_.tz = z / 128;
-            pos_.oz = z % 128;
-        }
-
-        if (frame_ > g_SpriteMgr.lastFrame(animationId_)
-            && !leftTimeShowAnim(elapsed))
-        {
-            if (loopAnimation_) {
-                reset();
-            } else {
-                sfx_life_over_ = true;
-            }
-        }
-        return changed;
+void SFXObject::doUpdateState(uint32_t elapsed) {
+    if (type_ == SFXObject::sfxt_ExplosionBall) {
+        int z = pos_.tz * 128 + pos_.oz;
+        // 250 per sec
+        z += ((elapsed + elapsed_left_) >> 2);
+        elapsed_left_ = elapsed &3;
+        if (z > (pMap_->maxZ() - 1) * 128)
+            z = (pMap_->maxZ() - 1) * 128;
+        pos_.tz = z / 128;
+        pos_.oz = z % 128;
     }
-    is_frame_drawn_ = true;
-    return false;
 }
 
+void SFXObject::handleAnimationEnded() {
+    sfx_life_over_ = true;
+}
 
 /** \brief
  *
@@ -157,9 +126,4 @@ void SFXObject::correctZ(int mapMaxZ) {
     }
 }
 
-void SFXObject::reset() {
-    sfx_life_over_ = false;
-    frame_ = 0;
-    elapsed_left_ = 0;
-}
 }

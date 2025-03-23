@@ -56,37 +56,37 @@ public:
         sfxt_AgentFourth = 12
     };
 
-    SFXObject(Map *pMap, SfxType type, bool drawable = true, int t_show = 0);
+    SFXObject(Map *pMap, SfxType type, bool drawable = true, uint32_t addShow = 0);
     virtual ~SFXObject() {}
 
+    //! Return true if object can be destroyed
     bool sfxLifeOver() { return sfx_life_over_; }
-
-    //! Set whether animation should loop or not
-    void setLoopAnimation(bool flag) { loopAnimation_ = flag; }
-    //! Reset animation
-    void reset();
+    //! Used to force the end of object
+    void forceEndofLife() { sfx_life_over_ = true; }
 
     void draw(const Point2D &screenPos) override;
-    bool animate(uint32_t elapsed) override;
+
+    void playMainAnimation() {
+        animationPlayer_->play(animationId_);
+    }
     //!
     void correctZ(int mapMaxZ);
-    void setDrawAllFrames(bool daf) {
-        if (daf != draw_all_frames_) {
-            draw_all_frames_ = daf;
-            frame_ = 0;
-        }
-    }
+
+protected:
+    //! @copydoc MapObject::doUpdateState()
+    void doUpdateState(uint32_t elapsed) override;
+    //! @copydoc MapObject::handleAnimationEnded()
+    void handleAnimationEnded() override;
+
 protected:
     static uint16_t sfxIdCnt;
     /*! The type of SfxObject.*/
     SfxType type_;
     //! Animation to use for this SfxObject
-    uint32_t animationId_;
+    uint16_t animationId_;
+    //! When true, SFXObject life is over and object can be destroyed
     bool sfx_life_over_;
-    // to draw all frames or first frame only
-    bool draw_all_frames_;
-    //! Tells if the animation should restart automatically after ending
-    bool loopAnimation_;
+
     uint32_t elapsed_left_;
 };
 

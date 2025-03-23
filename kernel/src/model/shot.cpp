@@ -612,8 +612,7 @@ FlamerShot::FlamerShot(Mission *pMission, const DamageToInflict &dmg) :
     // We create a SFXObjet that we keep in memory to updateits position
     pFlame_ = new SFXObject(pMission->get_map(),
                             dmg_.pWeapon->getClass()->impactAnims()->trace_anim);
-    // The sfxObject will loop to keep it alive
-    pFlame_->setLoopAnimation(true);
+
     pFlame_->setPosition(dmg.originLocW);
     pMission->addSfxObject(pFlame_);
 }
@@ -628,7 +627,7 @@ FlamerShot::~FlamerShot() {
  * Draws the animation of smoke behind the projectile.
  * \param pMission Mission data
  */
-void FlamerShot::drawTrace(Mission *pMission) {
+void FlamerShot::drawTrace([[maybe_unused]] Mission *pMission) {
 
     pFlame_->setPosition(curPosW_);
 }
@@ -638,7 +637,7 @@ void FlamerShot::inflictDamage(Mission *pMission) {
     // target was hit (or shot reached an end)  so we
     // can get rid of sfxobject
     // it will be destroyed by the GameplayMenu loop
-    pFlame_->setLoopAnimation(false);
+    pFlame_->forceEndofLife();
     pFlame_ = NULL;
     if (pShootableHit_ != NULL) {
         pShootableHit_->handleHit(dmg_);

@@ -363,7 +363,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
 
         for (size_t i = 0; i < mission_->numSfxObjects(); i++) {
             fs_knl::SFXObject *pSfx = mission_->sfxObjects(i);
-            change |= pSfx->animate(diff);
+            pSfx->animate2(diff);
             if (pSfx->sfxLifeOver()) {
                 mission_->delSfxObject(i);
                 i--;
@@ -1338,7 +1338,13 @@ void GameplayMenu::highlightLeaderMarker()
 {
     for (size_t i = fs_knl::Squad::kSlot1; i < fs_knl::Squad::kMaxSlot; i++) {
         // draw animation only for leader
-        mission_->sfxObjects(4 + i)->setDrawAllFrames(selection_.getLeaderSlot() == i);
+        //mission_->sfxObjects(4 + i)->setDrawAllFrames(selection_.getLeaderSlot() == i);
+        //mission_->sfxObjects(4 + i)->playMainAnimation();
+        if (selection_.getLeaderSlot() == i) {
+            mission_->sfxObjects(4 + i)->playMainAnimation();
+        } else {
+            mission_->sfxObjects(4 + i)->resetAnimation();
+        }
     }
 }
 

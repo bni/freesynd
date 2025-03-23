@@ -98,13 +98,14 @@ public:
     // Draw the current animation at given position
     void draw(const Point2D &screenPos, uint16_t animOffset);
 
-    //! Reset the player
-    void reset();
+    //! Keep current animation loaded but resets it to first frame and stops playing
+    void resetAnimation();
 
 protected:
     //! loads the animation to play. Subclass can alter the loaded animation
     virtual void loadAnimation(const uint16_t mapObjectAnimationId, uint32_t newMaxPlayTime);
-    
+    //! Reset the player
+    void reset();
 protected:
     //! List of registered animations
     std::vector<MapObjectAnimation> animations_;
