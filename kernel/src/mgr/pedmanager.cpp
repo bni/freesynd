@@ -164,9 +164,8 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
         return NULL;
     }
 
-    Ped *pedanim = new Ped();
-    initAnimation(pedanim, fs_utl::READ_LE_UINT16(gamdata.index_base_anim));
-    PedInstance *newped = new PedInstance(pedanim, ped_idx, pMap, isOurAgent);
+    PedInstance *newped = new PedInstance(ped_idx, pMap, isOurAgent);
+    newped->setAnimations(fs_utl::READ_LE_UINT16(gamdata.index_base_anim));
 
     int hp = fs_utl::READ_LE_INT16(gamdata.health);
     if (isOurAgent) {
@@ -185,7 +184,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
         newped->setStateMasks(PedInstance::pa_smDead);
     } else {
         newped->setHealth(hp);
-        newped->setStateMasks(PedInstance::pa_smStanding);
+        newped->goToState(PedInstance::pa_smStanding);
     }
     // this is tile based Z we get, realword Z is in gamdata,
     // for correct calculations of viewpoint, target hit etc.

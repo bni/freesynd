@@ -33,6 +33,7 @@
 #include "fs-kernel/model/train.h"
 #include "fs-kernel/model/squad.h"
 #include "fs-kernel/model/mission.h"
+#include "fs-kernel/mgr/missionmanager.h"
 
 namespace fs_knl {
 //*************************************
@@ -948,6 +949,10 @@ void ShootAction::setAimedAt(const WorldPoint &aimedAt) {
  */
 bool ShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusNotStarted) {
+        // TODO : stop moving only if shooting in different direction of movement
+        if (pPed->isMoving()) {
+            pPed->currentAction()->suspend(pPed);
+        }
         // Turn to target
         pPed->setDirectionTowardPosition(aimedAt_);
         // Shoot
@@ -962,6 +967,9 @@ bool ShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed
     } else if (status_ == kActStatusRunning) {
         // Shooting animation is finished
         pPed->leaveState(PedInstance::pa_smFiring);
+        if (pPed->isCurrentActionOfType(Action::kActTypeWalk)) {
+            pPed->currentAction()->resume(pMission, pPed);
+        }
 
         // The action is complete only after a certain laps of time to
         // simulate the fact that the weapon needs to be reloaded
@@ -1044,6 +1052,11 @@ bool AutomaticShootAction::execute(uint32_t elapsed, Mission *pMission, PedInsta
         setRunning();
         // change state to firing
         pPed->goToState(PedInstance::pa_smFiring);
+        // If ped was moving, stop during shooting
+        // TODO : stop moving only if shooting in different direction of movement
+        if (pPed->isMoving()) {
+            pPed->currentAction()->suspend(pPed);
+        }
         pWeapon_->setDirection(0);
         firstTime = true;
     }
@@ -1074,6 +1087,10 @@ void AutomaticShootAction::stop() {
         PedInstance *pPed = pWeapon_->owner();
         // Shooting animation is finished
         pPed->leaveState(PedInstance::pa_smFiring);
+        // If ped was moving before starting shooting, then resume walking
+        if (pPed->isCurrentActionOfType(Action::kActTypeWalk)) {
+            pPed->currentAction()->resume(g_missionCtrl.mission(), pPed);
+        }
         // The action is complete only after a certain laps of time to
         // simulate the fact that the weapon needs to be reloaded
         // and the shooter's reactivity to that

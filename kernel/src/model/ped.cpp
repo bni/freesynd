@@ -341,15 +341,20 @@ void PedInstance::synchDrawnAnimWithActionState(void) {
     } else if ((state_ & (pa_smWalking | pa_smFollowing)) != 0) {
         if ((state_ & pa_smFiring) != 0)
             setDrawnAnim(PedInstance::ad_WalkFireAnim);
-        else
+        else {
             setDrawnAnim(PedInstance::ad_WalkAnim);
+            playStandOrWalkAnimation();
+        }
     } else if ((state_ & pa_smWalkingBurning) != 0) {
         setDrawnAnim(PedInstance::ad_WalkBurnAnim);
     } else if ((state_ & pa_smStanding) != 0) {
-        if ((state_ & pa_smFiring) != 0)
+        if ((state_ & pa_smFiring) != 0) {
             setDrawnAnim(PedInstance::ad_StandFireAnim);
-        else
+            playStandAndShootAnimation();
+        } else {
             setDrawnAnim(PedInstance::ad_StandAnim);
+            playStandOrWalkAnimation();
+        }
     } else if ((state_ & pa_smPickUp) != 0) {
         setDrawnAnim(PedInstance::ad_PickupAnim);
     } else if ((state_ & pa_smPutDown) != 0) {
@@ -391,6 +396,99 @@ void PedInstance::leaveState(uint32_t as) {
     }
 }
 
+void PedInstance::setAnimations(uint16_t baseSpriteAnimationId) {
+    if (baseSpriteAnimationId == 1) { // Animations for agents
+        animations_.standAnimations[Weapon::Unarmed_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId);
+        animations_.standAnimations[Weapon::EnergyShield_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 16, fs_eng::kAnimationModeLoop);
+        animations_.standAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 32);
+        animations_.standAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 40, fs_eng::kAnimationModeLoop);
+        animations_.standAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 48);
+        
+        animations_.walkAnimations[Weapon::Unarmed_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 8, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::EnergyShield_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 56, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 72, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 80, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 88, fs_eng::kAnimationModeLoop);
+
+        // I think 97 was the original pistol shoot anim, but it wasn't sexy enough.
+        animations_.standShootAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104, fs_eng::kAnimationModeLoop);
+        animations_.standShootAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 112, fs_eng::kAnimationModeLoop);
+        animations_.standShootAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 120);
+        animations_.standShootAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 128, fs_eng::kAnimationModeLoop);
+        animations_.standShootAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 136);
+        
+        animations_.walkShootAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 152);
+        animations_.walkShootAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 152);
+        animations_.walkShootAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 152);
+        animations_.walkShootAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 160);
+        animations_.walkShootAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 168);
+        animations_.walkShootAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 176);
+        animations_.walkShootAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 184);
+        
+            /* 
+        pedanim->setWalkFireAnim(Weapon::Pistol_Anim, 152 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::Uzi_Anim, 152 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::Shotgun_Anim, 152 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::Gauss_Anim, 152 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::Minigun_Anim, 160 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::Laser_Anim, 168 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::Flamer_Anim, 176 + baseAnim);
+        pedanim->setWalkFireAnim(Weapon::LongRange_Anim, 184 + baseAnim); */
+    } else {
+
+    }
+}
+
 /*!
  * Update the current frame.
  * \param elapsed Time since the last frame
@@ -400,6 +498,32 @@ bool PedInstance::updateAnimation(uint32_t elapsed) {
     MapObject::animate(elapsed);
 
     return handleDrawnAnim(elapsed);
+}
+
+void PedInstance::doUpdateState(uint32_t elapsed) {
+    Mission *mission = g_missionCtrl.mission();
+    // Execute current behaviour
+    behaviour_.execute(elapsed, mission);
+
+    // Execute any active action
+    executeAction(elapsed, mission);
+
+    // cannot shoot if ped is doing something exlusive
+    if (currentAction_ == NULL || !currentAction_->isExclusive()) {
+        executeUseWeaponAction(elapsed, mission);
+    }
+}
+
+void PedInstance::handleAnimationEnded() {
+    // An action was waiting for the animation to finish
+    if (currentAction_ && currentAction_->isWaitingForAnimation()) {
+        // so continue action
+        currentAction_->setRunning();
+    }
+    if (pUseWeaponAction_ && pUseWeaponAction_->isWaitingForAnimation()) {
+        // so continue action
+        pUseWeaponAction_->setRunning();
+    }
 }
 
 /*!
@@ -452,7 +576,9 @@ bool PedInstance::executeAction(uint32_t elapsed, Mission *pMission) {
 
     while(currentAction_ != NULL) {
         // execute action
-        updated |= currentAction_->execute(elapsed, pMission, this);
+        if (!currentAction_->isSuspended()) {
+            updated |= currentAction_->execute(elapsed, pMission, this);
+        }
         if (currentAction_->isFinished()) {
             if (health_ == 0) {
                 // Ped may have died during execution of a HitAction.
@@ -720,9 +846,9 @@ void PedInstance::showPath(int scrollX, int scrollY, fs_eng::FSColor color) {
     }
 }
 
-PedInstance::PedInstance(Ped *ped, uint16_t anId, Map *pMap, bool isOur) :
+PedInstance::PedInstance(uint16_t anId, Map *pMap, bool isOur) :
     ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed),
-    ped_(ped),
+    ped_(nullptr),
     desc_state_(PedInstance::pd_smUndefined),
     hostile_desc_(PedInstance::pd_smUndefined),
     obj_group_def_(PedInstance::og_dmUndefined),
@@ -769,6 +895,32 @@ PedInstance::~PedInstance()
     destroyUseWeaponAction();
 }
 
+/*!
+ * Play a stand or walk animation whether the ped is moving or not and depending
+ * on the selected weapon. 
+ */
+void PedInstance::playStandOrWalkAnimation() {
+    Weapon::WeaponAnimIndex weapon_idx =
+        selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
+    if (isMoving()) {
+        animationPlayer_->play(animations_.walkAnimations[weapon_idx]);
+    } else {
+        animationPlayer_->play(animations_.standAnimations[weapon_idx]);
+    }
+}
+
+void PedInstance::playStandAndShootAnimation() {
+    Weapon::WeaponAnimIndex weapon_idx =
+        selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
+    animationPlayer_->play(animations_.standShootAnimations[weapon_idx]);
+}
+
+void PedInstance::playWalkAndShootAnimation() {
+    Weapon::WeaponAnimIndex weapon_idx =
+        selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
+    animationPlayer_->play(animations_.walkShootAnimations[weapon_idx]);
+}
+
 void PedInstance::draw(const Point2D &screenPos) {
 
     // ensure on map
@@ -779,8 +931,16 @@ void PedInstance::draw(const Point2D &screenPos) {
         selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
     Point2D posWithOffs = addOffs(screenPos);
 
-
-    switch(drawnAnim()){
+    if (animationPlayer_->isCurrentAnimation(animations_.standAnimations[weapon_idx])) {
+        animationPlayer_->draw(posWithOffs, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.walkAnimations[weapon_idx])) {
+        animationPlayer_->draw(posWithOffs, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.standShootAnimations[weapon_idx])) {
+        animationPlayer_->draw(posWithOffs, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.walkShootAnimations[weapon_idx])) {
+        animationPlayer_->draw(posWithOffs, getDiscreteDirection());
+    }
+/*    switch(drawnAnim()){
         case PedInstance::ad_HitAnim:
             ped_->drawHitFrame(posWithOffs, getDiscreteDirection(), frame_);
             break;
@@ -837,7 +997,7 @@ void PedInstance::draw(const Point2D &screenPos) {
             break;
         case PedInstance::ad_NoAnimation:
             break;
-    }
+    }*/
 }
 
 void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
@@ -845,7 +1005,7 @@ void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
     Weapon::WeaponAnimIndex weapon_idx =
         selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
 
-    switch(drawnAnim()) {
+ /*   switch(drawnAnim()) {
         case PedInstance::ad_HitAnim:
             ped_->drawHitFrame(screenPos, getDiscreteDirection(), frame_);
             break;
@@ -905,7 +1065,7 @@ void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
             printf("hmm ad_NoAnimation\n");
 #endif
             break;
-    }
+    }*/
 }
 
 bool PedInstance::inSightRange(MapObject *t) {
@@ -944,6 +1104,8 @@ void PedInstance::handleWeaponDeselected(WeaponInstance * wi) {
         // don't warn if ped is police to limit calls
         EventManager::fire<ShootingWeaponSelectedEvent>(this, false);
     }
+    // Update animation
+    playStandOrWalkAnimation();
 }
 
 /*!
@@ -955,6 +1117,7 @@ void PedInstance::handleWeaponSelected(WeaponInstance * wi, WeaponInstance * pre
     switch(wi->getClass()->getType()) {
     case Weapon::EnergyShield:
         addActionUseEnergyShield(wi);
+        playStandOrWalkAnimation();
         break;
     case Weapon::AccessCard:
         addEmulatedGroupDef(4, og_dmPolice);
@@ -971,6 +1134,9 @@ void PedInstance::handleWeaponSelected(WeaponInstance * wi, WeaponInstance * pre
         behaviour_.handleBehaviourEvent(Behaviour::kBehvEvtPersuadotronActivated);
         break;
     default:
+        if (wi->canShoot()) {
+            playStandOrWalkAnimation();
+        }
         break;
     }
 
@@ -1233,10 +1399,12 @@ void PedInstance::handleHit(DamageToInflict &d) {
     }
 }
 
+
 /*!
- * Method called when object is hit by a weapon shot.
- * \param d Damage description
- * \return true if Ped has died
+ * @brief 
+ * @param pMission 
+ * @param d 
+ * @return 
  */
 bool PedInstance::handleDeath(Mission *pMission, DamageToInflict &d) {
     if (health_ == 0) {

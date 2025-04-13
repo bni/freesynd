@@ -371,7 +371,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         }
 
         for (size_t i = 0; i < mission_->numPeds(); i++)
-            change |= mission_->ped(i)->animate(diff);
+            mission_->ped(i)->animate2(diff);
 
 
         for (size_t i = 0; i < mission_->numVehicles(); i++)
@@ -1158,7 +1158,7 @@ void GameplayMenu::drawMissionHint(uint32_t elapsed) {
     {
         for (SquadSelection::Iterator it = selection_.begin();
                             it != selection_.end(); ++it) {
-            if ((*it)->isMoving()) {
+            if ((*it)->hasDestination()) {
                 str = getMessage("HINT_GOING");
             } else {
                 str = getMessage("HINT_OBSERVING");

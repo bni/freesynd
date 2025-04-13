@@ -525,7 +525,7 @@ public:
     virtual bool doMove(uint32_t elapsed, Mission *m) = 0;
 
     //! Return true if the ped is moving
-    bool isMoving() { return speed_ != 0 || !dest_path_.empty();}
+    bool isMoving() { return speed_ != 0; }
     //! Returns true if object currently has a destination point (ie it's arrived)
     bool hasDestination() { return !dest_path_.empty(); }
 

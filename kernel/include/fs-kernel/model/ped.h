@@ -158,6 +158,20 @@ protected:
 };
 
 /*!
+ * Structure to hold all animations for a PedInstance
+ */
+struct PedAnimations {
+    //! Animation when standing with or without a weapon
+    uint16_t standAnimations[10];
+    //! Animation when walking with or without a weapon
+    uint16_t walkAnimations[NUM_ANIMS];
+    //! Animation when standing and shooting with a weapon
+    uint16_t standShootAnimations[NUM_ANIMS];
+    //! Animation when walking and shooting with a weapon
+    uint16_t walkShootAnimations[NUM_ANIMS];
+};
+
+/*!
  * Pedestrian instance class.
  */
 class PedInstance : public ShootableMovableMapObject, public WeaponHolder,
@@ -181,7 +195,7 @@ public:
         kPedTypeCriminal = 0x10
     } ;
 
-    PedInstance(Ped *ped, uint16_t id, Map *pMap, bool isOur);
+    PedInstance(uint16_t id, Map *pMap, bool isOur);
     ~PedInstance();
 
     /*!
@@ -254,9 +268,23 @@ public:
         pa_smAll = 0xFFFF
     };
 
-    void draw(const Point2D &screenPos) override;
+    /**
+     * @name Animation
+     */
+    ///@{
+    /*!
+     * @brief Init PedInstance animations using the base animation.
+     */
+    void setAnimations(uint16_t baseSpriteAnimationId);
 
+    void draw(const Point2D &screenPos) override;
+    
     void setFrame(int f) { frame_ = f; }
+
+    void playStandOrWalkAnimation();
+    void playStandAndShootAnimation();
+    void playWalkAndShootAnimation();
+    ///@}
 
     void setSightRange(int new_sight_range) { sight_range_ = new_sight_range; }
     int sightRange() { return sight_range_; }
@@ -285,6 +313,11 @@ public:
     void addToAltActions(MovementAction *pToAdd);
     //! Returns the ped's current movement action
     MovementAction * currentAction() { return currentAction_; }
+    //! Return true if current movement action is non null and has given type
+    bool isCurrentActionOfType(Action::ActionType type) {
+        return currentAction_ != NULL &&
+                currentAction_->type() == type;
+    }
     //! Returns the ped's first default action (can be null)
     MovementAction * defaultAction() { return defaultAction_; }
     //! Returns true if ped's current action is from given source
@@ -663,6 +696,11 @@ protected:
     //! Update frame to render
     bool updateAnimation(uint32_t elapsed);
 
+    //! Subclasses reimplement this to update their internal state
+    void doUpdateState(uint32_t elapsed) override;
+
+    void handleAnimationEnded() override;
+
 private:
     inline int getClosestDirs(int dir, int& closest, int& closer);
     bool floodMap(Mission *m, const TilePoint &clippedDestPt, floodPointDesc *mdpmirror);
@@ -702,6 +740,8 @@ protected:
     MovementAction *altAction_;
     /*! Current action of using a weapon.*/
     UseWeaponAction *pUseWeaponAction_;
+    //! The list of animations for the ped
+    PedAnimations animations_;
 
     // (pedDescStateMasks)
     uint32_t desc_state_;
