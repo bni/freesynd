@@ -266,6 +266,9 @@ bool PedInstance::switchActionStateTo(uint32_t as) {
         case pa_smDead:
             state_ = pa_smDead;
             break;
+        case pa_smDying:
+            state_ = pa_smDying;
+            break;
         case pa_smUnavailable:
             state_ = pa_smUnavailable;
             break;
@@ -357,8 +360,10 @@ void PedInstance::synchDrawnAnimWithActionState(void) {
         }
     } else if ((state_ & pa_smPickUp) != 0) {
         setDrawnAnim(PedInstance::ad_PickupAnim);
+        playPickupOrDropAnimation();
     } else if ((state_ & pa_smPutDown) != 0) {
         setDrawnAnim(PedInstance::ad_PutdownAnim);
+        playPickupOrDropAnimation();
     } else if ((state_ & pa_smInCar) != 0) {
         setDrawnAnim(PedInstance::ad_StandAnim);
     } else if ((state_ & pa_smHit) != 0) {
@@ -396,10 +401,20 @@ void PedInstance::leaveState(uint32_t as) {
     }
 }
 
+/*!
+ * @brief 
+ * @param aState 
+ * @return 
+ */
+bool PedInstance::isState(uint32_t aState) {
+    return (state_ & aState) != 0;
+}
+
 void PedInstance::setAnimations(uint16_t baseSpriteAnimationId) {
-    if (baseSpriteAnimationId == 1) { // Animations for agents
-        animations_.standAnimations[Weapon::Unarmed_Anim]  = 
+    animations_.standAnimations[Weapon::Unarmed_Anim]  = 
             animationPlayer_->addAnimation(baseSpriteAnimationId);
+    
+    if (baseSpriteAnimationId == 1) { // Animations for agents
         animations_.standAnimations[Weapon::EnergyShield_Anim]  = 
             animationPlayer_->addAnimation(baseSpriteAnimationId + 16, fs_eng::kAnimationModeLoop);
         animations_.standAnimations[Weapon::Pistol_Anim]  = 
@@ -474,19 +489,121 @@ void PedInstance::setAnimations(uint16_t baseSpriteAnimationId) {
             animationPlayer_->addAnimation(baseSpriteAnimationId + 176);
         animations_.walkShootAnimations[Weapon::LongRange_Anim]  = 
             animationPlayer_->addAnimation(baseSpriteAnimationId + 184);
-        
-            /* 
-        pedanim->setWalkFireAnim(Weapon::Pistol_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Uzi_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Shotgun_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Gauss_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Minigun_Anim, 160 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Laser_Anim, 168 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Flamer_Anim, 176 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::LongRange_Anim, 184 + baseAnim); */
     } else {
+        // NOTE: peds other then agents have pistol like animations for
+        // all weapons
+        animations_.standAnimations[Weapon::EnergyShield_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId, fs_eng::kAnimationModeLoop);
+        animations_.standAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        animations_.standAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24, fs_eng::kAnimationModeLoop);
+        animations_.standAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24);
+        
+        animations_.walkAnimations[Weapon::Unarmed_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 8, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::EnergyShield_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 24, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
+        animations_.walkAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 64, fs_eng::kAnimationModeLoop);
 
+        animations_.standShootAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104, fs_eng::kAnimationModeLoop);
+        animations_.standShootAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104, fs_eng::kAnimationModeLoop);
+        animations_.standShootAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.standShootAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104, fs_eng::kAnimationModeLoop);
+        animations_.standShootAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        
+        animations_.walkShootAnimations[Weapon::Pistol_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Uzi_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Shotgun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Gauss_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Minigun_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Laser_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::Flamer_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
+        animations_.walkShootAnimations[Weapon::LongRange_Anim]  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 104);
     }
+
+    animations_.pickAnimation  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 192);
+    animations_.hitAnimation  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 193);
+    animations_.vaporizeAnimation  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 197);
+    animations_.dyingAnimation  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 205);
+    animations_.deadAgentAnimation  = 
+            animationPlayer_->addAnimation(205);
+    animations_.deadAnimation  = 
+            animationPlayer_->addAnimation(baseSpriteAnimationId + 206,
+                                            fs_eng::kAnimationModeSingle, 2);
+
+
+    /*
+    pedanim->setPickupAnim(192 + baseAnim);
+    pedanim->setHitAnim(193 + baseAnim);
+   pedanim->setDieAnim(205 + baseAnim);
+    pedanim->setDeadAnim(206 + baseAnim);
+    pedanim->setVaporizeAnim(197 + baseAnim);
+    pedanim->setDeadAgentAnim(205);
+
+
+    pedanim->setSinkAnim(201 + baseAnim);
+    // 203 - die, 204 - dead, agent only
+    pedanim->setDieAgentAnim(203 + baseAnim);
+ 
+    // when this burning should be used?
+    pedanim->setStandBurnAnim(208);
+    // this one used when hit with flamethrower
+    pedanim->setWalkBurnAnim(209);
+    pedanim->setDieBurnAnim(210);
+    pedanim->setSmokeBurnAnim(211);
+    pedanim->setDeadBurnAnim(828);
+    pedanim->setPersuadeAnim(236);
+    */
 }
 
 /*!
@@ -563,98 +680,6 @@ bool PedInstance::animate(uint32_t elapsed) {
     }
 
     return update;
-}
-
-/*!
- * Executes the maximum number of actions.
- * \param elapsed Time since the last frame
- * \param mission Mission data
- * \return True if something has changed (to update rendering)
- */
-bool PedInstance::executeAction(uint32_t elapsed, Mission *pMission) {
-    bool updated = false;
-
-    while(currentAction_ != NULL) {
-        // execute action
-        if (!currentAction_->isSuspended()) {
-            updated |= currentAction_->execute(elapsed, pMission, this);
-        }
-        if (currentAction_->isFinished()) {
-            if (health_ == 0) {
-                // Ped may have died during execution of a HitAction.
-                destroyAllActions(true);
-                destroyUseWeaponAction();
-            } else {
-                bool warnBehaviour = currentAction_->warnBehaviour();
-                Action::ActionType actionType = currentAction_->type();
-                // current action is finished : go to next one
-                MovementAction *pNext = currentAction_->next();
-
-                if (currentAction_->source() == Action::kActionNotScripted) {
-                    currentAction_->removeAndJoinChain();
-                    delete currentAction_;
-                    currentAction_ = NULL;
-                }
-
-                if (warnBehaviour) {
-                    behaviour_.handleBehaviourEvent(Behaviour::kBehvEvtActionEnded, &actionType);
-                }
-
-                // If next action was suspended, resume it
-                if (pNext != NULL && pNext->isSuspended()) {
-                    pNext->resume(pMission, this);
-                }
-
-                currentAction_ = pNext;
-            }
-        } else if (currentAction_->type() == Action::kActTypeReset) {
-            ResetScriptedAction *pReset = static_cast<ResetScriptedAction *>(currentAction_);
-            Action::ActionSource source = pReset->sourceToReset();
-
-            if (pReset->source() == Action::kActionNotScripted) {
-                pReset->removeAndJoinChain();
-                delete pReset;
-            }
-            resetActions(source);
-            break;
-        } else if (currentAction_->type() == Action::kActTypeReplaceCurrent) {
-            ReplaceCurrentAction *pReplace = static_cast<ReplaceCurrentAction *>(currentAction_);
-            MovementAction *pTarget = pReplace->targetAction();
-            // delete actions
-            destroyAllActions(false);
-            currentAction_ = pTarget;
-            break;
-        } else {
-            // current action is still running, so stop iterate now
-            // we will continue next time
-            break;
-        }
-    }
-
-    return updated;
-}
-
-/*!
- * Executes a shoot action.
- */
-bool PedInstance::executeUseWeaponAction(uint32_t elapsed, Mission *pMission) {
-    bool updated = false;
-    if(pUseWeaponAction_ != NULL) {
-        // execute action
-        updated |= pUseWeaponAction_->execute(elapsed, pMission, this);
-        if (pUseWeaponAction_->isFinished()) {
-            // erase action
-            delete pUseWeaponAction_;
-            pUseWeaponAction_ = NULL;
-
-            // then select another weapon maybe
-            if (selectedWeapon() && selectedWeapon()->ammoRemaining() == 0) {
-                handleSelectedWeaponHasNoAmmo();
-            }
-        }
-    }
-
-    return updated;
 }
 
 void PedInstance::handleSelectedWeaponHasNoAmmo() {
@@ -921,6 +946,30 @@ void PedInstance::playWalkAndShootAnimation() {
     animationPlayer_->play(animations_.walkShootAnimations[weapon_idx]);
 }
 
+void PedInstance::playPickupOrDropAnimation() {
+    animationPlayer_->play(animations_.pickAnimation);
+}
+
+void PedInstance::playHitAnimation() {
+    animationPlayer_->play(animations_.hitAnimation);
+}
+
+void PedInstance::playDyingAnimation() {
+    animationPlayer_->play(animations_.dyingAnimation);
+}
+
+void PedInstance::playDeadAnimation() {
+    animationPlayer_->play(animations_.deadAnimation);
+}
+
+void PedInstance::playVaporizeAnimation() {
+    animationPlayer_->play(animations_.vaporizeAnimation);
+}
+
+void PedInstance::playDeadAgentAnimation() {
+    animationPlayer_->play(animations_.deadAgentAnimation);
+}
+
 void PedInstance::draw(const Point2D &screenPos) {
 
     // ensure on map
@@ -939,36 +988,40 @@ void PedInstance::draw(const Point2D &screenPos) {
         animationPlayer_->draw(posWithOffs, getDiscreteDirection());
     } else if (animationPlayer_->isCurrentAnimation(animations_.walkShootAnimations[weapon_idx])) {
         animationPlayer_->draw(posWithOffs, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.hitAnimation)) {
+        animationPlayer_->draw(posWithOffs, getDiscreteDirection());
+    } else {
+        animationPlayer_->draw(posWithOffs, 0);
     }
 /*    switch(drawnAnim()){
         case PedInstance::ad_HitAnim:
-            ped_->drawHitFrame(posWithOffs, getDiscreteDirection(), frame_);
+DONE            ped_->drawHitFrame(posWithOffs, getDiscreteDirection(), frame_);
             break;
-        case PedInstance::ad_DieAnim:
+DONE        case PedInstance::ad_DieAnim:
             ped_->drawDieFrame(posWithOffs, frame_);
             break;
-        case PedInstance::ad_DeadAnim:
+DONE        case PedInstance::ad_DeadAnim:
             ped_->drawDeadFrame(posWithOffs, frame_);
             break;
         case PedInstance::ad_DeadAgentAnim:
             ped_->drawDeadAgentFrame(posWithOffs, frame_);
             break;
-        case PedInstance::ad_PickupAnim:
+DONE        case PedInstance::ad_PickupAnim: 
             ped_->drawPickupFrame(posWithOffs, frame_);
             break;
-        case PedInstance::ad_PutdownAnim:
+DONE        case PedInstance::ad_PutdownAnim:
             ped_->drawPickupFrame(posWithOffs, frame_);
             break;
-        case PedInstance::ad_WalkAnim:
+DONE        case PedInstance::ad_WalkAnim:
             ped_->drawWalkFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
-        case PedInstance::ad_StandAnim:
+DONE        case PedInstance::ad_StandAnim:
             ped_->drawStandFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
-        case PedInstance::ad_WalkFireAnim:
+DONE        case PedInstance::ad_WalkFireAnim:
             ped_->drawWalkFireFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
-        case PedInstance::ad_StandFireAnim:
+DONE        case PedInstance::ad_StandFireAnim:
             ped_->drawStandFireFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
             break;
         case PedInstance::ad_VaporizeAnim:
@@ -1374,11 +1427,13 @@ bool PedInstance::handleDrawnAnim(uint32_t elapsed) {
 
 /*!
  * Return the damage after applying reduction of Mod protection.
- * \param d Damage description
+ * @param damage Damage description
+ * @return True if Ped has died due to damage received
  */
-int PedInstance::getRealDamage(DamageToInflict &d) {
-    // TODO : implement
-    return d.dvalue;
+bool PedInstance::takeDamage(DamageToInflict &damage) {
+    // TODO : reduce damage based on Mod protection
+    decreaseHealth(damage.dvalue);
+    return isDead();
 }
 
 /*!
@@ -1386,13 +1441,8 @@ int PedInstance::getRealDamage(DamageToInflict &d) {
  * \param d Damage description
  */
 void PedInstance::handleHit(DamageToInflict &d) {
-    if (health_ > 0) {
-        decreaseHealth(getRealDamage(d));
-
-        // Only add a hit if ped is not already being hit
-        if (currentAction_ == NULL || currentAction_->type() != Action::kActTypeHit) {
-            insertHitAction(d);
-        }
+    if (canTakeAction(fs_knl::Action::kActTypeHit)) {
+        insertHitAction(d);
 
         // Alert behaviour
         behaviour_.handleBehaviourEvent(Behaviour::kBehvEvtHit);

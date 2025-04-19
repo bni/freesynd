@@ -131,6 +131,8 @@ public:
     void setRunning() { status_ = kActStatusRunning; }
     //! Sets the status to WaitForTime
     void setWaitingForTime() { status_ = kActStatusWaitForTime; }
+    //! Sets the status to WaitForAnimation
+    void setWaitingForAnimation() { status_ = kActStatusWaitForAnim; }
     //! Sets the status to Succeeded
     void setSucceeded() { status_ = kActStatusSucceeded; }
     //! Sets the status to Failed
@@ -571,6 +573,9 @@ class HitAction : public MovementAction {
 public:
     //! Constructor of the class
     HitAction(DamageToInflict &d);
+
+    //! Entry point to execute the action
+    bool execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
     //! HitAction cannot be suspended
     bool suspend([[maybe_unused]] PedInstance *pPed) { return false; }

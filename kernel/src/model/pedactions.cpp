@@ -23,6 +23,114 @@
 #include "fs-utils/log/log.h"
 
 namespace fs_knl {
+
+/*!
+ * @brief 
+ * @param type 
+ * @return 
+ */
+bool PedInstance::canTakeAction(Action::ActionType type) {
+    if (type == Action::kActTypeHit) {
+        if (isAlive() && !isState(pa_smHit)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/*!
+ * Executes the maximum number of actions.
+ * \param elapsed Time since the last frame
+ * \param mission Mission data
+ * \return True if something has changed (to update rendering)
+ */
+bool PedInstance::executeAction(uint32_t elapsed, Mission *pMission) {
+    bool updated = false;
+
+    while(currentAction_ != NULL) {
+        // execute action
+        if (!currentAction_->isSuspended()) {
+            updated |= currentAction_->execute(elapsed, pMission, this);
+        }
+        if (currentAction_->isFinished()) {
+            if (health_ == 0) {
+                // Ped may have died during execution of a HitAction.
+                destroyAllActions(true);
+                destroyUseWeaponAction();
+            } else {
+                bool warnBehaviour = currentAction_->warnBehaviour();
+                Action::ActionType actionType = currentAction_->type();
+                // current action is finished : go to next one
+                MovementAction *pNext = currentAction_->next();
+
+                if (currentAction_->source() == Action::kActionNotScripted) {
+                    currentAction_->removeAndJoinChain();
+                    delete currentAction_;
+                    currentAction_ = NULL;
+                }
+
+                if (warnBehaviour) {
+                    behaviour_.handleBehaviourEvent(Behaviour::kBehvEvtActionEnded, &actionType);
+                }
+
+                // If next action was suspended, resume it
+                if (pNext != NULL && pNext->isSuspended()) {
+                    pNext->resume(pMission, this);
+                }
+
+                currentAction_ = pNext;
+            }
+        } else if (currentAction_->type() == Action::kActTypeReset) {
+            ResetScriptedAction *pReset = static_cast<ResetScriptedAction *>(currentAction_);
+            Action::ActionSource source = pReset->sourceToReset();
+
+            if (pReset->source() == Action::kActionNotScripted) {
+                pReset->removeAndJoinChain();
+                delete pReset;
+            }
+            resetActions(source);
+            break;
+        } else if (currentAction_->type() == Action::kActTypeReplaceCurrent) {
+            ReplaceCurrentAction *pReplace = static_cast<ReplaceCurrentAction *>(currentAction_);
+            MovementAction *pTarget = pReplace->targetAction();
+            // delete actions
+            destroyAllActions(false);
+            currentAction_ = pTarget;
+            break;
+        } else {
+            // current action is still running, so stop iterate now
+            // we will continue next time
+            break;
+        }
+    }
+
+    return updated;
+}
+
+/*!
+ * Executes a shoot action.
+ */
+bool PedInstance::executeUseWeaponAction(uint32_t elapsed, Mission *pMission) {
+    bool updated = false;
+    if(pUseWeaponAction_ != NULL) {
+        // execute action
+        updated |= pUseWeaponAction_->execute(elapsed, pMission, this);
+        if (pUseWeaponAction_->isFinished()) {
+            // erase action
+            delete pUseWeaponAction_;
+            pUseWeaponAction_ = NULL;
+
+            // then select another weapon maybe
+            if (selectedWeapon() && selectedWeapon()->ammoRemaining() == 0) {
+                handleSelectedWeaponHasNoAmmo();
+            }
+        }
+    }
+
+    return updated;
+}
+
 /*!
  * Add the given action to the list of actions.
  * If appendAction is true, the action is added after all existing actions.

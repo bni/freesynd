@@ -169,6 +169,14 @@ struct PedAnimations {
     uint16_t standShootAnimations[NUM_ANIMS];
     //! Animation when walking and shooting with a weapon
     uint16_t walkShootAnimations[NUM_ANIMS];
+    //! Animation when ped pick up or drop object
+    uint16_t pickAnimation;
+    //! Animation when ped is hit by weapon
+    uint16_t hitAnimation;
+    uint16_t dyingAnimation;
+    uint16_t deadAnimation;
+    uint16_t vaporizeAnimation;
+    uint16_t deadAgentAnimation;
 };
 
 /*!
@@ -255,6 +263,7 @@ public:
         pa_smPickUp = 0x0020,
         pa_smPutDown = 0x0040,
         pa_smBurning = 0x0080,
+        pa_smDying = 0x0100,
         pa_smInCar = 0x0400,
         pa_smHitByPersuadotron = 0x0800,
         pa_smDead = 0x1000,
@@ -284,6 +293,12 @@ public:
     void playStandOrWalkAnimation();
     void playStandAndShootAnimation();
     void playWalkAndShootAnimation();
+    void playPickupOrDropAnimation();
+    void playHitAnimation();
+    void playDyingAnimation();
+    void playDeadAnimation();
+    void playVaporizeAnimation();
+    void playDeadAgentAnimation();
     ///@}
 
     void setSightRange(int new_sight_range) { sight_range_ = new_sight_range; }
@@ -291,6 +306,10 @@ public:
 
     void showPath(int scrollX, int scrollY, fs_eng::FSColor color);
 
+    /**
+     * @name State management
+     */
+    ///@{
     bool switchActionStateTo(uint32_t as);
     bool switchActionStateFrom(uint32_t as);
     void synchDrawnAnimWithActionState(void);
@@ -301,10 +320,16 @@ public:
     void goToState(uint32_t as);
     //! Quit state for ped (replace switchActionStateFrom)
     void leaveState(uint32_t as);
+    //! Return is current state is equal to given state
+    bool isState(uint32_t as);
+    ///@}
 
-    //*************************************
-    // Action management
-    //*************************************
+    /**
+     * @name Action management
+     */
+    ///@{
+    //! Return true if the given type of action can be created in current state
+    bool canTakeAction(Action::ActionType type);
     //! Adds the given action to the list of actions
     void addMovementAction(MovementAction *pAction, bool appendAction);
     //! Adds the given action to the list of default scripted actions
@@ -365,6 +390,8 @@ public:
     //! Creates and insert a HitAction for the ped
     void insertHitAction(DamageToInflict &d);
 
+    ///@}
+
     //*************************************
     // Movement management
     //*************************************
@@ -381,9 +408,10 @@ public:
     void dropAllWeapons();
     bool wePickupWeapon();
 
-    //*************************************
-    // Shoot & Damage management
-    //*************************************
+    /**
+     * @name Shooting management
+     */
+    ///@{
     //! Return true if ped is currently using a weapon (ie there's an active action)
     bool isUsingWeapon() { return pUseWeaponAction_ != NULL; }
     //! Make the ped stop using weapon
@@ -397,19 +425,24 @@ public:
     //! Gets the time before a ped can shoot again
     int getTimeBetweenShoots(WeaponInstance *pWeapon);
 
-    //! Forces agent to kill himself
-    void commitSuicide();
-
     //! Return true if ped has activated his energy shield
     bool isEnergyShieldActivated() { return fs_utl::isBitsOnWithMask(desc_state_, pd_smShieldProtected); }
     void setEnergyActivated(bool status);
+    ///@}
 
-    //! Return the damage after applying protection of Mod
-    int getRealDamage(DamageToInflict &d);
+    /**
+     * @name Damage management
+     */
+    ///@{
+    //! Forces agent to kill himself
+    void commitSuicide();
+    //! Take the damage inflicted
+    bool takeDamage(DamageToInflict &d);
     //! Method called when object is hit by a weapon shot.
     void handleHit(DamageToInflict &d) override;
     //! Method called to check if ped has died
     bool handleDeath(Mission *pMission, DamageToInflict &d);
+    ///@}
 
     //*************************************
     // Persuasion

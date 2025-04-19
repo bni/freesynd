@@ -774,6 +774,21 @@ MovementAction(kActTypeHit) {
     damage_.pWeapon = d.pWeapon;
 }
 
+bool HitAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+    if (status_ == kActStatusNotStarted) {
+        setRunning();
+        doStart(pMission, pPed);
+        if (!isRunning()) {
+            // not running means failed or waiting for next run
+            return true;
+        }
+    }
+
+    doExecute(elapsed, pMission, pPed);
+
+    return true;
+}
+
 FallDeadHitAction::FallDeadHitAction(DamageToInflict &d) :
 HitAction(d) {
     targetState_ = PedInstance::pa_smNone;
@@ -806,7 +821,9 @@ HitAction(d) {
 void RecoilHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // Change direction due to impact
     pPed->setDirectionTowardPosition(damage_.originLocW);
-    status_ = kActStatusWaitForAnim;
+    pPed->playHitAnimation();
+    pPed->goToState(PedInstance::pa_smHit);
+    setWaitingForAnimation();
 }
 
 /*!
@@ -816,11 +833,21 @@ void RecoilHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *p
  * \param pPed The ped executing the action.
  */
 bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
-    if (status_ == kActStatusRunning) {
-        if (pPed->handleDeath(pMission, damage_)) {
-            targetState_ = PedInstance::pa_smNone;
+    if (isRunning()) {
+        if (pPed->isState(PedInstance::pa_smHit)) {
+            if (pPed->takeDamage(damage_)) {
+                pPed->playDyingAnimation();
+                pPed->goToState(PedInstance::pa_smDying);
+                setWaitingForAnimation();
+            } else {
+                pPed->leaveState(PedInstance::pa_smHit);
+                setSucceeded();
+            }
+        } else if (pPed->isState(PedInstance::pa_smDying)) {
+            pPed->handleDeath(pMission, damage_);
+            pPed->playDeadAnimation();
+            setSucceeded();
         }
-        setSucceeded();
     }
     return true;
 }
@@ -838,7 +865,9 @@ HitAction(d) {
 void LaserHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     // Change direction due to impact
     pPed->setDirectionTowardPosition(damage_.originLocW);
-    status_ = kActStatusWaitForAnim;
+    pPed->playVaporizeAnimation();
+    pPed->goToState(PedInstance::pa_smHitByLaser);
+    setWaitingForAnimation();
 }
 
 /*!
@@ -848,9 +877,14 @@ void LaserHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pP
  * \param pPed The ped executing the action.
  */
 bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
-    if (status_ == kActStatusRunning) {
-        if (pPed->handleDeath(pMission, damage_)) {
-            targetState_ = PedInstance::pa_smNone;
+    if (isRunning()) {
+        if (pPed->takeDamage(damage_)) {
+            pPed->handleDeath(pMission, damage_);
+            if (pPed->isOurAgent()) {
+                pPed->playDeadAgentAnimation();
+            } else {
+                pPed->setDrawable(false);
+            }
         }
         setSucceeded();
     }
