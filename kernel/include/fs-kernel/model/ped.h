@@ -174,9 +174,21 @@ struct PedAnimations {
     //! Animation when ped is hit by weapon
     uint16_t hitAnimation;
     uint16_t dyingAnimation;
+    //! Single frame animation for dead ped
     uint16_t deadAnimation;
+    //! Hit by laser
     uint16_t vaporizeAnimation;
     uint16_t deadAgentAnimation;
+    //! Hit by flame
+    uint16_t walkBurnAnimation;
+    //! when dying from flame
+    uint16_t dyingBurnAnimation;
+    //! end of burning animation
+    uint16_t smokeBurnAnimation;
+    //! dead by burning
+    uint16_t deadBurnAnimation;
+    //! Persuaded animation
+    uint16_t persuadedAnimation;
 };
 
 /*!
@@ -299,6 +311,11 @@ public:
     void playDeadAnimation();
     void playVaporizeAnimation();
     void playDeadAgentAnimation();
+    void playWalkBurnAnimation();
+    void playDyingBurnAnimation();
+    void playSmokeBurnAnimation();
+    void playDeadBurnAnimation();
+    void playPersuadedAnimation();
     ///@}
 
     void setSightRange(int new_sight_range) { sight_range_ = new_sight_range; }
@@ -440,8 +457,8 @@ public:
     bool takeDamage(DamageToInflict &d);
     //! Method called when object is hit by a weapon shot.
     void handleHit(DamageToInflict &d) override;
-    //! Method called to check if ped has died
-    bool handleDeath(Mission *pMission, DamageToInflict &d);
+    //! Method when a Ped is dead
+    void handleDeath(const DamageToInflict &damage);
     ///@}
 
     //*************************************

@@ -765,13 +765,15 @@ bool FireWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unus
 }
 
 HitAction::HitAction(DamageToInflict &d) :
-MovementAction(kActTypeHit) {
+        MovementAction(kActTypeHit) {
     damage_.aimedLocW = d.aimedLocW;
     damage_.dtype = d.dtype;
     damage_.dvalue = d.dvalue;
     damage_.d_owner = d.d_owner;
     damage_.originLocW = d.originLocW;
     damage_.pWeapon = d.pWeapon;
+
+    targetState_ = PedInstance::pa_smNone;
 }
 
 bool HitAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
@@ -789,10 +791,7 @@ bool HitAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) 
     return true;
 }
 
-FallDeadHitAction::FallDeadHitAction(DamageToInflict &d) :
-HitAction(d) {
-    targetState_ = PedInstance::pa_smNone;
-}
+FallDeadHitAction::FallDeadHitAction(DamageToInflict &d) : HitAction(d) {}
 
 /*!
  *
@@ -802,16 +801,15 @@ HitAction(d) {
  */
 bool FallDeadHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusRunning) {
-        pPed->handleDeath(pMission, damage_);
+        pPed->takeDamage(damage_);
+        pPed->playDyingAnimation();
+        pPed->handleDeath(damage_);
         setSucceeded();
     }
     return true;
 }
 
-RecoilHitAction::RecoilHitAction(DamageToInflict &d) :
-HitAction(d) {
-    targetState_ = PedInstance::pa_smHit;
-}
+RecoilHitAction::RecoilHitAction(DamageToInflict &d) : HitAction(d) {}
 
 /*!
  *
@@ -844,7 +842,7 @@ bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMis
                 setSucceeded();
             }
         } else if (pPed->isState(PedInstance::pa_smDying)) {
-            pPed->handleDeath(pMission, damage_);
+            pPed->handleDeath(damage_);
             pPed->playDeadAnimation();
             setSucceeded();
         }
@@ -852,10 +850,7 @@ bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMis
     return true;
 }
 
-LaserHitAction::LaserHitAction(DamageToInflict &d) :
-HitAction(d) {
-    targetState_ = PedInstance::pa_smHitByLaser;
-}
+LaserHitAction::LaserHitAction(DamageToInflict &d) : HitAction(d) {}
 
 /*!
  *
@@ -879,7 +874,7 @@ void LaserHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pP
 bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (isRunning()) {
         if (pPed->takeDamage(damage_)) {
-            pPed->handleDeath(pMission, damage_);
+            pPed->handleDeath(damage_);
             if (pPed->isOurAgent()) {
                 pPed->playDeadAgentAnimation();
             } else {
@@ -892,8 +887,7 @@ bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMiss
 }
 
 WalkBurnHitAction::WalkBurnHitAction(DamageToInflict &d) :
-HitAction(d),burnTimer_(kTimeToWalkBurning) {
-    targetState_ = PedInstance::pa_smWalkingBurning;
+    HitAction(d), burnTimer_(kTimeToWalkBurning) {
 }
 
 /*!
@@ -906,6 +900,9 @@ void WalkBurnHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance 
     walkedDist_ = 0;
     moveDirection_ = rand() % 256;
     pPed->setSpeed(pPed->getDefaultSpeed());
+    pPed->playWalkBurnAnimation();
+    pPed->goToState(PedInstance::pa_smWalkingBurning);
+    phase_ = kBurnPhaseWalk;
 }
 
 /*!
@@ -915,24 +912,38 @@ void WalkBurnHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance 
  * \param pPed The ped executing the action.
  */
 bool WalkBurnHitAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
-    int walkDistDiff = 0;
-    pPed->moveToDir(pMission, elapsed, moveDirdesc_, moveDirection_, -1, -1, &walkDistDiff, true);
-    walkedDist_ += walkDistDiff;
+    switch (phase_) {
+    case kBurnPhaseWalk:
+    {
+        int walkDistDiff = 0;
+        pPed->moveToDir(pMission, elapsed, moveDirdesc_, moveDirection_, -1, -1, &walkDistDiff, true);
+        walkedDist_ += walkDistDiff;
 
-    if (burnTimer_.update(elapsed)) {
-        setSucceeded();
-
-        if (pPed->handleDeath(pMission, damage_)) {
-            targetState_ = PedInstance::pa_smNone;
+        if (burnTimer_.update(elapsed)) {
+            pPed->takeDamage(damage_);
+            phase_ = kBurnPhaseDying;
+            pPed->playDyingBurnAnimation();
+            setWaitingForAnimation();
         }
     }
+        break;
+    case kBurnPhaseDying:
+        phase_ = kBurnPhaseDead;
+        pPed->playSmokeBurnAnimation();
+        setWaitingForAnimation();
+        break;
+    case kBurnPhaseDead:
+        pPed->handleDeath(damage_);
+        pPed->playDeadBurnAnimation();
+        setSucceeded();
+        break;
+    } 
 
     return true;
 }
 
 PersuadedHitAction::PersuadedHitAction(DamageToInflict &d) :
 HitAction(d) {
-    targetState_ = PedInstance::pa_smHitByPersuadotron;
     warnBehaviour_ = true;
 }
 
@@ -942,8 +953,10 @@ HitAction(d) {
  * \param pPed The ped executing the action.
  */
 void PersuadedHitAction::doStart([[maybe_unused]] Mission *pMission, [[maybe_unused]] PedInstance *pPed) {
-    status_ = kActStatusWaitForAnim;
+    pPed->goToState(PedInstance::pa_smHitByPersuadotron);
+    pPed->playPersuadedAnimation();
     g_SoundMgr.play(fs_eng::PERSUADE);
+    setWaitingForAnimation();
 }
 
 /*!
@@ -956,6 +969,7 @@ bool PersuadedHitAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_un
     if (status_ == kActStatusRunning) {
         PedInstance *pAgent = static_cast<PedInstance *>(damage_.d_owner);
         pPed->handlePersuadedBy(pAgent);
+        pPed->leaveState(PedInstance::pa_smHitByPersuadotron);
         setSucceeded();
     }
     return true;

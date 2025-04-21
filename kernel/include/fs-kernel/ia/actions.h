@@ -639,6 +639,14 @@ protected:
      */
     static const int kTimeToWalkBurning;
 
+    //! The different phase of dying by burning
+    enum BurnPhase {
+        kBurnPhaseWalk,
+        kBurnPhaseDying,
+        kBurnPhaseDead
+    };
+    //! Keep track of current phase
+    BurnPhase phase_;
     /*! Structure to hold information while walking.*/
     DirMoveType moveDirdesc_;
     /*! Used to store the distance the ped has walked.*/

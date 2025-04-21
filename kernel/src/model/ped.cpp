@@ -580,29 +580,23 @@ void PedInstance::setAnimations(uint16_t baseSpriteAnimationId) {
     animations_.deadAnimation  = 
             animationPlayer_->addAnimation(baseSpriteAnimationId + 206,
                                             fs_eng::kAnimationModeSingle, 2);
+    animations_.walkBurnAnimation  =  animationPlayer_->addAnimation(209, fs_eng::kAnimationModeLoop);
+    animations_.dyingBurnAnimation  = 
+            animationPlayer_->addAnimation(210, fs_eng::kAnimationModeLoop, 6, 7000);
+    animations_.smokeBurnAnimation  = 
+            animationPlayer_->addAnimation(211, fs_eng::kAnimationModeSingle, 2);
+    animations_.deadBurnAnimation  = 
+            animationPlayer_->addAnimation(828, fs_eng::kAnimationModeSingle, 2);
 
+    animations_.persuadedAnimation = animationPlayer_->addAnimation(236);
 
     /*
-    pedanim->setPickupAnim(192 + baseAnim);
-    pedanim->setHitAnim(193 + baseAnim);
-   pedanim->setDieAnim(205 + baseAnim);
-    pedanim->setDeadAnim(206 + baseAnim);
-    pedanim->setVaporizeAnim(197 + baseAnim);
-    pedanim->setDeadAgentAnim(205);
-
-
+    TODO : should we use these animations?
     pedanim->setSinkAnim(201 + baseAnim);
     // 203 - die, 204 - dead, agent only
     pedanim->setDieAgentAnim(203 + baseAnim);
- 
     // when this burning should be used?
     pedanim->setStandBurnAnim(208);
-    // this one used when hit with flamethrower
-    pedanim->setWalkBurnAnim(209);
-    pedanim->setDieBurnAnim(210);
-    pedanim->setSmokeBurnAnim(211);
-    pedanim->setDeadBurnAnim(828);
-    pedanim->setPersuadeAnim(236);
     */
 }
 
@@ -968,6 +962,26 @@ void PedInstance::playVaporizeAnimation() {
 
 void PedInstance::playDeadAgentAnimation() {
     animationPlayer_->play(animations_.deadAgentAnimation);
+}
+
+void PedInstance::playWalkBurnAnimation() {
+    animationPlayer_->play(animations_.walkBurnAnimation);
+}
+
+void PedInstance::playDyingBurnAnimation() {
+    animationPlayer_->play(animations_.dyingBurnAnimation);
+}
+
+void PedInstance::playSmokeBurnAnimation() {
+    animationPlayer_->play(animations_.smokeBurnAnimation);
+}
+
+void PedInstance::playDeadBurnAnimation() {
+    animationPlayer_->play(animations_.deadBurnAnimation);
+}
+
+void PedInstance::playPersuadedAnimation() {
+    animationPlayer_->play(animations_.persuadedAnimation);
 }
 
 void PedInstance::draw(const Point2D &screenPos) {
@@ -1451,53 +1465,47 @@ void PedInstance::handleHit(DamageToInflict &d) {
 
 
 /*!
- * @brief 
- * @param pMission 
- * @param d 
- * @return 
+ * This method do all things when a ped dies
+ * @param damage The damage that caused the death 
  */
-bool PedInstance::handleDeath(Mission *pMission, DamageToInflict &d) {
-    if (health_ == 0) {
-        clearDestination();
-        switchActionStateTo(PedInstance::pa_smDead);
+void PedInstance::handleDeath(const DamageToInflict &damage) {
+    clearDestination();
+    switchActionStateTo(PedInstance::pa_smDead);
 
-        switch (d.dtype) {
-            case kDmgTypeBullet:
+    switch (damage.dtype) {
+        case kDmgTypeBullet:
+            setDrawnAnim(PedInstance::ad_DieAnim);
+            dropAllWeapons();
+            break;
+        case kDmgTypeLaser:
+            if (is_our_) {
+                setDrawnAnim(PedInstance::ad_DeadAgentAnim);
+            } else {
+                setDrawnAnim(PedInstance::ad_NoAnimation);
+            }
+            break;
+        case kDmgTypeExplosion:
+        case kDmgTypeBurn:
+            if (hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2) &&
+                damage.d_owner != this) {
                 setDrawnAnim(PedInstance::ad_DieAnim);
                 dropAllWeapons();
-                break;
-            case kDmgTypeLaser:
-                if (is_our_) {
-                    setDrawnAnim(PedInstance::ad_DeadAgentAnim);
-                } else {
-                    setDrawnAnim(PedInstance::ad_NoAnimation);
-                }
-                break;
-            case kDmgTypeExplosion:
-            case kDmgTypeBurn:
-                if (hasMinimumVersionOfMod(Mod::MOD_CHEST, Mod::MOD_V2) &&
-                    d.d_owner != this) {
-                    setDrawnAnim(PedInstance::ad_DieAnim);
-                    dropAllWeapons();
-                } else {
-                    // was burning because not enough protected or suicide
-                    // so die burning
-                    setDrawnAnim(PedInstance::ad_DieBurnAnim);
-                }
-                break;
-            default:
-                FSERR(Log::k_FLG_GAME, "PedInstance", "handleDeath", ("Unhandled damage type: %d\n", d.dtype))
-        }
-
-        updatePersuadedRelations(pMission->getSquad());
-
-        // send an event to alert agent died
-        if (isOurAgent()) {
-            EventManager::fire<AgentDiedEvent>(this);
-        }
+            } else {
+                // was burning because not enough protected or suicide
+                // so die burning
+                setDrawnAnim(PedInstance::ad_DieBurnAnim);
+            }
+            break;
+        default:
+            FSERR(Log::k_FLG_GAME, "PedInstance", "handleDeath", ("Unhandled damage type: %d\n", damage.dtype))
     }
 
-    return health_ == 0;
+    updatePersuadedRelations(g_missionCtrl.mission()->getSquad());
+
+    // send an event to alert agent died
+    if (isOurAgent()) {
+        EventManager::fire<AgentDiedEvent>(this);
+    }
 }
 
 void PedInstance::addEnemyGroupDef(uint32_t eg_id, uint32_t eg_def) {
