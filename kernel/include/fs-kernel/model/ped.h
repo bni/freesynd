@@ -51,118 +51,11 @@ class Vehicle;
 #define NUM_ANIMS 10
 
 /*!
- * Pedestrian class.
- */
-class Ped {
-public:
-    Ped();
-    virtual ~Ped() {}
-
-    void setStandAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
-        assert(weapon < NUM_ANIMS);
-        stand_anims_[weapon] = anim;
-    }
-
-    void setWalkAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
-        assert(weapon < NUM_ANIMS);
-        walk_anims_[weapon] = anim;
-    }
-
-    void setStandFireAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
-        assert(weapon < NUM_ANIMS);
-        stand_fire_anims_[weapon] = anim;
-    }
-
-    void setWalkFireAnim(Weapon::WeaponAnimIndex weapon, uint32_t anim) {
-        assert(weapon < NUM_ANIMS);
-        walk_fire_anims_[weapon] = anim;
-    }
-
-    void setDieAgentAnim(uint32_t anim) { die_agent_anim_ = anim; }
-    void setDeadAgentAnim(uint32_t anim) { dead_agent_anim_ = anim; }
-    void setDieAnim(uint32_t anim) { die_anim_ = anim; }
-    void setDeadAnim(uint32_t anim) { dead_anim_ = anim; }
-    void setHitAnim(uint32_t anim) { hit_anim_ = anim; }
-    void setPickupAnim(uint32_t anim) { pickup_anim_ = anim; }
-
-    void setVaporizeAnim(uint32_t anim) { vaporize_anim_ = anim; }
-    void setSinkAnim(uint32_t anim) { sink_anim_ = anim; }
-    void setStandBurnAnim(uint32_t anim) { stand_burn_anim_ = anim; }
-    void setWalkBurnAnim(uint32_t anim) { walk_burn_anim_ = anim; }
-    void setDieBurnAnim(uint32_t anim) { die_burn_anim_ = anim; }
-    void setSmokeBurnAnim(uint32_t anim) { smoke_burn_anim_ = anim; }
-    void setDeadBurnAnim(uint32_t anim) { dead_burn_anim_ = anim; }
-
-    void setPersuadeAnim(uint32_t anim) { persuade_anim_ = anim; }
-
-    bool drawStandFrame(const Point2D &screenPos, uint8_t dir, int frame,
-            Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
-    int lastStandFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
-    bool drawWalkFrame(const Point2D &screenPos, uint8_t dir, int frame,
-            Weapon::WeaponAnimIndex weapon = Weapon::Unarmed_Anim);
-    int lastWalkFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
-    bool drawStandFireFrame(const Point2D &screenPos, uint8_t dir, int frame,
-            Weapon::WeaponAnimIndex weapon);
-    int lastStandFireFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
-    bool drawWalkFireFrame(const Point2D &screenPos, uint8_t dir, int frame,
-            Weapon::WeaponAnimIndex weapon);
-    int lastWalkFireFrame(uint8_t dir, Weapon::WeaponAnimIndex weapon);
-    bool drawDieFrame(const Point2D &screenPos, int frame);
-    int lastDieFrame();
-
-    void drawDeadFrame(const Point2D &screenPos, int frame);
-    void drawDeadAgentFrame(const Point2D &screenPos, int frame);
-
-    void drawHitFrame(const Point2D &screenPos, uint8_t dir, int frame);
-    int lastHitFrame(uint8_t dir);
-    void drawPickupFrame(const Point2D &screenPos, int frame);
-    int lastPickupFrame();
-    void drawVaporizeFrame(const Point2D &screenPos, uint8_t dir, int frame);
-    int lastVaporizeFrame(uint8_t dir);
-    void drawSinkFrame(const Point2D &screenPos, int frame);
-    int lastSinkFrame();
-
-    void drawStandBurnFrame(const Point2D &screenPos, int frame);
-    void drawWalkBurnFrame(const Point2D &screenPos, int frame);
-    void drawDieBurnFrame(const Point2D &screenPos, int frame);
-    int lastDieBurnFrame();
-    void drawSmokeBurnFrame(const Point2D &screenPos, int frame);
-    void drawDeadBurnFrame(const Point2D &screenPos, int frame);
-
-    void drawPersuadeFrame(const Point2D &screenPos, int frame);
-    int lastPersuadeFrame();
-
-protected:
-    uint32_t stand_anims_[NUM_ANIMS];
-    uint32_t walk_anims_[NUM_ANIMS];
-    uint32_t stand_fire_anims_[NUM_ANIMS];
-    uint32_t walk_fire_anims_[NUM_ANIMS];
-    unsigned int die_agent_anim_;
-    unsigned int dead_agent_anim_;
-    unsigned int die_anim_;
-    unsigned int dead_anim_;
-    // has 4 directions
-    unsigned int hit_anim_;
-    unsigned int pickup_anim_;
-
-    // has 4 directions
-    unsigned int vaporize_anim_;
-    unsigned int sink_anim_;
-    unsigned int stand_burn_anim_;
-    unsigned int walk_burn_anim_;
-    unsigned int die_burn_anim_;
-    unsigned int smoke_burn_anim_;
-    unsigned int dead_burn_anim_;
-
-    unsigned int persuade_anim_;
-};
-
-/*!
  * Structure to hold all animations for a PedInstance
  */
 struct PedAnimations {
     //! Animation when standing with or without a weapon
-    uint16_t standAnimations[10];
+    uint16_t standAnimations[NUM_ANIMS];
     //! Animation when walking with or without a weapon
     uint16_t walkAnimations[NUM_ANIMS];
     //! Animation when standing and shooting with a weapon
@@ -242,28 +135,6 @@ public:
     //! Tells the ped not to panic
     void setPanicImmuned() { panicImmuned_ = true; }
 
-    enum AnimationDrawn {
-        ad_NoAnimation,
-        ad_HitAnim,
-        ad_DieAnim,
-        ad_DeadAnim,
-        ad_DeadAgentAnim,
-        ad_PickupAnim,
-        ad_PutdownAnim,
-        ad_WalkAnim,
-        ad_StandAnim,
-        ad_WalkFireAnim,
-        ad_StandFireAnim,
-        ad_VaporizeAnim,
-        ad_SinkAnim,
-        ad_StandBurnAnim,
-        ad_WalkBurnAnim,
-        ad_DieBurnAnim,
-        ad_SmokeBurnAnim,
-        ad_DeadBurnAnim,
-        ad_PersuadedAnim
-    };
-
     //! MapObject::state_
     enum pedActionStateMasks {
         pa_smNone = 0x0,
@@ -330,7 +201,6 @@ public:
     bool switchActionStateTo(uint32_t as);
     bool switchActionStateFrom(uint32_t as);
     void synchDrawnAnimWithActionState(void);
-    bool animate(uint32_t elapsed) override;
 
     void drawSelectorAnim(const Point2D &screenPos);
     //! Set state for ped (replace switchActionStateTo)
@@ -489,10 +359,6 @@ public:
 
     void putInVehicle(Vehicle *v);
     void leaveVehicle();
-
-    AnimationDrawn drawnAnim(void);
-    void setDrawnAnim(AnimationDrawn drawn_anim);
-    bool handleDrawnAnim(uint32_t elapsed);
 
     uint8_t moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
         int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,
@@ -743,9 +609,6 @@ protected:
     //! When a ped dies, changes the persuaded owner/persuaded_group relation.
     void updatePersuadedRelations(Squad *pSquad);
 
-    //! Update frame to render
-    bool updateAnimation(uint32_t elapsed);
-
     //! Subclasses reimplement this to update their internal state
     void doUpdateState(uint32_t elapsed) override;
 
@@ -772,7 +635,6 @@ protected:
         pd_smAll = 0xFFFF
     };
 
-    Ped *ped_;
     //! Type of Ped
     PedType type_;
 
@@ -823,8 +685,6 @@ protected:
 
     //! base value that influences accuracy during fire
     double base_mod_acc_;
-
-    AnimationDrawn drawn_anim_;
 
     int sight_range_;
     Vehicle *in_vehicle_;

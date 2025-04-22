@@ -34,112 +34,6 @@
 
 namespace fs_knl {
 
-PedManager::PedManager()
-{
-}
-
-void PedManager::initAnimation(Ped *pedanim, unsigned short baseAnim)
-{
-    if (baseAnim == 1) {
-        pedanim->setStandAnim(Weapon::Unarmed_Anim, 0 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Unarmed_Anim, 8 + baseAnim);
-        pedanim->setStandAnim(Weapon::EnergyShield_Anim, 16 + baseAnim);
-        pedanim->setStandAnim(Weapon::Pistol_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Uzi_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Shotgun_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Gauss_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Minigun_Anim, 32 + baseAnim);
-        pedanim->setStandAnim(Weapon::Laser_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Flamer_Anim, 40 + baseAnim);
-        pedanim->setStandAnim(Weapon::LongRange_Anim, 48 + baseAnim);
-        pedanim->setWalkAnim(Weapon::EnergyShield_Anim, 56 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Pistol_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Uzi_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Shotgun_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Gauss_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Minigun_Anim, 72 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Laser_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Flamer_Anim, 80 + baseAnim);
-        pedanim->setWalkAnim(Weapon::LongRange_Anim, 88 + baseAnim);
-        // I think 97 was the original pistol shoot anim, but it wasn't sexy enough.
-        //pedanim->setStandFireAnim(Weapon::Laser_Anim, 96 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Pistol_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Uzi_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Shotgun_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Gauss_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Minigun_Anim, 112 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Laser_Anim, 120 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Flamer_Anim, 128 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::LongRange_Anim, 136 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Pistol_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Uzi_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Shotgun_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Gauss_Anim, 152 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Minigun_Anim, 160 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Laser_Anim, 168 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Flamer_Anim, 176 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::LongRange_Anim, 184 + baseAnim);
-    } else {
-        // NOTE: peds other then agents have pistol like animations for
-        // all weapons
-        pedanim->setStandAnim(Weapon::Unarmed_Anim, 0 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Unarmed_Anim, 8 + baseAnim);
-        pedanim->setStandAnim(Weapon::EnergyShield_Anim, 0 + baseAnim);
-        pedanim->setStandAnim(Weapon::Pistol_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Uzi_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Shotgun_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Gauss_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Minigun_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Laser_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::Flamer_Anim, 24 + baseAnim);
-        pedanim->setStandAnim(Weapon::LongRange_Anim, 24 + baseAnim);
-        pedanim->setWalkAnim(Weapon::EnergyShield_Anim, 24 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Pistol_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Uzi_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Shotgun_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Gauss_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Minigun_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Laser_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::Flamer_Anim, 64 + baseAnim);
-        pedanim->setWalkAnim(Weapon::LongRange_Anim, 64 + baseAnim);
-        // I think 97 was the original pistol shoot anim, but it wasn't sexy enough.
-        //pedanim->setStandFireAnim(Weapon::Laser_Anim, 96 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Pistol_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Uzi_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Shotgun_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Gauss_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Minigun_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Laser_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::Flamer_Anim, 104 + baseAnim);
-        pedanim->setStandFireAnim(Weapon::LongRange_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Pistol_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Uzi_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Shotgun_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Gauss_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Minigun_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Laser_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::Flamer_Anim, 104 + baseAnim);
-        pedanim->setWalkFireAnim(Weapon::LongRange_Anim, 104 + baseAnim);
-    }
-    pedanim->setPickupAnim(192 + baseAnim);
-    pedanim->setHitAnim(193 + baseAnim);
-    pedanim->setVaporizeAnim(197 + baseAnim);
-    pedanim->setSinkAnim(201 + baseAnim);
-    // 203 - die, 204 - dead, agent only
-    pedanim->setDieAgentAnim(203 + baseAnim);
-    pedanim->setDeadAgentAnim(205);
-    pedanim->setDieAnim(205 + baseAnim);
-    pedanim->setDeadAnim(206 + baseAnim);
-    // when this burning should be used?
-    pedanim->setStandBurnAnim(208);
-    // this one used when hit with flamethrower
-    pedanim->setWalkBurnAnim(209);
-    pedanim->setDieBurnAnim(210);
-    pedanim->setSmokeBurnAnim(211);
-    pedanim->setDeadBurnAnim(828);
-    pedanim->setPersuadeAnim(236);
-}
-
 /*!
  * Instanciate a PedInstance from the given data.
  * \param gamdata
@@ -179,7 +73,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
 
     newped->setDirection(gamdata.orientation);
     if (gamdata.state == LevelData::kPeopleStateDead) {
-        newped->setDrawnAnim(PedInstance::ad_DeadAnim);
+        newped->playDeadAnimation();
         newped->setHealth(-1);
         newped->setStateMasks(PedInstance::pa_smDead);
     } else {

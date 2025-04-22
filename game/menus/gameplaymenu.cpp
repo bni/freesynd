@@ -1166,7 +1166,7 @@ void GameplayMenu::drawMissionHint(uint32_t elapsed) {
             if ((*it)->wePickupWeapon()) {
                 str = getMessage("HINT_PICKUP_WEAPON");
             }
-            if ((*it)->drawnAnim() == fs_knl::PedInstance::ad_HitAnim) {
+            if ((*it)->isState(fs_knl::PedInstance::pa_smHit)) {
                 str = getMessage("HINT_HIT_BY_BULLET");
             }
         }

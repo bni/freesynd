@@ -38,12 +38,11 @@ namespace fs_knl {
  */
 class PedManager {
 public:
-    PedManager();
+    PedManager() {}
     virtual ~PedManager() {}
 
     PedInstance *loadInstance(const LevelData::People & ped_data, uint16_t ped_idx, Map *pMap, uint32_t playerGroupId);
 protected:
-    void initAnimation(Ped *pedanim, unsigned short baseAnim);
     //! Initialize the ped instance as our agent
     void initOurAgent(Agent *p_agent, unsigned int obj_group_id, PedInstance *pPed);
     //! Initialize the ped instance as an enemy agent
