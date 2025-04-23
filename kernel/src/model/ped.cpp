@@ -801,64 +801,6 @@ void PedInstance::draw(const Point2D &screenPos) {
     } else {
         animationPlayer_->draw(posWithOffs, 0);
     }
-/*    switch(drawnAnim()){
-        case PedInstance::ad_HitAnim:
-DONE            ped_->drawHitFrame(posWithOffs, getDiscreteDirection(), frame_);
-            break;
-DONE        case PedInstance::ad_DieAnim:
-            ped_->drawDieFrame(posWithOffs, frame_);
-            break;
-DONE        case PedInstance::ad_DeadAnim:
-            ped_->drawDeadFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_DeadAgentAnim:
-            ped_->drawDeadAgentFrame(posWithOffs, frame_);
-            break;
-DONE        case PedInstance::ad_PickupAnim: 
-            ped_->drawPickupFrame(posWithOffs, frame_);
-            break;
-DONE        case PedInstance::ad_PutdownAnim:
-            ped_->drawPickupFrame(posWithOffs, frame_);
-            break;
-DONE        case PedInstance::ad_WalkAnim:
-            ped_->drawWalkFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-DONE        case PedInstance::ad_StandAnim:
-            ped_->drawStandFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-DONE        case PedInstance::ad_WalkFireAnim:
-            ped_->drawWalkFireFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-DONE        case PedInstance::ad_StandFireAnim:
-            ped_->drawStandFireFrame(posWithOffs, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-        case PedInstance::ad_VaporizeAnim:
-            ped_->drawVaporizeFrame(posWithOffs, getDiscreteDirection(), frame_);
-            break;
-        case PedInstance::ad_SinkAnim:
-            ped_->drawSinkFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_StandBurnAnim:
-            ped_->drawStandBurnFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_WalkBurnAnim:
-            ped_->drawWalkBurnFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_DieBurnAnim:
-            ped_->drawDieBurnFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_SmokeBurnAnim:
-            ped_->drawSmokeBurnFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_DeadBurnAnim:
-            ped_->drawDeadBurnFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_PersuadedAnim:
-            ped_->drawPersuadeFrame(posWithOffs, frame_);
-            break;
-        case PedInstance::ad_NoAnimation:
-            break;
-    }*/
 }
 
 void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
@@ -866,67 +808,23 @@ void PedInstance::drawSelectorAnim(const Point2D &screenPos) {
     Weapon::WeaponAnimIndex weapon_idx =
         selectedWeapon() ? selectedWeapon()->index() : Weapon::Unarmed_Anim;
 
- /*   switch(drawnAnim()) {
-        case PedInstance::ad_HitAnim:
-            ped_->drawHitFrame(screenPos, getDiscreteDirection(), frame_);
-            break;
-        case PedInstance::ad_DieAnim:
-            ped_->drawDieFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_DeadAnim:
-            ped_->drawDeadFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_DeadAgentAnim:
-            ped_->drawDeadAgentFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_PickupAnim:
-            ped_->drawPickupFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_PutdownAnim:
-            ped_->drawPickupFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_WalkAnim:
-            ped_->drawWalkFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-        case PedInstance::ad_StandAnim:
-            ped_->drawStandFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-        case PedInstance::ad_WalkFireAnim:
-            ped_->drawWalkFireFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-        case PedInstance::ad_StandFireAnim:
-            ped_->drawStandFireFrame(screenPos, getDiscreteDirection(), frame_, weapon_idx);
-            break;
-        case PedInstance::ad_VaporizeAnim:
-            ped_->drawVaporizeFrame(screenPos, getDiscreteDirection(), frame_);
-            break;
-        case PedInstance::ad_SinkAnim:
-            ped_->drawSinkFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_StandBurnAnim:
-            ped_->drawStandBurnFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_WalkBurnAnim:
-            ped_->drawWalkBurnFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_DieBurnAnim:
-            ped_->drawDieBurnFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_SmokeBurnAnim:
-            ped_->drawSmokeBurnFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_DeadBurnAnim:
-            ped_->drawDeadBurnFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_PersuadedAnim:
-            ped_->drawPersuadeFrame(screenPos, frame_);
-            break;
-        case PedInstance::ad_NoAnimation:
-#ifdef _DEBUG
-            printf("hmm ad_NoAnimation\n");
-#endif
-            break;
-    }*/
+    if (animationPlayer_->isCurrentAnimation(animations_.standAnimations[weapon_idx])) {
+        animationPlayer_->draw(screenPos, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.walkAnimations[weapon_idx])) {
+        animationPlayer_->draw(screenPos, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.standShootAnimations[weapon_idx])) {
+        animationPlayer_->draw(screenPos, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.walkShootAnimations[weapon_idx])) {
+        animationPlayer_->draw(screenPos, getDiscreteDirection());
+    } else if (animationPlayer_->isCurrentAnimation(animations_.hitAnimation)) {
+        // There are only 4 animations for hit
+        animationPlayer_->draw(screenPos, getDiscreteDirection(4));
+    } else if (animationPlayer_->isCurrentAnimation(animations_.vaporizeAnimation)) {
+        // There are only 4 animations for vaporized
+        animationPlayer_->draw(screenPos, getDiscreteDirection(4));
+    } else {
+        animationPlayer_->draw(screenPos, 0);
+    }
 }
 
 bool PedInstance::inSightRange(MapObject *t) {

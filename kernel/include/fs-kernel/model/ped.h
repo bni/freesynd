@@ -170,8 +170,6 @@ public:
     void setAnimations(uint16_t baseSpriteAnimationId);
 
     void draw(const Point2D &screenPos) override;
-    
-    void setFrame(int f) { frame_ = f; }
 
     void playStandOrWalkAnimation();
     void playStandAndShootAnimation();

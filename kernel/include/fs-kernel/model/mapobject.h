@@ -256,47 +256,17 @@ public:
      * @name Animation
      */
     ///@{
-    void setTimeShowAnim(int t) {
-        frame_ = 0;
-        time_show_anim_ = t;
-        time_showing_anim_ = 0;
-    }
-
-    bool leftTimeShowAnim(uint32_t t) {
-        if (time_show_anim_ == -1)
-            return true;
-        time_showing_anim_ += t;
-        return time_show_anim_ > time_showing_anim_;
-    }
-
-    void setFrame(int frame) { frame_ = frame;}
-    void setFrameFromObject(MapObject *m) {
-        frame_ = m->frame_;
-    }
-
-    void setFramesPerSec(int framesPerSec)
-    {
-        frames_per_sec_ = framesPerSec;
-    }
-    int getFramesPerSec() { return frames_per_sec_; }
-
     void setStateMasks(unsigned int state) {
         state_ = state;
     }
     unsigned int stateMasks() { return state_; }
 
-    /** \brief Animates the object
+    /** @brief Animates the object
      * SubClasses can implement this method.
-     * \param elapsed int Time elapsed since last animation
-     * \return virtual bool True mean the object has changed
+     * @param elapsed int Time elapsed since last animation
      *
      */
-    virtual bool animate(uint32_t elapsed);
-
-    /*!
-     * @brief Animates the object
-     */
-    void animate2(uint32_t elapsed);
+    virtual void animate(uint32_t elapsed);
 
     /*!
      * Convenient method to play an animation using AnimationPlayer
@@ -370,24 +340,7 @@ protected:
     int size_x_, size_y_, size_z_;
     //! objects direction
     int dir_;
-    //! animation frame changing
-    int frame_;
-    /*!
-     * Time left, if frame needs to be drawn every 'n' milliseconds
-     * elapsed time % 'n' = time left
-     */
-    int elapsed_carry_;
-    //! how often this frame should be drawn per seccond
-    int frames_per_sec_;
-    //! looped animations, time to show them is set here, if = -1 show forever
-    int time_show_anim_;
-    //! looped animations, playing time
-    int time_showing_anim_;
-    /*! animation to draw can, change this varible should provide check
-     * whether first frame was drawn successfully, only if successful
-     * MapObject::animate should be called
-     */
-    bool is_frame_drawn_;
+
     uint32_t state_;
     //! Animation player is used to store and play animation for this object
     std::unique_ptr<fs_eng::AnimationPlayer> animationPlayer_;

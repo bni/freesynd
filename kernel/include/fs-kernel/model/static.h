@@ -218,7 +218,7 @@ protected:
  */
 class NeonSign : public Static {
 public:
-    NeonSign(uint16_t id, Map *pMap, uint16_t anim);
+    NeonSign(uint16_t id, Map *pMap, uint16_t anim, uint16_t currentFrame);
     virtual ~NeonSign() {}
 
     void draw(const Point2D &screenPos) override;

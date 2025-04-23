@@ -75,10 +75,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             //printf("0x0B anim %X\n", curanim);
             break;
         case 0x0A:
-            s = new NeonSign(id, pMap, curanim);
-            s->setFrame(g_SpriteMgr.getFrameFromFrameIndx(curframe));
-            s->setExcludedFromBlockers(true);
-            s->setSize(32, 1, 48);
+            s = new NeonSign(id, pMap, curanim, curframe);
             break;
         case 0x0C: // closed door
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80
@@ -454,20 +451,6 @@ LargeDoor::LargeDoor(uint16_t anId, Map *pMap, uint16_t baseAnim):
 }
 
 void LargeDoor::draw(const Point2D &screenPos) {
-    /*Point2D posWithOffs = addOffs(screenPos);
-    switch(state_) {
-        case Static::kstatedoorOpen:
-            break;
-        case Static::kstatedoorClosing:
-            g_SpriteMgr.drawFrame(closing_anim_, frame_, posWithOffs);
-            break;
-        case Static::sttdoor_Closed:
-            g_SpriteMgr.drawFrame(anim_, frame_, posWithOffs);
-            break;
-        case Static::sttdoor_Opening:
-            g_SpriteMgr.drawFrame(opening_anim_, frame_, posWithOffs);
-            break;
-    }*/
    // When a large door is opened, we just don't draw it
     if (state_ != Static::kStateDoorOpen) {
         animationPlayer_->draw(addOffs(screenPos), 0);
@@ -929,9 +912,12 @@ void EtcObj::draw(const Point2D &screenPos) {
  * @param pMap 
  * @param anim 
  */
-NeonSign::NeonSign(uint16_t anId, Map *pMap, uint16_t anim) : Static(anId, pMap, Static::smt_NeonSign) {
+NeonSign::NeonSign(uint16_t anId, Map *pMap, uint16_t anim, uint16_t currentFrame) : 
+        Static(anId, pMap, Static::smt_NeonSign) {
     uint16_t animation = animationPlayer_->addAnimation(anim, fs_eng::kAnimationModeLoop);
-    animationPlayer_->play(animation);
+    animationPlayer_->play(animation, g_SpriteMgr.getFrameFromFrameIndx(currentFrame));
+    setExcludedFromBlockers(true);
+    setSize(32, 1, 48);
 }
 
 void NeonSign::draw(const Point2D &screenPos) {
@@ -1072,7 +1058,6 @@ void AnimWindow::handleAnimationEnded() {
         if (rnd_v > 80) {
             playLightOnAnimation();
         } else if (rnd_v > 60) {
-            frame_ = 0;
             animationPlayer_->play(animPedAppears_);
         } else if (rnd_v > 10) {
             playLightOffAnimation();

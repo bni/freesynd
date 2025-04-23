@@ -96,7 +96,7 @@ protected:
     //! Selects/deselects all agents
     void selectAllAgents();
     //! Reacts to a weapon selection/deselection
-    void handleWeaponSelection(uint8 weapon_idx, bool ctrl);
+    void handleWeaponSelection(uint8_t weapon_idx, bool ctrl);
 
     //! Deselect agent if he died
     void updateSelectionForDeadAgent(fs_knl::PedInstance *p_ped);
@@ -162,7 +162,7 @@ protected:
         // ipa that is manipulated
         int8 ipa_chng;
         // agent to base IPA's update on
-        uint8 agent_used;
+        uint8_t agent_used;
     } ipa_chng_;
 };
 

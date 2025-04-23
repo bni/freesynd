@@ -34,10 +34,6 @@ MapObject::MapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
     id_(anId), pMap_(pMap), nature_(aNature),
     size_x_(1), size_y_(1), size_z_(2),
     dir_(0),
-    frame_(0), elapsed_carry_(0),
-    frames_per_sec_(8),
-    time_show_anim_(-1), time_showing_anim_(-1),
-    is_frame_drawn_(false),
     state_(0xFFFFFFFF),
     animationPlayer_(createAnimationPlayer())
 {
@@ -108,27 +104,13 @@ Point2D MapObject::addOffs(const Point2D &screenPos)
     return posWithOffs;
 }
 
-bool MapObject::animate(uint32_t elapsed)
-{
-    int frame_tics_ = 1000 / frames_per_sec_;
-    int total_elapsed = elapsed + elapsed_carry_;
-    elapsed_carry_ = total_elapsed % frame_tics_;
-    int framewas = frame_;
-    bool changed = true;
-    frame_ += (total_elapsed / frame_tics_);
-    if (framewas == frame_)
-        changed = false;
-    frame_ %= frames_per_sec_ << 3;
-    return changed;
-}
-
 /*!
  * Calls first the method doUpdateState() to let the object compute
  * its state and then update the animation.
  * If animation has ended calls handleAnimationEnded()
  * @param elapsed Number of ticks since the last iteration
  */
-void MapObject::animate2(uint32_t elapsed) {
+void MapObject::animate(uint32_t elapsed) {
     doUpdateState(elapsed);
     if (animationPlayer_->handleTick(elapsed)) {
         handleAnimationEnded();

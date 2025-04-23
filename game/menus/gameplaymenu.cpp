@@ -363,7 +363,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
 
         for (size_t i = 0; i < mission_->numSfxObjects(); i++) {
             fs_knl::SFXObject *pSfx = mission_->sfxObjects(i);
-            pSfx->animate2(diff);
+            pSfx->animate(diff);
             if (pSfx->sfxLifeOver()) {
                 mission_->delSfxObject(i);
                 i--;
@@ -371,17 +371,17 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         }
 
         for (size_t i = 0; i < mission_->numPeds(); i++)
-            mission_->ped(i)->animate2(diff);
+            mission_->ped(i)->animate(diff);
 
 
         for (size_t i = 0; i < mission_->numVehicles(); i++)
-            mission_->vehicle(i)->animate2(diff);
+            mission_->vehicle(i)->animate(diff);
 
         for (size_t i = 0; i < mission_->numWeaponsOnGround(); i++)
-            mission_->weaponOnGround(i)->animate2(diff);
+            mission_->weaponOnGround(i)->animate(diff);
 
         for (size_t i = 0; i < mission_->numStatics(); i++) {
-            mission_->statics(i)->animate2(elapsed);
+            mission_->statics(i)->animate(elapsed);
         }
 
         for (size_t i = 0; i < mission_->numPrjShots(); i++) {
@@ -524,7 +524,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
 
             // if agent is in selected group we will update all groups IPA
             if (selection_.isAgentSelected(ipa_chng_.agent_used)) {
-                for (uint8 i = 0; i < fs_knl::Squad::kMaxSlot; ++i) {
+                for (uint8_t i = 0; i < fs_knl::Squad::kMaxSlot; ++i) {
                     if (selection_.isAgentSelected(i)) {
                         setIPAForAgent(i, (IPAStim::IPAType)ipa_chng_.ipa_chng,
                             percent);
@@ -726,7 +726,7 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
  */
 void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button)
 {
-    uint8 w_num = ((point.y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
+    uint8_t w_num = ((point.y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
             + point.x / 32;
     fs_knl::PedInstance *pLeader = selection_.leader();
     if (pLeader->isAlive()) {
@@ -1151,7 +1151,7 @@ void GameplayMenu::drawMissionHint(uint32_t elapsed) {
 
     std::string str;
 
-    uint8 txtColor;
+    uint8_t txtColor;
 
     if ((mission_hint_ > 20 && mission_hint_ < 41)
         || (mission_hint_ > 60))
@@ -1408,7 +1408,7 @@ void GameplayMenu::centerMinimapOnLeader() {
  * Update the select all button's state
  */
 void GameplayMenu::updateSelectAll() {
-    uint8 nbAgentAlive = 0;
+    uint8_t nbAgentAlive = 0;
     // count the number of remaining agents
     for (size_t indx = 0; indx < fs_knl::Squad::kMaxSlot; indx++) {
         fs_knl::PedInstance *pAgent = mission_->getSquad()->member(indx);
@@ -1426,7 +1426,7 @@ void GameplayMenu::updateSelectAll() {
 /*!
  *
  */
-void GameplayMenu::handleWeaponSelection(uint8 selectorIndex, bool ctrl) {
+void GameplayMenu::handleWeaponSelection(uint8_t selectorIndex, bool ctrl) {
     fs_knl::PedInstance *pLeader = selection_.leader();
 
     if (selectorIndex < pLeader->numWeapons()) {
