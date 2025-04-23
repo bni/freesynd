@@ -34,7 +34,6 @@ MapObject::MapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
     id_(anId), pMap_(pMap), nature_(aNature),
     size_x_(1), size_y_(1), size_z_(2),
     dir_(0),
-    state_(0xFFFFFFFF),
     animationPlayer_(createAnimationPlayer())
 {
     isDrawable_ = true;

@@ -652,7 +652,8 @@ protected:
     UseWeaponAction *pUseWeaponAction_;
     //! The list of animations for the ped
     PedAnimations animations_;
-
+    //! State of the ped
+    uint32_t state_;
     // (pedDescStateMasks)
     uint32_t desc_state_;
     // this inherits definition from desc_state_

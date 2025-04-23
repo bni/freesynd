@@ -64,13 +64,6 @@ public:
         kStateDoorOpening
     };
 
-    enum StateWindows {
-        kStateWindowClosed = 0,
-        kStateWindowOpen,
-        kStateWindowBreaking,
-        kStateWindowDamaged
-    };
-
 public:
     static Static *loadInstance(uint8_t *data, uint16_t id, Map *pMap);
     virtual ~Static() {}
@@ -131,6 +124,8 @@ protected:
     uint16_t openedAnim_;
     //! Id of the opening door animation
     uint16_t openingAnim_;
+    //! State to manage if door is open or closed
+    StateDoors state_;
 };
 
 /*!
@@ -155,6 +150,8 @@ protected:
     uint16_t closingAnim_;
     //! Id of the opening door animation
     uint16_t openingAnim_;
+    //! State to manage if door is open or closed
+    StateDoors state_;
 };
 /*!
  * Tree map object class.
@@ -183,6 +180,13 @@ protected:
  */
 class WindowObj : public Static {
 public:
+    //! List of initial states for windows
+    enum StateWindows {
+        kStateWindowClosed = 0,
+        kStateWindowOpen,
+        kStateWindowDamaged
+    };
+
     WindowObj(uint16_t id, Map *pMap, StateWindows state, uint16_t anim);
     virtual ~WindowObj() {}
 

@@ -135,7 +135,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             //printf("0x11 anim %X\n", curanim);
             break;
         case 0x12:  // open window
-            s = new WindowObj(id, pMap, Static::kStateWindowOpen, curanim - 2);
+            s = new WindowObj(id, pMap, WindowObj::kStateWindowOpen, curanim - 2);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
                 s->setSize(96, 4, 96);
@@ -147,7 +147,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s->setStartHealth(1);
             break;
         case 0x13: // closed window
-            s = new WindowObj(id, pMap, Static::kStateWindowClosed, curanim);
+            s = new WindowObj(id, pMap, WindowObj::kStateWindowClosed, curanim);
             if (gamdata->orientation == 0x00 || gamdata->orientation == 0x80) {
                 s->setOrientation(kStaticOrientation1);
                 s->setSize(96, 4, 96);
@@ -159,7 +159,7 @@ Static *Static::loadInstance(uint8_t * data, uint16_t id, Map *pMap)
             s->setStartHealth(1);
             break;
         case 0x15: // damaged window
-            s = new WindowObj(id, pMap, Static::kStateWindowDamaged, curanim - 6);
+            s = new WindowObj(id, pMap, WindowObj::kStateWindowDamaged, curanim - 6);
             s->setExcludedFromBlockers(true);
             s->setHealth(0);
             s->setStartHealth(1);
@@ -844,18 +844,17 @@ void Tree::handleHit(DamageToInflict &d) {
  */
 WindowObj::WindowObj(uint16_t anId, Map *pMap, StateWindows state, uint16_t anim):
         Static(anId, pMap, Static::smt_Window) {
-    state_ = state;
     // We don't need to retain the id of the open/close anim as we
     // never come back to them after we move to breaking/damage anim
-    if (state == Static::kStateWindowOpen) {
+    if (state == kStateWindowOpen) {
         playAnimation(animationPlayer_->addAnimation(anim + 2));
-    } else if (state == Static::kStateWindowClosed) {
+    } else if (state == kStateWindowClosed) {
         playAnimation(animationPlayer_->addAnimation(anim));
     }
     breakingAnim_ = animationPlayer_->addAnimation(anim + 4, fs_eng::kAnimationModeSingle, 6);
     damagedAnim_ = animationPlayer_->addAnimation(anim + 6);
 
-    if (state == Static::kStateWindowDamaged) {
+    if (state == kStateWindowDamaged) {
         playAnimation(damagedAnim_);
     }
 }
@@ -863,7 +862,6 @@ WindowObj::WindowObj(uint16_t anId, Map *pMap, StateWindows state, uint16_t anim
 void WindowObj::handleAnimationEnded() {
     if (animationPlayer_->isCurrentAnimation(breakingAnim_)) {
         animationPlayer_->play(damagedAnim_);
-        state_ = kStateWindowDamaged;
     }
 }
 
@@ -880,7 +878,6 @@ void WindowObj::handleHit(DamageToInflict &d) {
         (d.dtype == kDmgTypeBullet || d.dtype == kDmgTypeExplosion)) {
         decreaseHealth(d.dvalue);
         if (isDead()) {
-            state_ = Static::kStateWindowBreaking;
             setExcludedFromBlockers(true);
             playAnimation(breakingAnim_);
         }

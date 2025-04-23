@@ -75,7 +75,7 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
     if (gamdata.state == LevelData::kPeopleStateDead) {
         newped->playDeadAnimation();
         newped->setHealth(-1);
-        newped->setStateMasks(PedInstance::pa_smDead);
+        newped->switchActionStateTo(PedInstance::pa_smDead);
     } else {
         newped->setHealth(hp);
         newped->goToState(PedInstance::pa_smStanding);

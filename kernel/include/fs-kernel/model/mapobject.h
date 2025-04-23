@@ -256,11 +256,6 @@ public:
      * @name Animation
      */
     ///@{
-    void setStateMasks(unsigned int state) {
-        state_ = state;
-    }
-    unsigned int stateMasks() { return state_; }
-
     /** @brief Animates the object
      * SubClasses can implement this method.
      * @param elapsed int Time elapsed since last animation
@@ -340,8 +335,6 @@ protected:
     int size_x_, size_y_, size_z_;
     //! objects direction
     int dir_;
-
-    uint32_t state_;
     //! Animation player is used to store and play animation for this object
     std::unique_ptr<fs_eng::AnimationPlayer> animationPlayer_;
 
