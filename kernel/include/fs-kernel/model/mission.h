@@ -35,6 +35,7 @@
 #include "fs-kernel/model/map.h"
 #include "fs-kernel/model/leveldata.h"
 #include "fs-kernel/model/pathsurfaces.h"
+#include "fs-kernel/model/squad.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 
 namespace fs_knl {
@@ -43,7 +44,6 @@ class Vehicle;
 class PedInstance;
 class Agent;
 class ObjectiveDesc;
-class Squad;
 class ProjectileShot;
 class GaussGunShot;
 
@@ -52,7 +52,7 @@ class GaussGunShot;
  */
 class MissionStats {
 public:
-    void init(int nbAgents);
+    void init(size_t nbAgents);
 
     int nbOfShots() { return nbOfShots_; }
     int precision() { return (nbOfHits_ * 100) / nbOfShots_; }
@@ -63,8 +63,8 @@ public:
     int guardKilled() { return guardKilled_;}
     int convinced() { return convinced_;}
     uint32_t missionDuration() { return missionDuration_; }
-    int agents() { return agents_; }
-    int agentCaptured() { return agentCaptured_; }
+    size_t nbAgents() { return nbAgents_; }
+    size_t nbAgentCaptured() { return nbAgentCaptured_; }
 
     //! Increments the number of shots by the given amount
     void incrShots(int shots) { nbOfShots_ += shots; }
@@ -78,18 +78,18 @@ public:
     void incrGuardKilled() { guardKilled_++; }
     void incrPoliceKilled() { policeKilled_++; }
     //!
-    void incrAgentCaptured() { agentCaptured_++; }
+    void incrAgentCaptured() { nbAgentCaptured_++; }
     //!
     void incrConvinced() { convinced_++; }
     //!
     void incrMissionDuration(uint32_t elapsed) { missionDuration_ += elapsed; }
 private:
     /*! How many agents participated in the mission. */
-    int agents_;
+    size_t nbAgents_;
     /*! How many time did the mission last. */
     uint32_t missionDuration_;
     /*! How many opposing agents where captured.*/
-    int agentCaptured_;
+    size_t nbAgentCaptured_;
     /*! How many opposing agents where killed.*/
     int enemyKilled_;
     /*! How many criminal where killed.*/
@@ -285,7 +285,7 @@ public:
     /*!
      * Returns the current squad.
      */
-    Squad * getSquad() const { return p_squad_; }
+    Squad * getSquad() const { return squad_.get(); }
 
 protected:
     bool sWalkable(char thisTile, char upperTile);
@@ -352,7 +352,7 @@ protected:
     /*!
      * The squad selected for the mission. It contains only active agents.
      */
-    Squad *p_squad_;
+    std::unique_ptr<Squad> squad_;
 };
 
 /** \brief Event sent when a mission has ended.

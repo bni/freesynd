@@ -127,8 +127,8 @@ void DebriefMenu::updateStatsFields(fs_knl::Mission *pMission) {
         getStatic(txtStatusId_)->setText("#DEBRIEF_MIS_ABORT");
     }
 
-    getStatic(txtUsedId_)->setTextFormated("%i", pStats->agents());
-    getStatic(txtAgentCapturedId_)->setTextFormated("%i", pStats->agentCaptured());
+    getStatic(txtUsedId_)->setTextFormated("%i", pStats->nbAgents());
+    getStatic(txtAgentCapturedId_)->setTextFormated("%i", pStats->nbAgentCaptured());
 
     int days = 0;
     int hours = 0;

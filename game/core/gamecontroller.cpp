@@ -203,7 +203,7 @@ void GameController::transferAgentToCryoChamber(fs_knl::Mission *pMission) {
     }
 
     // Add persuaded agents only in case of mission success
-    if (pMission->stats()->agentCaptured() > 0 && pMission->completed()) {
+    if (pMission->stats()->nbAgentCaptured() > 0 && pMission->completed()) {
         for (size_t i = pMission->getSquad()->size(); i < pMission->numPeds(); i++) {
             fs_knl::PedInstance *pPed = pMission->ped(i);
             if (pPed->objGroupDef() == fs_knl::PedInstance::og_dmAgent) {

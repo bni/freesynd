@@ -48,10 +48,10 @@ const uint8_t Mission::kBMaskBlockerTargetPosUpdated = 0x04;
  * Initialize the statistics.
  * \param nbAgents Number of agents for the mission
  */
-void MissionStats::init(int nbAgents) {
-    agents_ = nbAgents;
+void MissionStats::init(size_t nbAgents) {
+    nbAgents_ = nbAgents;
     missionDuration_ = 0;
-    agentCaptured_ = 0;
+    nbAgentCaptured_ = 0;
     enemyKilled_ = 0;
     criminalKilled_ = 0;
     civilKilled_ = 0;
@@ -63,12 +63,12 @@ void MissionStats::init(int nbAgents) {
 }
 
 /*!
- * @brief 
+ * Mission constructor
  * @param map_infos 
  * @param pMap 
  */
-Mission::Mission(const LevelData::MapInfos & map_infos, Map *pMap)
-{
+Mission::Mission(const LevelData::MapInfos & map_infos, Map *pMap) :
+        squad_(std::make_unique<Squad>()) {
     status_ = kMissionStatusRunning;
 
     mtsurfaces_ = NULL;
@@ -82,7 +82,6 @@ Mission::Mission(const LevelData::MapInfos & map_infos, Map *pMap)
     cur_objective_ = 0;
     p_minimap_ = NULL;
     set_map(pMap);
-    p_squad_ = new Squad();
 }
 
 Mission::~Mission()
@@ -105,10 +104,6 @@ Mission::~Mission()
 
     if (p_minimap_) {
         delete p_minimap_;
-    }
-
-    if (p_squad_) {
-        delete p_squad_;
     }
 }
 
@@ -195,7 +190,7 @@ int Mission::mapHeight()
 void Mission::start(WeaponManager& weaponMgr) {
     LOG(Log::k_FLG_GAME, "Mission", "start()", ("Start mission"));
     // Reset mission statistics
-    stats_.init(p_squad_->size());
+    stats_.init(squad_->size());
 
     cur_objective_ = 0;
 
@@ -222,7 +217,7 @@ void Mission::start(WeaponManager& weaponMgr) {
 
     // TODO: check whether enemy agents weapons are equal to best two
     // if not set them
-    for (uint16_t i = p_squad_->size(), sz = peds_.size(); i < sz; ++i) {
+    for (uint16_t i = squad_->size(), sz = peds_.size(); i < sz; ++i) {
         PedInstance *p = peds_[i];
         if (p->objGroupDef() == PedInstance::og_dmAgent &&
             p->numWeapons() == 0)
@@ -343,10 +338,9 @@ void Mission::endWithStatus(Status status) {
  * \return void
  *
  */
-void Mission::updateStats()
-{
+void Mission::updateStats() {
     LOG(Log::k_FLG_GAME, "Mission", "updateStats()", ("calculate statistics for mission"));
-    for (unsigned int i = p_squad_->size(); i < peds_.size(); i++) {
+    for (unsigned int i = squad_->size(); i < peds_.size(); i++) {
         PedInstance *p = peds_[i];
         // TODO: influence country happiness with number of killed overall
         // civilians+police, more killed less happy
