@@ -97,7 +97,7 @@ MissionBriefing *MissionManager::loadBriefing(int n) {
             break;
     }
     size_t size;
-    uint8 *data = fs_utl::File::loadOriginalFile(filename, size);
+    uint8_t *data = fs_utl::File::loadOriginalFile(filename, size);
     if (data == NULL) {
         return NULL;
     }
@@ -175,7 +175,7 @@ bool MissionManager::load_level_data(int n, LevelData::LevelDataAll &level_data)
 
     std::string filename = std::format("game{:02}.dat", n);
     LOG(Log::k_FLG_IO, "MissionManager", "load_level_data()", ("Loading file %s", filename.c_str()));
-    uint8 *data = fs_utl::File::loadOriginalFile(filename, size);
+    uint8_t *data = fs_utl::File::loadOriginalFile(filename, size);
     if (data == NULL) {
         return false;
     }
@@ -206,23 +206,23 @@ bool MissionManager::load_level_data(int n, LevelData::LevelDataAll &level_data)
 /*!
  *
  */
-void MissionManager::hackMissions(int missionId, uint8 *data) {
+void MissionManager::hackMissions(int missionId, uint8_t *data) {
     if (missionId == 10) { // Western Europe
         // Change the second destination of the car for ped #168
         // as in original scenario that destination seems non walkable
-        uint8 *scen_start = data + kScenarioOffset + 8 * 8;
+        uint8_t *scen_start = data + kScenarioOffset + 8 * 8;
         scen_start[4] = 74;
         scen_start[5] = 120;
         scen_start[6] = 2;
     } else if (missionId == 22) { // Siberia
         // Change destination of second action for ped #192 (police)
         // because in original it is not walkable
-        uint8 *scen_start = data + kScenarioOffset + 8 * 7;
+        uint8_t *scen_start = data + kScenarioOffset + 8 * 7;
         scen_start[5] = 120;
         scen_start[6] = 3;
     } else if (missionId == 40) { // Kenya
         // adding additional walking points to scenarios
-        uint8 *scen_start = data + kScenarioOffset + 8 * 86;
+        uint8_t *scen_start = data + kScenarioOffset + 8 * 86;
         // coord offsets changing for next point
         scen_start[4] = ((scen_start[4] & 0xFE) | 1);
         scen_start[5] = (scen_start[5] & 0xFE);
@@ -358,9 +358,9 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
             LevelData::Statics & sref = level_data.statics[i];
             if(sref.desc == 0)
                 continue;
-            Static *s = Static::loadInstance((uint8 *) & sref, i, p_mission->get_map());
+            auto s = Static::loadInstance((uint8_t *) & sref, i, p_mission->get_map());
             if (s) {
-                p_mission->addStatic(s);
+                p_mission->addStatic(std::unique_ptr<Static>(s));
             }
         }
 
@@ -835,7 +835,7 @@ void MissionManager::createObjectives(const LevelData::LevelDataAll &level_data,
     // 0x0e + 2 x 0x01 + 0x0f, because of this careful loading required
     // max 5(6 read) objectives
     std::vector <PedInstance *> peds_evacuate;
-    for (uint8 i = 0; i < 6; i++) {
+    for (uint8_t i = 0; i < 6; i++) {
         ObjectiveDesc *objd = NULL;
 
         const LevelData::Objectives & obj = level_data.objectives[i];

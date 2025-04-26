@@ -39,6 +39,14 @@ protected:
     uint32_t doUpdateState_;
 };
 
+class ShootableMapObjectTest : public fs_knl::ShootableMapObject {
+public:
+    ShootableMapObjectTest(uint16_t id) :
+        fs_knl::ShootableMapObject(id, nullptr, fs_knl::MapObject::kNaturePed) {}
+
+    void draw(const Point2D &screenPos) override {}
+};
+
 TEST_CASE( "Map Object", "[kernel][mapobject]" ) {
     MapObjectTest cut{1, fs_knl::MapObject::kNaturePed};
 
@@ -78,8 +86,49 @@ TEST_CASE( "Map Object", "[kernel][mapobject]" ) {
 
     SECTION( "Animate") {
         SECTION( "should call doUpdateState()") {
-            cut.animate2(32);
+            cut.animate(32);
             REQUIRE( cut.doUpdateStateValue() == 32 );
         }
+    }
+}
+
+TEST_CASE( "ShootableMapObject", "[kernel][mapobject]" ) {
+    ShootableMapObjectTest cut(1);
+    SECTION( "set health and start health") {
+        // By default health and start health are zero
+        REQUIRE( cut.health() == 0 );
+        REQUIRE( cut.startHealth() == 0 );
+
+        cut.setHealth(10);
+        REQUIRE( cut.health() == 10 );
+
+        cut.setStartHealth(20);
+        REQUIRE( cut.startHealth() == 20 );
+    }
+
+    SECTION( "Should not increase health more than start health") {
+        cut.setHealth(10);
+        cut.setStartHealth(20);
+
+        cut.increaseHealth(5);
+        REQUIRE( cut.health() == 15 );
+
+        cut.increaseHealth(10);
+        REQUIRE( cut.health() == 20 );
+    }
+
+    SECTION( "Should decrease health") {
+        cut.setHealth(10);
+
+        cut.decreaseHealth(20);
+        REQUIRE( cut.isDead() );
+    }
+
+    SECTION( "Should reset health") {
+        cut.setHealth(10);
+        cut.setStartHealth(20);
+
+        cut.resetHealth();
+        REQUIRE( cut.health() == cut.startHealth() );
     }
 }

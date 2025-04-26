@@ -200,9 +200,12 @@ public:
     void addWeaponToGround(WeaponInstance *w);
     void removeWeaponOnGround(WeaponInstance *pWeapon);
 
+    //! Return the numbers of Static
     size_t numStatics() { return statics_.size(); }
-    Static *statics(size_t i) { return statics_[i]; }
-    void addStatic(Static *pStatic) { statics_.push_back(pStatic); }
+    //! Return a raw pointer to the Static at given position
+    Static *statics(size_t i) { return statics_.at(i).get(); }
+    //! Add a Static object to manage
+    void addStatic(std::unique_ptr<Static> aStatic);
 
     //! Return the numbers of SfxObjects
     size_t numSfxObjects() {return sfx_objects_.size(); }
@@ -306,7 +309,8 @@ protected:
     std::vector<PedInstance *> peds_;
     //! List of all weapons that have no owner
     std::vector<WeaponInstance *> weaponsOnGround_;
-    std::vector<Static *> statics_;
+    //! List of all Static to animate
+    std::vector<std::unique_ptr<Static>> statics_;
     //! List of SFXObject that need to be animated
     std::vector<std::unique_ptr<SFXObject>> sfx_objects_;
     //! List of ProjectileShot that need to be animated

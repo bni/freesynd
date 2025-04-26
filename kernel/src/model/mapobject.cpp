@@ -457,7 +457,7 @@ void MapObject::offzOnStairs(uint8_t twd) {
  *
  */
 ShootableMapObject::ShootableMapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
-    MapObject(anId, pMap, aNature)
+    MapObject(anId, pMap, aNature), health_(0), start_health_(0)
 {}
 
 ShootableMovableMapObject::ShootableMovableMapObject(uint16_t anId, Map *pMap, ObjectNature aNature):

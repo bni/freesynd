@@ -75,7 +75,7 @@ private:
 
 private:
     //! When loading missions, possibly adds some info to the data
-    void hackMissions(int n, uint8 *data);
+    void hackMissions(int n, uint8_t *data);
     //! Reads the mission file and return a representation of that file
     bool load_level_data(int n, LevelData::LevelDataAll &level_data);
     // Instanciate a mission from the data file

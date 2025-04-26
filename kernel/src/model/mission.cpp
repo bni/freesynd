@@ -96,9 +96,8 @@ Mission::~Mission()
     
     sfx_objects_.clear();
     projectileShots_.clear();
+    statics_.clear();
 
-    for (unsigned int i = 0; i < statics_.size(); i++)
-        delete statics_[i];
     for (unsigned int i = 0; i < objectives_.size(); i++)
         delete objectives_[i];
     armedPedsVec_.clear();
@@ -111,6 +110,14 @@ Mission::~Mission()
     if (p_squad_) {
         delete p_squad_;
     }
+}
+
+/*!
+ * Add the given Static to the list of objects to animate
+ * @param aStatic 
+ */
+void Mission::addStatic(std::unique_ptr<Static> aStatic) { 
+    statics_.push_back(std::move(aStatic));
 }
 
 /*!
@@ -138,12 +145,9 @@ void Mission::addSfxObject(std::unique_ptr<SFXObject> so) {
  * \param pPed The ped to remove
  */
 void Mission::removeArmedPed(PedInstance *pPed) {
-    for (size_t i = 0; i < armedPedsVec_.size();  i++) {
-        if (pPed == armedPedsVec_[i]) {
-            armedPedsVec_.erase(armedPedsVec_.begin() + i);
-            break;
-        }
-    }
+    std::erase_if(armedPedsVec_, [pPed](PedInstance* ped) {
+        return ped == pPed;
+    });
 }
 
 /*!
@@ -184,8 +188,11 @@ int Mission::mapHeight()
     return p_map_->height();
 }
 
-void Mission::start(WeaponManager& weaponMgr)
-{
+/*!
+ * @brief 
+ * @param weaponMgr 
+ */
+void Mission::start(WeaponManager& weaponMgr) {
     LOG(Log::k_FLG_GAME, "Mission", "start()", ("Start mission"));
     // Reset mission statistics
     stats_.init(p_squad_->size());
@@ -266,7 +273,7 @@ void Mission::handleTick(uint32_t elapsed, uint32_t diff) {
         pWeapon->animate(diff);
     }
 
-    for (fs_knl::Static *pStatics : statics_) {
+    for (auto & pStatics : statics_) {
         pStatics->animate(elapsed);
     }
 
@@ -507,10 +514,7 @@ bool Mission::setSurfaces() {
     }
 
     // to make surfaces where large doors are located walkable
-    for (std::vector<Static *>::iterator it = statics_.begin();
-        it != statics_.end(); ++it)
-    {
-        Static *s = *it;
+    for (const auto & s : statics_) {
         if (s->type() == Static::smt_LargeDoor) {
             int indx = s->tileX() + s->tileY() * mmax_x_
                 + s->tileZ() * mmax_m_xy;
@@ -2518,8 +2522,7 @@ MapObject * Mission::checkBlockedByObject(WorldPoint * pStartPt, WorldPoint * pE
     double closest = *dist;
     MapObject *pBlocker = NULL;
 
-    for (unsigned int i = 0; i < statics_.size(); ++i) {
-        Static * s_blocker = statics_[i];
+    for (const auto & s_blocker : statics_) {
         if (s_blocker->isExcludedFromBlockers())
             continue;
         if (s_blocker->isBlocker(&copyStartPt, &copyEndPt, inc_xyz)) {
@@ -2529,7 +2532,7 @@ MapObject * Mission::checkBlockedByObject(WorldPoint * pStartPt, WorldPoint * pE
             double dist_blocker = sqrt((double) (cx * cx + cy * cy + cz * cz));
             if (closest == -1 || dist_blocker < closest) {
                 closest = dist_blocker;
-                pBlocker = s_blocker;
+                pBlocker = s_blocker.get();
                 blockStartPt = copyStartPt;
                 blockEndPt = copyEndPt;
             }
