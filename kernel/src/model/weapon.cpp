@@ -373,8 +373,7 @@ void WeaponInstance::fire(Mission *pMission, DamageToInflict &dmg, uint32_t elap
         dmg.d_owner->resetHealth();
         updateStats = false;
     } else if (isInstanceOf(Weapon::GaussGun)) {
-        GaussGunShot *pShot = new GaussGunShot(dmg);
-        pMission->addPrjShot(pShot);
+        pMission->addProjectileShot(std::make_unique<GaussGunShot>(dmg));
     } else if (isInstanceOf(Weapon::Flamer)) {
         // when targeting a point with the flamer, the point of impact
         // circles around the target.
@@ -411,8 +410,7 @@ void WeaponInstance::fire(Mission *pMission, DamageToInflict &dmg, uint32_t elap
             break;
         }
 
-        FlamerShot *pFlamerShot = new FlamerShot(pMission, dmg);
-        pMission->addPrjShot(pFlamerShot);
+        pMission->addProjectileShot(std::make_unique<FlamerShot>(pMission, dmg));
 
         // Change direction for next time
         if (flamerTimer_.update(elapsed)) {

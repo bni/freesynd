@@ -211,28 +211,8 @@ public:
     //! Add an SfxObject to manage
     void addSfxObject(std::unique_ptr<SFXObject> so);
 
-    /*!
-     * Adds the given ProjectileShot to the list of animated shots.
-     * \param prj The projectile to add
-     */
-    void addPrjShot(ProjectileShot *prj) {
-        prj_shots_.push_back(prj);
-    }
-    /*!
-     * Returns the number of currently animated ProjectileShot.
-     */
-    size_t numPrjShots() { return prj_shots_.size(); }
-    /*!
-     * Return the projectile at the given index.
-     * \param i Index of the projectile
-     * \return The projectile found.
-     */
-    ProjectileShot *prjShots(size_t i) { return prj_shots_[i]; }
-    /*!
-     * Destroy the projectile at given index.
-     * \param i Index of the projectile
-     */
-    void delPrjShot(size_t i);
+    //! Adds the given ProjectileShot to the list of animated shots.
+    void addProjectileShot(std::unique_ptr<ProjectileShot> shot);
 
     /*!
      * Adds the given PedInstance to the list of armed peds.
@@ -327,9 +307,10 @@ protected:
     //! List of all weapons that have no owner
     std::vector<WeaponInstance *> weaponsOnGround_;
     std::vector<Static *> statics_;
-    //! List of SFXObject
+    //! List of SFXObject that need to be animated
     std::vector<std::unique_ptr<SFXObject>> sfx_objects_;
-    std::vector<ProjectileShot *> prj_shots_;
+    //! List of ProjectileShot that need to be animated
+    std::vector<std::unique_ptr<ProjectileShot>> projectileShots_;
     /*!
      * A vector constantly updated with the peds that hold a weapon.
      * It's used for performance reasons.

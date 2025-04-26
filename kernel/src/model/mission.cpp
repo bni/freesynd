@@ -95,9 +95,8 @@ Mission::~Mission()
         delete weaponsOnGround_[i];
     
     sfx_objects_.clear();
+    projectileShots_.clear();
 
-    for (unsigned int i = 0; i < prj_shots_.size(); i++)
-        delete prj_shots_[i];
     for (unsigned int i = 0; i < statics_.size(); i++)
         delete statics_[i];
     for (unsigned int i = 0; i < objectives_.size(); i++)
@@ -114,9 +113,12 @@ Mission::~Mission()
     }
 }
 
-void Mission::delPrjShot(size_t i) {
-    delete prj_shots_[i];
-    prj_shots_.erase((prj_shots_.begin() + i));
+/*!
+ * Adds the given ProjectileShot to the list of animated shots.
+ * @param shot The projectile to add
+ */
+void Mission::addProjectileShot(std::unique_ptr<ProjectileShot> shot) {
+    projectileShots_.push_back(std::move(shot));
 }
 
 /*!
@@ -260,18 +262,24 @@ void Mission::handleTick(uint32_t elapsed, uint32_t diff) {
         pVehicle->animate(diff);
     }
 
-    for (size_t i = 0; i < numWeaponsOnGround(); i++)
-        weaponOnGround(i)->animate(diff);
-
-    for (size_t i = 0; i < numStatics(); i++) {
-        statics(i)->animate(elapsed);
+    for (fs_knl::WeaponInstance *pWeapon : weaponsOnGround_) {
+        pWeapon->animate(diff);
     }
 
-    for (size_t i = 0; i < numPrjShots(); i++) {
-        prjShots(i)->animate(diff, this);
-        if (prjShots(i)->isLifeOver()) {
-            delPrjShot(i);
-            i--;
+    for (fs_knl::Static *pStatics : statics_) {
+        pStatics->animate(elapsed);
+    }
+
+    for (auto it = projectileShots_.begin(); it != projectileShots_.end(); ) {
+        auto& projectileShot = *it;
+
+        projectileShot->animate(diff, this);
+
+        if (projectileShot->isLifeOver()) {
+            // TODO Delete object 
+            it = projectileShots_.erase(it);
+        } else {
+            ++it;
         }
     }
 }
