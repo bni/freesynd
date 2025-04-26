@@ -62,6 +62,11 @@ void MissionStats::init(int nbAgents) {
     nbOfHits_ = 0;
 }
 
+/*!
+ * @brief 
+ * @param map_infos 
+ * @param pMap 
+ */
 Mission::Mission(const LevelData::MapInfos & map_infos, Map *pMap)
 {
     status_ = kMissionStatusRunning;
@@ -88,9 +93,9 @@ Mission::~Mission()
         delete peds_[i];
     for (unsigned int i = 0; i < weaponsOnGround_.size(); i++)
         delete weaponsOnGround_[i];
-    while (sfx_objects_.size() != 0) {
-        delSfxObject(0);
-    }
+    
+    sfx_objects_.clear();
+
     for (unsigned int i = 0; i < prj_shots_.size(); i++)
         delete prj_shots_[i];
     for (unsigned int i = 0; i < statics_.size(); i++)
@@ -112,6 +117,18 @@ Mission::~Mission()
 void Mission::delPrjShot(size_t i) {
     delete prj_shots_[i];
     prj_shots_.erase((prj_shots_.begin() + i));
+}
+
+/*!
+ * Add an new instance of SfxObject.
+ * If object is visible, start its animation.
+ * @param so The SfxObject to manage
+ */
+void Mission::addSfxObject(std::unique_ptr<SFXObject> so) {
+    if (so->isDrawable()) {
+        so->playMainAnimation();
+    }
+    sfx_objects_.push_back(std::move(so));
 }
 
 /*!
@@ -216,17 +233,46 @@ void Mission::start(WeaponManager& weaponMgr)
     }
 }
 
-/*!
- * Update mission state.
- * @param elapsed 
- */
-void Mission::handleTick(uint32_t elapsed) {
-    if (status_ == kMissionStatusRunning) {
-        // Update stats
-        stats_.incrMissionDuration(elapsed);
 
-        // Checks mission objectives
-        checkObjectives();
+/*!
+ * Run animate method for each managed object.
+ * @param elapsed 
+ * @param diff 
+ */
+void Mission::handleTick(uint32_t elapsed, uint32_t diff) {
+    for (auto it = sfx_objects_.begin(); it != sfx_objects_.end(); ) {
+        auto& sfx = *it;
+
+        sfx->animate(diff);
+
+        if (sfx->sfxLifeOver()) {
+            it = sfx_objects_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    for (fs_knl::PedInstance *pPed : peds_) {
+        pPed->animate(diff);
+    }
+
+    for (fs_knl::Vehicle *pVehicle : vehicles_) {
+        pVehicle->animate(diff);
+    }
+
+    for (size_t i = 0; i < numWeaponsOnGround(); i++)
+        weaponOnGround(i)->animate(diff);
+
+    for (size_t i = 0; i < numStatics(); i++) {
+        statics(i)->animate(elapsed);
+    }
+
+    for (size_t i = 0; i < numPrjShots(); i++) {
+        prjShots(i)->animate(diff, this);
+        if (prjShots(i)->isLifeOver()) {
+            delPrjShot(i);
+            i--;
+        }
     }
 }
 
@@ -347,14 +393,24 @@ void Mission::removeWeaponOnGround(WeaponInstance *pWeapon) {
     pWeapon->resetAnimation();
 }
 
+/*!
+ * 
+ * @param tilex 
+ * @param tiley 
+ * @param tilez 
+ * @param nature 
+ * @param searchIndex 
+ * @param only 
+ * @return 
+ */
 MapObject * Mission::findObjectWithNatureAtPos(int tilex, int tiley, int tilez,
-                            MapObject::ObjectNature *nature, int *searchIndex,
+                            MapObject::ObjectNature *nature, size_t *searchIndex,
                             bool only) {
 
     const TilePoint position(tilex, tiley, tilez);
     switch(*nature) {
         case MapObject::kNaturePed:
-            for (unsigned int i = *searchIndex; i < peds_.size(); i++) {
+            for (size_t i = *searchIndex; i < peds_.size(); i++) {
                 // dead peds are included because doors stay opened even with dead corpses
                 // it also prevents glitches with a closed door over a dead body
                 if (peds_[i]->sameTile(position)) {
@@ -367,7 +423,7 @@ MapObject * Mission::findObjectWithNatureAtPos(int tilex, int tiley, int tilez,
                 return NULL;
             *searchIndex = 0;
         case MapObject::kNatureVehicle:
-            for (unsigned int i = *searchIndex; i < vehicles_.size(); i++)
+            for (size_t i = *searchIndex; i < vehicles_.size(); i++)
                 if (vehicles_[i]->sameTile(position))
                 {
                     *searchIndex = i + 1;

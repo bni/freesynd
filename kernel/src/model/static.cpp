@@ -319,7 +319,7 @@ void Door::doUpdateState([[maybe_unused]] uint32_t elapsed) {
     int y = tileY();
     int z = tileZ();
     MapObject::ObjectNature aNature;
-    int si;
+    size_t si;
     char inc_rel = 0, rel_inc = 0;
     char *i = 0, *j = 0;
     bool found = false;
@@ -457,7 +457,7 @@ void LargeDoor::draw(const Point2D &screenPos) {
     }
 }
 
-void LargeDoor::doUpdateState(uint32_t elapsed) {
+void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
     // TODO: there must be somewhere locked door
     Mission *pMission = g_missionCtrl.mission();
     ShootableMovableMapObject *pVehicle = NULL;
@@ -466,7 +466,7 @@ void LargeDoor::doUpdateState(uint32_t elapsed) {
     int y = tileY();
     int z = tileZ();
     MapObject::ObjectNature aNature;
-    int si;
+    size_t si;
     char inc_rel = 0, rel_inc = 0;
     char *i = 0, *j = 0;
     bool found = false;
@@ -476,7 +476,6 @@ void LargeDoor::doUpdateState(uint32_t elapsed) {
     found_peds_mid.reserve(256);
     char sign;
     int set_wayFree = 0;
-    uint32_t cur_state = state_;
 
     switch(state_) {
         case Static::kStateDoorOpen:

@@ -144,7 +144,7 @@ public:
     //! Ends mission with the given status
     void endWithStatus(Status status);
     //! Update mission state
-    void handleTick(uint32_t elapsed);
+    void handleTick(uint32_t elapsed, uint32_t diff);
 
     //! Returns true if mission status is failed
     bool failed() { return status_ == kMissionStatusFailed; }
@@ -204,23 +204,12 @@ public:
     Static *statics(size_t i) { return statics_[i]; }
     void addStatic(Static *pStatic) { statics_.push_back(pStatic); }
 
-    size_t numSfxObjects() { return sfx_objects_.size(); }
-    SFXObject *sfxObjects(size_t i) { return sfx_objects_[i]; }
-
-    void addSfxObject(SFXObject *so) {
-        sfx_objects_.push_back(so);
-        if (so->isDrawable()) {
-            so->playMainAnimation();
-        }
-    }
-    /*!
-     * Removes SfxObject at given position in the list of sfxobjects.
-     * \param i position of object in the list.
-     */
-    void delSfxObject(size_t i) {
-        delete sfx_objects_[i];
-        sfx_objects_.erase((sfx_objects_.begin() + i));
-    }
+    //! Return the numbers of SfxObjects
+    size_t numSfxObjects() {return sfx_objects_.size(); }
+    //! Return a raw pointer to the SfXObject at given position
+    SFXObject *sfxObjects(size_t i) { return sfx_objects_.at(i).get(); }
+    //! Add an SfxObject to manage
+    void addSfxObject(std::unique_ptr<SFXObject> so);
 
     /*!
      * Adds the given ProjectileShot to the list of animated shots.
@@ -268,8 +257,9 @@ public:
      */
     void removeArmedPed(PedInstance *pPed);
 
+    //! Search for an object of given nature and given position
     MapObject * findObjectWithNatureAtPos(int tilex, int tiley, int tilez,
-        MapObject::ObjectNature *nature, int *searchIndex, bool only);
+        MapObject::ObjectNature *nature, size_t *searchIndex, bool only);
 
     /*! Return the mission statistics. */
     MissionStats *stats() { return &stats_; }
@@ -337,7 +327,8 @@ protected:
     //! List of all weapons that have no owner
     std::vector<WeaponInstance *> weaponsOnGround_;
     std::vector<Static *> statics_;
-    std::vector<SFXObject *> sfx_objects_;
+    //! List of SFXObject
+    std::vector<std::unique_ptr<SFXObject>> sfx_objects_;
     std::vector<ProjectileShot *> prj_shots_;
     /*!
      * A vector constantly updated with the peds that hold a weapon.

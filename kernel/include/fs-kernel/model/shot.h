@@ -184,8 +184,6 @@ class FlamerShot: public ProjectileShot {
  public:
     //! Constructor
     explicit FlamerShot(Mission *pMission, const DamageToInflict &dmg);
-    //! Desctructor
-    ~FlamerShot();
 
     void inflictDamage(Mission *pMission) override;
 

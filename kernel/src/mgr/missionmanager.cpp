@@ -390,14 +390,14 @@ Mission * MissionManager::create_mission(LevelData::LevelDataAll &level_data) {
 
         // adding visual markers(arrow + 1,2,3,4) above our agents
         // availiable/selected on screen
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentFirst));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentSecond));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentThird));
-        p_mission->addSfxObject(new SFXObject(p_mission->get_map(), SFXObject::sfxt_AgentFourth));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_SelArrow, false));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_AgentFirst));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_AgentSecond));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_AgentThird));
+        p_mission->addSfxObject(std::make_unique<SFXObject>(p_mission->get_map(), SFXObject::sfxt_AgentFourth));
 
         LOG(Log::k_FLG_GAME, "MissionManager", "create_mission", ("End of Mission creation"));
         return p_mission;

@@ -213,12 +213,12 @@ void InstantImpactShot::createImpactAnimation(Mission *pMission, ShootableMapObj
             dmg_.pWeapon->getClass()->impactAnims()->objectHit :
             dmg_.pWeapon->getClass()->impactAnims()->groundHit);
 
-    if (impactAnimId != SFXObject::sfxt_Unknown) {
-        SFXObject *so = new SFXObject(pMission->get_map(), impactAnimId);
-        so->setPosition(impactPosW);
-        so->correctZ(pMission->get_map()->maxZ());
-        pMission->addSfxObject(so);
-    }
+        if (impactAnimId != SFXObject::sfxt_Unknown) {
+            auto sfx = std::make_unique<SFXObject>(pMission->get_map(), impactAnimId);
+            sfx->setPosition(impactPosW);
+            sfx->correctZ(pMission->get_map()->maxZ());
+            pMission->addSfxObject(std::move(sfx));
+        }
 }
 
 /*!
@@ -294,11 +294,10 @@ void Explosion::inflictDamage(Mission *pMission) {
             updateStat = false;
         }
         // draw a explosion ball above each object that was hit
-        SFXObject *so = new SFXObject(pMission->get_map(), SFXObject::sfxt_ExplosionBall);
-        so->setPosition(smo->tileX(), smo->tileY(), smo->tileZ(), smo->offX(),
-            smo->offY(), smo->offZ());
-        so->correctZ(pMission->get_map()->maxZ());
-        pMission->addSfxObject(so);
+        auto sfx = std::make_unique<SFXObject>(pMission->get_map(), SFXObject::sfxt_ExplosionBall);
+        sfx->setPosition(smo->position());
+        sfx->correctZ(pMission->get_map()->maxZ());
+        pMission->addSfxObject(std::move(sfx));
     }
     // create the ring of fire around the origin of explosion
     generateFlameWaves(pMission, &(dmg_.originLocW), dmg_.range);
@@ -338,10 +337,10 @@ void Explosion::generateFlameWaves(Mission *pMission, WorldPoint *pOrigin, doubl
 
             uint8 block_mask = pMission->checkBlockedByTile(*pOrigin, &flamePosW, true, dmg_rng);
             if (block_mask != 32) {
-                SFXObject *so = new SFXObject(pMission->get_map(), rngDmgAnim_, true,
-                                100 * (rand() % 16));
-                so->setPosition(flamePosW);
-                pMission->addSfxObject(so);
+                auto sfx = std::make_unique<SFXObject>(pMission->get_map(),
+                                                        rngDmgAnim_, true, 100 * (rand() % 16));
+                sfx->setPosition(flamePosW);
+                pMission->addSfxObject(std::move(sfx));
             }
         }
         angle_inc /= 2.0;
@@ -597,10 +596,10 @@ void GaussGunShot::drawTrace(Mission *pMission) {
                 if (t.z > (pMission->mmax_z_ - 1) * 128)
                     t.z = (pMission->mmax_z_ - 1) * 128;
 
-                SFXObject *so = new SFXObject(pMission->get_map(),
-                    dmg_.pWeapon->getClass()->impactAnims()->trace_anim);
-                so->setPosition(t);
-                pMission->addSfxObject(so);
+                auto sfx = std::make_unique<SFXObject>(pMission->get_map(), 
+                                dmg_.pWeapon->getClass()->impactAnims()->trace_anim);
+                sfx->setPosition(t);
+                pMission->addSfxObject(std::move(sfx));
             }
         }
     }
@@ -608,18 +607,19 @@ void GaussGunShot::drawTrace(Mission *pMission) {
 
 FlamerShot::FlamerShot(Mission *pMission, const DamageToInflict &dmg) :
         ProjectileShot(dmg) {
-    // We create a SFXObjet that we keep in memory to updateits position
-    pFlame_ = new SFXObject(pMission->get_map(),
-                            dmg_.pWeapon->getClass()->impactAnims()->trace_anim);
+    // We create a SFXObjet
+    auto sfx = std::make_unique<SFXObject>(
+        pMission->get_map(),
+        dmg_.pWeapon->getClass()->impactAnims()->trace_anim
+    );
 
-    pFlame_->setPosition(dmg.originLocW);
-    pMission->addSfxObject(pFlame_);
-}
+    sfx->setPosition(dmg.originLocW);
 
-FlamerShot::~FlamerShot() {
-    if(pFlame_ != NULL) {
-        delete pFlame_;
-    }
+    // that we keep in memory to update its position
+    pFlame_ = sfx.get();
+
+    // Then store it in mission
+    pMission->addSfxObject(std::move(sfx));
 }
 
 /*!
@@ -637,7 +637,7 @@ void FlamerShot::inflictDamage(Mission *pMission) {
     // can get rid of sfxobject
     // it will be destroyed by the GameplayMenu loop
     pFlame_->forceEndofLife();
-    pFlame_ = NULL;
+    pFlame_ = nullptr;
     if (pShootableHit_ != NULL) {
         pShootableHit_->handleHit(dmg_);
         if (dmg_.pWeapon->owner()->isOurAgent()) {

@@ -339,7 +339,11 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
     bool change = false;
     tick_count_ += elapsed;
 
-    mission_->handleTick(elapsed);
+    if (mission_->isRunning()) {
+        // Update stats
+        mission_->stats()->incrMissionDuration(elapsed);
+        mission_->checkObjectives();
+    }
 
     if (!canPlayPoliceWarnSound_ && warningTimer_.update(elapsed)) {
         // wait an amount of time before allowing another warning
@@ -361,36 +365,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         uint32_t diff = tick_count_ - last_animate_tick_;
         last_animate_tick_ = tick_count_;
 
-        for (size_t i = 0; i < mission_->numSfxObjects(); i++) {
-            fs_knl::SFXObject *pSfx = mission_->sfxObjects(i);
-            pSfx->animate(diff);
-            if (pSfx->sfxLifeOver()) {
-                mission_->delSfxObject(i);
-                i--;
-            }
-        }
-
-        for (size_t i = 0; i < mission_->numPeds(); i++)
-            mission_->ped(i)->animate(diff);
-
-
-        for (size_t i = 0; i < mission_->numVehicles(); i++)
-            mission_->vehicle(i)->animate(diff);
-
-        for (size_t i = 0; i < mission_->numWeaponsOnGround(); i++)
-            mission_->weaponOnGround(i)->animate(diff);
-
-        for (size_t i = 0; i < mission_->numStatics(); i++) {
-            mission_->statics(i)->animate(elapsed);
-        }
-
-        for (size_t i = 0; i < mission_->numPrjShots(); i++) {
-            change |= mission_->prjShots(i)->animate(diff, mission_);
-            if (mission_->prjShots(i)->isLifeOver()) {
-                mission_->delPrjShot(i);
-                i--;
-            }
-        }
+        mission_->handleTick(elapsed, diff);
 
         updateMarkersPosition();
     }
