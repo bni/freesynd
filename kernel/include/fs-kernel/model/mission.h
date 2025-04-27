@@ -242,7 +242,7 @@ public:
 
     //! Search for an object of given nature and given position
     MapObject * findObjectWithNatureAtPos(int tilex, int tiley, int tilez,
-        MapObject::ObjectNature *nature, size_t *searchIndex, bool only);
+        MapObject::ObjectNature nature, size_t *searchIndex);
 
     /*! Return the mission statistics. */
     MissionStats *stats() { return &stats_; }

@@ -402,49 +402,51 @@ void Mission::removeWeaponOnGround(WeaponInstance *pWeapon) {
     pWeapon->resetAnimation();
 }
 
-/*!
- * 
- * @param tilex 
- * @param tiley 
- * @param tilez 
- * @param nature 
- * @param searchIndex 
- * @param only 
- * @return 
+/**
+ * This function iterates over the objects of the requested type (pedestrians or vehicles) starting
+ * from the provided search index and looks for an object located at the specified tile coordinates.
+ * If a matching object is found, it is returned and the search index is updated
+ * so that subsequent calls can continue searching from the next object.
+ *
+ * @param tilex X coordinate of the tile.
+ * @param tiley Y coordinate of the tile.
+ * @param tilez Z level (altitude) of the tile.
+ * @param nature The nature/type of the object to search for (pedestrian or vehicle).
+ * @param searchIndex [in,out] Pointer to the current search index; updated if a matching object is found.
+ * @return Pointer to the found object, or nullptr if no matching object is found.
+ *
+ * @note
+ * - Dead pedestrians are included in the search to prevent logic issues (e.g., doors closing over a corpse).
+ * - If an undefined nature is provided, an error is logged and the function returns nullptr.
+ *
+ * @see MapObject::ObjectNature
  */
 MapObject * Mission::findObjectWithNatureAtPos(int tilex, int tiley, int tilez,
-                            MapObject::ObjectNature *nature, size_t *searchIndex,
-                            bool only) {
+                            MapObject::ObjectNature nature, size_t *searchIndex) {
 
-    const TilePoint position(tilex, tiley, tilez);
-    switch(*nature) {
-        case MapObject::kNaturePed:
-            for (size_t i = *searchIndex; i < peds_.size(); i++) {
-                // dead peds are included because doors stay opened even with dead corpses
-                // it also prevents glitches with a closed door over a dead body
-                if (peds_[i]->sameTile(position)) {
-                    *searchIndex = i + 1;
-                    *nature = MapObject::kNaturePed;
-                    return peds_[i];
-                }
+    const TilePoint position{tilex, tiley, tilez};
+
+    // lambda to search for an object in a generic container that has same position
+    auto findIn = [&](auto& container) -> MapObject* {
+        for (size_t i = *searchIndex; i < container.size(); ++i) {
+            if (container[i]->sameTile(position)) {
+                *searchIndex = i + 1;
+                return container[i];
             }
-            if(only)
-                return NULL;
-            *searchIndex = 0;
+        }
+        return nullptr;
+    };
+
+    switch (nature) {
+        case MapObject::kNaturePed:
+            return findIn(peds_);
         case MapObject::kNatureVehicle:
-            for (size_t i = *searchIndex; i < vehicles_.size(); i++)
-                if (vehicles_[i]->sameTile(position))
-                {
-                    *searchIndex = i + 1;
-                    *nature = MapObject::kNatureVehicle;
-                    return vehicles_[i];
-                }
-            break;
+            return findIn(vehicles_);
         default:
-            FSERR(Log::k_FLG_GAME, "Mission", "findObjectWithNatureAtPos", ("Undefined nature %i\n", *nature));
-            break;
+            FSERR(Log::k_FLG_GAME, "Mission", "findObjectWithNatureAtPos", 
+                    ("Undefined nature %i\n", static_cast<int>(nature)));
+            return nullptr;
     }
-    return NULL;
 }
 
 // Surface walkable

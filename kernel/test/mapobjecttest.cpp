@@ -124,6 +124,12 @@ TEST_CASE( "ShootableMapObject", "[kernel][mapobject]" ) {
         REQUIRE( cut.isDead() );
     }
 
+    SECTION( "Should init health with start health") {
+        cut.setStartHealth(20, true);
+        REQUIRE( cut.health() == 20 );
+        REQUIRE( cut.health() == cut.startHealth() );
+    }
+
     SECTION( "Should reset health") {
         cut.setHealth(10);
         cut.setStartHealth(20);

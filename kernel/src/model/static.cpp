@@ -338,7 +338,7 @@ void Door::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = dynamic_cast<ShootableMovableMapObject *>(pMission->findObjectWithNatureAtPos(x + inc_rel,
-                        y + rel_inc, z, &aNature, &si, true));
+                        y + rel_inc, z, aNature, &si));
                     if (!pPed && state_ == Static::kStateDoorOpen && (!found)) {
                         state_ = Static::kStateDoorClosing;
                         setExcludedFromBlockers(false);
@@ -366,7 +366,7 @@ void Door::doUpdateState([[maybe_unused]] uint32_t elapsed) {
             aNature = MapObject::kNaturePed; si = 0;
             do {
                 pPed = dynamic_cast<ShootableMovableMapObject *>(pMission->findObjectWithNatureAtPos(x + inc_rel,
-                    y + rel_inc, z, &aNature, &si, true));
+                    y + rel_inc, z, aNature, &si));
                 if (pPed && pPed->isAlive()) {
                     if (!found) {
                         state_ = Static::kStateDoorOpening;
@@ -387,7 +387,7 @@ void Door::doUpdateState([[maybe_unused]] uint32_t elapsed) {
             aNature = MapObject::kNaturePed; si = 0;
             do {
                 pPed = dynamic_cast<ShootableMovableMapObject *>(pMission->findObjectWithNatureAtPos(x + inc_rel,
-                    y + rel_inc, z, &aNature, &si, true));
+                    y + rel_inc, z, aNature, &si));
                 if (pPed && pPed->isAlive()) {
                     if (!found) {
                         state_ = Static::kStateDoorOpening;
@@ -492,7 +492,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNatureVehicle; si = 0;
                 pVehicle = dynamic_cast<ShootableMovableMapObject *>
                                 (pMission->findObjectWithNatureAtPos(x + inc_rel,
-                                                                    y + rel_inc,z, &aNature, &si, true));
+                                                                    y + rel_inc,z, aNature, &si));
                 if (!pVehicle && !found) {
                     state_ = Static::kStateDoorClosing;
                     playAnimation(closingAnim_);
@@ -512,7 +512,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNatureVehicle; si = 0;
                 pVehicle = dynamic_cast<ShootableMovableMapObject *>
                                 (pMission->findObjectWithNatureAtPos(x + inc_rel,
-                                                                    y + rel_inc,z,&aNature,&si,true));
+                                                                    y + rel_inc,z,aNature,&si));
                 if (!pVehicle && !found) {
                     state_ = Static::kStateDoorClosing;
                     playAnimation(closingAnim_);
@@ -531,7 +531,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds.push_back(pPed);
                         if (!found && pPed->hasAccessCard()) {
@@ -549,7 +549,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds.push_back(pPed);
                         if (!found && pPed->hasAccessCard()) {
@@ -567,7 +567,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds_mid.push_back(pPed);
                         if (!found && pPed->hasAccessCard()) {
@@ -628,7 +628,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
             aNature = MapObject::kNatureVehicle; si = 0;
             pVehicle = dynamic_cast<ShootableMovableMapObject *>
                             (pMission->findObjectWithNatureAtPos(x + inc_rel,
-                                                                y + rel_inc,z, &aNature, &si,true));
+                                                                y + rel_inc,z, aNature, &si));
             if (pVehicle) {
                 if (!found) {
                     state_ = Static::kStateDoorOpening;
@@ -644,7 +644,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
             aNature = MapObject::kNatureVehicle; si = 0;
             pVehicle = dynamic_cast<ShootableMovableMapObject *>
                             (pMission->findObjectWithNatureAtPos(x + inc_rel,
-                                                                y + rel_inc,z, &aNature, &si,true));
+                                                                y + rel_inc,z, aNature, &si));
             if (pVehicle) {
                 if (!found) {
                     state_ = Static::kStateDoorOpening;
@@ -660,7 +660,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds.push_back(pPed);
                         if (!found && pPed->hasAccessCard()) {
@@ -677,7 +677,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds.push_back(pPed);
                         if (!found && pPed->hasAccessCard()) {
@@ -723,7 +723,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
             aNature = MapObject::kNatureVehicle; si = 0;
             pVehicle = dynamic_cast<ShootableMovableMapObject *>
                     (pMission->findObjectWithNatureAtPos(x + inc_rel,
-                y + rel_inc,z, &aNature, &si,true));
+                y + rel_inc,z, aNature, &si));
             if (pVehicle) {
                 pVehicle->hold_on_.wayFree = 1;
                 pVehicle->hold_on_.pathBlocker = this;
@@ -733,7 +733,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
             aNature = MapObject::kNatureVehicle; si = 0;
             pVehicle = dynamic_cast<ShootableMovableMapObject *>
                     (pMission->findObjectWithNatureAtPos(x + inc_rel,
-                y + rel_inc,z, &aNature, &si,true));
+                y + rel_inc,z, aNature, &si));
             if (pVehicle) {
                 pVehicle->hold_on_.wayFree = 1;
                 pVehicle->hold_on_.pathBlocker = this;
@@ -743,7 +743,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds.push_back(pPed);
                     }
@@ -754,7 +754,7 @@ void LargeDoor::doUpdateState([[maybe_unused]] uint32_t elapsed) {
                 aNature = MapObject::kNaturePed; si = 0;
                 do {
                     pPed = (PedInstance *)(pMission->findObjectWithNatureAtPos(x + rel_inc,
-                        y + inc_rel, z, &aNature, &si, true));
+                        y + inc_rel, z, aNature, &si));
                     if (pPed) {
                         found_peds.push_back(pPed);
                     }

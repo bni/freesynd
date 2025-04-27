@@ -368,7 +368,12 @@ public:
 
     int startHealth() { return start_health_; }
 
-    void setStartHealth(int n) {
+    /*!
+     * Set value of start health
+     * @param n value to set
+     * @param setHealth if true, health will be set with same value
+     */
+    void setStartHealth(int n, bool setHealth = false) {
         if (n > 255)
             n = 255;
 
@@ -376,6 +381,10 @@ public:
             n = -1;
 
         start_health_ = n;
+
+        if (setHealth) {
+            health_ = start_health_;
+        }
     }
 
     /*!
