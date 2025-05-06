@@ -108,6 +108,18 @@ private:
     int nbOfHits_;
 };
 
+enum class SurfaceType : uint8_t
+    {
+        Empty    = 0x00,
+        Type01   = 0x01,
+        Type02   = 0x02,
+        Type03   = 0x03,
+        Type04   = 0x04,
+        Type0C   = 0x0C,
+        Type10   = 0x10,
+        Unknown
+    };
+
 /*!
  * Contains information read from original mission data file.
  */
@@ -139,7 +151,7 @@ public:
      * @name Mission life cycle and objectives
      */
     ///@{
-    //! Init mission data
+    //! Starts the mission.
     void start(WeaponManager& weaponMgr);
     //! Ends mission with the given status
     void endWithStatus(Status status);
@@ -288,9 +300,21 @@ public:
     Squad * getSquad() const { return squad_.get(); }
 
 protected:
+    SurfaceType surfaceAt(int x, int y, int z) const;
     bool sWalkable(char thisTile, char upperTile);
     bool isSurface(char thisTile);
     bool isStairs(char thisTile);
+
+    //! Selects the two best-ranked weapons from a list.
+    std::pair<int, int> findTopTwoWeapons(const std::vector<Weapon*>& weapons);
+    //! Assigns the best available weapons (and optionally a bomb) to enemy agents without weapons.
+    void assignWeaponsToEnemyAgents(const std::vector<Weapon*>& weapons, Weapon* bomb);
+
+    bool tryShiftX(int &bx, int by, int bzm, int &box, int &boy, int shift, int newBox, int newBoy, SurfaceType expected);
+    bool tryShiftY(int bx, int &by, int bzm, int &box, int &boy, int shift, int newBox, int newBoy, SurfaceType expected);
+    bool tryNeighbourAdjustments(int &bx, int &by, int bzm, int &box, int &boy);
+    void finalizeTile(TilePoint tempTile, TilePoint *pLocT);
+    void finalizeDefault(TilePoint &tempTile, TilePoint *pLocT);
 
     //! At the end of the mission calculate all stats
     void updateStats();

@@ -29,6 +29,7 @@
 #include <string.h>
 #include <assert.h>
 #include <string>
+#include <random>
 
 #include "fs-utils/log/log.h"
 #include "fs-engine/events/event.h"
@@ -37,6 +38,11 @@
 #include "fs-kernel/model/objectivedesc.h"
 #include "fs-kernel/model/vehicle.h"
 #include "fs-kernel/model/squad.h"
+
+namespace {
+    // Générateur de nombres aléatoires thread-safe
+    thread_local std::mt19937 rng(std::random_device{}());
+}
 
 namespace fs_knl {
 
@@ -183,58 +189,95 @@ int Mission::mapHeight()
     return p_map_->height();
 }
 
-/*!
- * @brief 
- * @param weaponMgr 
+/**
+ * Iterates over the given weapon list and identifies the two weapons
+ * with the highest rank values.
+ *
+ * @param weapons List of available weapons to select from.
+ * @return A pair of indices {bestWeaponIndex, secondBestWeaponIndex}.
+ *         If no weapons are available, indices are set to -1.
+ */
+std::pair<int, int> Mission::findTopTwoWeapons(const std::vector<Weapon*>& weapons) {
+    int indexBest = -1, indexSecond = -1;
+    int rankBest = -1, rankSecond = -1;
+
+    for (size_t i = 0; i < weapons.size(); ++i) {
+        int weaponRank = weapons[i]->rank();
+        if (weaponRank > rankBest) {
+            rankSecond = rankBest;
+            indexSecond = indexBest;
+            rankBest = weaponRank;
+            indexBest = static_cast<int>(i);
+        } else if (weaponRank > rankSecond) {
+            rankSecond = weaponRank;
+            indexSecond = static_cast<int>(i);
+        }
+    }
+    return {indexBest, indexSecond};
+}
+
+/**
+ * For each enemy agent without any weapon, this function assigns either the best-ranked
+ * or second-best-ranked weapon (randomly with a small chance) and optionally a time bomb
+ * if one is available.
+ *
+ * @param weapons List of available weapons.
+ * @param bomb Pointer to a bomb weapon (can be nullptr if not available).
+ */
+void Mission::assignWeaponsToEnemyAgents(const std::vector<Weapon*>& weapons, Weapon* bomb) {
+    std::uniform_int_distribution<int> distribution(0, 255);
+
+    auto [indexBest, indexSecond] = findTopTwoWeapons(weapons);
+
+    for (size_t i = squad_->size(); i < peds_.size(); ++i) {
+        auto* ped = peds_[i];
+        if (ped->objGroupDef() == PedInstance::og_dmAgent && ped->numWeapons() == 0) {
+            int indexToGive = indexBest;
+
+            if (indexSecond != -1 && distribution(rng) > 200) {
+                indexToGive = indexSecond;
+            }
+
+            if (indexToGive != -1 && static_cast<size_t>(indexToGive) < weapons.size()) {
+                auto* weaponInstance = WeaponInstance::createInstance(weapons[indexToGive]);
+                ped->addWeapon(weaponInstance);
+                weaponInstance->setOwner(ped);
+            }
+
+            if (bomb) {
+                auto* bombInstance = WeaponInstance::createInstance(bomb);
+                ped->addWeapon(bombInstance);
+                bombInstance->setOwner(ped);
+            }
+        }
+    }
+}
+
+/**
+ * Initializes mission statistics, prepares available weapons,
+ * and assigns weapons to enemy agents.
+ *
+ * @param weaponMgr WeaponManager instance providing access to available weapons.
  */
 void Mission::start(WeaponManager& weaponMgr) {
+    // TODO: consider weight of weapons when adding?
+    // TODO: check whether enemy agents weapons are equal to best two
+
     LOG(Log::k_FLG_GAME, "Mission", "start()", ("Start mission"));
     // Reset mission statistics
     stats_.init(squad_->size());
 
     cur_objective_ = 0;
 
-    // creating a list of available weapons
-    // TODO: consider weight of weapons when adding?
-    std::vector <Weapon *> wpns;
-    weaponMgr.getAvailable(kDmgTypeBullet, wpns);
-    int indx_best = -1;
-    int indx_second = -1;
-    for (int i = 0, sz = wpns.size(), rank_best = -1, rank_second = -1;
-        i < sz; ++i)
-    {
-        if (wpns[i]->rank() > rank_best) {
-            rank_second = rank_best;
-            indx_second = indx_best;
-            rank_best = wpns[i]->rank();
-            indx_best = i;
-        } else if (wpns[i]->rank() > rank_second) {
-            rank_second = wpns[i]->rank();
-            indx_second = i;
-        }
-    }
-    Weapon *bomb = weaponMgr.getAvailable(Weapon::TimeBomb);
+    // Get available weapons
+    std::vector<Weapon*> availableWeapons;
+    weaponMgr.getAvailable(kDmgTypeBullet, availableWeapons);
 
-    // TODO: check whether enemy agents weapons are equal to best two
-    // if not set them
-    for (uint16_t i = squad_->size(), sz = peds_.size(); i < sz; ++i) {
-        PedInstance *p = peds_[i];
-        if (p->objGroupDef() == PedInstance::og_dmAgent &&
-            p->numWeapons() == 0)
-        {
-            int index_give = indx_best;
-            if (indx_second != -1 && (rand() & 0xFF) > 200)
-                index_give = indx_second;
-            WeaponInstance *wi = WeaponInstance::createInstance(wpns[index_give]);
-            p->addWeapon(wi);
-            wi->setOwner(p);
-            if (bomb) {
-                WeaponInstance *w_bomb = WeaponInstance::createInstance(bomb);
-                p->addWeapon(w_bomb);
-                w_bomb->setOwner(p);
-            }
-        }
-    }
+    // see if bomb is available
+    Weapon* bomb = weaponMgr.getAvailable(Weapon::TimeBomb);
+
+    // Assign best weapons to enemy agents
+    assignWeaponsToEnemyAgents(availableWeapons, bomb);
 }
 
 
@@ -340,7 +383,7 @@ void Mission::endWithStatus(Status status) {
  */
 void Mission::updateStats() {
     LOG(Log::k_FLG_GAME, "Mission", "updateStats()", ("calculate statistics for mission"));
-    for (unsigned int i = squad_->size(); i < peds_.size(); i++) {
+    for (size_t i = squad_->size(); i < peds_.size(); i++) {
         PedInstance *p = peds_[i];
         // TODO: influence country happiness with number of killed overall
         // civilians+police, more killed less happy
@@ -2864,266 +2907,169 @@ uint8_t Mission::getPathLengthBetween(PedInstance *pPed, ShootableMapObject* obj
     return res == 1 ? 0 : 1;
 }
 
-bool Mission::getShootableTile(TilePoint *pLocT)
+constexpr bool isSolidSurface(SurfaceType type)
 {
-    // TODO: review later
-    bool gotit = false;
+    return !(type == SurfaceType::Empty ||
+            type == SurfaceType::Type0C ||
+            type == SurfaceType::Type10);
+}
+
+SurfaceType Mission::surfaceAt(int x, int y, int z) const
+{
+    if (x < 0 || y < 0 || z < 0 || x >= mmax_x_ || y >= mmax_y_ || z >= mmax_z_)
+        return SurfaceType::Unknown;
+
+    return static_cast<SurfaceType>(mtsurfaces_[x + y * mmax_x_ + z * mmax_m_xy]);
+}
+
+
+bool Mission::getShootableTile(TilePoint *pLocT) {
+    bool gotIt = false;
     int bx, by, box, boy;
     int bz = mmax_z_;
-    unsigned char twd;
-    unsigned int cindx;
-    do {
-        --bz;
-        int bzm = bz - 1;
-        bx = pLocT->tx * 256 + pLocT->ox + 128 * bzm;
-        box = bx % 256;
-        bx = bx / 256;
-        by = pLocT->ty * 256 + pLocT->oy + 128 * bzm;
-        boy = by % 256;
-        by = by / 256;
-        if (bz >= mmax_z_ || bx >= mmax_x_ || by >= mmax_y_)
-            continue;
-        if (bz < 0 || bx < 0 || by < 0)
-            break;
-        twd = mtsurfaces_[bx + by * mmax_x_ + bzm * mmax_m_xy];
-        int dx = 0;
-        int dy = 0;
-        switch (twd) {
-            case 0x01:
-                dy = (boy * 2) / 3;
-                dx = box - dy / 2;
-                if (dx >= 0) {
-                    gotit = true;
-                    box = dx;
-                    boy = dy;
-                } else {
-                    if ((bx - 1) >= 0) {
-                        cindx = (bx - 1) + by * mmax_x_ + bzm * mmax_m_xy;
-                        if (mtsurfaces_[cindx] == 0x01) {
-                            gotit = true;
-                            --bx;
-                            box = dx + 256;
-                            boy = dy;
-                        }
-                    }
-                }
-                break;
-            case 0x02:
-                dy = (boy - 128) * 2;
-                dx = (box + dy / 2) - 128;
-                if (dy >= 0) {
-                    if (dx >= 0) {
-                        if (dx < 256) {
-                            gotit = true;
-                            box = dx;
-                            boy = dy;
-                        } else {
-                            if ((bx + 1) < mmax_x_) {
-                                cindx = (bx + 1) + by * mmax_x_ + bzm * mmax_m_xy;
-                                if (mtsurfaces_[cindx] == 0x02) {
-                                    gotit = true;
-                                    ++bx;
-                                    box = dx - 256;
-                                    boy = dy;
-                                }
-                            }
-                        }
-                    } else {
-                        if ((bx - 1) >= 0) {
-                            cindx = (bx - 1) + by * mmax_x_ + bzm * mmax_m_xy;
-                            if (mtsurfaces_[cindx] == 0x02) {
-                                gotit = true;
-                                --bx;
-                                box = dx + 256;
-                                boy = dy;
-                            }
-                        }
-                    }
-                }
-                break;
-            case 0x03:
-                dx = (box - 128) * 2;
-                dy = (boy + dx / 2) - 128;
-                if (dx >= 0) {
-                    if (dy >= 0) {
-                        if (dy < 256) {
-                            gotit = true;
-                            box = dx;
-                            boy = dy;
-                        } else {
-                            if ((by + 1) < mmax_y_) {
-                                cindx = bx + (by + 1) * mmax_x_ + bzm * mmax_m_xy;
-                                if (mtsurfaces_[cindx] == 0x03) {
-                                    gotit = true;
-                                    by++;
-                                    box = dx;
-                                    boy = dy - 256;
-                                }
-                            }
-                        }
-                    } else {
-                        if ((by - 1) >= 0) {
-                            cindx = bx + (by - 1) * mmax_x_ + bzm * mmax_m_xy;
-                            if (mtsurfaces_[cindx] == 0x03) {
-                                gotit = true;
-                                --by;
-                                box = dx;
-                                boy = dy + 256;
-                            }
-                        }
-                    }
-                }
-                break;
-            case 0x04:
-                dx = (box * 2) / 3;
-                dy = boy - dx / 2;
-                if (dy >= 0) {
-                    gotit = true;
-                    box = dx;
-                    boy = dy;
-                } else {
-                    if ((by - 1) >= 0) {
-                        cindx = bx + (by - 1) * mmax_x_ + bzm * mmax_m_xy;
-                        if (mtsurfaces_[cindx] == 0x04) {
-                            gotit = true;
-                            --by;
-                            box = dx;
-                            boy = dy + 256;
-                        }
-                    }
-                }
-                break;
-            default:
-                if (!(twd == 0x00 || twd == 0x0C || twd == 0x10))
-                    gotit = true;
-            break;
-        }
-       if (!gotit) {
-            if (box < 128 && (bx - 1) >= 0) {
-                cindx = (bx - 1) + by * mmax_x_ + bzm * mmax_m_xy;
-                twd = mtsurfaces_[cindx];
-                if (twd == 0x01) {
-                    dy = (boy * 2) / 3;
-                    dx = (box + 256) - dy / 2;
-                    if (dx < 256) {
-                        --bx;
-                        gotit = true;
-                        box = dx;
-                        boy = dy;
-                    }
-                } else if (twd == 0x04) {
-                    dx = ((box + 256) * 2) / 3;
-                    dy = boy - dx / 2;
-                    if (dy >= 0) {
-                        --bx;
-                        gotit = true;
-                        box = dx;
-                        boy = dy;
-                    }
-                }
-            }
-            if (!gotit && boy < 128 && (by - 1) >= 0) {
-                cindx = bx + (by - 1) * mmax_x_ + bzm * mmax_m_xy;
-                twd = mtsurfaces_[cindx];
-                if (twd == 0x01) {
-                    dy = ((boy + 256) * 2) / 3;
-                    dx = box - dy / 2;
-                    if (dx >= 0) {
-                        --by;
-                        gotit = true;
-                        box = dx;
-                        boy = dy;
-                    }
-                } else if (twd == 0x04) {
-                    dx = (box * 2) / 3;
-                    dy = (boy + 256) - dx / 2;
-                    if (dy < 256) {
-                        --by;
-                        gotit = true;
-                        box = dx;
-                        boy = dy;
-                    }
-                }
-                if(!gotit && box < 128 && (bx - 1) >= 0) {
-                    --cindx;
-                    int dx2 = 0;
-                    int dy2 = 0;
-                    twd = mtsurfaces_[cindx];
-                    if (twd == 0x01) {
-                        dy2 = ((boy + 256) * 2) / 3;
-                        dx2 = (box + 256) - dy2 / 2;
-                        if (dx2 < 256 && dy2 < 256) {
-                            --bx;
-                            --by;
-                            gotit = true;
-                            box = dx2;
-                            boy = dy2;
-                        }
-                    } else if (twd == 0x04) {
-                        dx2 = ((box + 256) * 2) / 3;
-                        dy2 = (boy + 256) - dx2 / 2;
-                        if (dx2 < 256 && dy2 < 256) {
-                            --bx;
-                            --by;
-                            gotit = true;
-                            box = dx2;
-                            boy = dy2;
-                        }
-                    }
-                }
-            }
-       }
-    } while (bz != 0 && !gotit);
-    if (gotit) {
-        twd = mtsurfaces_[bx + by * mmax_x_ + (bz - 1) * mmax_m_xy];
-        switch (twd) {
-            case 0x01:
-                pLocT->oz = 127 - (boy >> 1);
-                --bz;
-                break;
-            case 0x02:
-                pLocT->oz = boy >> 1;
-                --bz;
-                break;
-            case 0x03:
-                pLocT->oz = box >> 1;
-                --bz;
-                break;
-            case 0x04:
-                pLocT->oz = 127 - (box >> 1);
-                --bz;
-                break;
-            default:
-                twd = mtsurfaces_[bx + by * mmax_x_ + bz * mmax_m_xy];
-                if (!(twd == 0x00 || twd == 0x0C || twd == 0x10)) {
-                    // recalculating point of collision
-                    if (box > 192 || boy > 192) {
-                        if (box >= boy)
-                            pLocT->oz = (256 - box) << 1;
-                        else if (boy > box)
-                            pLocT->oz = (256 - boy) << 1;
-                    } else
-                        pLocT->oz = 128;
 
-                    bx = pLocT->tx * 256 + pLocT->ox + 128 * (bz - 1) + pLocT->oz;
-                    box = bx % 256;
-                    bx = bx / 256;
-                    by = pLocT->ty * 256 + pLocT->oy + 128 * (bz - 1) + pLocT->oz;
-                    boy = by % 256;
-                    by = by / 256;
-                    bz += pLocT->oz / 128;
-                    pLocT->oz %= 128;
-                } else
-                    pLocT->oz = 0;
+    while (bz-- > 0 && !gotIt) {
+        int bzm = bz - 1;
+
+        bx = pLocT->tx * 256 + pLocT->ox + 128 * bzm;
+        by = pLocT->ty * 256 + pLocT->oy + 128 * bzm;
+        box = bx % 256;
+        boy = by % 256;
+        bx /= 256;
+        by /= 256;
+
+        const SurfaceType twd = surfaceAt(bx, by, bzm);
+        int dx = 0, dy = 0;
+
+        if (twd == SurfaceType::Type01) {
+            dy = (boy * 2) / 3;
+            dx = box - dy / 2;
+            gotIt = (dx >= 0) || tryShiftX(bx, by, bzm, box, boy, -1, dx + 256, dy, SurfaceType::Type01);
+        } else if (twd == SurfaceType::Type02) {
+            dy = (boy - 128) * 2;
+            dx = (box + dy / 2) - 128;
+            if (dy >= 0)
+                gotIt = (dx >= 0 && dx < 256) || tryShiftX(bx, by, bzm, box, boy, (dx < 0) ? -1 : 1, (dx + ((dx < 0) ? 256 : -256)), dy, SurfaceType::Type02);
+        } else if (twd == SurfaceType::Type03) {
+            dx = (box - 128) * 2;
+            dy = (boy + dx / 2) - 128;
+            if (dx >= 0)
+                gotIt = (dy >= 0 && dy < 256) || tryShiftY(bx, by, bzm, box, boy, (dy < 0) ? -1 : 1, dx, (dy + ((dy < 0) ? 256 : -256)), SurfaceType::Type03);
+        } else if (twd == SurfaceType::Type04) {
+            dx = (box * 2) / 3;
+            dy = boy - dx / 2;
+            gotIt = (dy >= 0) || tryShiftY(bx, by, bzm, box, boy, -1, dx, dy + 256, SurfaceType::Type04);
+        } else {
+            gotIt = isSolidSurface(twd);
         }
-        pLocT->tx = bx;
-        pLocT->ty = by;
-        pLocT->tz = bz;
-        pLocT->ox = box;
-        pLocT->oy = boy;
-        assert(bz >= 0);
+
+        if (!gotIt)
+            gotIt = tryNeighbourAdjustments(bx, by, bzm, box, boy);
     }
-    return gotit;
+
+    if (gotIt) {
+        TilePoint tempTile(bx, by, bz, box, boy);
+        finalizeTile(tempTile, pLocT);
+    }
+
+    return gotIt;
+}
+
+
+bool Mission::tryShiftX(int &bx, int by, int bzm, int &box, int &boy, int shift, int newBox, int newBoy, SurfaceType expected) {
+    int newBx = bx + shift;
+    if (surfaceAt(newBx, by, bzm) == expected) {
+        bx = newBx;
+        box = newBox;
+        boy = newBoy;
+        return true;
+    }
+    return false;
+}
+
+bool Mission::tryShiftY(int bx, int &by, int bzm, int &box, int &boy, int shift, int newBox, int newBoy, SurfaceType expected) {
+    int newBy = by + shift;
+    if (surfaceAt(bx, newBy, bzm) == expected) {
+        by = newBy;
+        box = newBox;
+        boy = newBoy;
+        return true;
+    }
+    return false;
+}
+
+bool Mission::tryNeighbourAdjustments(int &bx, int &by, int bzm, int &box, int &boy) {
+    auto check = [&](int offsetX, int offsetY) -> bool {
+        const SurfaceType twd = surfaceAt(bx + offsetX, by + offsetY, bzm);
+        if (twd == SurfaceType::Type01 || twd == SurfaceType::Type04) {
+            int dx = (twd == SurfaceType::Type01) ? ((boy + 256 * (offsetY != 0)) * 2) / 3 : ((box + 256 * (offsetX != 0)) * 2) / 3;
+            int dy = (twd == SurfaceType::Type01) ? (box + 256 * (offsetX != 0)) - dx / 2 : (boy + 256 * (offsetY != 0)) - dx / 2;
+
+            if (dx >= 0 && dx < 256 && dy >= 0 && dy < 256) {
+                bx += offsetX;
+                by += offsetY;
+                box = (twd == SurfaceType::Type01) ? dy : dx;
+                boy = (twd == SurfaceType::Type01) ? dx : dy;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    return check(-1, 0) || check(0, -1) || check(-1, -1);
+}
+
+void Mission::finalizeTile(TilePoint tempTile, TilePoint *pLocT) {
+    SurfaceType twd = surfaceAt(tempTile.tx, tempTile.ty, tempTile.tz - 1);
+
+    switch (twd)
+    {
+    case SurfaceType::Type01:
+        pLocT->oz = 127 - (tempTile.oy >> 1);
+        --tempTile.tz;
+        break;
+    case SurfaceType::Type02:
+        pLocT->oz = tempTile.oy >> 1;
+        --tempTile.tz;
+        break;
+    case SurfaceType::Type03:
+        pLocT->oz = tempTile.ox >> 1;
+        --tempTile.tz;
+        break;
+    case SurfaceType::Type04:
+        pLocT->oz = 127 - (tempTile.ox >> 1);
+        --tempTile.tz;
+        break;
+    default:
+        finalizeDefault(tempTile, pLocT);
+        break;
+    }
+
+    pLocT->tx = tempTile.tx;
+    pLocT->ty = tempTile.ty;
+    pLocT->tz = tempTile.tz;
+    pLocT->ox = tempTile.ox;
+    pLocT->oy = tempTile.oy;
+
+    assert(tempTile.tz >= 0);
+}
+
+void Mission::finalizeDefault(TilePoint &tempTile, TilePoint *pLocT) {
+    SurfaceType twd = surfaceAt(tempTile.tx, tempTile.ty, tempTile.tz);
+    if (isSolidSurface(twd))
+    {
+        pLocT->oz = (tempTile.ox > 192 || tempTile.oy > 192) ? (((tempTile.ox >= tempTile.oy) ? (256 - tempTile.ox) : (256 - tempTile.oy)) << 1) : 128;
+        tempTile.tx = (pLocT->tx * 256 + pLocT->ox + 128 * (tempTile.tz - 1) + pLocT->oz) / 256;
+        tempTile.ox = (pLocT->tx * 256 + pLocT->ox + 128 * (tempTile.tz - 1) + pLocT->oz) % 256;
+        tempTile.ty = (pLocT->ty * 256 + pLocT->oy + 128 * (tempTile.tz - 1) + pLocT->oz) / 256;
+        tempTile.oy = (pLocT->ty * 256 + pLocT->oy + 128 * (tempTile.tz - 1) + pLocT->oz) % 256;
+        tempTile.tz += pLocT->oz / 128;
+        pLocT->oz %= 128;
+    }
+    else
+    {
+        pLocT->oz = 0;
+    }
 }
 
 bool Mission::isTileSolid(int x, int y, int z, int ox, int oy, int oz) {
