@@ -493,7 +493,7 @@ MapObject * Mission::findObjectWithNatureAtPos(int tilex, int tiley, int tilez,
 }
 
 // Surface walkable
-bool Mission::sWalkable(char thisTile, char upperTile) {
+bool Mission::sWalkable(uint8_t thisTile, uint8_t upperTile) {
 
     return (
             // checking surface
@@ -505,13 +505,13 @@ bool Mission::sWalkable(char thisTile, char upperTile) {
         ) && (upperTile == 0x00 || upperTile == 0x10);
 }
 
-bool Mission::isSurface(char thisTile) {
+bool Mission::isSurface(uint8_t thisTile) {
     return (thisTile >= 0x05 && thisTile <= 0x09) ||
         thisTile == 0x0B || (thisTile >= 0x0D && thisTile <= 0x0F)
         || (thisTile == 0x11 || thisTile == 0x12);
 }
 
-bool Mission::isStairs(char thisTile) {
+bool Mission::isStairs(uint8_t thisTile) {
     return thisTile > 0x00 && thisTile < 0x05;
 }
 
@@ -532,9 +532,12 @@ bool Mission::setSurfaces() {
 
     clrSurfaces();
     int mmax_m_all = mmax_x_ * mmax_y_ * mmax_z_;
-    mtsurfaces_ = (uint8_t *)malloc(mmax_m_all * sizeof(uint8_t));
-    mdpoints_ = (floodPointDesc *)malloc(mmax_m_all * sizeof(floodPointDesc));
-    mdpoints_cp_ = (floodPointDesc *)malloc(mmax_m_all * sizeof(floodPointDesc));
+    //mtsurfaces_ = (uint8_t *)malloc(mmax_m_all * sizeof(uint8_t));
+    mtsurfaces_ = new uint8_t[mmax_m_all];
+    //mdpoints_ = (floodPointDesc *)malloc(mmax_m_all * sizeof(floodPointDesc));
+    mdpoints_ = new floodPointDesc[mmax_m_all];
+    //mdpoints_cp_ = (floodPointDesc *)malloc(mmax_m_all * sizeof(floodPointDesc));
+    mdpoints_cp_ = new floodPointDesc[mmax_m_all];
     if(mtsurfaces_ == NULL || mdpoints_ == NULL || mdpoints_cp_ == NULL) {
         clrSurfaces();
         FSERR(Log::k_FLG_GAME, "Mission", "setSurfaces", ("Memory allocation error\n"));
@@ -575,14 +578,13 @@ bool Mission::setSurfaces() {
     //printf("surface data size %i\n", sizeof(surfaceDesc) * mmax_m_all);
     //printf("flood data size %i\n", sizeof(floodPointDesc) * mmax_m_all);
 
-    for (unsigned int i = 0; i < peds_.size(); ++i) {
-        PedInstance *p = peds_[i];
-        int x = p->tileX();
-        int y = p->tileY();
-        int z = p->tileZ();
-        if (z >= mmax_z_ || z < 0 || p->isDead()) {
+    for (PedInstance *pPed : peds_) {
+        int x = pPed->tileX();
+        int y = pPed->tileY();
+        int z = pPed->tileZ();
+        if (z >= mmax_z_ || z < 0 || pPed->isDead()) {
             // TODO : check on all maps those peds correct position
-            p->setTileZ(mmax_z_ - 1);
+            pPed->setTileZ(mmax_z_ - 1);
             continue;
         }
         if (mdpoints_[x + y * mmax_x_ + z * mmax_m_xy].bfNodeDesc == m_fdNotDefined) {

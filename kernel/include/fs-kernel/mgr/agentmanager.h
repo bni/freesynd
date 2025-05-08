@@ -100,8 +100,8 @@ public:
         return a_squad_[slotId];
     }
 
-    //! Return the slot that holds the given agent or -1 if ni agent is found
-    int getSquadSlotForAgent(Agent *pAgent);
+    //! Return the slot that holds the given agent or Squad::kMaxSlot if no agent is found
+    size_t getSquadSlotForAgent(Agent *pAgent);
 
     //! Save instance to file
     bool saveToFile(fs_utl::PortableFile &file);

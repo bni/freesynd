@@ -301,9 +301,9 @@ public:
 
 protected:
     SurfaceType surfaceAt(int x, int y, int z) const;
-    bool sWalkable(char thisTile, char upperTile);
-    bool isSurface(char thisTile);
-    bool isStairs(char thisTile);
+    bool sWalkable(uint8_t thisTile, uint8_t upperTile);
+    bool isSurface(uint8_t thisTile);
+    bool isStairs(uint8_t thisTile);
 
     //! Selects the two best-ranked weapons from a list.
     std::pair<int, int> findTopTwoWeapons(const std::vector<Weapon*>& weapons);

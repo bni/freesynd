@@ -46,7 +46,7 @@ SelectMenu::SelectMenu(fs_eng::MenuManager * m):
     
     tab_ = TAB_EQUIPS;
     pSelectedWeap_ = NULL;
-    selectedWInstId_ = 0;
+    pSelectedWInstance_ = nullptr;
     pSelectedMod_ = NULL;
     weapon_dragged_ = NULL;
 
@@ -203,13 +203,13 @@ void SelectMenu::drawAgent()
     // draw inventory
     Point2D pos[8];
     fs_knl::WeaponInstance * draw_weapons[8];
-    for (uint8 i = 0; i < 8; ++i) {
+    for (uint8_t i = 0; i < 8; ++i) {
         draw_weapons[i] = NULL;
     }
-    for (int j = 0, k = 0; j < 2; ++j)
-        for (int i = 0; i < 4 && (j * 4 + i < selected->numWeapons()); ++i)
+    for (uint8_t j = 0, k = 0; j < 2; ++j) {
+        for (uint8_t i = 0; i < 4 && (j * 4u + i < selected->numWeapons()); ++i)
         {
-            fs_knl::WeaponInstance *wi = selected->weapon(j * 4 + i);
+            fs_knl::WeaponInstance *wi = selected->weapon(j * 4u + i);
             if (wi == weapon_dragged_ && menu_manager_->isMouseDragged()) {
                 pos[7] = weapon_pos_;
                 draw_weapons[7] = wi;
@@ -221,6 +221,7 @@ void SelectMenu::drawAgent()
             }
 
         }
+    }
 
     // Draw weapons for the selected agent
     for (uint8_t i = 0; i < 8; ++i) {
@@ -312,10 +313,9 @@ void SelectMenu::drawSelectedWeaponInfos(int x, int y) {
         y += 12;
     }
 
-    if (selectedWInstId_ > 0 && g_gameCtrl.weaponManager().isAvailable(pSelectedWeap_)) {
-        fs_knl::WeaponInstance *wi = g_gameCtrl.agents().squadMember(cur_agent_)->weapon(selectedWInstId_ - 1);
-        if (wi->needsReloading()) {
-            int rldCost = pSelectedWeap_->calculateReloadingCost(wi->ammoRemaining());
+    if (pSelectedWInstance_ != nullptr && g_gameCtrl.weaponManager().isAvailable(pSelectedWeap_)) {
+        if (pSelectedWInstance_->needsReloading()) {
+            int rldCost = pSelectedWeap_->calculateReloadingCost(pSelectedWInstance_->ammoRemaining());
 
             sprintf(tmp, ":%d", rldCost);
             getMenuFont(FontManager::SIZE_1)->drawText(x, y,
@@ -350,9 +350,11 @@ bool SelectMenu::handleBeforeShow() {
         getStatic(txtAgentId_)->setText("");
     }
 
-    for (int iAgnt=0; iAgnt<fs_knl::AgentManager::MAX_AGENT; iAgnt++) {
+    for (uint8_t iAgnt=0; iAgnt<fs_knl::AgentManager::MAX_AGENT; iAgnt++) {
         fs_knl::Agent *pAgentFromCryo = g_gameCtrl.agents().agent(iAgnt);
-        pTeamLBox_->setSquadLine(g_gameCtrl.agents().getSquadSlotForAgent(pAgentFromCryo), iAgnt);
+        pTeamLBox_->setSquadLine(
+                        g_gameCtrl.agents().getSquadSlotForAgent(pAgentFromCryo),
+                        static_cast<int>(iAgnt));
     }
     showItemList();
 
@@ -446,7 +448,7 @@ void SelectMenu::handleLeave() {
  * Invert the active/inactive status of an agent in the squad.
  * Cannot inactivate an agent if he's the last active agent.
  */
-void SelectMenu::toggleAgent(int n)
+void SelectMenu::toggleAgent(size_t n)
 {
     int nactive = 0;
     // count the number of active agents
@@ -477,7 +479,7 @@ void SelectMenu::updateAcceptEnabled() {
     getOption(acceptButId_)->setWidgetEnabled(found);
 }
 
-void SelectMenu::handleMouseMotion(Point2D point, uint32_t state)
+void SelectMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state)
 {
     if (weapon_dragged_) {
         weapon_pos_ = point;
@@ -486,14 +488,16 @@ void SelectMenu::handleMouseMotion(Point2D point, uint32_t state)
 
 void SelectMenu::handleMouseUp(Point2D point, int button)
 {
-    if (button == 3) {
+    if (button == 3) {  // End of drag & drop weapon instance
         fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
         if (selected == NULL)
             weapon_dragged_ = NULL;
         if (weapon_dragged_) {
-            int target = -1;
+            size_t target;
+            bool hasClickedOnTarget = false;
             if (point.x >= 20 && point.x <= 140) {
                 if (point.y >= 84 && point.y <= 150) {
+                    hasClickedOnTarget = true;
                     if (point.x >= 82) {
                         target = 1;
                     } else {
@@ -501,6 +505,7 @@ void SelectMenu::handleMouseUp(Point2D point, int button)
                     }
                 }
                 if (point.y >= 162 && point.y <= 228) {
+                    hasClickedOnTarget = true;
                     if (point.x >= 82) {
                         target = 3;
                     } else {
@@ -508,8 +513,8 @@ void SelectMenu::handleMouseUp(Point2D point, int button)
                     }
                 }
             }
-            fs_knl::Agent *reciever = target != -1
-                ? g_gameCtrl.agents().squadMember(target) : NULL;
+            fs_knl::Agent *reciever = hasClickedOnTarget ? 
+                                        g_gameCtrl.agents().squadMember(target) : nullptr;
             if (target != cur_agent_ && reciever
                 && reciever->numWeapons() < 8)
             {
@@ -517,7 +522,7 @@ void SelectMenu::handleMouseUp(Point2D point, int button)
                 reciever->addWeapon(weapon_dragged_);
 
                 pSelectedWeap_ = NULL;
-                selectedWInstId_ = 0;
+                pSelectedWInstance_ = nullptr;
                 showItemList();
             }
             weapon_dragged_ = NULL;
@@ -553,7 +558,7 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
         if (point.x >= 366 && point.x < 366 + 4 * 32
             && point.y >= 308 && point.y < 308 + 2 * 32)
         {
-            int newId = (point.x - 366) / 32 + ((point.y - 308) / 32) * 4;
+            size_t newId = static_cast<size_t>((point.x - 366) / 32 + ((point.y - 308) / 32) * 4);
             if (newId < selected->numWeapons())
             {
                 // The user has actually selected a weapon from the inventory :
@@ -570,8 +575,8 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
                     weapon_pos_ = point;
                 }
 
-                if (newId != selectedWInstId_) { // Do something only if a different weapon is selected
-                    selectedWInstId_ = newId;
+                if (wi != pSelectedWInstance_) { // Do something only if a different weapon is selected
+                    pSelectedWInstance_ = wi;
                     pSelectedWeap_ = wi->getClass();
                     // 3/ see if reload button should be displayed,
                     // if weapon is not researched it will not be reloadable
@@ -597,12 +602,11 @@ bool SelectMenu::handleMouseDown(Point2D point, int button)
 /**
  * Handles when the player clicks on a agent selector.
  */
-void SelectMenu::handleClickOnAgentSelector(const int agent_no, int button) {
+void SelectMenu::handleClickOnAgentSelector(const size_t agent_no, int button) {
     if (button == 3) {
         toggleAgent(agent_no);
     } else if (cur_agent_ != agent_no) {
-        if (selectedWInstId_ != 0)
-            updateSelectedWeapon();
+        updateSelectedWeapon();
         cur_agent_ = agent_no;
         if (g_gameCtrl.agents().squadMember(agent_no)) {
             getStatic(txtAgentId_)->setTextFormated("#SELECT_SUBTITLE",
@@ -630,7 +634,7 @@ void SelectMenu::showModWeaponPanel() {
 void SelectMenu::showItemList() {
     pSelectedMod_ = NULL;
     pSelectedWeap_ = NULL;
-    selectedWInstId_ = 0;
+    pSelectedWInstance_ = nullptr;
     getOption(cancelButId_)->setVisible(false);
     getOption(reloadButId_)->setVisible(false);
     getOption(purchaseButId_)->setVisible(false);
@@ -697,13 +701,11 @@ void SelectMenu::handleAction(const ActionDesc &action)
     } else if (action.id == cancelButId_) {
         showItemList();
     } else if (action.id == reloadButId_) {
-        fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
-        fs_knl::WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
-        int rldCost = pSelectedWeap_->calculateReloadingCost(wi->ammoRemaining());
+        int rldCost = pSelectedWeap_->calculateReloadingCost(pSelectedWInstance_->ammoRemaining());
 
         if (g_Session.canAfford(rldCost)) {
             g_Session.decreaseMoney(rldCost);
-            wi->reload();
+            pSelectedWInstance_->reload();
             getOption(reloadButId_)->setVisible(false);
             getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
         }
@@ -752,39 +754,38 @@ void SelectMenu::handleAction(const ActionDesc &action)
             showItemList();
         }
 
-    } else if (action.id == sellButId_ && selectedWInstId_) {
+    } else if (action.id == sellButId_ && pSelectedWInstance_ != nullptr) {
         fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
-        fs_knl::WeaponInstance *pWi = selected->removeWeaponAtIndex(selectedWInstId_ - 1);
-        g_Session.increaseMoney(pWi->getClass()->cost());
+        selected->removeWeapon(pSelectedWInstance_);
+        g_Session.increaseMoney(pSelectedWInstance_->getClass()->cost());
         getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());
-        delete pWi;
+        delete pSelectedWInstance_;
         showItemList();
     }
 }
 
 void SelectMenu::updateSelectedWeapon() {
-    assert(selectedWInstId_ != 0);
+    if (pSelectedWInstance_ != nullptr) {
 
-    fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
-    if (selected == NULL) {
-        tab_ = TAB_EQUIPS;
-        showItemList();
-        return;
-    }
-
-    fs_knl::WeaponInstance *wi = selected->weapon(selectedWInstId_ - 1);
-
-    // if weapon is researched it can be bought
-    if (g_gameCtrl.weaponManager().isAvailable(wi->getClass())) {
-        selectedWInstId_ = 0;
-        getOption(sellButId_)->setVisible(false);
-        getOption(purchaseButId_)->setVisible(true);
-        if (wi->needsReloading()) {
-            getOption(reloadButId_)->setVisible(false);
+        fs_knl::Agent *selected = g_gameCtrl.agents().squadMember(cur_agent_);
+        if (selected == NULL) {
+            tab_ = TAB_EQUIPS;
+            showItemList();
+            return;
         }
-        getOption(cancelButId_)->setVisible(true);
-    } else {
-        tab_ = TAB_EQUIPS;
-        showItemList();
+
+        // if weapon is researched it can be bought
+        if (g_gameCtrl.weaponManager().isAvailable(pSelectedWInstance_->getClass())) {
+            getOption(sellButId_)->setVisible(false);
+            getOption(purchaseButId_)->setVisible(true);
+            if (pSelectedWInstance_->needsReloading()) {
+                getOption(reloadButId_)->setVisible(false);
+            }
+            getOption(cancelButId_)->setVisible(true);
+            pSelectedWInstance_ = nullptr;
+        } else {
+            tab_ = TAB_EQUIPS;
+            showItemList();
+        }
     }
 }

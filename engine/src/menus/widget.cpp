@@ -486,8 +486,8 @@ void TeamListBox::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t sta
     }
 }
 
-void TeamListBox::setSquadLine(int squadSlot, unsigned int line) {
-    if (pModel_ && line < pModel_->size() && squadSlot >= 0 && squadSlot < 4) {
+void TeamListBox::setSquadLine(size_t squadSlot, int line) {
+    if (pModel_ && line < pModel_->size() && squadSlot < 4) {
         squadLines_[squadSlot] = line;
     }
 }

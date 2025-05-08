@@ -366,8 +366,8 @@ public:
 
     //! Callback method to respond to mouse motion event
     void handleMouseMotion(Point2D point, uint32_t state) override;
-
-    void setSquadLine(int squadSlot, unsigned int line);
+    //!
+    void setSquadLine(size_t squadSlot, int line);
 
 protected:
     static const int LINE_OFFSET;

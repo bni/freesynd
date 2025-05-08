@@ -51,7 +51,7 @@ protected:
     void handleMouseMotion(Point2D point, uint32_t state) override;
     void handleMouseUp(Point2D point, int button) override;
     bool handleMouseDown(Point2D point, int button) override;
-    void handleClickOnAgentSelector(const int agent_no, int button);
+    void handleClickOnAgentSelector(const size_t agent_no, int button);
 
     void updateClock();
     //! Draws a focus around the selected agent picture
@@ -60,7 +60,7 @@ protected:
     void drawSelectedWeaponInfos(int x, int y);
     void drawSelectedModInfos(int x, int y);
 
-    void toggleAgent(int n);
+    void toggleAgent(size_t n);
     void updateAcceptEnabled();
 
     void showModWeaponPanel();
@@ -79,7 +79,7 @@ protected:
 
     ETab tab_;
     /*! Id of the currently selected agent.*/
-    int cur_agent_;
+    size_t cur_agent_;
     /*! Counter to update the rnd_ field.*/
     fs_utl::Timer timerSelector_;
     /*! This offset is used to draw the dash line for the selector.
@@ -89,8 +89,10 @@ protected:
     bool sel_all_;
     /*! Selected weapon on the weapon list.*/
     fs_knl::Weapon *pSelectedWeap_;
-    /*! Selected weapon instance id on the current agent inventory.*/
-    int selectedWInstId_;
+    /*! Selected weapon instance from an agent's inventory. 
+     *  In null when no weapon is selected
+     */
+    fs_knl::WeaponInstance *pSelectedWInstance_;
     /*! Selected mod on the mods list.*/
     Mod *pSelectedMod_;
     /*! Id of the text widget presenting the selected agent name.*/

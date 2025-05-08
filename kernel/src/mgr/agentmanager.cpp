@@ -328,16 +328,21 @@ bool AgentManager::isSquadSlotActive(size_t slotId) {
     return a_squad_[slotId] && a_squad_[slotId]->isActive();
 }
 
-//! Return the slot that holds the given agent or -1 if ni agent is found
-int AgentManager::getSquadSlotForAgent(Agent *pAgent) {
+
+/*!
+ * Return the slot id for the given agent.
+ * @param pAgent can be null
+ * @return 
+ */
+size_t AgentManager::getSquadSlotForAgent(Agent *pAgent) {
     if (pAgent) {
-        for (uint8_t i=0; i<Squad::kMaxSlot; i++) {
+        for (size_t i=0; i<Squad::kMaxSlot; i++) {
             if (pAgent == a_squad_[i]) {
                 return i;
             }
         }
     }
-    return -1;
+    return Squad::kMaxSlot;
 }
 
 }
