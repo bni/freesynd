@@ -373,7 +373,7 @@ public:
     void setAllPercepLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
         perception_->setLevels256(amount, depend, effect);
     }
-    void updtIPATime(int elapsed) {
+    void updtIPATime(uint32_t elapsed) {
         adrenaline_->processTicks(elapsed);
         perception_->processTicks(elapsed);
         intelligence_->processTicks(elapsed);

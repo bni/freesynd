@@ -73,7 +73,7 @@ public:
     int getEffect()    const { return effect_; }
     IPAType getType()   const { return ipa_type_; }
 
-    void processTicks(int elapsed);
+    void processTicks(uint32_t elapsed);
 
 private:
     // Used to select colors when rendering

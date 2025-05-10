@@ -93,7 +93,7 @@ void IPAStim::setLevels(int amount, int dependency, int effect)
     //printf("%s: A: %d, D: %d, E: %d\n", getName(), amount, dependency, effect_);
 }
 
-void IPAStim::processTicks(int elapsed)
+void IPAStim::processTicks(uint32_t elapsed)
 {
     // From observation of the original Syndicate:
     // * Effect moves about once a second.

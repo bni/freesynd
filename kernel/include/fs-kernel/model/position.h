@@ -62,15 +62,16 @@ public:
         oy = off_y;
         oz = off_z;
     }
-
-    TilePoint(const TilePoint &tp) {
-        tx = tp.tx;
-        ty = tp.ty;
-        tz = tp.tz;
-        ox = tp.ox;
-        oy = tp.oy;
-        oz = tp.oz;
-    }
+    
+    //! Copy constructor
+    TilePoint(const TilePoint& other) = default;
+    //! Assign by copy
+    TilePoint& operator=(const TilePoint& other) = default;
+    //! Move constructor
+    TilePoint(TilePoint&& other) noexcept = default;
+    //! Move assignment
+    TilePoint& operator=(TilePoint&& other) noexcept = default;
+    ~TilePoint() = default;
 
     void reset() {
         tx = 0;

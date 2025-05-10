@@ -79,11 +79,28 @@ protected:
     void onMissionEndedEvent(fs_knl::MissionEndedEvent *pEvt);
     ///@}
 
+    /**
+     * @name State update
+     */
+    ///@{
+    //! Update the target value for adrenaline etc for an agent
+    void updateIPALevelMeters(uint32_t elapsed);
+
+    void updateMarkersPosition();
+    //! Get the current hint and manage animation
+    void updateMissionHint(uint32_t elapsed);
+    ///@}
+
+    /**
+     * @name Draw screen elements
+     */
+    ///@{
     //!
     void drawSelectAllButton();
-    void drawMissionHint(uint32_t elapsed);
+    void drawMissionHint();
     void drawWeaponSelectors();
     void drawPausePanel();
+    ///@}
     
     //! Scroll the map horizontally.
     bool scrollOnX();
@@ -109,18 +126,30 @@ protected:
     void centerMinimapOnLeader();
     //! Update the select all button state
     void updateSelectAll();
-    //! Update the target value for adrenaline etc for an agent
-    void updateIPALevelMeters(int elapsed);
-
-    void updateMarkersPosition();
 
 protected:
     /*! Origin of the minimap on the screen.*/
     static const Point2D kMiniMapScreenPos;
 
     uint32_t tick_count_, last_animate_tick_;
-    int last_motion_tick_, last_motion_x_, last_motion_y_;
-    int mission_hint_ticks_, mission_hint_;
+    int last_motion_x_, last_motion_y_;
+    //! Text of the hint to display
+    std::string hint_;
+    //! Color to draw the hint text
+    uint8_t hintColor_;
+    //! Yellow rect displayed when the objective name is displayed to accentuate text
+    bool drawHintYellowRect_;
+    /*!
+     * Timer to alternate between agent action and mission objective
+     * When state is true, we display ped status.
+     * When state if false, we display mission's objective
+     */
+    fs_utl::BoolTimer hintTimer_;
+    //! Timer to control blinking color of hint when displaying objectives.
+    fs_utl::BoolTimer hintColorTimer_;
+    //! Timer to control the display of Press space message when mission is over
+    fs_utl::BoolTimer hintSpaceTimer_;
+
     fs_knl::Mission *mission_;
 
     /*! This is a projection in 2D of a point on a the map. This point represents the top
@@ -160,9 +189,9 @@ protected:
     // when ipa is manipulated this represents
     struct IPA_manipulation {
         // ipa that is manipulated
-        int8 ipa_chng;
+        int8_t ipa_chng;
         // agent to base IPA's update on
-        uint8_t agent_used;
+        size_t agent_used;
     } ipa_chng_;
 };
 

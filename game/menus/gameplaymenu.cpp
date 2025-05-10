@@ -52,10 +52,10 @@ const Point2D GameplayMenu::kMiniMapScreenPos = {0, 46 + 44 + 10 + 46 + 44 + 15 
 
 GameplayMenu::GameplayMenu(fs_eng::MenuManager *m) :
 Menu(m, fs_game_menus::kMenuIdGameplay, fs_game_menus::kMenuIdDebrief),
-tick_count_(0), last_animate_tick_(0), last_motion_tick_(0),
-last_motion_x_(320), last_motion_y_(240), mission_hint_ticks_(0),
-mission_hint_(0), mission_(NULL), selection_(),
-target_(NULL),
+tick_count_(0), last_animate_tick_(0),
+last_motion_x_(320), last_motion_y_(240), drawHintYellowRect_(false),
+hintTimer_(1200, false), hintColorTimer_(200, false), hintSpaceTimer_(500, false),
+mission_(nullptr), selection_(), target_(nullptr),
 mm_renderer_(kMiniMapScreenPos), warningTimer_(20000)
 {
     cursorOnShow_ = kGameplayCursor;
@@ -379,7 +379,7 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         handleMouseMotion({last_motion_x_, last_motion_y_}, 0);
     }
 
-    drawMissionHint(elapsed);
+    updateMissionHint(elapsed);
 
     return true;
 }
@@ -389,7 +389,7 @@ void GameplayMenu::handleRender() {
     g_System.drawRect({0,0}, 129, fs_eng::kScreenHeight, menu_manager_->kMenuColorBlack);
     agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);
     drawSelectAllButton();
-    drawMissionHint(0);
+    drawMissionHint();
     drawWeaponSelectors();
     mm_renderer_.render(missionPalette_);
 
@@ -435,14 +435,14 @@ void GameplayMenu::handleRender() {
 
 #ifdef FS_TRACK_FPS
     std::stringstream fpsText;
-    static int current_time = 0;
-    static int last_time = 0;
+    static uint32_t current_time = 0;
+    static uint32_t last_time = 0;
     static float fps = 0;
     static int frame = 0;
 
     current_time = g_System.getTicks();
 
-    int elapsed = current_time - last_time;
+    uint32_t elapsed = current_time - last_time;
     frame++;
 
     if (elapsed > 1000) {
@@ -470,11 +470,8 @@ void GameplayMenu::handleLeave()
 
     tick_count_ = 0;
     last_animate_tick_ = 0;
-    last_motion_tick_ = 0;
     last_motion_x_ = 320;
     last_motion_y_ = 240;
-    mission_hint_ticks_ = 0;
-    mission_hint_ = 0;
     displayOriginPt_.x = 0;
     displayOriginPt_.y = 0;
     target_ = NULL;
@@ -485,9 +482,7 @@ void GameplayMenu::handleLeave()
     ipa_chng_.ipa_chng = -1;
 }
 
-void GameplayMenu::handleMouseMotion(Point2D point, uint32_t state)
-{
-    last_motion_tick_ = tick_count_;
+void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state) {
     last_motion_x_ = point.x;
     last_motion_y_ = point.y;
     // locking mouse motion on ipa change until mouseup is recieved
@@ -699,10 +694,9 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
  * \param point Mouse coord
  * \param button Mouse button that was clicked
  */
-void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button)
-{
-    uint8_t w_num = ((point.y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
-            + point.x / 32;
+void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button) {
+    uint8_t w_num = static_cast<uint8_t>(((point.y - (2 + 46 + 44 + 10 + 46 + 44 + 15)) / 32) * 4
+            + point.x / 32);
     fs_knl::PedInstance *pLeader = selection_.leader();
     if (pLeader->isAlive()) {
         bool is_ctrl = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
@@ -738,7 +732,7 @@ void GameplayMenu::setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int pe
     }
 }
 
-void GameplayMenu::updateIPALevelMeters(int elapsed)
+void GameplayMenu::updateIPALevelMeters(uint32_t elapsed)
 {
     for (size_t agent = 0; agent < fs_knl::Squad::kMaxSlot; ++agent) {
         fs_knl::PedInstance *ped = mission_->getSquad()->member(agent);
@@ -863,7 +857,7 @@ void GameplayMenu::stopShootingEvent()
 }
 
 
-void GameplayMenu::handleMouseUp(Point2D point, int button)
+void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
 {
     ipa_chng_.ipa_chng = -1;
 
@@ -874,7 +868,6 @@ void GameplayMenu::handleMouseUp(Point2D point, int button)
 }
 
 bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
-    bool change = false;    // indicator whether menu should be redrawn 
     bool consumed = true;
 
     // Pause/unpause game
@@ -1109,87 +1102,79 @@ void GameplayMenu::drawSelectAllButton() {
     }
 }
 
-void GameplayMenu::drawMissionHint(uint32_t elapsed) {
+/*!
+ * Manage the animation of the hint display.
+ * We either display the current action of the squad leader or
+ * the mission's objective if mission is ongoing or a status
+ * if mission has failed.
+ * For objective/status, the font is blinking and there is 
+ * a yellow box to accentuate the display
+ * @param elapsed 
+ */
+void GameplayMenu::updateMissionHint(uint32_t elapsed) {
+    drawHintYellowRect_ = false;
+    hintTimer_.update(elapsed);
 
-    elapsed += mission_hint_ticks_;
-    int inc = elapsed / 45;
-    mission_hint_ticks_ = elapsed % 45;
-
-    g_SpriteMgr.drawSprite(1798, {0, 46 + 44 + 10 + 46 + 44 - 1});
-    g_SpriteMgr.drawSprite(1799, {64, 46 + 44 + 10 + 46 + 44 - 1});
-
-    mission_hint_ += inc;
-
-    bool inversed = false;
-    bool text_pw = (target_ && target_->nature() == fs_knl::MapObject::kNatureWeapon
-        && target_->isDrawable());
-
-    std::string str;
-
-    uint8_t txtColor;
-
-    if ((mission_hint_ > 20 && mission_hint_ < 41)
-        || (mission_hint_ > 60))
-    {
-        for (SquadSelection::Iterator it = selection_.begin();
-                            it != selection_.end(); ++it) {
-            if ((*it)->hasDestination()) {
-                str = getMessage("HINT_GOING");
-            } else {
-                str = getMessage("HINT_OBSERVING");
-            }
-            if ((*it)->wePickupWeapon()) {
-                str = getMessage("HINT_PICKUP_WEAPON");
-            }
-            if ((*it)->isState(fs_knl::PedInstance::pa_smHit)) {
-                str = getMessage("HINT_HIT_BY_BULLET");
-            }
-        }
-        txtColor = 14;
-
-        if (mission_hint_ > 79) {
-            mission_hint_ = 0;
-            return;
-        }
-    } else {
-
-        inversed = (mission_hint_ % 5) > 2;
-        txtColor = inversed ? 0 : 11;
-
-        if (mission_) {
-            mission_->objectiveMsg(str);
-            if (mission_->failed()) {
-                str = getMessage("HINT_MISSION_FAILED");
-                text_pw = false;
-            }
-
-            if (mission_->completed()) {
-                str = getMessage("HINT_MISSION_COMPLETE");
-                text_pw = false;
-            }
-
-            if (mission_hint_ > 40 && mission_hint_ < 61)
-                if (mission_->completed() || mission_->failed()) {
-                    str = getMessage("HINT_PRESS_SPACE");
-                    text_pw = false;
-                }
-        }
-
-        if (inversed && !text_pw) {
-            g_System.drawFillRect({0, 46 + 44 + 10 + 46 + 44}, 128, 12, menu_manager_->kMenuColorYellow);
+    if (hintTimer_.state()) {
+        fs_knl::PedInstance *pLeader = selection_.leader();
+        if (pLeader->hasDestination()) {
+            hint_ = getMessage("HINT_GOING");
         } else {
-            if (text_pw) {
-                str = ((fs_knl::WeaponInstance *)target_)->name();
-                txtColor = inversed ? 14 : 11;
+            hint_ = getMessage("HINT_OBSERVING");
+        }
+        if (pLeader->wePickupWeapon()) {
+            hint_ = getMessage("HINT_PICKUP_WEAPON");
+        }
+        if (pLeader->isState(fs_knl::PedInstance::pa_smHit)) {
+            hint_ = getMessage("HINT_HIT_BY_BULLET");
+        }
+        hintColor_ = 14;
+    } else {
+        hintColorTimer_.update(elapsed);
+        hintColor_ = hintColorTimer_.state() ? 0 : 11;
+
+        if (mission_->isRunning()) {
+            if (target_ && 
+                    target_->nature() == fs_knl::MapObject::kNatureWeapon && 
+                    target_->isDrawable()) {
+                // The player is pointing to a weapon on ground -> display the name of weapon
+                hint_ = static_cast<fs_knl::WeaponInstance *>(target_)->name();
+                hintColor_ = hintColorTimer_.state() ? 14 : 11;
+            } else {
+                mission_->objectiveMsg(hint_);
+                drawHintYellowRect_ = hintColorTimer_.state();
+            }
+        } else {
+            hintSpaceTimer_.update(elapsed);
+            if (hintSpaceTimer_.state()) { // When true, we display the press space message
+                hint_ = getMessage("HINT_PRESS_SPACE");
+            } else {
+                if (mission_->failed()) {
+                    hint_ = getMessage("HINT_MISSION_FAILED");
+                } else {
+                    hint_ = getMessage("HINT_MISSION_COMPLETE");
+                }
             }
         }
     }
+}
 
-    int width = gameFont()->textWidth(str, false);
+/*!
+ * @brief 
+ */
+void GameplayMenu::drawMissionHint() {
+    g_SpriteMgr.drawSprite(1798, {0, 46 + 44 + 10 + 46 + 44 - 1});
+    g_SpriteMgr.drawSprite(1799, {64, 46 + 44 + 10 + 46 + 44 - 1});
+
+    if (drawHintYellowRect_) {
+        g_System.drawFillRect({0, 46 + 44 + 10 + 46 + 44}, 128, 12, menu_manager_->kMenuColorYellow);
+    }
+
+    int width = gameFont()->textWidth(hint_, false);
     int x = 64 - width / 2;
     fs_eng::FSColor aColor;
-    menu_manager_->getColorFromMenuPalette(txtColor, aColor);
-    gameFont()->drawText(x, 46 + 44 + 10 + 46 + 44 + 2 - 1, str, aColor);
+    menu_manager_->getColorFromMenuPalette(hintColor_, aColor);
+    gameFont()->drawText(x, 46 + 44 + 10 + 46 + 44 + 2 - 1, hint_, aColor);
 }
 
 void GameplayMenu::drawPausePanel() {
@@ -1214,8 +1199,8 @@ void GameplayMenu::drawWeaponSelectors() {
 
     if (p) {
         bool draw_pw = true;
-        for (int j = 0; j < 2; j++) {
-            for (int i = 0; i < 4; i++) {
+        for (uint8_t j = 0; j < 2; j++) {
+            for (uint8_t i = 0; i < 4; i++) {
                 fs_knl::WeaponInstance *wi = NULL;
                 int s = 1601;
                 // NOTE: weapon selectors can be drawn by drawFrame instead
@@ -1227,14 +1212,13 @@ void GameplayMenu::drawWeaponSelectors() {
                 // 327 medikit 329 :: 331 time bomb 333 :: 343 access card 345
                 // 351 energy shield 353
 
-                if (i + j * 4 < p->numWeapons()) {
-                    wi = p->weapon(i + j * 4);
+                if (i + j * 4u < p->numWeapons()) {
+                    wi = p->weapon(i + j * 4u);
                     s = wi->getClass()->selector();
                     if (p->selectedWeapon() && p->selectedWeapon() == wi)
                         s += 40;
                 } else if (draw_pw) {
                     if (target_ && target_->nature() == fs_knl::MapObject::kNatureWeapon
-                        && (mission_hint_ % 20) < 10
                         && target_->isDrawable())
                     {
                         // player is pointing a weapon on the ground and there's space
@@ -1419,7 +1403,7 @@ void GameplayMenu::handleWeaponSelection(uint8_t selectorIndex, bool ctrl) {
 /**
  * Method to intercept game events.
  */
-void GameplayMenu::onPoliceWarningEmittedEvent(fs_knl::PoliceWarningEmittedEvent *pEvt) {
+void GameplayMenu::onPoliceWarningEmittedEvent([[maybe_unused]] fs_knl::PoliceWarningEmittedEvent *pEvt) {
     if (canPlayPoliceWarnSound_) {
         // warn
         g_SoundMgr.play(fs_eng::PUTDOWN_WEAPON);
