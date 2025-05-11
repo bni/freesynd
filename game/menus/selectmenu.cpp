@@ -250,7 +250,7 @@ bool SelectMenu::handleTick(uint32_t elapsed)
     }
 
     // Update the clock
-    if (g_Session.updateTime(elapsed)) {
+    if (g_gameCtrl.updateTime(elapsed)) {
         updateClock();
     }
 
@@ -261,9 +261,10 @@ bool SelectMenu::handleTick(uint32_t elapsed)
  * Update the game time display
  */
 void SelectMenu::updateClock() {
-    char tmp[100];
-    g_Session.getTimeAsStr(tmp);
-    getStatic(txtTimeId_)->setText(tmp);
+    std::string newTime;
+
+    g_Session.currentTime().getTimeAsStr(newTime);
+    getStatic(txtTimeId_)->setText(newTime.c_str());
 
     // update money
     getStatic(moneyTxtId_)->setTextFormated("%d", g_Session.getMoney());

@@ -86,7 +86,7 @@ BriefMenu::~BriefMenu() {
 
 bool BriefMenu::handleTick(uint32_t elapsed)
 {
-    if (g_Session.updateTime(elapsed)) {
+    if (g_gameCtrl.updateTime(elapsed)) {
         updateClock();
     }
 
@@ -99,10 +99,10 @@ bool BriefMenu::handleTick(uint32_t elapsed)
  * Update the game time display
  */
 void BriefMenu::updateClock() {
-    char tmp[100];
+    std::string newTime;
 
-    g_Session.getTimeAsStr(tmp);
-    getStatic(txtTimeId_)->setText(tmp);
+    g_Session.currentTime().getTimeAsStr(newTime);
+    getStatic(txtTimeId_)->setText(newTime.c_str());
 
     // update money
     getStatic(txtMoneyId_)->setTextFormated("%d", g_Session.getMoney());
@@ -114,7 +114,7 @@ void BriefMenu::updateClock() {
  * \param enh_lvl Level of enhancement already bought by player
  * \return The zoom level in the minimap
  */
-MinimapRenderer::EZoom BriefMenu::toZoomLevel(uint8 enh_lvl) {
+MinimapRenderer::EZoom BriefMenu::toZoomLevel(uint8_t enh_lvl) {
     if (enh_lvl == 0) {
         return MinimapRenderer::ZOOM_X4;
     } else if (enh_lvl == 1) {
@@ -144,7 +144,7 @@ bool BriefMenu::handleBeforeShow() {
     update_briefing_text();
 
     // reset minimap renderer with current mission
-    uint8 enh_lvl = g_Session.getSelectedBlock().enhanceLevel;
+    uint8_t enh_lvl = g_Session.getSelectedBlock().enhanceLevel;
     MinimapRenderer::EZoom zoom =
         toZoomLevel(enh_lvl);
 

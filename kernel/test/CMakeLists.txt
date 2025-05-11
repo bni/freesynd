@@ -26,7 +26,8 @@ add_executable(test-kernel
     objectivedesctest.cpp
     pedtest.cpp
     pedactiontest.cpp
-    missiontest.cpp)
+    missiontest.cpp
+    timetest.cpp)
 
 target_link_libraries(test-kernel PRIVATE Catch2::Catch2WithMain Freesynd::Kernel Freesynd::Utils Freesynd::Engine)
 

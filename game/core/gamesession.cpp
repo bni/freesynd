@@ -86,14 +86,18 @@ Block g_Blocks[50] = {
  */
 int g_syndicate_color_id[7];
 
-const int GameSession::HOUR_DELAY = 4000;
+//! The maximum number of syndicate in the game
+constexpr uint8_t kMaxSyndicate { 8 };
+
 const int GameSession::NB_MISSION = 50;
 const int GameSession::kNameMaxSize = 16;
 
-GameSession::GameSession(fs_knl::WeaponManager *pWeaponManager, fs_knl::ModManager *pModManager) : researchMan_(pWeaponManager, pModManager) {
+GameSession::GameSession(fs_knl::WeaponManager *pWeaponManager, fs_knl::ModManager *pModManager) : 
+        researchMan_(pWeaponManager, pModManager),
+        rng_(std::random_device{}()),
+        syndicateDist_(0, kMaxSyndicate - 2) {
     enable_all_mis_ = false;
     replay_mission_ = false;
-    hour_delay_ = HOUR_DELAY;
 }
 
 GameSession::~GameSession() {}
@@ -130,7 +134,7 @@ bool GameSession::reset() {
         // Find a enemy syndicate as owner
         bool found_owner = false;
         do {
-            int index = rand() % 7;
+            uint8_t index = getRandomEnemySyndicateId();
             if (map_count[index] > 0) {
                 g_Blocks[i].syndicate_owner = index;
                 map_count[index] -= 1;
@@ -147,12 +151,13 @@ bool GameSession::reset() {
     selected_blck_ = 9;
     g_Blocks[selected_blck_].status = BLK_AVAIL;
 
-    time_hour_ = 0;
-    time_day_ = 1;
-    time_year_ = 85;
-    time_elapsed_ = 0;
+    currentTime_.reset();
 
     return researchMan_.reset();
+}
+
+uint8_t GameSession::getRandomEnemySyndicateId() {
+    return syndicateDist_(rng_);
 }
 
 Block & GameSession::getBlock(int index) {
@@ -212,88 +217,6 @@ void GameSession::cheatEnableAllMission() {
             g_Blocks[i].status = BLK_AVAIL;
         }
     }
-}
-
-/*!
- * Returns the number of hours and days for the given period
- * in millisecond.
- * \param elapsed
- * \param days
- * \param hours
- */
-void GameSession::getDayHourFromPeriod(int elapsed, int & days, int & hours) {
-    // Total number of hours in the period
-    int hour_elapsed = elapsed / hour_delay_;
-
-    days = hour_elapsed / 24;
-    hours = hour_elapsed % 24;
-}
-
-/*!
- * Updates the game time based on the given elapsed millisecond since
- * the last update.
- * For every day passed, it calls the updateCountries() method and update
- * the user's amount of money.
- * \param elapsed The number of millisecond since the last update.
- * \return True if time has changed.
- */
-bool GameSession::updateTime(uint32_t elapsed) {
-
-    time_elapsed_ += elapsed;
-    if (time_elapsed_ > hour_delay_) {
-        // Computes how much hours have passed
-        int hour_elapsed = time_elapsed_ / hour_delay_;
-        // Reset the counter
-        time_elapsed_ = 0;
-        // Number of days in that time
-        int day_elapsed = hour_elapsed / 24;
-        int hour_remain = hour_elapsed % 24;
-
-        // Hour update
-        time_hour_ += hour_remain;
-        // Update research
-        money_ -= researchMan_.process(hour_remain, money_);
-        // Collect taxes if we reached the end of the day
-        if (time_hour_ > 23) {
-            time_hour_ -= 24;
-            time_day_++;
-
-            if (time_day_ > 365) {
-                time_day_ = 1;
-                time_year_++;
-            }
-
-            // Update money
-            money_ += updateCountries();
-        }
-
-        if (day_elapsed != 0) {
-            for (int i=0; i<day_elapsed; i++) {
-                time_day_++;
-                if (time_day_ > 365) {
-                    time_day_ = 1;
-                    time_year_++;
-                }
-
-                // Update research for a day
-                money_ -= researchMan_.process(24, money_);
-                // Update money
-                money_ += updateCountries();
-            }
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-/*!
- * Returns the current game time as a string.
- * \param dest Buffer that will contains the resulting string.
- */
-void GameSession::getTimeAsStr(char *dest) {
-    sprintf(dest, "%02d:%d:%dNC", time_hour_, time_day_, time_year_);
 }
 
 /*!
@@ -382,7 +305,7 @@ int GameSession::getNewPopulation(const int defaultPop, int currPop) {
  * Updates population number and status for all countries on a daily basis.
  * \return The amount of money collected after all countries have been updated
  */
-int GameSession::updateCountries() {
+uint32_t GameSession::updateCountries() {
     int amount = 0;
 
     for (int i=0; i < 50; i++) {
@@ -496,23 +419,23 @@ bool GameSession::saveToFile(fs_utl::PortableFile &file) {
     // User name
     file.write_string(username_, kNameMaxSize);
     // Logo
-    file.write32(logo_);
+    file.write32(static_cast<uint32_t>(logo_));
     // Logo colour
-    file.write32(logo_colour_);
+    file.write32(static_cast<uint32_t>(logo_colour_));
     // Money
     file.write32(money_);
     // Time
-    file.write32(time_year_);
-    file.write32(time_day_);
-    file.write32(time_hour_);
+    file.write32(currentTime_.currentYear());
+    file.write32(currentTime_.currentDay());
+    file.write32(currentTime_.currentHour());
 
     // Missions
     for (int i=0; i<GameSession::NB_MISSION; i++) {
-        file.write32(g_Blocks[i].population);
-        file.write32(g_Blocks[i].tax);
+        file.write32(static_cast<uint32_t>(g_Blocks[i].population));
+        file.write32(static_cast<uint32_t>(g_Blocks[i].tax));
         file.write32(g_Blocks[i].popStatus);
-        file.write32(g_Blocks[i].daysToNextStatus);
-        file.write32(g_Blocks[i].daysStatusElapsed);
+        file.write32(static_cast<uint32_t>(g_Blocks[i].daysToNextStatus));
+        file.write32(static_cast<uint32_t>(g_Blocks[i].daysStatusElapsed));
         file.write32(g_Blocks[i].status);
         // NOTE : before 1.2 we were saving the block color
         file.write8(g_Blocks[i].syndicate_owner);
@@ -548,11 +471,9 @@ bool GameSession::loadFromFile(fs_utl::PortableFile &infile, const fs_utl::Forma
     }
 
     // Read money
-    money_ = infile.reads32();
+    money_ = infile.read32();
     // Read time
-    time_year_ = infile.reads32();
-    time_day_ = infile.reads32();
-    time_hour_ = infile.reads32();
+    currentTime_.setTime(infile.read32(), infile.read32(), infile.read32());
 
     // Missions
     for (int i=0; i<GameSession::NB_MISSION; i++) {

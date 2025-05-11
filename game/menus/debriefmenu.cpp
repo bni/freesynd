@@ -130,9 +130,9 @@ void DebriefMenu::updateStatsFields(fs_knl::Mission *pMission) {
     getStatic(txtUsedId_)->setTextFormated("%i", pStats->nbAgents());
     getStatic(txtAgentCapturedId_)->setTextFormated("%i", pStats->nbAgentCaptured());
 
-    int days = 0;
-    int hours = 0;
-    g_Session.getDayHourFromPeriod(pStats->missionDuration(), days, hours);
+    uint32_t days = 0;
+    uint32_t hours = 0;
+    g_Session.currentTime().getDayHourFromPeriod(pStats->missionDuration(), days, hours);
     getStatic(txtTimeId_)->setTextFormated("#DEBRIEF_TIME_FORMAT", hours, days);
     getStatic(txtAgentKilledId_)->setTextFormated("%i", pStats->enemyKilled());
     getStatic(txtCrimKilledId_)->setTextFormated("%i", pStats->criminalKilled());

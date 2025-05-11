@@ -79,6 +79,9 @@ class GameController : public Singleton < GameController > {
     //! Changes the user preferences (from the config menu)
     void change_user_infos(const char *company_name, const char *player_name,
                             int logo, int color);
+
+    //! Do all time related updates
+    bool updateTime(uint32_t elapsed);
     
     //! Loads briefing for the given mission id
     fs_knl::MissionBriefing *loadBriefing(int n);

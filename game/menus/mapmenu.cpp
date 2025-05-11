@@ -27,7 +27,7 @@
 #include "fs-utils/io/file.h"
 #include "fs-utils/log/log.h"
 #include "menus/gamemenuid.h"
-#include "core/gamesession.h"
+#include "core/gamecontroller.h"
 #include "fs-engine/system/system.h"
 #include "fs-engine/menus/menumanager.h"
 
@@ -251,7 +251,7 @@ bool MapMenu::handleTick(uint32_t elapsed) {
    // This counter is used for blinking available countries
    timerBlinkCountry_.update(elapsed);
 
-    if (g_Session.updateTime(elapsed)) {
+    if (g_gameCtrl.updateTime(elapsed)) {
         handleBlockSelected();
         updateClock();
     }
@@ -263,9 +263,10 @@ bool MapMenu::handleTick(uint32_t elapsed) {
  * Update the game time display
  */
 void MapMenu::updateClock() {
-    char tmp[100];
-    g_Session.getTimeAsStr(tmp);
-    getStatic(txtTimeId_)->setText(tmp);
+    std::string newTime;
+
+    g_Session.currentTime().getTimeAsStr(newTime);
+    getStatic(txtTimeId_)->setText(newTime.c_str());
 }
 
 /*!

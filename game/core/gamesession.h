@@ -24,6 +24,7 @@
 
 #include <string>
 #include <set>
+#include <random>
 
 #include "fs-utils/common.h"
 #include "fs-utils/misc/singleton.h"
@@ -31,8 +32,9 @@
 #include "fs-utils/io/formatversion.h"
 #include "fs-kernel/mgr/researchmanager.h"
 #include "fs-kernel/model/mission.h"
+#include "fs-kernel/model/time.h"
 
-//using namespace fs_knl;
+
 
 enum Status_Pop {
     STAT_VERY_HAPPY = 5,
@@ -98,8 +100,6 @@ struct Block {
  */
 class GameSession : public Singleton<GameSession> {
 public:
-    /*! Number of millisecond for an hour in the game.*/
-    static const int HOUR_DELAY;
     /*! Total number of missions. */
     static const int NB_MISSION;
     //! Maximum length for user's and company's name
@@ -171,29 +171,29 @@ public:
     /*!
      * Returns the user's money.
      */
-    int getMoney() const {
+    uint32_t getMoney() const {
         return money_;
     }
 
     /*!
      * Sets the user's money.
      */
-    void setMoney(int m) {
+    void setMoney(uint32_t m) {
         money_ = m;
     }
 
-    void increaseMoney(int amount) {
+    void increaseMoney(uint32_t amount) {
         money_ += amount;
     }
 
-    void decreaseMoney(int amount) {
-        money_ -= amount;
-        if (money_ < 0) {
-            money_ = 0;
+    void decreaseMoney(uint32_t amount) {
+        if (amount > money_) {
+            amount = money_;
         }
+        money_ -= amount;
     }
 
-    bool canAfford(int amount) {
+    bool canAfford(uint32_t amount) {
         return money_ >= amount;
     }
 
@@ -201,8 +201,8 @@ public:
         return researchMan_;
     }
 
-    //! Sets the representation of the time in the given string
-    void getTimeAsStr(char *dest);
+    //! Return the current time
+    fs_knl::GameTime currentTime() { return currentTime_; }
 
     //! Returns the Block at the given index.
     Block & getBlock(int index);
@@ -236,19 +236,19 @@ public:
     //! Tells if cheat mode Replay missions is on
     bool canReplayMission() { return replay_mission_; }
 
-    void cheatAccelerateTime() { hour_delay_ = 1000; }
-
-    //! Do all time related updates
-    bool updateTime(uint32_t elapsed);
-
-    //! Returns the number of days and hours from the given amount of time
-    void getDayHourFromPeriod(int elapsed, int & days, int & hours);
-
     //! Adds the given amount to the selected block tax rate.
     bool addToTaxRate(int amount);
 
     //! Returns a revenue for a given population and rate.
     int getTaxRevenue(int population, int rate);
+
+    //! Do all time related updates
+    bool addElapsedTime(uint32_t elapsed) { return currentTime_.updateTime(elapsed); }
+    //! Update population, status and returns money
+    uint32_t updateCountries();
+
+    std::mt19937 & getRandomGenerator() { return rng_; }
+    uint8_t getRandomEnemySyndicateId();
 
     //! Save instance to file
     bool saveToFile(fs_utl::PortableFile &file);
@@ -259,8 +259,7 @@ private:
     //! Destroy GameSession resources
     void destroy();
     int getDaysBeforeChange(Status_Pop status, int tax);
-    //! Update population, status and returns money
-    int updateCountries();
+
     //! Returns new population number
     int getNewPopulation(const int defaultPop, int currPop);
 
@@ -268,19 +267,12 @@ private:
     int logo_;
     //! the ID of the color for the logo
     int logo_colour_;
-    int money_;
+    uint32_t money_;
     std::string company_name_;
     std::string username_;
-    /*! Stores the current hour. */
-    int time_hour_;
-    /*! Stores the current day. */
-    int time_day_;
-    /*! Stores the current year. */
-    int time_year_;
-    /*! Time in millisecond since the last time update.*/
-    int time_elapsed_;
-    /*! How long does an hour in millisecond. */
-    int hour_delay_;
+    /*! Stores the current time (hours, day and year). */
+    fs_knl::GameTime currentTime_;
+
     /*!
      * Stores the index of the current selected
      * region on the mission map.
@@ -293,6 +285,11 @@ private:
     bool replay_mission_;
     /*! Manager for researches. */
     fs_knl::ResearchManager researchMan_;
+
+    //! Random generator
+    std::mt19937 rng_;
+    //! Distribution for choosing a random syndicate
+    std::uniform_int_distribution<uint8_t> syndicateDist_;
 };
 
 #define g_Session   GameSession::singleton()

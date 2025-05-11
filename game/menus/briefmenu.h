@@ -58,7 +58,7 @@ protected:
 
     bool handleMouseDown(Point2D point, int button) override;
     //! Return the zoom level from the enhancement level
-    MinimapRenderer::EZoom toZoomLevel(uint8 enh_lvl);
+    MinimapRenderer::EZoom toZoomLevel(uint8_t enh_lvl);
 
     //! Renders the current page of briefing
     void render_briefing_text();

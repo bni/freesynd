@@ -34,6 +34,9 @@
 
 #include "core/gamesession.h"
 
+//! The maximum number of syndicate in the game
+constexpr uint8_t kMaxSyndicate { 8 };
+
 GameController::GameController() :
         missionMgr_(&tileMgr_),
         session_(std::make_unique<GameSession>(&weaponMgr_, &mods_)) {
@@ -139,6 +142,30 @@ void GameController::change_user_infos(const char *company_name, const char *pla
     g_Session.setLogoColour(new_color);
 }
 
+/*!
+ * Updates the game time based on the given elapsed millisecond since
+ * the last update.
+ * For every day passed, it calls the updateCountries() method and update
+ * the user's amount of money.
+ * \param elapsed The number of millisecond since the last update.
+ * \return True if time has changed.
+ */
+bool GameController::updateTime(uint32_t elapsed) {
+    fs_knl::GameTime previousTime = session_->currentTime();
+    uint32_t hours = session_->addElapsedTime(elapsed);
+
+    // first update countries to collect money
+    uint32_t daysElapsed = session_->currentTime().diffInDays(previousTime);
+    for (uint32_t i=0; i < daysElapsed; i++) {
+        session_->increaseMoney(session_->updateCountries());
+    }
+
+    // then update ongoing research
+    session_->decreaseMoney(session_->researchManager().process(hours, session_->getMoney()));
+
+    return hours != 0;
+}
+
 fs_knl::MissionBriefing * GameController::loadBriefing(int n) {
     return missionMgr_.loadBriefing(n);
 }
@@ -156,7 +183,7 @@ bool GameController::loadSelectedMission() {
 
 void GameController::handle_mission_end(fs_knl::Mission *p_mission) {
     u_int32_t elapsed = p_mission->stats()->missionDuration();
-    g_Session.updateTime(elapsed);
+    updateTime(elapsed);
 
     // synch ped agents with agent from cryo chamber
     transferAgentToCryoChamber(p_mission);
@@ -228,7 +255,7 @@ void GameController::simulate_enemy_moves() {
     int nb_active_synds = 0;
     // Each list of the array contains the id of countries
     // owned by a given syndicate.
-    std::list<int> blocks_per_synd[7];
+    std::list<int> blocks_per_synd[kMaxSyndicate - 1];
     for (int i=0; i<GameSession::NB_MISSION; i++) {
         Block & blk = g_Session.getBlock(i);
         if (blk.status == BLK_AVAIL || blk.status == BLK_UNAVAIL) {
@@ -255,11 +282,14 @@ void GameController::simulate_enemy_moves() {
         do {
             // randomly chose a syndicate
             // that will lose a country
-            int synd_from_id = rand() % 7;
+            uint8_t synd_from_id = session_->getRandomEnemySyndicateId();
+            // Distribution for choosing a random country
+            std::uniform_int_distribution<std::size_t> countryDist(0,
+                                                        blocks_per_synd[synd_from_id].size() - 1);
             if (!blocks_per_synd[synd_from_id].empty()) {
                 // randomly chose one of its countries
-                int m_pos = rand() % blocks_per_synd[synd_from_id].size();
-                int i = 0;
+                size_t m_pos = countryDist(session_->getRandomGenerator());
+                size_t i = 0;
                 for (std::list < int >::iterator it = blocks_per_synd[synd_from_id].begin();
                         it != blocks_per_synd[synd_from_id].end(); it++) {
                     if (i == m_pos) {
@@ -273,11 +303,11 @@ void GameController::simulate_enemy_moves() {
                             }
                         }
                         if (!is_in_list) {
-                            int synd_to_id;
+                            uint8_t synd_to_id;
                             do {
                                 // find another syndicate that owns countries.
                                 // synds that do not have countries are out
-                                synd_to_id = rand() % 7;
+                                synd_to_id = session_->getRandomEnemySyndicateId();
                             } while (synd_from_id == synd_to_id || blocks_per_synd[synd_to_id].empty());
 
                             // Gives the country to the other syndicate
@@ -434,7 +464,7 @@ void GameController::cheatWeaponsAndMods() {
 }
 
 void GameController::cheatEquipAllMods() {
-    for (int agent = 0; agent < fs_knl::AgentManager::MAX_AGENT; agent++) {
+    for (uint8_t agent = 0; agent < fs_knl::AgentManager::MAX_AGENT; agent++) {
         fs_knl::Agent *pAgent = agents().agent(agent);
         if (pAgent) {
             pAgent->clearSlots();
@@ -465,18 +495,18 @@ void GameController::cheatOwnAllCountries() {
 }
 
 void GameController::cheatAccelerateTime() {
-    g_Session.cheatAccelerateTime();
+    g_Session.currentTime().cheatAccelerateTime();
 }
 
 void GameController::cheatFemaleRecruits() {
     agents().reset(true);
 
-    for (size_t i = 0; i < fs_knl::Squad::kMaxSlot; i++)
+    for (uint8_t i = 0; i < fs_knl::Squad::kMaxSlot; i++)
         agents().setSquadMember(i, agents().agent(i));
 }
 
 void GameController::cheatEquipFancyWeapons() {
-    for (int i = 0; i < fs_knl::AgentManager::MAX_AGENT; i++) {
+    for (uint8_t i = 0; i < fs_knl::AgentManager::MAX_AGENT; i++) {
         if (agents().agent(i)) {
         agents().agent(i)->destroyAllWeapons();
 #ifdef _DEBUG
