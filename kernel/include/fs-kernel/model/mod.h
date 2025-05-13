@@ -27,6 +27,7 @@
 
 #include <string>
 
+namespace fs_knl {
 /*!
  * Mod class.
  */
@@ -70,6 +71,8 @@ protected:
     /*! Version of modification.*/
     EModVersion ver_;
     int cost_, icon_, icon_f_;
+};
+
 };
 
 #endif

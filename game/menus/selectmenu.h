@@ -30,8 +30,7 @@
 #include "fs-utils/misc/timer.h"
 #include "fs-engine/menus/widget.h"
 #include "fs-kernel/model/weapon.h"
-
-class Mod;
+#include "fs-kernel/model/mod.h"
 
 /*!
  * Select Menu class.
@@ -94,7 +93,7 @@ protected:
      */
     fs_knl::WeaponInstance *pSelectedWInstance_;
     /*! Selected mod on the mods list.*/
-    Mod *pSelectedMod_;
+    fs_knl::Mod *pSelectedMod_;
     /*! Id of the text widget presenting the selected agent name.*/
     int txtAgentId_;
     /*! Id of the text widget for time.*/

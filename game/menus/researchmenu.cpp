@@ -341,7 +341,7 @@ void ResearchMenu::handleAction(const ActionDesc &action)
 
     } else if (action.id == pModsLBox_->getId()) {  // Selection of an avalaible mod
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
-        pSelectedMod_ = static_cast<Mod *> (pPair->second);
+        pSelectedMod_ = static_cast<fs_knl::Mod *> (pPair->second);
         hideDetailsList();
         getOption(cancelDescId_)->setVisible(true);
 

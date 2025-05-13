@@ -28,6 +28,8 @@
 
 #include "fs-kernel/model/mod.h"
 
+namespace fs_knl {
+
 class ModOwner {
 public:
     ModOwner() {
@@ -103,6 +105,8 @@ public:
 
 protected:
     Mod *slots_[6];
+};
+
 };
 
 #endif

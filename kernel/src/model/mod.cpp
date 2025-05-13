@@ -28,6 +28,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace fs_knl {
+
 Mod::Mod(const std::string& mod_name, EModType type, EModVersion version,
          int mod_cost, const std::string& mod_desc,
          int mod_icon, int mod_iconF):name_(mod_name),
@@ -40,3 +42,4 @@ icon_f_(mod_iconF)
         icon_f_ = icon_;
 }
 
+};

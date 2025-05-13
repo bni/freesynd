@@ -469,12 +469,12 @@ void GameController::cheatEquipAllMods() {
         if (pAgent) {
             pAgent->clearSlots();
 
-            pAgent->addMod(mods().getMod(Mod::MOD_LEGS, Mod::MOD_V3));
-            pAgent->addMod(mods().getMod(Mod::MOD_ARMS, Mod::MOD_V3));
-            pAgent->addMod(mods().getMod(Mod::MOD_EYES, Mod::MOD_V3));
-            pAgent->addMod(mods().getMod(Mod::MOD_BRAIN, Mod::MOD_V3));
-            pAgent->addMod(mods().getMod(Mod::MOD_CHEST, Mod::MOD_V3));
-            pAgent->addMod(mods().getMod(Mod::MOD_HEART, Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(fs_knl::Mod::MOD_LEGS, fs_knl::Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(fs_knl::Mod::MOD_ARMS, fs_knl::Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(fs_knl::Mod::MOD_EYES, fs_knl::Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(fs_knl::Mod::MOD_BRAIN, fs_knl::Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(fs_knl::Mod::MOD_CHEST, fs_knl::Mod::MOD_V3));
+            pAgent->addMod(mods().getMod(fs_knl::Mod::MOD_HEART, fs_knl::Mod::MOD_V3));
         }
     }
 }

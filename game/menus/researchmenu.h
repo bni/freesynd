@@ -70,7 +70,7 @@ protected:
     /*! Weapon selected in the Equips tab.*/
     fs_knl::Weapon *pSelectedWeapon_;
     /*! Mod selected in the Mods tab.*/
-    Mod *pSelectedMod_;
+    fs_knl::Mod *pSelectedMod_;
     /*! Research selected from the field list*/
     fs_knl::Research *pSelectedRes_;
     /*! Research used for displaying graph.*/

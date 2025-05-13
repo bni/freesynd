@@ -33,7 +33,6 @@
 #include "core/gamecontroller.h"
 #include "core/gamesession.h"
 #include "fs-engine/system/system.h"
-#include "fs-kernel/model/mod.h"
 
 using fs_eng::FontManager;
 
@@ -134,16 +133,16 @@ void SelectMenu::drawAgent()
         legsy -= 4;
     }
 
-    if (selected->slot(Mod::MOD_LEGS)) {
-        legs = selected->slot(Mod::MOD_LEGS)->icon(selected->isMale());
+    if (selected->slot(fs_knl::Mod::MOD_LEGS)) {
+        legs = selected->slot(fs_knl::Mod::MOD_LEGS)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 250,
-            selected->slot(Mod::MOD_LEGS)->getName(),
+            selected->slot(fs_knl::Mod::MOD_LEGS)->getName(),
             false);
     }
-    if (selected->slot(Mod::MOD_ARMS)) {
-        arms = selected->slot(Mod::MOD_ARMS)->icon(selected->isMale());
+    if (selected->slot(fs_knl::Mod::MOD_ARMS)) {
+        arms = selected->slot(fs_knl::Mod::MOD_ARMS)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 226,
-            selected->slot(Mod::MOD_ARMS)->getName(),
+            selected->slot(fs_knl::Mod::MOD_ARMS)->getName(),
             false);
     }
 
@@ -151,10 +150,10 @@ void SelectMenu::drawAgent()
     menuSprites().drawSprite(torso, 224, torsoy, false, true);
     menuSprites().drawSprite(legs, 224, legsy, false, true);
 
-    if (selected->slot(Mod::MOD_CHEST)) {
-        int chest = selected->slot(Mod::MOD_CHEST)->icon(selected->isMale());
+    if (selected->slot(fs_knl::Mod::MOD_CHEST)) {
+        int chest = selected->slot(fs_knl::Mod::MOD_CHEST)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 202,
-            selected->slot(Mod::MOD_CHEST)->getName(), false);
+            selected->slot(fs_knl::Mod::MOD_CHEST)->getName(), false);
         int chestx = 216;
         int chesty = 146;
         if (!selected->isMale()) {
@@ -164,17 +163,17 @@ void SelectMenu::drawAgent()
         menuSprites().drawSprite(chest, chestx, chesty, false, true);
     }
 
-    if (selected->slot(Mod::MOD_HEART)) {
-        int heart = selected->slot(Mod::MOD_HEART)->icon(selected->isMale());
+    if (selected->slot(fs_knl::Mod::MOD_HEART)) {
+        int heart = selected->slot(fs_knl::Mod::MOD_HEART)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 160,
-            selected->slot(Mod::MOD_HEART)->getName(), false);
+            selected->slot(fs_knl::Mod::MOD_HEART)->getName(), false);
         menuSprites().drawSprite(heart, 254, 166, false, true);
     }
 
-    if (selected->slot(Mod::MOD_EYES)) {
-        int eyes = selected->slot(Mod::MOD_EYES)->icon(selected->isMale());
+    if (selected->slot(fs_knl::Mod::MOD_EYES)) {
+        int eyes = selected->slot(fs_knl::Mod::MOD_EYES)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 136,
-            selected->slot(Mod::MOD_EYES)->getName(), false);
+            selected->slot(fs_knl::Mod::MOD_EYES)->getName(), false);
         int eyesx = 238;
         if (!selected->isMale()) {
             eyesx += 2;
@@ -182,10 +181,10 @@ void SelectMenu::drawAgent()
         menuSprites().drawSprite(eyes, eyesx, 116, false, true);
     }
 
-    if (selected->slot(Mod::MOD_BRAIN)) {
-        int brain = selected->slot(Mod::MOD_BRAIN)->icon(selected->isMale());
+    if (selected->slot(fs_knl::Mod::MOD_BRAIN)) {
+        int brain = selected->slot(fs_knl::Mod::MOD_BRAIN)->icon(selected->isMale());
         getMenuFont(FontManager::SIZE_1)->drawText(366, 112,
-            selected->slot(Mod::MOD_BRAIN)->getName(), false);
+            selected->slot(fs_knl::Mod::MOD_BRAIN)->getName(), false);
         int brainx = 238;
         if (!selected->isMale()) {
             brainx += 2;
@@ -693,7 +692,7 @@ void SelectMenu::handleAction(const ActionDesc &action)
 
     } else if (action.id == pModsLBox_->getId()) {
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
-        pSelectedMod_ = static_cast<Mod *> (pPair->second);
+        pSelectedMod_ = static_cast<fs_knl::Mod *> (pPair->second);
         showModWeaponPanel();
     } else if (action.id == pWeaponsLBox_->getId()) {
         std::pair<int, void *> * pPair = static_cast<std::pair<int, void *> *> (action.ctx);
