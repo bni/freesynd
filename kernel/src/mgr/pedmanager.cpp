@@ -145,7 +145,6 @@ void PedManager::initOurAgent(Agent *pAgent, unsigned int obj_group_id, PedInsta
     pPed->addEnemyGroupDef(2);
     pPed->addEnemyGroupDef(3);
     pPed->setSightRange(7 * 256);
-    pPed->setBaseSpeed(256);
     pPed->setTimeBeforeCheck(400);
     pPed->setBaseModAcc(0.5);
 
@@ -165,7 +164,6 @@ void PedManager::initEnemyAgent(PedInstance *pPed) {
 
     pPed->setObjGroupID(2);
     pPed->addEnemyGroupDef(1);
-    pPed->setBaseSpeed(256);
     // enemies get top version of mods
     pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_LEGS));
     pPed->addMod(g_modMgr.getHighestVersion(Mod::MOD_LEGS));
@@ -191,7 +189,6 @@ void PedManager::initGuard(PedInstance *pPed) {
 
     pPed->setObjGroupID(3);
     pPed->addEnemyGroupDef(1);
-    pPed->setBaseSpeed(192);
     pPed->setTimeBeforeCheck(300);
     pPed->setBaseModAcc(0.45);
 
@@ -208,7 +205,6 @@ void PedManager::initPolice(PedInstance *pPed) {
     LOG(Log::k_FLG_GAME, "PedManager","initPolice", ("Create police with id %d", pPed->id()))
 
     pPed->setObjGroupID(4);
-    pPed->setBaseSpeed(160);
     pPed->setTimeBeforeCheck(400);
     pPed->setBaseModAcc(0.4);
 
@@ -226,7 +222,6 @@ void PedManager::initCivilian(PedInstance *pPed) {
 
     pPed->setObjGroupID(5);
     pPed->addEnemyGroupDef(6);
-    pPed->setBaseSpeed(128);
     pPed->setTimeBeforeCheck(600);
     pPed->setBaseModAcc(0.2);
 
@@ -243,7 +238,6 @@ void PedManager::initCriminal(PedInstance *pPed) {
     LOG(Log::k_FLG_GAME, "PedManager","initCriminal", ("Create criminal with id %d", pPed->id()))
 
     pPed->setObjGroupID(6);
-    pPed->setBaseSpeed(128);
     pPed->setTimeBeforeCheck(500);
     pPed->setBaseModAcc(0.2);
 }

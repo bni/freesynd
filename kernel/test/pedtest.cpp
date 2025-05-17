@@ -20,13 +20,43 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "fs-kernel/model/ped.h"
+#include "testcase.h"
+#include "fs-engine/appcontext.h"
 
 TEST_CASE( "Ped", "[kernel][ped]" ) {
+    fs_eng::AppContext appCtx;
+    ConfigFile config;
+    initWeaponConfigFile(config);
+
     fs_knl::PedInstance cut(1, nullptr, true);
-    cut.setStartHealth(10);
+    cut.setStartHealth(10, true);
+    cut.setTypeFromValue(0x02);
 
     SECTION( "State management") {
         cut.switchActionStateTo(fs_knl::PedInstance::pa_smWalking);
         REQUIRE( cut.isState(fs_knl::PedInstance::pa_smWalking) );
+    }
+
+    SECTION("Mods") {
+        SECTION ("Speed should be default with no mods and no load") {
+            cut.setSpeed(cut.getDefaultSpeed());
+            REQUIRE( cut.speed() == cut.getDefaultSpeed() );
+        }
+
+        SECTION ("Speed should be modified with no mods and load") {
+            fs_knl::Weapon weaponClass(fs_knl::Weapon::GaussGun, config);
+            fs_knl::WeaponInstance gauss(&weaponClass, 0, nullptr);
+            fs_knl::WeaponInstance gauss2(&weaponClass, 1, nullptr);
+
+            // inventory is only above max weight
+            cut.addWeapon(&gauss);
+            cut.setSpeed(cut.getDefaultSpeed());
+            REQUIRE( cut.speed() == (cut.getDefaultSpeed() / 2) );
+
+            // Inventory is now more than double max weight
+            cut.addWeapon(&gauss2);
+            cut.setSpeed(cut.getDefaultSpeed());
+            REQUIRE( cut.speed() == fs_knl::PedInstance::kAgentMaxSpeedWithOverweight );
+        }
     }
 }

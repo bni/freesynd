@@ -504,7 +504,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
 
     if(!dest_path_.empty()) {
         // Adjusting offsets for correct positioning
-        speed_ = newSpeed;
+        setSpeed(newSpeed);
         int curox = pos_.ox;
         int curoy = pos_.oy;
         for(std::list < TilePoint >::iterator it = dest_path_.begin();
@@ -698,14 +698,14 @@ bool GenericCar::doMove(uint32_t elapsed, Mission *m)
             dest_path_.pop_front();
             // There's no following point so stop moving
             if (dest_path_.size() == 0)
-                speed_ = 0;
+                stop();
             updated = true;
         } else {
             setDirection(diffx, diffy, &dir_);
             int dx = 0, dy = 0;
             double d = sqrt((double)(diffx * diffx + diffy * diffy));
             // This is the time for all the remaining distance to the node
-            double avail_time_use = (d / (double)speed_) * 1000.0;
+            double avail_time_use = (d / (double)speed()) * 1000.0;
             // correcting time available regarding the time we have
             if (avail_time_use > used_time)
                 avail_time_use = used_time;
@@ -713,20 +713,20 @@ bool GenericCar::doMove(uint32_t elapsed, Mission *m)
             // computes distance travelled by vehicle in the available time
             if (abs(diffx) > 0)
                 // dx = diffx * (speed_ * used_time / 1000) / d;
-                dx = (int)((diffx * (speed_ * avail_time_use) / d) / 1000);
+                dx = (int)((diffx * (speed() * avail_time_use) / d) / 1000);
             if (abs(diffy) > 0)
                 // dy = diffy * (speed_ * used_time / 1000) / d;
-                dy = (int)((diffy * (speed_ * avail_time_use) / d) / 1000);
+                dy = (int)((diffy * (speed() * avail_time_use) / d) / 1000);
 
             // Updates the available time
             if (dx || dy) {
                 int prv_time = used_time;
                 if (dx) {
                     used_time -= (int)(((double) dx * 1000.0 * d)
-                        / (double)(diffx * speed_));
+                        / (double)(diffx * speed()));
                 } else if (dy) {
                     used_time -= (int)(((double) dy * 1000.0 * d)
-                        / (double)(diffy * speed_));
+                        / (double)(diffy * speed()));
                 } else
                     used_time = 0;
                 if (used_time < 0 || prv_time == used_time)
@@ -750,16 +750,16 @@ bool GenericCar::doMove(uint32_t elapsed, Mission *m)
                 && dest_path_.front().oy == pos_.oy)
                 dest_path_.pop_front();
             if (dest_path_.size() == 0)
-                speed_ = 0;
+                stop();
 
             updated = true;
         }
     }
 
-    if (dest_path_.empty() && speed_) {
+    if (dest_path_.empty() && isMoving()) {
         printf("Destination Unknown, full speed driving = %i ... doing full stop\n",
-               speed_);
-        speed_ = 0;
+               speed());
+        stop();
     }
     if (!passengers_.empty()) {
         for (std::list<PedInstance *>::iterator it = passengers_.begin();

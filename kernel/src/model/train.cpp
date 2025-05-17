@@ -91,7 +91,7 @@ bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_u
     clearDestination();
 
     dest_path_.push_front(destinationPt);
-    speed_ = newSpeed;
+    setSpeed(newSpeed);
 
     return true;
 }
@@ -112,7 +112,7 @@ bool TrainHead::doMove(uint32_t elapsed, [[maybe_unused]] Mission *m)
 
         double distanceToNextNode = distanceToPosition(destination);
         // This is the time for all the remaining distance to the next node in the path
-        double availableTimeToNextNode = (distanceToNextNode / (double)speed_) * 1000.0;
+        double availableTimeToNextNode = (distanceToNextNode / (double)speed()) * 1000.0;
         // We cannot spend more time than the time remaining
         if (availableTimeToNextNode > remainingTime)
             availableTimeToNextNode = remainingTime;
@@ -122,10 +122,10 @@ bool TrainHead::doMove(uint32_t elapsed, [[maybe_unused]] Mission *m)
         int  distanceX = 0, distanceY = 0;
         if (isMovementOnXAxis()) {
             int diffx = destination.x - currentPos.x;
-            distanceX = (int)((diffx * (speed_ * availableTimeToNextNode) / distanceToNextNode) / 1000);
+            distanceX = (int)((diffx * (speed() * availableTimeToNextNode) / distanceToNextNode) / 1000);
         } else {
             int diffy = destination.y - currentPos.y;
-            distanceY = (int)((diffy * (speed_ * availableTimeToNextNode) / distanceToNextNode) / 1000);
+            distanceY = (int)((diffy * (speed() * availableTimeToNextNode) / distanceToNextNode) / 1000);
         }
 
         // Updates the remaining time
@@ -143,16 +143,16 @@ bool TrainHead::doMove(uint32_t elapsed, [[maybe_unused]] Mission *m)
 }
 
 void TrainHead::stopIfDestinationReached(const WorldPoint &destinationPt) {
-    bool stop = false;
+    bool doStop = false;
     WorldPoint currentPos(pos_);
 
-    stop = isMovementOnXAxis() ?
+    doStop = isMovementOnXAxis() ?
                 abs(destinationPt.x - currentPos.x) < 4:
                 abs(destinationPt.y - currentPos.y) < 4;
 
-    if(stop) {
+    if(doStop) {
         dest_path_.pop_front();
-        speed_ = 0;
+        stop();
     }
 }
 

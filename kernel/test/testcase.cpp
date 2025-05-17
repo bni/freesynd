@@ -42,6 +42,26 @@ void initWeaponConfigFile( ConfigFile &config ) {
     config.add("weapon.1.ammo.impactNb", 1);
     config.add("weapon.1.weight", 1);
 
+    config.add("weapon.2.name", "GAUSS_GUN");
+    config.add("weapon.2.icon.small", 15);
+    config.add("weapon.2.icon.big", 65);
+    config.add("weapon.2.cost", 0);
+    config.add("weapon.2.ammo.nb", 13);
+    config.add("weapon.2.ammo.price", 0);
+    config.add("weapon.2.range", 1280);
+    config.add("weapon.2.rank", 1);
+    config.add("weapon.2.anim", 368);
+    config.add("weapon.2.ammopershot", 1);
+    config.add("weapon.2.timeforshot", 200);
+    config.add("weapon.2.timereload", 600);
+    config.add("weapon.2.damagerange", 0);
+    config.add("weapon.2.shotangle", 5.0);
+    config.add("weapon.2.shotaccuracy", 0.9);
+    config.add("weapon.2.shotspeed", 0);
+    config.add("weapon.2.dmg_per_shot", 2);
+    config.add("weapon.2.ammo.impactNb", 1);
+    config.add("weapon.2.weight", 15);
+
     config.add("weapon.12.name", "scanner");
     config.add("weapon.12.icon.small", 26);
     config.add("weapon.12.icon.big", 76);

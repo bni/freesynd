@@ -97,6 +97,8 @@ public:
     static const int kDefaultShootReactionTime;
     //! Id of the group for the player's agents
     static const uint32_t kPlayerGroupId;
+    //! Maximum speed an agent has when he carries too much weight
+    static const int kAgentMaxSpeedWithOverweight;
     /*!
      * Type of Ped.
      */
@@ -281,7 +283,7 @@ public:
     // Movement management
     //*************************************
     //! See ShootableMovableMapObject::initMovementToDestination()
-    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1);
+    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
 
     //! See ShootableMovableMapObject::doMove()
     bool doMove(uint32_t elapsed, Mission *pMission) override;
@@ -611,6 +613,8 @@ protected:
     void doUpdateState(uint32_t elapsed) override;
 
     void handleAnimationEnded() override;
+
+    int applySpeedModifier(int speed) override;
 
 private:
     inline int getClosestDirs(int dir, int& closest, int& closer);

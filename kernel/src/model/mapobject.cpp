@@ -463,7 +463,6 @@ ShootableMapObject::ShootableMapObject(uint16_t anId, Map *pMap, ObjectNature aN
 ShootableMovableMapObject::ShootableMovableMapObject(uint16_t anId, Map *pMap, ObjectNature aNature):
         ShootableMapObject(anId, pMap, aNature) {
     speed_ = 0;
-    base_speed_ = 0;
     dist_to_pos_ = 0;
 }
 

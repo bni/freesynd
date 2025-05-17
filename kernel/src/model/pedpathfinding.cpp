@@ -155,11 +155,11 @@ bool PedInstance::initMovementToDestination(Mission *m, const TilePoint &destina
 
     if (dest_path_.empty()) {
         // destination was not set -> stop ped
-        speed_ = 0;
+        stop();
         return false;
     } else {
         // if no speed was set, use ped's default speed
-        speed_ = newSpeed != -1 ? newSpeed : getDefaultSpeed();
+        setSpeed(newSpeed != -1 ? newSpeed : getDefaultSpeed());
         return true;
     }
 
@@ -2343,7 +2343,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
                         return updated;
                     // hold_on_.wayFree == 2
                     dest_path_.clear();
-                    speed_ = 0;
+                    stop();
                     return updated;
                 }
             } else {
@@ -2354,7 +2354,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
                         return updated;
                     // hold_on_.wayFree == 2
                     dest_path_.clear();
-                    speed_ = 0;
+                    stop();
                     return updated;
                 }
             }
@@ -2379,7 +2379,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
             pos_.tx = nxtTileX;
             dest_path_.pop_front();
             if (dest_path_.empty())
-                speed_ = 0;
+                stop();
             updated = true;
         } else {
             setDirection(diffx, diffy, &dir_);
@@ -2387,7 +2387,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
             int dx = 0, dy = 0;
             double d = sqrt((double)(diffx * diffx + diffy * diffy));
             // object will not move over a distance he can actually move
-            double avail_time_use = (d / (double)speed_) * 1000.0;
+            double avail_time_use = (d / (double)speed()) * 1000.0;
             // correcting time availiable for this distance to time
             // we can use
             if (avail_time_use > used_time)
@@ -2395,19 +2395,19 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
 
             if (abs(diffx) > 0)
                 // dx = diffx * (speed_ * used_time / 1000) / d;
-                dx = (int)((diffx * (speed_ * avail_time_use) / d) / 1000);
+                dx = (int)((diffx * (speed() * avail_time_use) / d) / 1000);
             if (abs(diffy) > 0)
                 // dy = diffy * (speed_ * used_time / 1000) / d;
-                dy = (int)((diffy * (speed_ * avail_time_use) / d) / 1000);
+                dy = (int)((diffy * (speed() * avail_time_use) / d) / 1000);
 
             if (dx || dy) {
                 int prv_time = used_time;
                 if (dx) {
                     used_time -= (int)(((double) dx * 1000.0 * d)
-                        / (double)(diffx * speed_));
+                        / (double)(diffx * speed()));
                 } else if (dy) {
                     used_time -= (int)(((double) dy * 1000.0 * d)
-                        / (double)(diffy * speed_));
+                        / (double)(diffy * speed()));
                 } else
                     used_time = 0;
                 if (used_time < 0 || prv_time == used_time)
@@ -2437,7 +2437,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
                 dest_path_.pop_front();
             }
             if (dest_path_.size() == 0)
-                speed_ = 0;
+                stop();
 
             updated = true;
         }
@@ -2452,7 +2452,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
                 double dist_cur = distanceToPosition(wpt);
                 if (dist_cur < (double)dist_to_pos_) {
                     dest_path_.clear();
-                    speed_ = 0;
+                    stop();
                 }
             }
         }
@@ -2461,9 +2461,9 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
             + pos_.tz * pMission->mmax_m_xy]);
     }
 #ifdef _DEBUG
-    if (dest_path_.empty() && speed_) {
-        printf("Was running at speed %i, destination unknown\n", speed_);
-        speed_ = 0;
+    if (dest_path_.empty() && isMoving()) {
+        printf("Was running at speed %i, destination unknown\n", speed());
+        stop();
     }
 #endif
 
@@ -2515,7 +2515,7 @@ uint8 PedInstance::moveToDir(Mission* m, uint32_t elapsed, DirMoveType &dir_move
         }
     }
 
-    double dist_curr = (elapsed * speed_) / 1000.0;
+    double dist_curr = (elapsed * speed()) / 1000.0;
     if (dist == NULL || (dist && *dist == 0)) {
          if (dist_to_pos_ > 0 && (int)dist_curr > dist_to_pos_)
              dist_curr = (double) dist_to_pos_;

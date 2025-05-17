@@ -124,12 +124,12 @@ public:
     virtual ~GenericCar() {}
 
     //! See ShootableMovableMapObject::initMovementToDestination()
-    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1);
+    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
 
     void addDestinationV(int x, int y, int z, int ox = 128, int oy = 128,
             int new_speed = 160) {
         dest_path_.push_back(TilePoint(x, y, z, ox, oy));
-        speed_ = new_speed;
+        setSpeed(new_speed);
     }
 
     //! @copydoc ShootableMovableMapObject::doMove()

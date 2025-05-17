@@ -43,6 +43,7 @@ namespace fs_knl {
 const int PedInstance::kAgentMaxHealth = 16;
 const int PedInstance::kDefaultShootReactionTime = 200;
 const uint32_t PedInstance::kPlayerGroupId = 1;
+const int PedInstance::kAgentMaxSpeedWithOverweight = 64;
 
 PedInstance::PedInstance(uint16_t anId, Map *pMap, bool isOur) :
     ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed),
@@ -1165,13 +1166,30 @@ void PedInstance::verifyHostilesFound(Mission *m) {
     }
 }
 
+
+int PedInstance::getDefaultSpeed() {
+    switch (type_) {
+        case kPedTypeCivilian :
+            return 128;
+        case kPedTypeAgent :
+            return 256;
+        case kPedTypePolice :
+            return 160;
+        case kPedTypeGuard :
+            return 192;
+        case kPedTypeCriminal:
+            return 128;
+        default:
+            return 0;
+    }
+}
+
 /*!
  * Movement speed calculated from base speed, mods, weight of inventory,
  * ipa, etc.
  */
-int PedInstance::getDefaultSpeed()
-{
-    int speed_new = base_speed_;
+int PedInstance::applySpeedModifier(int speed) {
+    int speed_new = speed;
 
     int weight_max = 0;
     Mod *pMod = slots_[Mod::MOD_LEGS];
@@ -1193,7 +1211,7 @@ int PedInstance::getDefaultSpeed()
 
     if (weight_inv > weight_max) {
         if ((weight_inv / weight_max) > 1)
-            speed_new = 64;
+            speed_new = kAgentMaxSpeedWithOverweight;
         else
             speed_new /= 2;
     }

@@ -440,16 +440,22 @@ public:
     ShootableMovableMapObject(uint16_t id, Map *pMap, ObjectNature nature);
     virtual ~ShootableMovableMapObject() {}
 
-    void setSpeed(int new_speed) {
-        speed_ = new_speed;
+    /*!
+     * @brief Set speed for the object.
+     * Given speed will be pass to applySpeedModifier() method before being set.
+     * @param newSpeed Speed to set
+     */
+    void setSpeed(int newSpeed) {
+        speed_ = applySpeedModifier(newSpeed);
     }
+
+    //! Set speed to zero
+    void stop() { speed_ = 0; }
 
     int speed() {
         return speed_;
     }
-    void setBaseSpeed(int bs) {
-        base_speed_ = bs;
-    }
+    
     /*!
      * Clear path to destination and sets speed to 0.
      */
@@ -489,11 +495,19 @@ public:
 protected:
     bool addOffsetToPosition(int nOffX, int nOffY);
 
+    /*!
+     * @brief Return a modified speed based on contextual parameters.
+     * @return By default return unmodified speed
+     */
+    virtual int applySpeedModifier(int speed) { return speed; }
+
 protected:
-    int speed_, base_speed_;
     //! on reaching this distance object should stop
     int dist_to_pos_;
     std::list<TilePoint> dest_path_;
+
+private:
+    int speed_;
 };
 
 }
