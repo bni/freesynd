@@ -24,34 +24,35 @@
 
 #include "fs-utils/misc/timer.h"
 
-// Stores the values for the Intelligence, Perception and
-// Adrenaline bars. Also calculates the multipliers to things
-// like speed that these give.
-//
-// Each IPAStim tracks a few values and via the processTicks() method
-// these values will change over time as in the original Syndicate.
-
+/*!
+ * Stores the values for the Intelligence, Perception and
+ * Adrenaline bars. Also calculates the multipliers to things
+ * like speed that these give.
+ *
+ * Each IPAStim tracks a few values and via the processTicks() method
+ * these values will change over time as in the original Syndicate.
+ */
 class IPAStim
 {
 public:
-    typedef enum {
+    enum IPAType {
         Adrenaline,
         Perception,
         Intelligence
-    } IPAType;
-    IPAStim(IPAType ipa_type, int amount = 50, int dependency = 50);
-#ifdef _DEBUG
-    const char * getName() const
-    {
-        return IPANames[(int)ipa_type_];
-    }
-#endif
+    };
 
-    // Return value varies from 0.5 to 2 and returns 1
-    // for 'neutral' adrenaline.
+    IPAStim(IPAType ipa_type, int amount = 50, int dependency = 50);
+
+    IPAType type()   const { return ipa_type_; }
+    int amount()     const { return amount_; }
+    void setAmount(int percentage) { amount_ = percentage; }
+    int dependency() const { return dependency_; }
+    int effect()    const { return effect_; }
+
+    //! Return value varies from 0.5 to 2 and returns 1 for 'neutral' adrenaline.
     float getMultiplier() const;
 
-    // We are using percentages, the original data files are using uint8 256 ranges
+    //! We are using percentages, the original data files are using uint8 256 ranges
     void setLevels256(int amount, int dependency, int effect)
     {
         setLevels(
@@ -61,58 +62,77 @@ public:
         );
     }
 
-    // Note: this method takes percentages as arguments, use
-    // setLevels256 to use the values from Syndicate's data files.
-    // "effect" may not currently be used.
-    void setLevels(int amount, int dependency, int effect = 0);
-
-    void setAmount(int percentage) { amount_ = percentage; }
-
-    int getAmount()     const { return amount_; }
-    int getDependency() const { return dependency_; }
-    int getEffect()    const { return effect_; }
-    IPAType getType()   const { return ipa_type_; }
-
     void processTicks(uint32_t elapsed);
 
+#ifdef _DEBUG
+    const char * getName() const {
+        return IPANames[ipa_type_];
+    }
+#endif
+
 private:
-    // Used to select colors when rendering
+    /*!
+     * @brief Indicate if IPA stimulation is boosting or reducing
+     */
+    enum IPADir {
+        kIPADirBoost,
+        kIPADirReduce
+    };
+
+    /*!
+     * Note: this method takes percentages as arguments, use
+     * setLevels256 to use the values from Syndicate's data files.
+     * "effect" may not currently be used.
+     */
+    void setLevels(int amount, int dependency, int effect = 0);
+
+    /*!
+     * Given a percentage returns that % of 1 to 2
+     * i.e. instead of 0 to 2
+     */
+    float part_of_two(int percentage) const {
+        return (((float)percentage)/100.0f) + 1.0f;
+    }
+
+    IPADir direction() const
+        { return amount_ - dependency_ >= 0 ? kIPADirBoost : kIPADirReduce; }
+
+    int getMagnitude() const;
+
+private:
+    //! Used to select colors when rendering
     IPAType ipa_type_;
+
 #ifdef _DEBUG
     // Allow pretty debug
     static const char * IPANames[3];
 #endif
 
-    // These are percentages - 50% is the neutral mid-point
-    int amount_, dependency_;
-
-    // The darker bar that grows to match 'amount'. If you watch
-    // the behaviour of this in the original Syndicate it grows from
-    // the dependency line to meet the currently set 'amount'. Once the
-    // two are equal it disappears and the 'amount' starts
-    // moving towards the dependency line.
+    /*!
+     * This represent the amount of drug injected for the current type.
+     * On screen, it is the bright color and is set by the player.
+     * It is a percentage - 50% is the neutral mid-point.
+     */
+    int amount_;
+    /*!
+     * This represent the level of consumption and the effect of given amount of drug.
+     * It's the darker bar on screen. It grows from the dependency line
+     * to meet the currently set 'amount'.
+     * Once the two are equal, it disappears and the 'amount' and effect start
+     * moving towards the dependency line.
+     */
     int effect_;
+    /*!
+     * This represent the level of dependency for the current type.
+     * It is a percentage - 50% is the neutral mid-point.
+     * The higher this level is set, the less time the effect will last.
+     */
+    int dependency_;
 
-    // Given a percentage returns that % of 1 to 2
-    // i.e. instead of 0 to 2
-    float part_of_two(int percentage) const
-    {
-        return (((float)percentage)/100.0f) + 1.0f;
-    }
-
-    enum IPADir {
-        IPA_boost,
-        IPA_reduce
-    };
-    IPADir direction() const
-        { return amount_ - dependency_ >= 0 ? IPA_boost : IPA_reduce; }
-
-    int getMagnitude() const;
-
-    // A one second timer, IPA's seem to adjust themselves
-    // about once a second
-    fs_utl::Timer effect_timer_; // every second
-    fs_utl::Timer dependency_timer_; // once every 4.5 seconds
+    //! A timer to control the update of effect level
+    fs_utl::Timer effect_timer_;
+    //! A timer to control the level of dependency
+    fs_utl::Timer dependency_timer_;
 };
 
 #endif

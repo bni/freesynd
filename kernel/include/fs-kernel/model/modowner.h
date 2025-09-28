@@ -97,6 +97,40 @@ public:
         return 0;
     }
 
+    /*!
+     * Return a multiplier factor corresponding to the mod Leg.
+     * @return x1 if Agent has no mod for leg
+     */
+    float getSpeedMultiplier() {
+        Mod *pMod = slots_[Mod::MOD_LEGS];
+        if (pMod) {
+            switch(pMod->getVersion()) {
+                case Mod::MOD_V1:
+                    return 1.25;
+                case Mod::MOD_V2:
+                    return 1.50;
+                case Mod::MOD_V3:
+                    return 1.75;
+            }
+        }
+        return 1.0;
+    }
+
+    int getMaxWeight() {
+        Mod *pMod = slots_[Mod::MOD_ARMS];
+        if (pMod) {
+            switch(pMod->getVersion()) {
+                case Mod::MOD_V1:
+                    return 10;
+                case Mod::MOD_V2:
+                    return 20;
+                case Mod::MOD_V3:
+                    return 200;
+            }
+        }
+        return 5;
+    }
+
     void transferMods(ModOwner &modOwner) {
         for (int i = 0; i < 6; i++) {
             modOwner.addMod(slots_[i]);

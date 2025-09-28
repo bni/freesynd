@@ -115,6 +115,19 @@ void WeaponHolder::transferWeapons(WeaponHolder &anotherHolder) {
 }
 
 /*!
+ * Return total weight of inventory
+ * @return 0 if inventory is empty
+ */
+int WeaponHolder::getInventoryWeight() {
+    int totalWeight = 0;
+    for (auto weapon : weapons_) {
+        totalWeight += weapon->getWeight();
+    }
+    
+    return totalWeight;
+}
+
+/*!
  * Return true if given weapon is selected.
  * @param pWeapon The weapon to check
  * @return true if pWeapon is not null and equal to the selected weapon.

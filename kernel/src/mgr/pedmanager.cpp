@@ -93,12 +93,12 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
                         gamdata.mapposy[0], oz);
     newped->setTypeFromValue(gamdata.type_ped);
 
-    newped->setAllAdrenaLevels(gamdata.adrena_amount,
-        gamdata.adrena_dependency, gamdata.adrena_effect);
-    newped->setAllInteliLevels(gamdata.inteli_amount,
-        gamdata.inteli_dependency, gamdata.inteli_effect);
-    newped->setAllPercepLevels(gamdata.percep_amount,
-        gamdata.percep_dependency, gamdata.percep_effect);
+    newped->initAllLevelsForIPAType(IPAStim::Adrenaline,
+        gamdata.adrena_amount, gamdata.adrena_dependency, gamdata.adrena_effect);
+    newped->initAllLevelsForIPAType(IPAStim::Intelligence,
+        gamdata.inteli_amount, gamdata.inteli_dependency, gamdata.inteli_effect);
+    newped->initAllLevelsForIPAType(IPAStim::Perception,
+        gamdata.percep_amount, gamdata.percep_dependency, gamdata.percep_effect);
 
     if (isOurAgent) {
         // We're loading one of our agents

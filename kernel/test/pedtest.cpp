@@ -43,20 +43,39 @@ TEST_CASE( "Ped", "[kernel][ped]" ) {
             REQUIRE( cut.speed() == cut.getDefaultSpeed() );
         }
 
-        SECTION ("Speed should be modified with no mods and load") {
-            fs_knl::Weapon weaponClass(fs_knl::Weapon::GaussGun, config);
-            fs_knl::WeaponInstance gauss(&weaponClass, 0, nullptr);
-            fs_knl::WeaponInstance gauss2(&weaponClass, 1, nullptr);
+        SECTION ("Speed should be modified with no mods and overload") {
+            fs_knl::Weapon shieldClass(fs_knl::Weapon::EnergyShield, config);
+            fs_knl::Weapon gaussClass(fs_knl::Weapon::GaussGun, config);
+            fs_knl::WeaponInstance energyShield(&shieldClass, 0, nullptr);
+            fs_knl::WeaponInstance gauss(&gaussClass, 1, nullptr);
 
             // inventory is only above max weight
-            cut.addWeapon(&gauss);
+            cut.addWeapon(&energyShield);
             cut.setSpeed(cut.getDefaultSpeed());
             REQUIRE( cut.speed() == (cut.getDefaultSpeed() / 2) );
 
             // Inventory is now more than double max weight
-            cut.addWeapon(&gauss2);
+            cut.addWeapon(&gauss);
             cut.setSpeed(cut.getDefaultSpeed());
             REQUIRE( cut.speed() == fs_knl::PedInstance::kAgentMaxSpeedWithOverweight );
+        }
+
+        SECTION ("Speed should be higher with Leg Mod and no load") {
+            fs_knl::Mod legV1("LegV1", fs_knl::Mod::MOD_LEGS, fs_knl::Mod::MOD_V1, 0, "", 0);
+            fs_knl::Mod legV2("LegV2", fs_knl::Mod::MOD_LEGS, fs_knl::Mod::MOD_V2, 0, "", 0);
+            fs_knl::Mod legV3("LegV3", fs_knl::Mod::MOD_LEGS, fs_knl::Mod::MOD_V3, 0, "", 0);
+
+            cut.addMod(&legV1);
+            cut.setSpeed(50);
+            REQUIRE( cut.speed() == 62 );
+
+            cut.addMod(&legV2);
+            cut.setSpeed(50);
+            REQUIRE( cut.speed() == 75 );
+
+            cut.addMod(&legV3);
+            cut.setSpeed(50);
+            REQUIRE( cut.speed() == 87 );
         }
     }
 }

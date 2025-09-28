@@ -64,7 +64,7 @@ float IPAStim::getMultiplier() const
     // adrenaline and 1 to 2 on the positive side.
     int magnitude = getMagnitude();
 
-    if(direction() == IPA_boost) {
+    if(direction() == kIPADirBoost) {
         // return value is 1 to 2 for values
         // of 'magnitude' from 0 to 100
         // If you fiddle with this equation beware of

@@ -1185,29 +1185,39 @@ int PedInstance::getDefaultSpeed() {
 }
 
 /*!
+ * Initiate the amount, depend and effect level for a given type of IPA.
+ * Levels passed to this method should come from original values and will be transformed into pourcentage.
+ * @param type The type of IPA to init for this ped
+ * @param amount The amount level
+ * @param depend The depend level
+ * @param effect The effect level
+ */
+void PedInstance::initAllLevelsForIPAType(IPAStim::IPAType type, uint8_t amount, uint8_t depend, uint8_t effect) {
+    switch (type)
+    {
+    case IPAStim::IPAType::Adrenaline:
+        adrenaline_->setLevels256(amount, depend, effect);
+        break;
+    case IPAStim::IPAType::Perception:
+        perception_->setLevels256(amount, depend, effect);
+        break;
+    case IPAStim::IPAType::Intelligence:
+        intelligence_->setLevels256(amount, depend, effect);
+        break;
+    default:
+        break;
+    }
+}
+
+/*!
  * Movement speed calculated from base speed, mods, weight of inventory,
  * ipa, etc.
  */
 int PedInstance::applySpeedModifier(int speed) {
-    int speed_new = speed;
+    float speed_new = static_cast<float>(speed) * getSpeedMultiplier();
 
-    int weight_max = 0;
-    Mod *pMod = slots_[Mod::MOD_LEGS];
-    if (pMod) {
-        weight_max += 5 << (pMod->getVersion() + 1);
-        speed_new *= (pMod->getVersion() + 5);
-        speed_new >>= 2;
-    } else
-        weight_max = 5;
-    pMod = slots_[Mod::MOD_ARMS];
-    if (pMod)
-        weight_max += 5 << (pMod->getVersion() + 1);
-    else
-        weight_max += 5;
-
-    int weight_inv = 0;
-    for (uint8_t i = 0; i < weapons_.size(); ++i)
-        weight_inv += weapons_[i]->getWeight();
+    int weight_max = getMaxWeight();
+    int weight_inv = getInventoryWeight();
 
     if (weight_inv > weight_max) {
         if ((weight_inv / weight_max) > 1)
@@ -1220,15 +1230,15 @@ int PedInstance::applySpeedModifier(int speed) {
     {
         // See the comments in the IPAStim class for details on the multiplier
         // algorithm for adrenaline
-        speed_new = (int)((float)speed_new * adrenaline_->getMultiplier());
+        speed_new *= adrenaline_->getMultiplier();
     }
 
     if (isPersuaded()) {
         speed_new *= owner_->getSpeedOwnerBoost();
-        speed_new >>= 1;
+        //speed_new >>= 1;
     }
 
-    return speed_new;
+    return static_cast<int>(speed_new);
 }
 
 // NOTE: returned value is *2, it should be should be corrected

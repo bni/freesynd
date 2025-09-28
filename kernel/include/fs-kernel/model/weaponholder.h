@@ -86,6 +86,9 @@ public:
 
     void transferWeapons(WeaponHolder &anotherHolder);
 
+    //! Return the weight of the whole inventory
+    int getInventoryWeight();
+
 protected:
     struct WeaponSelectCriteria {
         

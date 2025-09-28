@@ -141,4 +141,13 @@ TEST_CASE( "Weapon holder", "[kernel][weaponholder]" ) {
             REQUIRE ( holder.isWeaponSelected(&pistol2) );
         }
     }
+
+    SECTION( "Get inventory weight") {
+        holder.addWeapon(&pistol1);
+        holder.addWeapon(&energy);
+        holder.addWeapon(&scanner);
+        holder.addWeapon(&pistol2);
+
+        REQUIRE ( holder.getInventoryWeight() == 11 );
+    }
 }

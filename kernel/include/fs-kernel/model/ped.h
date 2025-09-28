@@ -331,9 +331,10 @@ public:
     void handleDeath(const DamageToInflict &damage);
     ///@}
 
-    //*************************************
-    // Persuasion
-    //*************************************
+    /**
+     * @name Persuasion
+     */
+    ///@{
     //! Return true if ped is persuaded
     bool isPersuaded() { return fs_utl::isBitsOnWithMask(desc_state_, pd_smControlled); }
     //! Returns true if this ped can persuade that ped
@@ -351,6 +352,7 @@ public:
     //!
     void informPersuadedToEnterVehicle(Vehicle *pVehicle);
     void dropPersuadedFromCar(Vehicle *pCar);
+    ///@}
 
     bool inSightRange(MapObject *t);
     Vehicle * inVehicle() const;
@@ -364,22 +366,20 @@ public:
         int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,
         bool set_dist = false);
 
-    void setAllAdrenaLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
-        adrenaline_->setLevels256(amount, depend, effect);
-    }
-
-    void setAllInteliLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
-        intelligence_->setLevels256(amount, depend, effect);
-    }
-
-    void setAllPercepLevels(uint8_t amount, uint8_t depend, uint8_t effect) {
-        perception_->setLevels256(amount, depend, effect);
-    }
+    /**
+     * @name IPA Management
+     */
+    ///@{
+    //! Initiate the amount, depend and effect level for a given type of IPA.
+    void initAllLevelsForIPAType(IPAStim::IPAType type, uint8_t amount, uint8_t depend, uint8_t effect);
+    
+    //! Update the state for each IPA
     void updtIPATime(uint32_t elapsed) {
         adrenaline_->processTicks(elapsed);
         perception_->processTicks(elapsed);
         intelligence_->processTicks(elapsed);
     }
+    ///@}
 
     void setDescStateMasks(unsigned int desc_state) {
         desc_state_ = desc_state;

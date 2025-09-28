@@ -133,11 +133,11 @@ fs_eng::FSColor AgentSelectorRenderer::dim_colour(IPAStim::IPAType type, const f
 void AgentSelectorRenderer::drawIPABar(size_t agent, IPAStim *stim, const fs_eng::Palette &palette)
 {
     // Convert those percentages to pixels
-    int amount_x = (float)kIpaBarWidth * ((float)stim->getAmount()/100.0);
-    int effect_x = (float)kIpaBarWidth * ((float)stim->getEffect()/100.0);
-    int dependency_x = (float)kIpaBarWidth * ((float)stim->getDependency()/100.0);
+    int amount_x = (float)kIpaBarWidth * ((float)stim->amount()/100.0);
+    int effect_x = (float)kIpaBarWidth * ((float)stim->effect()/100.0);
+    int dependency_x = (float)kIpaBarWidth * ((float)stim->dependency()/100.0);
 
-    IPAStim::IPAType type = stim->getType();
+    IPAStim::IPAType type = stim->type();
 
     // Draw a bar between the current level and the dependency marker
     // x needs to be leftmost...
