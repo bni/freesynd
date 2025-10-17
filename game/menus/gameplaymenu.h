@@ -58,7 +58,7 @@ protected:
     //! Handles the user's click on weapon selector
     void handleClickOnWeaponSelector(Point2D point, int button);
     //! sets IPA level for defined agent, selector
-    void setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int percentage);
+    void setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, uint8_t percentage);
     //! Handles the user's click on the map
     void handleClickOnMap(Point2D point, int button);
     //! Handles the user's click on the minimap

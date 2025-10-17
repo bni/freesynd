@@ -489,7 +489,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
     if (ipa_chng_.ipa_chng != -1 && menu_manager_->isMouseDragged()) {
         fs_knl::PedInstance *p = mission_->ped(ipa_chng_.agent_used);
         if (p->isAlive()) {
-            int percent = agt_sel_renderer_.getPercentageAnyX(
+            uint8_t percent = agt_sel_renderer_.getPercentageAnyX(
                 ipa_chng_.agent_used, point.x);
 
             // if agent is in selected group we will update all groups IPA
@@ -712,32 +712,17 @@ void GameplayMenu::handleClickOnWeaponSelector(Point2D point, int button) {
     }
 }
 
-void GameplayMenu::setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, int percentage)
-{
+void GameplayMenu::setIPAForAgent(size_t slot, IPAStim::IPAType ipa_type, uint8_t percentage) {
     fs_knl::PedInstance *ped = mission_->ped(slot);
     if (ped->isDead())
         return;
 
-    switch(ipa_type)
-    {
-        case IPAStim::Adrenaline:
-            ped->adrenaline_->setAmount(percentage);
-            break;
-        case IPAStim::Perception:
-            ped->perception_->setAmount(percentage);
-            break;
-        case IPAStim::Intelligence:
-            ped->intelligence_->setAmount(percentage);
-            break;
-    }
+    ped->setIPAAmount(ipa_type, percentage);
 }
 
-void GameplayMenu::updateIPALevelMeters(uint32_t elapsed)
-{
-    for (size_t agent = 0; agent < fs_knl::Squad::kMaxSlot; ++agent) {
-        fs_knl::PedInstance *ped = mission_->getSquad()->member(agent);
-        if (ped && ped->isAlive())
-            ped->updtIPATime(elapsed);
+void GameplayMenu::updateIPALevelMeters(uint32_t elapsed) {
+    for (auto it = mission_->getSquad()->alive_begin(); it != mission_->getSquad()->alive_end(); ++it) {
+        (*it)->updateAllIPA(elapsed);
     }
 }
 

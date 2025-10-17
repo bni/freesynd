@@ -41,13 +41,13 @@ public:
         Intelligence
     };
 
-    IPAStim(IPAType ipa_type, int amount = 50, int dependency = 50);
+    IPAStim(IPAType ipa_type, uint8_t amount = 50, uint8_t dependency = 50);
 
     IPAType type()   const { return ipa_type_; }
-    int amount()     const { return amount_; }
-    void setAmount(int percentage) { amount_ = percentage; }
-    int dependency() const { return dependency_; }
-    int effect()    const { return effect_; }
+    uint8_t amount()     const { return amount_; }
+    void setAmount(uint8_t percentage) { amount_ = percentage; }
+    uint8_t dependency() const { return dependency_; }
+    uint8_t effect()    const { return effect_; }
 
     //! Return value varies from 0.5 to 2 and returns 1 for 'neutral' adrenaline.
     float getMultiplier() const;
@@ -56,9 +56,9 @@ public:
     void setLevels256(int amount, int dependency, int effect)
     {
         setLevels(
-            (int)((float)amount/256.0*100.0),
-            (int)((float)dependency/256.0*100.0),
-            (int)((float)effect/256.0*100.0)
+            (uint8_t)((float)amount/256.0*100.0),
+            (uint8_t)((float)dependency/256.0*100.0),
+            (uint8_t)((float)effect/256.0*100.0)
         );
     }
 
@@ -84,7 +84,7 @@ private:
      * setLevels256 to use the values from Syndicate's data files.
      * "effect" may not currently be used.
      */
-    void setLevels(int amount, int dependency, int effect = 0);
+    void setLevels(uint8_t amount, uint8_t dependency, uint8_t effect = 0);
 
     /*!
      * Given a percentage returns that % of 1 to 2
@@ -113,7 +113,7 @@ private:
      * On screen, it is the bright color and is set by the player.
      * It is a percentage - 50% is the neutral mid-point.
      */
-    int amount_;
+    uint8_t amount_;
     /*!
      * This represent the level of consumption and the effect of given amount of drug.
      * It's the darker bar on screen. It grows from the dependency line
@@ -121,13 +121,13 @@ private:
      * Once the two are equal, it disappears and the 'amount' and effect start
      * moving towards the dependency line.
      */
-    int effect_;
+    uint8_t effect_;
     /*!
      * This represent the level of dependency for the current type.
      * It is a percentage - 50% is the neutral mid-point.
      * The higher this level is set, the less time the effect will last.
      */
-    int dependency_;
+    uint8_t dependency_;
 
     //! A timer to control the update of effect level
     fs_utl::Timer effect_timer_;

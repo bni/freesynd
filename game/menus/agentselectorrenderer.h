@@ -47,7 +47,7 @@ public:
     /*! The type of IPA selected for eventType = kSelectIpa.*/
     IPAStim::IPAType IpaType;
     /*! for eventType = kSelectIpa.*/
-    int percentage;
+    uint8_t percentage;
 };
 
 /*!
@@ -63,7 +63,7 @@ public:
     void render(SquadSelection & selection, fs_knl::Squad * pSquad, const fs_eng::Palette &palette);
 
     //! gets percentage for any x coord
-    int getPercentageAnyX(size_t agent, int x) {
+    uint8_t getPercentageAnyX(size_t agent, int x) {
         int barLeft = getIpaBarLeftForAgent(agent);
         if (x < barLeft)
             x = barLeft;
@@ -81,7 +81,7 @@ private:
     void scanCoordsForIPA(int x, int y, SelectorEvent & evt);
 
     //! Draws all the elements for one bar
-    void drawIPABar(size_t agent, IPAStim *stim, const fs_eng::Palette &palette);
+    void drawIPABar(size_t agent, const IPAStim &stim, const fs_eng::Palette &palette);
 
     /*!
      * Returns the Y coord of the top left corner of the IPA bar for a given agent slot and IPA Type.
@@ -128,10 +128,10 @@ private:
     /*!
      *
      */
-    int getPercentage(int left, int x)
+    uint8_t getPercentage(int left, int x)
     {
         int offset = x - left;
-        return (int)(((float)offset / (float) kIpaBarWidth) * 100.0);
+        return (uint8_t)(((float)offset / (float) kIpaBarWidth) * 100.0);
     }
 
     void drawSelectorForAgent(size_t agentSlot, fs_knl::PedInstance *pAgent, bool isSelected, const fs_eng::Palette &palette);

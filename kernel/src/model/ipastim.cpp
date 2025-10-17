@@ -33,7 +33,7 @@ const char * IPAStim::IPANames[3] = {
 };
 #endif
 
-IPAStim::IPAStim(IPAType ipa_type, int amount, int dependency)
+IPAStim::IPAStim(IPAType ipa_type, uint8_t amount, uint8_t dependency)
 :ipa_type_(ipa_type), effect_(50), effect_timer_(1000), dependency_timer_(4500)
 {
     assert(ipa_type_ <= 3);
@@ -83,12 +83,12 @@ float IPAStim::getMultiplier() const
     }
 }
 
-void IPAStim::setLevels(int amount, int dependency, int effect)
+void IPAStim::setLevels(uint8_t amount, uint8_t dependency, uint8_t effect)
 {
     amount_ = amount;
     dependency_ = dependency;
 
-    effect_ = dependency;
+    effect_ = effect;
 
     //printf("%s: A: %d, D: %d, E: %d\n", getName(), amount, dependency, effect_);
 }

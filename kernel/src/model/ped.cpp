@@ -53,15 +53,14 @@ PedInstance::PedInstance(uint16_t anId, Map *pMap, bool isOur) :
     old_obj_group_def_(PedInstance::og_dmUndefined),
     obj_group_id_(0), old_obj_group_id_(0),
     sight_range_(0), in_vehicle_(NULL),
-    owner_(NULL)
+    owner_(NULL),
+    adrenaline_(IPAStim::Adrenaline),
+    perception_(IPAStim::Perception),
+    intelligence_(IPAStim::Intelligence)
 {
     hold_on_.wayFree = 0;
     state_ = PedInstance::pa_smNone;
     is_our_ = isOur;
-
-    adrenaline_  = new IPAStim(IPAStim::Adrenaline);
-    perception_  = new IPAStim(IPAStim::Perception);
-    intelligence_ = new IPAStim(IPAStim::Intelligence);
 
     tm_before_check_ = 1000;
     base_mod_acc_ = 0.1;
@@ -77,13 +76,6 @@ PedInstance::PedInstance(uint16_t anId, Map *pMap, bool isOur) :
 }
 
 PedInstance::~PedInstance() {
-    delete adrenaline_;
-    adrenaline_ = NULL;
-    delete perception_;
-    perception_ = NULL;
-    delete intelligence_;
-    intelligence_ = NULL;
-
     destroyAllActions();
     destroyUseWeaponAction();
 }
@@ -1196,16 +1188,36 @@ void PedInstance::initAllLevelsForIPAType(IPAStim::IPAType type, uint8_t amount,
     switch (type)
     {
     case IPAStim::IPAType::Adrenaline:
-        adrenaline_->setLevels256(amount, depend, effect);
+        adrenaline_.setLevels256(amount, depend, effect);
         break;
     case IPAStim::IPAType::Perception:
-        perception_->setLevels256(amount, depend, effect);
+        perception_.setLevels256(amount, depend, effect);
         break;
     case IPAStim::IPAType::Intelligence:
-        intelligence_->setLevels256(amount, depend, effect);
+        intelligence_.setLevels256(amount, depend, effect);
         break;
     default:
         break;
+    }
+}
+
+
+/*!
+ * Set amount for given IPA.
+ * @param ipaType The type of IPA
+ * @param percentage The amount expressed as a percentage
+ */
+void PedInstance::setIPAAmount(IPAStim::IPAType ipaType, uint8_t percentage) {
+    switch(ipaType) {
+        case IPAStim::Adrenaline:
+            adrenaline_.setAmount(percentage);
+            break;
+        case IPAStim::Perception:
+            perception_.setAmount(percentage);
+            break;
+        case IPAStim::Intelligence:
+            intelligence_.setAmount(percentage);
+            break;
     }
 }
 
@@ -1230,7 +1242,7 @@ int PedInstance::applySpeedModifier(int speed) {
     {
         // See the comments in the IPAStim class for details on the multiplier
         // algorithm for adrenaline
-        speed_new *= adrenaline_->getMultiplier();
+        speed_new *= adrenaline_.getMultiplier();
     }
 
     if (isPersuaded()) {
@@ -1247,7 +1259,7 @@ int PedInstance::getSpeedOwnerBoost()
 {
     if (obj_group_def_ == PedInstance::og_dmAgent)
     {
-        float ipa_adr = adrenaline_->getMultiplier();
+        float ipa_adr = adrenaline_.getMultiplier();
         if (ipa_adr > 1.0)
             return 4;
         else if (ipa_adr < 1.0)
@@ -1321,8 +1333,8 @@ void PedInstance::getAccuracy(double &base_acc)
         }
         // 0.59 max from here
 
-        base_mod -= 0.4 * (2.0 - perception_->getMultiplier());
-        base_mod += 0.4 * (2.0 - adrenaline_->getMultiplier());
+        base_mod -= 0.4 * (2.0 - perception_.getMultiplier());
+        base_mod += 0.4 * (2.0 - adrenaline_.getMultiplier());
         // 0.99 max after adrenaline
     }
 

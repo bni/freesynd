@@ -122,7 +122,12 @@ public:
     bool isOurAgent() { return is_our_; }
     //! Return the type of Ped
     PedType type() { return type_; }
-
+    //! Return the Adrenaline
+    IPAStim & adrenaline() { return adrenaline_; }
+    //! Return the Adrenaline
+    IPAStim & intelligence() { return intelligence_; }
+    //! Return the Adrenaline
+    IPAStim & perception() { return perception_; }
     ///@}
 
     void setTypeFromValue(uint8_t value);
@@ -372,12 +377,15 @@ public:
     ///@{
     //! Initiate the amount, depend and effect level for a given type of IPA.
     void initAllLevelsForIPAType(IPAStim::IPAType type, uint8_t amount, uint8_t depend, uint8_t effect);
+
+    //! Set the amount for the given IPA Type
+    void setIPAAmount(IPAStim::IPAType type, uint8_t amount);
     
     //! Update the state for each IPA
-    void updtIPATime(uint32_t elapsed) {
-        adrenaline_->processTicks(elapsed);
-        perception_->processTicks(elapsed);
-        intelligence_->processTicks(elapsed);
+    void updateAllIPA(uint32_t elapsed) {
+        adrenaline_.processTicks(elapsed);
+        perception_.processTicks(elapsed);
+        intelligence_.processTicks(elapsed);
     }
     ///@}
 
@@ -587,9 +595,6 @@ public:
     void cpyEnemyDefs(Mmuu32_t &eg_defs) { eg_defs = enemy_group_defs_; }
     bool isArmed() { return selectedWeapon() != NULL; }
 
-    IPAStim *adrenaline_;
-    IPAStim *perception_;
-    IPAStim *intelligence_;
 protected:
     //! Called before a weapon is selected to check if weapon can be selected.
     bool canSelectWeapon(WeaponInstance *pNewWeapon) override;
@@ -703,6 +708,13 @@ protected:
     bool panicImmuned_;
     //! This field is used to select a weapon after medikit was used
     WeaponInstance *pSelectedWeaponBeforeMedikit_;
+
+    //! Adrenaline boost
+    IPAStim adrenaline_;
+    //! Perception boost
+    IPAStim perception_;
+    //! Intelligence boost
+    IPAStim intelligence_;
 };
 
 /** \brief Event sent when our agent has died

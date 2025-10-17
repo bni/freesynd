@@ -130,14 +130,14 @@ fs_eng::FSColor AgentSelectorRenderer::dim_colour(IPAStim::IPAType type, const f
  * Draws all the elements
  * for one bar
  */
-void AgentSelectorRenderer::drawIPABar(size_t agent, IPAStim *stim, const fs_eng::Palette &palette)
+void AgentSelectorRenderer::drawIPABar(size_t agent, const IPAStim &stim, const fs_eng::Palette &palette)
 {
     // Convert those percentages to pixels
-    int amount_x = (float)kIpaBarWidth * ((float)stim->amount()/100.0);
-    int effect_x = (float)kIpaBarWidth * ((float)stim->effect()/100.0);
-    int dependency_x = (float)kIpaBarWidth * ((float)stim->dependency()/100.0);
+    int amount_x = (float)kIpaBarWidth * ((float)stim.amount()/100.0);
+    int effect_x = (float)kIpaBarWidth * ((float)stim.effect()/100.0);
+    int dependency_x = (float)kIpaBarWidth * ((float)stim.dependency()/100.0);
 
-    IPAStim::IPAType type = stim->type();
+    IPAStim::IPAType type = stim.type();
 
     // Draw a bar between the current level and the dependency marker
     // x needs to be leftmost...
@@ -197,9 +197,9 @@ void AgentSelectorRenderer::drawSelectorForAgent(size_t agentSlot,
 
         // draw IPA, for alive only agents
         if (pAgent->isAlive()) {
-            drawIPABar(agentSlot, pAgent->adrenaline_, palette);
-            drawIPABar(agentSlot, pAgent->perception_, palette);
-            drawIPABar(agentSlot, pAgent->intelligence_, palette);
+            drawIPABar(agentSlot, pAgent->adrenaline(), palette);
+            drawIPABar(agentSlot, pAgent->perception(), palette);
+            drawIPABar(agentSlot, pAgent->intelligence(), palette);
         }
     }
 }
