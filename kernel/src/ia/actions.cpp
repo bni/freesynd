@@ -617,7 +617,7 @@ void DriveVehicleAction::doStart(Mission *pMission, PedInstance *pPed) {
         setFailed();
     }
 
-    if (!pVehicle_->initMovementToDestination(pMission, dest_, 1024)) {
+    if (!pVehicle_->initMovementToDestination(pMission, dest_)) {
         setFailed();
     }
 }
@@ -799,7 +799,7 @@ FallDeadHitAction::FallDeadHitAction(DamageToInflict &d) : HitAction(d) {}
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool FallDeadHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+bool FallDeadHitAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (status_ == kActStatusRunning) {
         pPed->takeDamage(damage_);
         pPed->playDyingAnimation();
@@ -830,7 +830,7 @@ void RecoilHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *p
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+bool RecoilHitAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (isRunning()) {
         if (pPed->isState(PedInstance::pa_smHit)) {
             if (pPed->takeDamage(damage_)) {
@@ -871,7 +871,7 @@ void LaserHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pP
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
+bool LaserHitAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     if (isRunning()) {
         if (pPed->takeDamage(damage_)) {
             pPed->handleDeath(damage_);

@@ -154,8 +154,8 @@ void Vehicle::handleAnimationEnded() {
     }
 }
 
-GenericCar::GenericCar(uint16_t anId, uint8_t aType, Map *pMap):
-    Vehicle(anId, aType, pMap, 0) {
+GenericCar::GenericCar(uint16_t anId, uint8_t aType, Map *pMap, int maxSpeed):
+    Vehicle(anId, aType, pMap, maxSpeed) {
     pDriver_ = NULL;
     hold_on_.wayFree = 0;
 }
@@ -395,10 +395,11 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
         return false;
     }
 
+    // If vehicle is on a non drivable place, first set a path to a drivable tile
     if (!pMap_->isTileWalkableByCar(pos_.tx, pos_.ty, z)) {
         TilePoint currentPos(pos_.tx , pos_.ty, z, pos_.ox, pos_.oy);
 
-        if(!findPathToNearestWalkableTile(pMap_, currentPos, &basex, &basey, &path2add)) {
+        if(!findPathToNearestWalkableTile(currentPos, &basex, &basey, &path2add)) {
             return false;
         }
     }
@@ -504,7 +505,7 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
 
     if(!dest_path_.empty()) {
         // Adjusting offsets for correct positioning
-        setSpeed(newSpeed);
+        setSpeedToMax();
         int curox = pos_.ox;
         int curoy = pos_.oy;
         for(std::list < TilePoint >::iterator it = dest_path_.begin();
@@ -576,18 +577,18 @@ bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &d
     return !dest_path_.empty();
 }
 
-bool GenericCar::findPathToNearestWalkableTile(Map *pMap, const TilePoint &startPt, int *basex, int *basey, std::vector < TilePoint > *path2add) {
+bool GenericCar::findPathToNearestWalkableTile(const TilePoint &startPt, int *basex, int *basey, std::vector < TilePoint > *path2add) {
     int dBest = 100000, dCur;
     std::vector < TilePoint > path2wtile;
     path2wtile.reserve(16);
     // we got somewhere we shouldn't, we need to find somewhere that is walkable
     TilePoint pntile = startPt;
     for (int i = 1; i < 16; i++) {
-        if (pos_.tx + i >= pMap->maxX())
+        if (pos_.tx + i >= pMap_->maxX())
             break;
         pntile.tx = pos_.tx + i;
         path2wtile.push_back(pntile);
-        if (pMap->isTileWalkableByCar(pos_.tx + i, pos_.ty, startPt.tz)) {
+        if (pMap_->isTileWalkableByCar(pos_.tx + i, pos_.ty, startPt.tz)) {
             dCur = i * i;
             if(dCur < dBest) {
                 dBest = dCur;
@@ -607,7 +608,7 @@ bool GenericCar::findPathToNearestWalkableTile(Map *pMap, const TilePoint &start
             break;
         pntile.tx = (pos_.tx + i);
         path2wtile.push_back(pntile);
-        if (pMap->isTileWalkableByCar(pos_.tx + i, pos_.ty, startPt.tz)) {
+        if (pMap_->isTileWalkableByCar(pos_.tx + i, pos_.ty, startPt.tz)) {
             dCur = i * i;
             if(dCur < dBest) {
                 dBest = dCur;
@@ -627,7 +628,7 @@ bool GenericCar::findPathToNearestWalkableTile(Map *pMap, const TilePoint &start
             break;
         pntile.ty = (pos_.ty + i);
         path2wtile.push_back(pntile);
-        if (pMap->isTileWalkableByCar(pos_.tx, pos_.ty + i, startPt.tz)) {
+        if (pMap_->isTileWalkableByCar(pos_.tx, pos_.ty + i, startPt.tz)) {
             dCur = i * i;
             if(dCur < dBest) {
                 dBest = dCur;
@@ -643,11 +644,11 @@ bool GenericCar::findPathToNearestWalkableTile(Map *pMap, const TilePoint &start
     path2wtile.clear();
     pntile = startPt;
     for (int i = 1; i < 16; i++) {
-        if (pos_.ty + i >= pMap->maxY())
+        if (pos_.ty + i >= pMap_->maxY())
             break;
         pntile.ty = pos_.ty + i;
         path2wtile.push_back(pntile);
-        if (pMap->isTileWalkableByCar(pos_.tx, pos_.ty + i, startPt.tz)) {
+        if (pMap_->isTileWalkableByCar(pos_.tx, pos_.ty + i, startPt.tz)) {
             dCur = i * i;
             if(dCur < dBest) {
                 dBest = dCur;

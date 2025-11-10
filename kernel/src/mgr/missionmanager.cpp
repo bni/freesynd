@@ -561,7 +561,7 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
     } else {
         // standard car
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create generic car %d", id))
-        pVehicle = new GenericCar(id, gamdata.sub_type, pMap);
+        pVehicle = new GenericCar(id, gamdata.sub_type, pMap, 1024);
         pVehicle->setHealth(hp);
         pVehicle->setStartHealth(hp);
 

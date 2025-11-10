@@ -120,7 +120,7 @@ private:
 class GenericCar : public Vehicle
 {
 public:
-    GenericCar(uint16_t id, uint8_t aType, Map *pMap);
+    GenericCar(uint16_t id, uint8_t aType, Map *pMap, int maxSpeed);
     virtual ~GenericCar() {}
 
     //! See ShootableMovableMapObject::initMovementToDestination()
@@ -151,7 +151,7 @@ public:
     void handleHit(DamageToInflict &d);
 
 protected:
-    bool findPathToNearestWalkableTile(Map *pMap, const TilePoint &startPt, int *basex, int *basey, std::vector < TilePoint > *path2add);
+    bool findPathToNearestWalkableTile(const TilePoint &startPt, int *basex, int *basey, std::vector < TilePoint > *path2add);
     uint16_t tileDir(int x, int y, int z);
     bool dirWalkable(TilePoint *p, int x, int y, int z);
 
