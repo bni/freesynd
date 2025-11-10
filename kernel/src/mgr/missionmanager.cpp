@@ -549,6 +549,7 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
     int dir = gamdata.orientation >> 5;
 
     uint16_t cur_anim = fs_utl::READ_LE_UINT16(gamdata.index_current_anim) - dir;
+    bool playBurnAnimation = false;
 
     Vehicle *pVehicle = NULL;
     if (gamdata.sub_type == Vehicle::kVehicleTypeTrainHead) {
@@ -568,9 +569,8 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
             case 0x04:
                 // large armored damaged
                 // it is actually base animation and they have 8 directions
-                //setVehicleBaseAnim(vehicleanim, cur_anim - 12 + (dir >> 1));
-                pVehicle->setAnimations(cur_anim - 12 + (dir >> 1));
-                pVehicle->playAnimation(pVehicle->burntAnimation());
+                cur_anim = cur_anim - 12 + (dir >> 1);
+                playBurnAnimation = true;
                 pVehicle->setStartHealth(0);
                 pVehicle->setHealth(-1);
                 break;
@@ -581,21 +581,9 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
             case 0x1C: // small armored vehicle
             case 0x24: // police vehicle
             case 0x28: // medical vehicle
-                pVehicle->setAnimations(cur_anim);
-                pVehicle->playAnimation(pVehicle->regularAnimation());
                 break;
             default:
-        #if _DEBUG
-                printf("uknown vehicle type %02X , %02X, %X\n", gamdata.sub_type,
-                    gamdata.orientation,
-                    fs_utl::READ_LE_UINT16(gamdata.index_current_frame));
-                printf("x = %i, xoff = %i, ", gamdata.mapposx[1],
-                    gamdata.mapposx[0]);
-                printf("y = %i, yoff = %i, ", gamdata.mapposy[1],
-                    gamdata.mapposy[0]);
-                printf("z = %i, zoff = %i\n", gamdata.mapposz[1],
-                    gamdata.mapposz[0]);
-        #endif
+                FSERR(Log::k_FLG_GAME, "Mission", "createVehicleInstance", ("Unknown Car subtype : %d", gamdata.sub_type));
                 break;
 
         }
@@ -620,6 +608,10 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", (" - field unknown 3 %u", gamdata.unkn3))
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", (" - field unknown 4 %u", gamdata.unkn4))
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", (" - field unknown 6 %u", gamdata.unkn6))
+
+        pVehicle->setAnimations(cur_anim);
+        pVehicle->playAnimation(playBurnAnimation ? 
+                                    pVehicle->burntAnimation() : pVehicle->regularAnimation());
     }
 
     return pVehicle;
