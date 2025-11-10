@@ -110,7 +110,7 @@ public:
         kPedTypeCriminal = 0x10
     } ;
 
-    PedInstance(uint16_t id, Map *pMap, bool isOur);
+    PedInstance(uint16_t id, Map *pMap, PedType type, bool isOur, int maxSpeed);
     ~PedInstance();
 
     /*!
@@ -130,7 +130,6 @@ public:
     IPAStim & perception() { return perception_; }
     ///@}
 
-    void setTypeFromValue(uint8_t value);
     //! Returns the ped's behaviour
     Behaviour & behaviour() { return behaviour_; }
     //! Return true if ped has escaped the map
@@ -141,6 +140,8 @@ public:
     bool isImmunedToPanic();
     //! Tells the ped not to panic
     void setPanicImmuned() { panicImmuned_ = true; }
+    //! Return true if the ped is currently in panic
+    bool isInPanic();
 
     //! MapObject::state_
     enum pedActionStateMasks {
@@ -585,8 +586,6 @@ public:
         og_dmCriminal = 0x10
     };
 
-    //! Returns ped's speed under normal conditions
-    int getDefaultSpeed();
     int getSpeedOwnerBoost();
 
     void getAccuracy(double &base_acc);

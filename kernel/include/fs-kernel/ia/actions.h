@@ -235,9 +235,9 @@ protected:
 class WalkAction : public MovementAction {
 public:
     //! Walt to given point
-    WalkAction(const TilePoint &locT, int speed = -1);
+    WalkAction(const TilePoint &locT);
     //! Walk to given object
-    WalkAction(ShootableMapObject *smo, int speed = -1);
+    WalkAction(ShootableMapObject *smo);
 
     //! Set the destination as the location of the given object
     void setDestination(ShootableMapObject *smo);
@@ -251,8 +251,6 @@ protected:
 protected:
     /*! Where to walk to.*/
     TilePoint destLocT_;
-    /*! Speed used to walk to destination.*/
-    int newSpeed_;
 };
 
 /*!
@@ -268,7 +266,7 @@ public:
     //! Walk to direction given by point
     WalkToDirectionAction(const WorldPoint &destLocW);
     //! Walk following ped's direction
-    WalkToDirectionAction(int speed = -1);
+    WalkToDirectionAction();
 
     void setMaxDistanceToWalk(int distance) { maxDistanceToWalk_ = distance; }
     //! Suspend action
@@ -284,8 +282,6 @@ protected:
     /*! Count the distance the ped has walked since starting the action.*/
     int distWalked_;
     int maxDistanceToWalk_;
-    /*! Speed used to walk to destination.*/
-    int newSpeed_;
 };
 
 /*!

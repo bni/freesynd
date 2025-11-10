@@ -43,6 +43,10 @@ public:
 
     PedInstance *loadInstance(const LevelData::People & ped_data, uint16_t ped_idx, Map *pMap, uint32_t playerGroupId);
 protected:
+    //! Return the pedtype from the value in data    
+    PedInstance::PedType getTypeFromValue(uint8_t value);
+    //! Get default max speed for a given type of Ped
+    int getDefaultSpeed(PedInstance::PedType type);
     //! Initialize the ped instance as our agent
     void initOurAgent(Agent *p_agent, unsigned int obj_group_id, PedInstance *pPed);
     //! Initialize the ped instance as an enemy agent

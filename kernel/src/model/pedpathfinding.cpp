@@ -158,8 +158,8 @@ bool PedInstance::initMovementToDestination(Mission *m, const TilePoint &destina
         stop();
         return false;
     } else {
-        // if no speed was set, use ped's default speed
-        setSpeed(newSpeed != -1 ? newSpeed : getDefaultSpeed());
+        // start moving
+        setSpeedToMax();
         return true;
     }
 

@@ -379,7 +379,7 @@ void  PanicComponent::runAway(PedInstance *pPed) {
     if (pPed->altAction() == NULL) {
         // Adds the action of running away
         WalkToDirectionAction *pAction =
-            new WalkToDirectionAction(256);
+            new WalkToDirectionAction();
         // walk for a certain distance
         pAction->setMaxDistanceToWalk(kDistanceToRun);
         pAction->setWarnBehaviour(true);

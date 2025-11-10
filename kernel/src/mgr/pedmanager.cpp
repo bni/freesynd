@@ -58,7 +58,8 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
         return NULL;
     }
 
-    PedInstance *newped = new PedInstance(ped_idx, pMap, isOurAgent);
+    PedInstance::PedType pedType = getTypeFromValue(gamdata.type_ped);
+    PedInstance *newped = new PedInstance(ped_idx, pMap, pedType, isOurAgent, getDefaultSpeed(pedType));
     newped->setAnimations(fs_utl::READ_LE_UINT16(gamdata.index_base_anim));
 
     int hp = fs_utl::READ_LE_INT16(gamdata.health);
@@ -91,7 +92,6 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
     newped->setPosition(gamdata.mapposx[1], gamdata.mapposy[1],
                         z, gamdata.mapposx[0],
                         gamdata.mapposy[0], oz);
-    newped->setTypeFromValue(gamdata.type_ped);
 
     newped->initAllLevelsForIPAType(IPAStim::Adrenaline,
         gamdata.adrena_amount, gamdata.adrena_dependency, gamdata.adrena_effect);
@@ -122,6 +122,48 @@ PedInstance *PedManager::loadInstance(const LevelData::People & gamdata, uint16_
     }
 
     return newped;
+}
+
+/*!
+ * @brief 
+ * @param value 
+ */
+PedInstance::PedType PedManager::getTypeFromValue(uint8_t value) {
+    switch(value) {
+    case 0x01:
+        return PedInstance::kPedTypeCivilian;
+    case 0x02:
+        return PedInstance::kPedTypeAgent;
+        break;
+    case 0x04:
+        return PedInstance::kPedTypePolice;
+        break;
+    case 0x08:
+        return PedInstance::kPedTypeGuard;
+        break;
+    case 0x10:
+        return PedInstance::kPedTypeCriminal;
+        break;
+    }
+
+    return PedInstance::kPedTypeCivilian;
+}
+
+int PedManager::getDefaultSpeed(PedInstance::PedType type) {
+    switch (type) {
+        case PedInstance::kPedTypeCivilian :
+            return 128;
+        case PedInstance::kPedTypeAgent :
+            return 256;
+        case PedInstance::kPedTypePolice :
+            return 160;
+        case PedInstance::kPedTypeGuard :
+            return 192;
+        case PedInstance::kPedTypeCriminal:
+            return 128;
+        default:
+            return 0;
+    }
 }
 
 /*!

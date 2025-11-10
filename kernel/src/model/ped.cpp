@@ -45,8 +45,8 @@ const int PedInstance::kDefaultShootReactionTime = 200;
 const uint32_t PedInstance::kPlayerGroupId = 1;
 const int PedInstance::kAgentMaxSpeedWithOverweight = 64;
 
-PedInstance::PedInstance(uint16_t anId, Map *pMap, bool isOur) :
-    ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed),
+PedInstance::PedInstance(uint16_t anId, Map *pMap, PedType pedType, bool isOur, int maxSpeed) :
+    ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed, maxSpeed),
     desc_state_(PedInstance::pd_smUndefined),
     hostile_desc_(PedInstance::pd_smUndefined),
     obj_group_def_(PedInstance::og_dmUndefined),
@@ -81,30 +81,6 @@ PedInstance::~PedInstance() {
 }
 
 /*!
- * @brief 
- * @param value 
- */
-void PedInstance::setTypeFromValue(uint8_t value) {
-    switch(value) {
-    case 0x01:
-        type_ = kPedTypeCivilian;
-        break;
-    case 0x02:
-        type_ = kPedTypeAgent;
-        break;
-    case 0x04:
-        type_ = kPedTypePolice;
-        break;
-    case 0x08:
-        type_ = kPedTypeGuard;
-        break;
-    case 0x10:
-        type_ = kPedTypeCriminal;
-        break;
-    }
-}
-
-/*!
  * A ped cannot panic only if:
  * - he's immuned because he's an mission objective
  * - he's in a car
@@ -113,6 +89,11 @@ void PedInstance::setTypeFromValue(uint8_t value) {
  */
 bool PedInstance::isImmunedToPanic() { 
     return panicImmuned_ || isInVehicle() || isPersuaded();
+}
+
+bool PedInstance::isInPanic() {
+    // TODO : find a way to know if he's panicking
+    return false;
 }
 
 bool PedInstance::switchActionStateTo(uint32_t as) {
@@ -1158,24 +1139,6 @@ void PedInstance::verifyHostilesFound(Mission *m) {
     }
 }
 
-
-int PedInstance::getDefaultSpeed() {
-    switch (type_) {
-        case kPedTypeCivilian :
-            return 128;
-        case kPedTypeAgent :
-            return 256;
-        case kPedTypePolice :
-            return 160;
-        case kPedTypeGuard :
-            return 192;
-        case kPedTypeCriminal:
-            return 128;
-        default:
-            return 0;
-    }
-}
-
 /*!
  * Initiate the amount, depend and effect level for a given type of IPA.
  * Levels passed to this method should come from original values and will be transformed into pourcentage.
@@ -1226,6 +1189,10 @@ void PedInstance::setIPAAmount(IPAStim::IPAType ipaType, uint8_t percentage) {
  * ipa, etc.
  */
 int PedInstance::applySpeedModifier(int speed) {
+    if (isInPanic()) {
+        return 256;
+    }
+    
     float speed_new = static_cast<float>(speed) * getSpeedMultiplier();
 
     int weight_max = getMaxWeight();

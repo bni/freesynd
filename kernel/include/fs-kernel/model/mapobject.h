@@ -443,19 +443,11 @@ public:
     virtual ~ShootableMovableMapObject() {}
 
     /*!
-     * @brief Set speed for the object.
-     * Given speed will be pass to applySpeedModifier() method before being set.
-     * @param newSpeed Speed to set
-     */
-    void setSpeed(int newSpeed) {
-        speed_ = applySpeedModifier(newSpeed);
-    }
-
-    /*!
      * @brief Set speed for the object to the max.
+     * Default speed will be pass to applySpeedModifier() method before being set.
      */
     void setSpeedToMax() {
-        speed_ = maxSpeed_;
+        speed_ = applySpeedModifier(maxSpeed_);
     }
 
     //! Set speed to zero

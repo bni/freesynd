@@ -204,9 +204,8 @@ void MovementAction::removeAndJoinChain() {
     pNext_ = NULL;
 }
 
-WalkAction::WalkAction(const TilePoint &locT, int speed) :
+WalkAction::WalkAction(const TilePoint &locT) :
     MovementAction(kActTypeWalk) {
-    newSpeed_ = speed;
     destLocT_ = locT;
     targetState_ = PedInstance::pa_smWalking;
 }
@@ -217,9 +216,7 @@ WalkAction::WalkAction(const TilePoint &locT, int speed) :
  * \param speed int
  *
  */
-WalkAction::WalkAction(ShootableMapObject *smo, int speed) :
-MovementAction(kActTypeWalk) {
-    newSpeed_ = speed;
+WalkAction::WalkAction(ShootableMapObject *smo) : MovementAction(kActTypeWalk) {
     targetState_ = PedInstance::pa_smWalking;
     setDestination(smo);
 }
@@ -230,7 +227,7 @@ void WalkAction::setDestination(ShootableMapObject *smo) {
 }
 
 bool WalkAction::suspend(PedInstance *pPed) {
-    pPed->setSpeed(0);
+    pPed->stop();
     return MovementAction::suspend(pPed);
 }
 
@@ -246,7 +243,7 @@ void WalkAction::resume(Mission *pMission, PedInstance *pPed) {
 
 void WalkAction::doStart(Mission *pMission, PedInstance *pPed) {
     // Go to given location at given speed
-    if (!pPed->initMovementToDestination(pMission, destLocT_, newSpeed_)) {
+    if (!pPed->initMovementToDestination(pMission, destLocT_)) {
         setFailed();
         return;
     }
@@ -275,28 +272,26 @@ MovementAction(kActTypeWalk) {
     maxDistanceToWalk_ = 0;
     destLocW_ = destLocW;
     targetState_ = PedInstance::pa_smWalking;
-    newSpeed_ = -1;
 }
 
-WalkToDirectionAction::WalkToDirectionAction(int speed) :
+WalkToDirectionAction::WalkToDirectionAction() :
 MovementAction(kActTypeWalk) {
     maxDistanceToWalk_ = 0;
     destLocW_.x = -1;
     destLocW_.y = -1;
     destLocW_.z = -1;
     targetState_ = PedInstance::pa_smWalking;
-    newSpeed_ = speed;
 }
 
 bool WalkToDirectionAction::suspend(PedInstance *pPed) {
-    pPed->setSpeed(0);
+    pPed->stop();
     return MovementAction::suspend(pPed);
 }
 
 void WalkToDirectionAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
     moveDirdesc_.clear();
     moveDirdesc_.bounce = true;
-    pPed->setSpeed(newSpeed_ != -1? newSpeed_ : pPed->getDefaultSpeed());
+    pPed->setSpeedToMax();
     distWalked_ = 0;
 }
 
@@ -899,7 +894,7 @@ void WalkBurnHitAction::doStart([[maybe_unused]] Mission *pMission, PedInstance 
     moveDirdesc_.clear();
     walkedDist_ = 0;
     moveDirection_ = rand() % 256;
-    pPed->setSpeed(pPed->getDefaultSpeed());
+    pPed->setSpeedToMax();
     pPed->playWalkBurnAnimation();
     pPed->goToState(PedInstance::pa_smWalkingBurning);
     phase_ = kBurnPhaseWalk;
