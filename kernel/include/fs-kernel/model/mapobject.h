@@ -433,11 +433,13 @@ public:
 };
 
 /*!
- * Shootable movable map object class.
+ * @brief An object that can move and be shootable like Peds and vehicles.
+ * Each object has a current speed that has a max. This max is fixe for vehicles.
+ * You can set the destination using initMovementToDestination().
  */
 class ShootableMovableMapObject : public ShootableMapObject {
 public:
-    ShootableMovableMapObject(uint16_t id, Map *pMap, ObjectNature nature);
+    ShootableMovableMapObject(uint16_t id, Map *pMap, ObjectNature nature, int maxSpeed = 0);
     virtual ~ShootableMovableMapObject() {}
 
     /*!
@@ -447,6 +449,13 @@ public:
      */
     void setSpeed(int newSpeed) {
         speed_ = applySpeedModifier(newSpeed);
+    }
+
+    /*!
+     * @brief Set speed for the object to the max.
+     */
+    void setSpeedToMax() {
+        speed_ = maxSpeed_;
     }
 
     //! Set speed to zero
@@ -507,7 +516,10 @@ protected:
     std::list<TilePoint> dest_path_;
 
 private:
+    //! Current speed of the objet
     int speed_;
+    //! Maximum speed of the object. For vehicle, maximum speed is fixed
+    int maxSpeed_;
 };
 
 }

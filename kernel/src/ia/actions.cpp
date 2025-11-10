@@ -640,7 +640,7 @@ void DriveTrainAction::doStart(Mission *pMission, PedInstance *pPed) {
         setFailed();
     }
 
-    if (!pTrain_->initMovementToDestination(pMission, dest_, 1024)) {
+    if (!pTrain_->initMovementToDestination(pMission, dest_)) {
         setFailed();
     }
 }

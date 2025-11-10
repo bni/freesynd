@@ -553,7 +553,7 @@ Vehicle * MissionManager::createVehicleInstance(const LevelData::Cars &gamdata, 
     Vehicle *pVehicle = NULL;
     if (gamdata.sub_type == Vehicle::kVehicleTypeTrainHead) {
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create Train Head %d", id))
-        pVehicle = new TrainHead(id, Vehicle::kVehicleTypeTrainHead, pMap, hp, gamdata.orientation == 192);
+        pVehicle = new TrainHead(id, Vehicle::kVehicleTypeTrainHead, pMap, hp, gamdata.orientation == 192, 1024);
     } else if (gamdata.sub_type == Vehicle::kVehicleTypeTrainBody) {
         LOG(Log::k_FLG_GAME, "MissionManager","createVehicleInstance", ("Create Train Body %d", id))
         pVehicle = new TrainBody(id, Vehicle::kVehicleTypeTrainBody, pMap, hp, gamdata.orientation == 192);

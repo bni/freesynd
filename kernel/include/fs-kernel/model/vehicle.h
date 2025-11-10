@@ -50,8 +50,8 @@ public:
     static const uint8_t kVehicleTypePolice;
     static const uint8_t kVehicleTypeMedics;
 
-    Vehicle(uint16_t anId, uint8_t aType, Map *pMap) :
-        ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle) {
+    Vehicle(uint16_t anId, uint8_t aType, Map *pMap, int maxSpeed) :
+        ShootableMovableMapObject(anId, pMap, MapObject::kNatureVehicle, maxSpeed) {
         type_ = aType;
     }
 
@@ -125,12 +125,6 @@ public:
 
     //! See ShootableMovableMapObject::initMovementToDestination()
     bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
-
-    void addDestinationV(int x, int y, int z, int ox = 128, int oy = 128,
-            int new_speed = 160) {
-        dest_path_.push_back(TilePoint(x, y, z, ox, oy));
-        setSpeed(new_speed);
-    }
 
     //! @copydoc ShootableMovableMapObject::doMove()
     bool doMove(uint32_t elapsed, Mission *m) override;

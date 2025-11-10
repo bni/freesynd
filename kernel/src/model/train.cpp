@@ -30,8 +30,8 @@
 
 namespace fs_knl {
 
-TrainBody::TrainBody(uint16_t anId, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis) :
-    Vehicle(anId, aType, pMap) {
+TrainBody::TrainBody(uint16_t anId, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis, int maxSpeed) :
+    Vehicle(anId, aType, pMap, maxSpeed) {
 
     setHealth(startHp);
     setStartHealth(startHp);
@@ -79,8 +79,8 @@ void TrainBody::changeTrainAndPassengersPosition(int distanceX, int distanceY) {
     }
 }
 
-TrainHead::TrainHead(uint16_t anId, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis) :
-    TrainBody(anId, aType, pMap, startHp, isMoveOnXAxis) {}
+TrainHead::TrainHead(uint16_t anId, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis, int maxSpeed) :
+    TrainBody(anId, aType, pMap, startHp, isMoveOnXAxis, maxSpeed) {}
 
 TrainHead::~TrainHead() {
 
@@ -91,7 +91,7 @@ bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_u
     clearDestination();
 
     dest_path_.push_front(destinationPt);
-    setSpeed(newSpeed);
+    setSpeedToMax();
 
     return true;
 }

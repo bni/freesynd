@@ -155,7 +155,7 @@ void Vehicle::handleAnimationEnded() {
 }
 
 GenericCar::GenericCar(uint16_t anId, uint8_t aType, Map *pMap):
-    Vehicle(anId, aType, pMap) {
+    Vehicle(anId, aType, pMap, 0) {
     pDriver_ = NULL;
     hold_on_.wayFree = 0;
 }

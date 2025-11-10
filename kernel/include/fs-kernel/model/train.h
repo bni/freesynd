@@ -39,7 +39,7 @@ namespace fs_knl {
  */
 class TrainBody : public Vehicle {
 public:
-    TrainBody(uint16_t id, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis);
+    TrainBody(uint16_t id, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis, int maxSpeed = 0);
     ~TrainBody();
 
     TrainBody * getNext() { return pNextBody_; }
@@ -78,7 +78,7 @@ protected:
  */
 class TrainHead : public TrainBody {
 public:
-    TrainHead(uint16_t id, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis);
+    TrainHead(uint16_t id, uint8_t aType, Map *pMap, int startHp, bool isMoveOnXAxis, int maxSpeed);
     ~TrainHead();
 
     //! Set the destination to reach at given speed
