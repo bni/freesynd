@@ -50,11 +50,10 @@ const uint8 floodPointDesc::kBMaskDirNorthWest = 0x20;
 /*!
  * Sets a destination point for the ped to reach at given speed.
  * \param m
- * \param node destination point
- * \param newSpeed Speed of movement
+ * \param destinationPt destination point
  * \return true if destination has been set correctly.
  */
-bool PedInstance::initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed) {
+bool PedInstance::initMovementToDestination(Mission *m, const TilePoint &destinationPt) {
 
     dest_path_.clear();
 

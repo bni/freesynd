@@ -48,8 +48,7 @@ public:
 
     //! Set the destination to reach at given speed
     bool initMovementToDestination([[maybe_unused]] Mission *m,
-                                    [[maybe_unused]] const TilePoint &destinationPt,
-                                    [[maybe_unused]] int newSpeed = -1) override {
+                                    [[maybe_unused]] const TilePoint &destinationPt) override {
         return false;
     }
 
@@ -82,7 +81,7 @@ public:
     ~TrainHead();
 
     //! Set the destination to reach at given speed
-    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
+    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt) override;
 
     bool doMove(uint32_t elapsed, Mission *m) override;
 

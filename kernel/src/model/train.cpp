@@ -87,7 +87,7 @@ TrainHead::~TrainHead() {
 }
 
 //! Set the destination to reach at given speed
-bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_unused]] const TilePoint &destinationPt, [[maybe_unused]] int newSpeed) {
+bool TrainHead::initMovementToDestination([[maybe_unused]] Mission *m, [[maybe_unused]] const TilePoint &destinationPt) {
     clearDestination();
 
     dest_path_.push_front(destinationPt);

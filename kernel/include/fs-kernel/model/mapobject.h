@@ -470,11 +470,10 @@ public:
      * Compute a path from the object current position to given destination using given speed.
      * Subclasses must implement this method.
      * \param m Mission* Mission data
-     * \param locT Destination for the movement
-     * \param newSpeed The speed at which the object will move. If speed is -1, use default speed.
+     * \param destinationPt Destination for the movement
      * \return true if there is a path towards given destination
      */
-    virtual bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) = 0;
+    virtual bool initMovementToDestination(Mission *m, const TilePoint &destinationPt) = 0;
 
     /**
      * Update position of the object using the current path and speed.

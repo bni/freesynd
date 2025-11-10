@@ -124,7 +124,7 @@ public:
     virtual ~GenericCar() {}
 
     //! See ShootableMovableMapObject::initMovementToDestination()
-    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
+    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt) override;
 
     //! @copydoc ShootableMovableMapObject::doMove()
     bool doMove(uint32_t elapsed, Mission *m) override;

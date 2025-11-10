@@ -289,7 +289,7 @@ public:
     // Movement management
     //*************************************
     //! See ShootableMovableMapObject::initMovementToDestination()
-    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt, int newSpeed = -1) override;
+    bool initMovementToDestination(Mission *m, const TilePoint &destinationPt) override;
 
     //! See ShootableMovableMapObject::doMove()
     bool doMove(uint32_t elapsed, Mission *pMission) override;

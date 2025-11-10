@@ -357,12 +357,11 @@ bool GenericCar::dirWalkable(TilePoint *p, int x, int y, int z) {
 
 /*!
  * Sets a destination point for the vehicle to reach at given speed.
- * \param m
- * \param locT destination point
- * \param newSpeed Speed of movement
+ * \param pMission
+ * \param destinationPt destination point
  * \return true if destination has been set correctly.
  */
-bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &destinationPt, int newSpeed) {
+bool GenericCar::initMovementToDestination(Mission *pMission, const TilePoint &destinationPt) {
     std::map < TilePoint, uint16_t > open;
     std::set < TilePoint > closed;
     std::map < TilePoint, TilePoint > parent;
