@@ -25,110 +25,94 @@
 
 void configureMission(fs_knl::Mission &mission) {
     // Define a squad of 2 agents
-    fs_knl::PedInstance *agent = new fs_knl::PedInstance(1, nullptr, true);
+    fs_knl::PedInstance *agent = new fs_knl::PedInstance(1, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
     mission.addPed(agent);
     mission.getSquad()->setMember(fs_knl::Squad::kSlot1, agent);
     agent->setStartHealth(10, true);
     agent->setPosition(10, 20, 3, 5, 56, 0);
-    agent = new fs_knl::PedInstance(2, nullptr, true);
+    agent = new fs_knl::PedInstance(2, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
     mission.addPed(agent);
     agent->setStartHealth(10, true);
     agent->setPosition(20, 45, 1, 10, 45, 0);
     mission.getSquad()->setMember(fs_knl::Squad::kSlot2, agent);
 
     // Enemies : 4 total : 3 killed, 1 persuaded
-    fs_knl::PedInstance *ped = new fs_knl::PedInstance(3, nullptr, true);
-    ped->setTypeFromValue(0x02);
+    fs_knl::PedInstance *ped = new fs_knl::PedInstance(3, nullptr, fs_knl::PedInstance::kPedTypeAgent, false, 128);
     ped->setObjGroupDef(fs_knl::PedInstance::og_dmAgent);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(4, nullptr, true);
+    ped = new fs_knl::PedInstance(4, nullptr, fs_knl::PedInstance::kPedTypeAgent, false, 128);
     mission.addPed(ped);
-    ped->setTypeFromValue(0x02);
     ped->setObjGroupDef(fs_knl::PedInstance::og_dmAgent);
     ped->setStartHealth(10, true);
     ped->setPosition(10, 20, 3, 56, 12, 0); //same tile as agent 1
     ped->handlePersuadedBy(agent);
-    ped = new fs_knl::PedInstance(5, nullptr, true);
+    ped = new fs_knl::PedInstance(5, nullptr, fs_knl::PedInstance::kPedTypeAgent, false, 128);
     mission.addPed(ped);
-    ped->setTypeFromValue(0x02);
     ped->setObjGroupDef(fs_knl::PedInstance::og_dmAgent);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(6, nullptr, true);
+    ped = new fs_knl::PedInstance(6, nullptr, fs_knl::PedInstance::kPedTypeAgent, false, 128);
     mission.addPed(ped);
-    ped->setTypeFromValue(0x02);
     ped->setObjGroupDef(fs_knl::PedInstance::og_dmAgent);
     ped->setStartHealth(10);
     ped->setPosition(10, 20, 3, 45, 20, 0); //same tile as ped 4 but dead
 
     // Civilian : 5 total : 2 killed, 2 persuaded
-    ped = new fs_knl::PedInstance(7, nullptr, true);
-    ped->setTypeFromValue(0x01);
+    ped = new fs_knl::PedInstance(7, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10, true);
     ped->handlePersuadedBy(agent);
     ped->setPosition(55, 20, 3, 45, 20, 0);
-    ped = new fs_knl::PedInstance(8, nullptr, true);
-    ped->setTypeFromValue(0x01);
+    ped = new fs_knl::PedInstance(8, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(9, nullptr, true);
-    ped->setTypeFromValue(0x01);
+    ped = new fs_knl::PedInstance(9, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10, true);
     ped->handlePersuadedBy(agent);
-    ped = new fs_knl::PedInstance(10, nullptr, true);
-    ped->setTypeFromValue(0x01);
+    ped = new fs_knl::PedInstance(10, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(11, nullptr, true);
-    ped->setTypeFromValue(0x01);
+    ped = new fs_knl::PedInstance(11, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10, true);
 
     // Criminal : 2 total : 1 killed
-    ped = new fs_knl::PedInstance(12, nullptr, true);
-    ped->setTypeFromValue(0x10);
+    ped = new fs_knl::PedInstance(12, nullptr, fs_knl::PedInstance::kPedTypeCriminal, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(13, nullptr, true);
-    ped->setTypeFromValue(0x10);
+    ped = new fs_knl::PedInstance(13, nullptr, fs_knl::PedInstance::kPedTypeCriminal, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10, true);
 
     // Guard : 3 total : 3 killed
-    ped = new fs_knl::PedInstance(14, nullptr, true);
-    ped->setTypeFromValue(0x08);
+    ped = new fs_knl::PedInstance(14, nullptr, fs_knl::PedInstance::kPedTypeGuard, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(15, nullptr, true);
-    ped->setTypeFromValue(0x08);
+    ped = new fs_knl::PedInstance(15, nullptr, fs_knl::PedInstance::kPedTypeGuard, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(16, nullptr, true);
-    ped->setTypeFromValue(0x08);
+    ped = new fs_knl::PedInstance(16, nullptr, fs_knl::PedInstance::kPedTypeGuard, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
 
     // Police : 2 total : 1 killed
-    ped = new fs_knl::PedInstance(17, nullptr, true);
-    ped->setTypeFromValue(0x04);
+    ped = new fs_knl::PedInstance(17, nullptr, fs_knl::PedInstance::kPedTypePolice, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10);
-    ped = new fs_knl::PedInstance(18, nullptr, true);
-    ped->setTypeFromValue(0x04);
+    ped = new fs_knl::PedInstance(18, nullptr, fs_knl::PedInstance::kPedTypeGuard, false, 128);
     mission.addPed(ped);
     ped->setStartHealth(10, true);
 
     // Vehicle : 1 alive, 1 destroyed
     fs_knl::Vehicle *pVehicle = 
-        new fs_knl::GenericCar(11, fs_knl::Vehicle::kVehicleTypePolice, nullptr);
+        new fs_knl::GenericCar(11, fs_knl::Vehicle::kVehicleTypePolice, nullptr, 100);
     mission.addVehicle(pVehicle);
     pVehicle->setPosition(12, 45, 2, 0, 5, 0);
     pVehicle->setStartHealth(10, true);
 
     pVehicle = 
-        new fs_knl::GenericCar(12, fs_knl::Vehicle::kVehicleTypeRegularCar, nullptr);
+        new fs_knl::GenericCar(12, fs_knl::Vehicle::kVehicleTypeRegularCar, nullptr, 100);
     pVehicle->setPosition(12, 45, 2, 0, 5, 0);
     pVehicle->setStartHealth(10);
     mission.addVehicle(pVehicle);

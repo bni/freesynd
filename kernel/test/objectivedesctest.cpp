@@ -52,9 +52,9 @@ private:
 TEST_CASE( "ObjectiveDesc", "[kernel][objectivedesc]" ) {
 
     fs_eng::AppContext appCtx;
-    fs_knl::PedInstance agent1(3, nullptr, false);
-    fs_knl::PedInstance agent2(4, nullptr, false);
-    fs_knl::PedInstance agent3(5, nullptr, false);
+    fs_knl::PedInstance agent1(3, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
+    fs_knl::PedInstance agent2(4, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
+    fs_knl::PedInstance agent3(5, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
     agent1.setHealth(10);
     agent2.setHealth(10);
     agent3.setHealth(10);
@@ -113,8 +113,8 @@ TEST_CASE( "ObjectiveDesc", "[kernel][objectivedesc]" ) {
     }
 
     SECTION( "ObjEvacuate") {
-        fs_knl::PedInstance ped1(1, nullptr, false);
-        fs_knl::PedInstance ped2(2, nullptr, false);
+        fs_knl::PedInstance ped1(1, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
+        fs_knl::PedInstance ped2(2, nullptr, fs_knl::PedInstance::kPedTypeCivilian, false, 128);
         std::vector<fs_knl::PedInstance *> pedsToEvacuate = {&ped1, &ped2};
         fs_knl::ObjEvacuate cut(5200, 6400, 128, pedsToEvacuate);
 

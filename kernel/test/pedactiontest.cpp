@@ -22,7 +22,7 @@
 #include "fs-kernel/model/ped.h"
 
 TEST_CASE( "PedAction", "[kernel][ped]" ) {
-    fs_knl::PedInstance cut(1, nullptr, true);
+    fs_knl::PedInstance cut(1, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
     cut.setStartHealth(10);
     cut.switchActionStateTo(fs_knl::PedInstance::pa_smStanding);
 

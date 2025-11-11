@@ -47,6 +47,7 @@ const int PedInstance::kAgentMaxSpeedWithOverweight = 64;
 
 PedInstance::PedInstance(uint16_t anId, Map *pMap, PedType pedType, bool isOur, int maxSpeed) :
     ShootableMovableMapObject(anId, pMap, MapObject::kNaturePed, maxSpeed),
+    type_(pedType),
     desc_state_(PedInstance::pd_smUndefined),
     hostile_desc_(PedInstance::pd_smUndefined),
     obj_group_def_(PedInstance::og_dmUndefined),

@@ -28,9 +28,8 @@ TEST_CASE( "Ped", "[kernel][ped]" ) {
     ConfigFile config;
     initWeaponConfigFile(config);
 
-    fs_knl::PedInstance cut(1, nullptr, true);
+    fs_knl::PedInstance cut(1, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 50);
     cut.setStartHealth(10, true);
-    cut.setTypeFromValue(0x02);
 
     SECTION( "State management") {
         cut.switchActionStateTo(fs_knl::PedInstance::pa_smWalking);
@@ -39,8 +38,8 @@ TEST_CASE( "Ped", "[kernel][ped]" ) {
 
     SECTION("Mods") {
         SECTION ("Speed should be default with no mods and no load") {
-            cut.setSpeed(cut.getDefaultSpeed());
-            REQUIRE( cut.speed() == cut.getDefaultSpeed() );
+            cut.setSpeedToMax();
+            REQUIRE( cut.speed() == 50 );
         }
 
         SECTION ("Speed should be modified with no mods and overload") {
@@ -51,12 +50,12 @@ TEST_CASE( "Ped", "[kernel][ped]" ) {
 
             // inventory is only above max weight
             cut.addWeapon(&energyShield);
-            cut.setSpeed(cut.getDefaultSpeed());
-            REQUIRE( cut.speed() == (cut.getDefaultSpeed() / 2) );
+            cut.setSpeedToMax();
+            REQUIRE( cut.speed() == (50 / 2) );
 
             // Inventory is now more than double max weight
             cut.addWeapon(&gauss);
-            cut.setSpeed(cut.getDefaultSpeed());
+            cut.setSpeedToMax();
             REQUIRE( cut.speed() == fs_knl::PedInstance::kAgentMaxSpeedWithOverweight );
         }
 
@@ -66,15 +65,15 @@ TEST_CASE( "Ped", "[kernel][ped]" ) {
             fs_knl::Mod legV3("LegV3", fs_knl::Mod::MOD_LEGS, fs_knl::Mod::MOD_V3, 0, "", 0);
 
             cut.addMod(&legV1);
-            cut.setSpeed(50);
+            cut.setSpeedToMax();
             REQUIRE( cut.speed() == 62 );
 
             cut.addMod(&legV2);
-            cut.setSpeed(50);
+            cut.setSpeedToMax();
             REQUIRE( cut.speed() == 75 );
 
             cut.addMod(&legV3);
-            cut.setSpeed(50);
+            cut.setSpeedToMax();
             REQUIRE( cut.speed() == 87 );
         }
     }

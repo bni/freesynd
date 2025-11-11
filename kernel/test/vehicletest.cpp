@@ -22,7 +22,7 @@
 #include "fs-kernel/model/vehicle.h"
 
 TEST_CASE( "Vehicle", "[kernel][vehicle]" ) {
-    fs_knl::GenericCar cut(1, fs_knl::Vehicle::kVehicleTypeRegularCar, nullptr);
+    fs_knl::GenericCar cut(1, fs_knl::Vehicle::kVehicleTypeRegularCar, nullptr, 100);
 
     SECTION( "Should set animations with right offset") {
         // Test is not complete

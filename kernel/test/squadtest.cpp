@@ -28,10 +28,10 @@
 TEST_CASE( "Squad", "[kernel][squad]" ) {
     // Component under test
     fs_knl::Squad cut;
-    fs_knl::PedInstance agent1(1, nullptr, true);
-    fs_knl::PedInstance agent2(2, nullptr, true);
-    fs_knl::PedInstance agent3(3, nullptr, true);
-    fs_knl::PedInstance agent4(4, nullptr, true);
+    fs_knl::PedInstance agent1(1, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
+    fs_knl::PedInstance agent2(2, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
+    fs_knl::PedInstance agent3(3, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
+    fs_knl::PedInstance agent4(4, nullptr, fs_knl::PedInstance::kPedTypeAgent, true, 128);
     agent1.setHealth(10);
     agent2.setHealth(10);
     agent3.setHealth(10);
