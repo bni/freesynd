@@ -84,16 +84,17 @@ set(SOURCE_LIST
 
 find_package (PNG REQUIRED)
 find_package (CLI11 REQUIRED)
+find_package (utf8cpp REQUIRED)
 
 # This is the main library for this directory
 add_library(fs_engine ${SOURCE_LIST} ${HEADER_LIST})
 add_library(Freesynd::Engine ALIAS fs_engine)
 
 # We need this directory, and users of our library will need it too
-target_include_directories(fs_engine PUBLIC include "${Freesynd_SOURCE_DIR}/extern/utfcpp")
+target_include_directories(fs_engine PUBLIC include)
 
-target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG CLI11::CLI11)
-target_link_libraries(fs_engine INTERFACE CLI11::CLI11)
+target_link_libraries(fs_engine PRIVATE freesynd_warnings Freesynd::Utils PNG::PNG CLI11::CLI11 utf8cpp)
+target_link_libraries(fs_engine INTERFACE CLI11::CLI11 utf8cpp)
 
 # The USE_SYSTEM_SDL option enables the creation of the fs_engine_sdl
 # library. If not on, there will be an error as there is not other implementation
@@ -122,11 +123,11 @@ if (USE_SYSTEM_SDL)
                 )
     add_library(Freesynd::Engine::Sdl ALIAS fs_engine_sdl)
 
-    target_include_directories(fs_engine_sdl PUBLIC src/system "${Freesynd_SOURCE_DIR}/extern/utfcpp")
+    target_include_directories(fs_engine_sdl PUBLIC src/system)
     target_include_directories(fs_engine_sdl PRIVATE include)
 
     target_link_libraries(fs_engine_sdl PUBLIC SDL2::Main SDL2::Image Freesynd::Utils)
-    target_link_libraries(fs_engine_sdl PRIVATE freesynd_warnings )
+    target_link_libraries(fs_engine_sdl PRIVATE freesynd_warnings utf8cpp)
 
     target_link_libraries(fs_engine PRIVATE Freesynd::Engine::Sdl)
 endif()
