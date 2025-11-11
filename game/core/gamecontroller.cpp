@@ -182,7 +182,7 @@ bool GameController::loadSelectedMission() {
 }
 
 void GameController::handle_mission_end(fs_knl::Mission *p_mission) {
-    u_int32_t elapsed = p_mission->stats()->missionDuration();
+    uint32_t elapsed = p_mission->stats()->missionDuration();
     updateTime(elapsed);
 
     // synch ped agents with agent from cryo chamber

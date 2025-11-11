@@ -87,7 +87,7 @@ Block g_Blocks[50] = {
 int g_syndicate_color_id[7];
 
 //! The maximum number of syndicate in the game
-constexpr uint8_t kMaxSyndicate { 8 };
+constexpr int kMaxSyndicate { 8 };
 
 const int GameSession::NB_MISSION = 50;
 const int GameSession::kNameMaxSize = 16;
@@ -157,7 +157,7 @@ bool GameSession::reset() {
 }
 
 uint8_t GameSession::getRandomEnemySyndicateId() {
-    return syndicateDist_(rng_);
+    return static_cast<uint8_t>(syndicateDist_(rng_));
 }
 
 Block & GameSession::getBlock(int index) {

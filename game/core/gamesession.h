@@ -288,8 +288,11 @@ private:
 
     //! Random generator
     std::mt19937 rng_;
-    //! Distribution for choosing a random syndicate
-    std::uniform_int_distribution<uint8_t> syndicateDist_;
+    /*!
+     * Distribution for choosing a random syndicate.
+     * NOTE : Using int as param cause on windows it does not allow uint8_t.
+     */
+    std::uniform_int_distribution<int> syndicateDist_;
 };
 
 #define g_Session   GameSession::singleton()
