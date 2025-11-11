@@ -27,8 +27,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/Wohlstand/libADLMIDI.git
   # We use the version in the main branch because release 1.5.1
   # does not build on MacOS
-  # TODO : when future release is available, switch to it
-  #GIT_TAG        84d27bc2bdbd6dd249537a7f7d2450cbd402482e # release-1.5.1
+  GIT_TAG        2b350f9ef5fa7bafd90b8ce3beb2a77c1e87af25 # release-1.6.1
 )
 
 set(USE_JAVA_EMULATOR OFF CACHE INTERNAL "Turn off JAva Emulator")
