@@ -21,6 +21,7 @@ freesynd (0.9) unstable; urgency=low
   * CLI parameter is now managed using CLI11 library
   [ Fixed ]
   * Option to disable friendly fire. Closes: #69
+  * Radar signal does not display on minimap. Closes: #71
   [ Removed ]
   * Files assassinate.ogg and intro.ogg removed to use XMI files for music
 

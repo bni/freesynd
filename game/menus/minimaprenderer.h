@@ -225,13 +225,11 @@ protected:
     Point2D mapToScreenPosition(const fs_knl::TilePoint &mapPosition);
 
     /*!
-     * Returns X coord of the current real world coordinate of the signal relatively
+     * Returns coord of the current real world coordinate of the signal relatively
      * to the top letf corner of the minimap in pixel.
      */
-    Point2D signalXYZToMiniMap() {
-        return topLeftCornerPos_.add(
-            signalSourceLocW_.x * pixpertile_ / 256 - world_.tx * pixpertile_ + pixpertile_,
-            signalSourceLocW_.y * pixpertile_ / 256 - world_.ty * pixpertile_ + pixpertile_);
+    Point2D signalLocToMiniMap() {
+        return mapToScreenPosition(signalSourceLoc_);
     }
 
     /*!
@@ -272,7 +270,7 @@ private:
     /*! Coords in pixels of the cross.*/
     Point2D crossPos_;
     /*! Coords on the world map of the signal source.*/
-    fs_knl::WorldPoint signalSourceLocW_;
+    fs_knl::TilePoint signalSourceLoc_;
     /*! Type of emitted signal. If NONE, no signal is emitted.*/
     ESignalType signalType_;
     /*! Radius for the signal circle.*/

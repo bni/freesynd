@@ -427,17 +427,20 @@ void GamePlayMinimapRenderer::onMissionEndedEvent([[maybe_unused]] fs_knl::Missi
     handleClearSignal();
 }
 
+/*!
+ * @brief React to the Evacuate objective being started.
+ * On this event, start the signal centered on the evacuation point
+ * @param pEvt The event containing the position where to evacuate
+ */
 void GamePlayMinimapRenderer::onEvacuateObjectiveStartedEvent(fs_knl::EvacuateObjectiveStartedEvent *pEvt) {
     handleClearSignal();
-    signalSourceLocW_.x = pEvt->evacuationPoint.x;
-    signalSourceLocW_.y = pEvt->evacuationPoint.y;
-    signalSourceLocW_.z = pEvt->evacuationPoint.z;
+    pEvt->evacuationPoint.convertToTilePoint(&signalSourceLoc_);
 
     signalType_ = kEvacuation;
 
     // Check if the evacuation point is already visible
     // in this case, we draw the circle in red
-    Point2D signalPos = signalXYZToMiniMap();
+    Point2D signalPos = signalLocToMiniMap();
     if (isEvacuationCircleOnMinimap(signalPos.x, signalPos.y)) {
         signalColor_ = fs_eng::kPaletteGameColorDarkRed;
         signalRadius_ = kEvacuationRadius;
@@ -448,9 +451,7 @@ void GamePlayMinimapRenderer::handleClearSignal() {
     signalRadius_ = 0;
     signalColor_ = fs_eng::kPaletteGameColorWhite;
     signalType_ = kNone;
-    signalSourceLocW_.x = 0;
-    signalSourceLocW_.y = 0;
-    signalSourceLocW_.z = 0;
+    signalSourceLoc_.reset();
 }
 
 /*!
@@ -460,7 +461,7 @@ void GamePlayMinimapRenderer::onTargetObjectiveStartedEvent(fs_knl::TargetObject
     handleClearSignal();
     // get the target current position
     p_minimap_->setTarget(pEvt->pTarget);
-    signalSourceLocW_.convertFromTilePoint(pEvt->pTarget->position());
+    signalSourceLoc_.initFrom(pEvt->pTarget->position());
     signalType_ = kTarget;
 }
 
@@ -473,7 +474,7 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
     if (signalType_ != kNone &&mm_timer_signal.update(elapsed)) {
         // Time hit max -> update radar circle size
         signalRadius_ += 16;
-        Point2D signalPos = signalXYZToMiniMap();
+        Point2D signalPos = signalLocToMiniMap();
 
         if (signalType_ == kEvacuation && isEvacuationCircleOnMinimap(signalPos.x, signalPos.y)) {
             // the evacuation circle is completely on the map, so it's a red circle with fixed size
@@ -496,7 +497,7 @@ bool GamePlayMinimapRenderer::handleTick(uint32_t elapsed) {
                 signalRadius_ = 0;
                 // Update signal position in case of a moving target
                 if (signalType_ == kTarget) {
-                    signalSourceLocW_.convertFromTilePoint(p_minimap_->target()->position());
+                    signalSourceLoc_.initFrom(p_minimap_->target()->position());
                 }
                 g_SoundMgr.play(fs_eng::TRACKING_PONG);
             }
@@ -561,7 +562,7 @@ void GamePlayMinimapRenderer::render(const fs_eng::Palette & palette) {
     drawVehicles(palette);
 
     if (signalType_ != kNone) {
-        Point2D signal = signalXYZToMiniMap();
+        Point2D signal = signalLocToMiniMap();
         drawSignalCircle(signal, palette);
     }
 
@@ -695,8 +696,8 @@ void GamePlayMinimapRenderer::drawPedCircle(const Point2D &screenPos, int type) 
  * @param color Color to draw the point
  */
 void GamePlayMinimapRenderer::drawPixel (const Point2D &point, fs_eng::FSColor color) {
-        if (point.x > topLeftCornerPos_.x && point.x < (topLeftCornerPos_.x + kMiniMapSizePx) && 
-            point.y > topLeftCornerPos_.y && point.y < (topLeftCornerPos_.y + kMiniMapSizePx)) {
+        if (point.x > 0 && point.x < (kMiniMapSizePx) && 
+            point.y > 0 && point.y < (kMiniMapSizePx)) {
             g_System.drawPoint(point, color);
         }
     }
@@ -708,21 +709,14 @@ void GamePlayMinimapRenderer::drawPixel (const Point2D &point, fs_eng::FSColor c
 void GamePlayMinimapRenderer::drawSignalCircle(const Point2D &signalPos, const fs_eng::Palette & palette)
 {
     fs_eng::FSColor color = palette[signalColor_];
-    if (signalRadius_ == 0)
-    {
-       //drawPixel(a_buffer, signal_px, signal_py, color);
-        drawPixel(signalPos, color);
+    if (signalRadius_ == 0) {
         return;
     }
-    /* drawPixel(a_buffer, signal_px-radius,signal_py, color);
-    drawPixel(a_buffer, signal_px+radius,signal_py, color);
-    drawPixel(a_buffer, signal_px,signal_py-radius, color);
-    drawPixel(a_buffer, signal_px,signal_py+radius, color); */
+
     drawPixel(signalPos.add(-signalRadius_, 0), color);
     drawPixel(signalPos.add(signalRadius_, 0), color);
     drawPixel(signalPos.add(0, -signalRadius_), color);
     drawPixel(signalPos.add(0, signalRadius_), color);
-
 
     if (signalRadius_ == 1) {
         return;
@@ -740,20 +734,11 @@ void GamePlayMinimapRenderer::drawSignalCircle(const Point2D &signalPos, const f
                     x4 = signalPos.x+x,
                     y3 = signalPos.y-y,
                     y4 = signalPos.y+y;
-            /* drawPixel(a_buffer, x1,y1, color);
-            drawPixel(a_buffer, x1,y2, color);
-            drawPixel(a_buffer, x2,y1, color);
-            drawPixel(a_buffer, x2,y2, color); */
             drawPixel({x1,y1}, color);
             drawPixel({x1,y2}, color);
             drawPixel({x2,y1}, color);
             drawPixel({x2,y2}, color);
-            if (x!=y)
-            {
-                /* drawPixel(a_buffer, x3,y3, color);
-                drawPixel(a_buffer, x4,y4, color);
-                drawPixel(a_buffer, x4,y3, color);
-                drawPixel(a_buffer, x3,y4, color); */
+            if (x!=y) {
                 drawPixel({x3,y3}, color);
                 drawPixel({x4,y4}, color);
                 drawPixel({x4,y3}, color);
