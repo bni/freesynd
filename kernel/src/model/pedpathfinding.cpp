@@ -38,14 +38,14 @@
 
 namespace fs_knl {
 
-const uint8 floodPointDesc::kBMaskDirNorth = 0x10;
-const uint8 floodPointDesc::kBMaskDirNorthEast = 0x08;
-const uint8 floodPointDesc::kBMaskDirEast = 0x04;
-const uint8 floodPointDesc::kBMaskDirSouth = 0x01;
-const uint8 floodPointDesc::kBMaskDirSouthEast = 0x02;
-const uint8 floodPointDesc::kBMaskDirSouthWest = 0x80;
-const uint8 floodPointDesc::kBMaskDirWest = 0x40;
-const uint8 floodPointDesc::kBMaskDirNorthWest = 0x20;
+const uint8_t floodPointDesc::kBMaskDirNorth = 0x10;
+const uint8_t floodPointDesc::kBMaskDirNorthEast = 0x08;
+const uint8_t floodPointDesc::kBMaskDirEast = 0x04;
+const uint8_t floodPointDesc::kBMaskDirSouth = 0x01;
+const uint8_t floodPointDesc::kBMaskDirSouthEast = 0x02;
+const uint8_t floodPointDesc::kBMaskDirSouthWest = 0x80;
+const uint8_t floodPointDesc::kBMaskDirWest = 0x40;
+const uint8_t floodPointDesc::kBMaskDirNorthWest = 0x20;
 
 /*!
  * Sets a destination point for the ped to reach at given speed.
@@ -2478,7 +2478,7 @@ bool PedInstance::doMove(uint32_t elapsed, Mission *pMission)
  * - 5b(32): dist passed set
  * - 6b(64): bouncing restored original dir (loop is possible)
  */
-uint8 PedInstance::moveToDir(Mission* m, uint32_t elapsed, DirMoveType &dir_move,
+uint8_t PedInstance::moveToDir(Mission* m, uint32_t elapsed, DirMoveType &dir_move,
     int dir, int t_posx, int t_posy, int* dist, bool set_dist)
 {
     // TODO: better non-posiotional random walking
@@ -2526,7 +2526,7 @@ uint8 PedInstance::moveToDir(Mission* m, uint32_t elapsed, DirMoveType &dir_move
         dir = dir_move.dir_last;
     }
     double dist_total = 0;
-    uint8 move_mask = 1;
+    uint8_t move_mask = 1;
 
     while ((int)dist_curr > 0) {
         bool need_bounce = false;

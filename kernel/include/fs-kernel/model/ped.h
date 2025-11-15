@@ -285,14 +285,20 @@ public:
 
     ///@}
 
-    //*************************************
-    // Movement management
-    //*************************************
+    /**
+     * @name Movement management
+     */
+    ///@{
     //! See ShootableMovableMapObject::initMovementToDestination()
     bool initMovementToDestination(Mission *m, const TilePoint &destinationPt) override;
 
     //! See ShootableMovableMapObject::doMove()
     bool doMove(uint32_t elapsed, Mission *pMission) override;
+
+    uint8_t moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
+        int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,
+        bool set_dist = false);
+    ///@}
 
     //*************************************
     // Weapon management
@@ -367,10 +373,6 @@ public:
 
     void putInVehicle(Vehicle *v);
     void leaveVehicle();
-
-    uint8_t moveToDir(Mission *m, uint32_t elapsed, DirMoveType &dir_move,
-        int dir = -1, int t_posx = -1, int t_posy = -1, int *dist = NULL,
-        bool set_dist = false);
 
     /**
      * @name IPA Management

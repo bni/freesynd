@@ -348,7 +348,7 @@ void PedInstance::setNewOwner(PedInstance *pNewOwner) {
  * \param weaponIndex The index of the weapon to drop in the agent inventory.
  * \param appendAction If true action is append after all existing actions.
  */
-void PedInstance::addActionPutdown(uint8 weaponIndex, bool appendAction) {
+void PedInstance::addActionPutdown(uint8_t weaponIndex, bool appendAction) {
     PutdownWeaponAction *action = new PutdownWeaponAction(weaponIndex);
     addMovementAction(action, appendAction);
 }

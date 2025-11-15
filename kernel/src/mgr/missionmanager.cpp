@@ -743,7 +743,7 @@ void MissionManager::createScriptedActionsForPed(Mission *pMission, DataIndex &d
                 }
             } else {
                 LOG(Log::k_FLG_GAME, "MissionManager","createScriptedActionsForPed", (" - Walk toward location (%d, %d, %d)", locT.tx, locT.ty, locT.tz))
-                pPed->addToDefaultActions(new WalkToDirectionAction(locW));
+                pPed->addToDefaultActions(new WalkAction(locT));
             }
             if (isInVehicle && offset_nxt == 0) {
                 LOG(Log::k_FLG_GAME, "MissionManager","createScriptedActionsForPed", (" - Repeat driving scenario"))

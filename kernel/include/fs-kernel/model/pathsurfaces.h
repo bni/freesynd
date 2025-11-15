@@ -43,47 +43,47 @@ namespace fs_knl {
          *      tiles)
         * \see mapFloodDesc
         */
-        uint8 bfNodeDesc;
+        uint8_t bfNodeDesc;
         // dirh(z + 1), dirm(z), dirl(z - 1) - directions
         // 0x01 = (x, y + 1, z); 0x02 = (x + 1, y + 1, z);
         // 0x04 = (x + 1, y, z); 0x08 = (x + 1, y - 1, z);
         // 0x10 = (x, y - 1, z); 0x20 = (x - 1, y - 1, z);
         // 0x40 = (x - 1, y, z); 0x80 = (x - 1, y + 1, z)
         // can be combined 0x01 | 0x02; 0x01 | 0x10 | 0x40 etc.
-        uint8 dirh;
-        uint8 dirm;
-        uint8 dirl;
+        uint8_t dirh;
+        uint8_t dirm;
+        uint8_t dirl;
 
         unsigned short lvl;
 
-        bool isDirectionUpContains(uint8 bmDirection) {
+        bool isDirectionUpContains(uint8_t bmDirection) {
             return fs_utl::isBitsOnWithMask(dirh, bmDirection);
         }
 
-        bool isDirectionGroundContains(uint8 bmDirection) {
+        bool isDirectionGroundContains(uint8_t bmDirection) {
             return fs_utl::isBitsOnWithMask(dirm, bmDirection);
         }
 
-        bool isDirectionDownContains(uint8 bmDirection) {
+        bool isDirectionDownContains(uint8_t bmDirection) {
             return fs_utl::isBitsOnWithMask(dirl, bmDirection);
         }
 
         //! In path finding, identify the direction to North
-        static const uint8 kBMaskDirNorth;
+        static const uint8_t kBMaskDirNorth;
         //! In path finding, identify the direction to North-East
-        static const uint8 kBMaskDirNorthEast;
+        static const uint8_t kBMaskDirNorthEast;
         //! In path finding, identify the direction to East
-        static const uint8 kBMaskDirEast;
+        static const uint8_t kBMaskDirEast;
         //! In path finding, identify the direction to South-East
-        static const uint8 kBMaskDirSouthEast;
+        static const uint8_t kBMaskDirSouthEast;
         //! In path finding, identify the direction to South
-        static const uint8 kBMaskDirSouth;
+        static const uint8_t kBMaskDirSouth;
         //! In path finding, identify the direction to South-West
-        static const uint8 kBMaskDirSouthWest;
+        static const uint8_t kBMaskDirSouthWest;
         //! In path finding, identify the direction to West
-        static const uint8 kBMaskDirWest;
+        static const uint8_t kBMaskDirWest;
         //! In path finding, identify the direction to North-West
-        static const uint8 kBMaskDirNorthWest;
+        static const uint8_t kBMaskDirNorthWest;
     };
 
     typedef enum {
