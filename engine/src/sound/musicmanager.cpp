@@ -188,10 +188,10 @@ void MusicManager::toggleMusic() {
     if (isAudioInitialized()) {
         if (volumeBeforeMute_ == -1) {
             volumeBeforeMute_ = audio_->getMusicVolume();
-            LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music off : %d", volumeBeforeMute_))
+            LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music off (volume before was %d)", volumeBeforeMute_))
             audio_->setMusicVolume(0);
         } else {
-            LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music on : %d", volumeBeforeMute_))
+            LOG(Log::k_FLG_SND, "MusicManager", "toggleMusic", ("Turning music on (volume is %d)", volumeBeforeMute_))
             audio_->setMusicVolume(volumeBeforeMute_);
             volumeBeforeMute_ = -1;
         }

@@ -252,7 +252,7 @@ void AppContext::deactivateTestFlag() {
 }
 
 /*!
- * Update hte sound_volume parameter in the config file 
+ * Update the sound_volume parameter in the config file 
  * @param volume new volume. Must greater or equal zero
  */
 void AppContext::updateSoundVolume(int volume) {
@@ -261,7 +261,7 @@ void AppContext::updateSoundVolume(int volume) {
     }
     std::filesystem::path userConfPath;
     fs_utl::File::getUserConfFullPath(userConfPath);
-    LOG(Log::k_FLG_IO, "AppContext", "deactivateTestFlag", ("Setting sound_volume to false in %s", userConfPath.c_str()))
+    LOG(Log::k_FLG_IO, "AppContext", "updateSoundVolume", ("Updating sound volume to %d in %s", volume, userConfPath.c_str()))
     ConfigFile conf(userConfPath.string());
     conf.add("sound_volume", volume);
 
