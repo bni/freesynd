@@ -528,21 +528,21 @@ void GameController::cheatEquipFancyWeapons() {
             fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Shotgun)));
 #else
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Minigun)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Minigun)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Minigun)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Persuadatron)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Persuadatron)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::TimeBomb)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::TimeBomb)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::EnergyShield)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::EnergyShield)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::EnergyShield)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::EnergyShield)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Laser)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Laser)));
         agents().agent(i)->addWeapon(
-                WeaponInstance::createInstance(weaponManager().getWeapon(Weapon::Laser)));
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Laser)));
 #endif
         }
     }
