@@ -317,11 +317,11 @@ bool SdlMixerAudio::openFile(std::string path) {
  * @param loop True to play the sing indefinitly
  */
 void SdlMixerAudio::playMusic(int songNb, bool loop) {
+    pauseMusic();
     // We use the loop marker that are in the file
     adl_setLoopEnabled(pMidiPlayer, loop ? 1 : 0);
     adl_selectSongNum(pMidiPlayer, songNb);
-    //Mix_ResumeMusic();
-    is_playing = 1;
+    resumeMusic();
 }
 
 /*!
@@ -329,7 +329,7 @@ void SdlMixerAudio::playMusic(int songNb, bool loop) {
  */
 void SdlMixerAudio::pauseMusic() {
     is_playing = 0;
-    //Mix_PauseMusic();
+    Mix_PauseMusic();
 }
 
 /*!
@@ -337,7 +337,7 @@ void SdlMixerAudio::pauseMusic() {
  */
 void SdlMixerAudio::resumeMusic() {
     is_playing = 1;
-    //Mix_ResumeMusic();
+    Mix_ResumeMusic();
 }
 
 /*!
