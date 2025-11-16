@@ -61,7 +61,7 @@ weapon.3.shotaccuracy=0.7
 weapon.3.shotspeed=0
 weapon.3.dmg_per_shot=2
 weapon.3.ammo.impactNb=6
-weapon.3.weight=7
+weapon.3.weight=2
 
 # Uzi
 weapon.4.name=WEAPON_UZI
@@ -82,7 +82,7 @@ weapon.4.shotaccuracy=0.85
 weapon.4.shotspeed=0
 weapon.4.dmg_per_shot=2
 weapon.4.ammo.impactNb=1
-weapon.4.weight=5
+weapon.4.weight=3
 weapon.4.auto.fire_rate=250
 
 # MiniGun
