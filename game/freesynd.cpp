@@ -119,7 +119,7 @@ void operator delete(void *p) {
 
 int main(int argc, char *argv[]) {
 
-    printf("Freesynd v%i.%i (jan 2025)\n", FS_VERSION_MAJOR, FS_VERSION_MINOR);
+    printf("Freesynd v%i.%i (nov 2025)\n", FS_VERSION_MAJOR, FS_VERSION_MINOR);
 
 #ifdef CHEAP_LEAK_DETECTION
     initLeakDetection();
