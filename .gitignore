@@ -15,3 +15,6 @@ freesynd.ini
 
 CMakeUserPresets.json
 .DS_Store
+
+/.idea
+/synd

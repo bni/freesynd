@@ -52,6 +52,8 @@ public:
     bool isTestFiles() { return test_files_; }
     //! Return the sound volume parameter
     int getSoundVolume() { return soundVolume_; }
+    //! Return the forced scale factor (0 = auto-calculate)
+    int getScaleFactor() { return scaleFactor_; }
 
     //! Sets the intro flag to false in the config file
     void updateIntroFlag();
@@ -82,12 +84,14 @@ private:
     */
     uint32_t time_for_click_;
     /*! True means data files will be verified.*/
-    bool test_files_;
+    bool test_files_{};
     /*! Language file. */
     ConfigFile  *language_;
     fs_eng::FS_Lang curr_language_;
     //! Volume of sound : from 0 to 128
     int soundVolume_;
+    //! Forced integer scale factor for gameplay (0 = auto-calculate from window size)
+    int scaleFactor_;
 };
 
 }

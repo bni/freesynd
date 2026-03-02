@@ -34,6 +34,7 @@
 #include <format>
 #include "utf8.h"
 
+#include "fs-engine/appcontext.h"
 #include "fs-engine/config.h"
 #include "fs-engine/sound/audio.h"
 #include "fs-utils/io/file.h"
@@ -52,6 +53,11 @@ SystemSDL::SystemSDL() {
     pCursorTexture_ = nullptr;
     pWindow_ = nullptr;
     pRenderer_ = nullptr;
+    pGameTexture_ = nullptr;
+    viewportRect_ = {0, 0, 0, 0};
+    nativeAspectRatio_ = false;
+    gameHeight_ = fs_eng::kScreenHeight;
+    gameWidth_ = fs_eng::kScreenWidth;
 }
 
 SystemSDL::~SystemSDL() {
@@ -66,6 +72,11 @@ SystemSDL::~SystemSDL() {
 
     // Destroy SDL_Image Lib
     IMG_Quit();
+
+    if (pGameTexture_) {
+        SDL_DestroyTexture(pGameTexture_);
+        pGameTexture_ = nullptr;
+    }
 
     if (pRenderer_) {
         SDL_DestroyRenderer(pRenderer_);
@@ -101,8 +112,10 @@ void SystemSDL::initialize(bool fullscreen) {
     // initialize the screen to black
     SDL_SetRenderDrawColor(pRenderer_, 0, 0, 0, 255);
     SDL_RenderClear(pRenderer_);
-    // in case we are fullscreen and did not specify dimensions
-    SDL_RenderSetLogicalSize(pRenderer_, fs_eng::kScreenWidth, fs_eng::kScreenHeight);
+
+    // Create offscreen game texture and calculate viewport
+    calculateGameViewport();
+    recreateGameTexture();
 
     // Init SDL_Image library
     int sdlImgFlags = IMG_INIT_PNG;
@@ -173,29 +186,108 @@ bool SystemSDL::clearScreen() {
     return SDL_RenderClear(pRenderer_);
 }
 
-void SystemSDL::updateScreen() {        
+void SystemSDL::updateScreen() {
+    // Draw cursor into the game texture (in game coordinates)
     if (cursor_visible_) {
         SDL_Rect dst;
-
         dst.x = cursor_x_ - cursor_hs_x_;
         dst.y = cursor_y_ - cursor_hs_y_;
         dst.w = dst.h = kCursorWidth;
-
-        SDL_RenderCopy( pRenderer_, pCursorTexture_, &cursor_rect_, &dst );
+        SDL_RenderCopy(pRenderer_, pCursorTexture_, &cursor_rect_, &dst);
         update_cursor_ = false;
     }
 
-    // Flip screen
-    SDL_RenderPresent( pRenderer_ );
+    // Switch to the screen, clear to black (fills letterbox borders), then
+    // blit the game texture stretched to the 4:3 integer-scaled viewport
+    SDL_SetRenderTarget(pRenderer_, nullptr);
+    SDL_SetRenderDrawColor(pRenderer_, 0, 0, 0, 255);
+    SDL_RenderClear(pRenderer_);
+    SDL_RenderCopy(pRenderer_, pGameTexture_, nullptr, &viewportRect_);
+
+    SDL_RenderPresent(pRenderer_);
+
+    // Restore game texture as render target for the next frame
+    SDL_SetRenderTarget(pRenderer_, pGameTexture_);
 }
 
 bool SystemSDL::resetRenderTarget() {
-    if (SDL_SetRenderTarget( pRenderer_, NULL )) {
+    // Restore to the game texture (not the screen), so all rendering
+    // continues into the offscreen buffer
+    if (SDL_SetRenderTarget(pRenderer_, pGameTexture_)) {
         FSERR(Log::k_FLG_GFX, "SystemSDL", "resetRenderTarget", ("Critical error, Could not reset target texture! SDL Error : %s", SDL_GetError()))
         return false;
     }
 
     return true;
+}
+
+void SystemSDL::calculateGameViewport() {
+    int winW, winH;
+    SDL_GetWindowSize(pWindow_, &winW, &winH);
+
+    if (nativeAspectRatio_) {
+        // Gameplay: use the largest integer scale N where N*640 <= winW and N*400 <= winH.
+        // Expand the game texture to fill the full window in both directions:
+        // gameWidth = winW / N, gameHeight = winH / N (both >= their respective kScreen* minimums).
+        int n = g_Ctx.getScaleFactor();
+        if (n <= 0) {
+            // Default to ~2x at 1440p: use 1.5x native resolution as base unit
+            // (960×600), yielding n=1 at 720p/1080p, n=2 at 1440p, n=3 at 4K.
+            n = std::min(winW / (fs_eng::kScreenWidth * 3 / 2),
+                         winH / (fs_eng::kScreenHeight * 3 / 2));
+        }
+        if (n < 1) n = 1;
+        gameWidth_  = winW / n;
+        gameHeight_ = winH / n;
+        viewportRect_ = {0, 0, n * gameWidth_, n * gameHeight_};
+    } else {
+        // Menus: original 320x200 was displayed on a 4:3 CRT, equivalent to
+        // 640x480 in our doubled coordinate space. Stretch 400 source rows to
+        // 480 display rows to replicate the CRT pixel aspect ratio.
+        gameWidth_  = fs_eng::kScreenWidth;
+        gameHeight_ = fs_eng::kScreenHeight;
+        int targetH = fs_eng::kScreenWidth * 3 / 4; // 480
+        int n = std::min(winW / fs_eng::kScreenWidth, winH / targetH);
+        if (n < 1) n = 1;
+        int scaledW = n * fs_eng::kScreenWidth;
+        int scaledH = n * targetH;
+        viewportRect_ = {(winW - scaledW) / 2, (winH - scaledH) / 2, scaledW, scaledH};
+    }
+}
+
+void SystemSDL::recreateGameTexture() {
+    if (pGameTexture_) {
+        SDL_DestroyTexture(pGameTexture_);
+        pGameTexture_ = nullptr;
+    }
+    pGameTexture_ = SDL_CreateTexture(pRenderer_, SDL_PIXELFORMAT_RGBA8888,
+                                      SDL_TEXTUREACCESS_TARGET,
+                                      gameWidth_, gameHeight_);
+    if (pGameTexture_ == nullptr) {
+        throw InitializationFailedException(std::format("Critical error, could not create game texture! SDL Error: {}", SDL_GetError()));
+    }
+    SDL_SetRenderTarget(pRenderer_, pGameTexture_);
+}
+
+void SystemSDL::setNativeAspectRatio(bool native) {
+    int oldGameWidth  = gameWidth_;
+    int oldGameHeight = gameHeight_;
+    nativeAspectRatio_ = native;
+    calculateGameViewport();
+    if (gameWidth_ != oldGameWidth || gameHeight_ != oldGameHeight) {
+        recreateGameTexture();
+    }
+}
+
+Point2D SystemSDL::windowToGame(int x, int y) const {
+    if (viewportRect_.w == 0 || viewportRect_.h == 0) {
+        return {x, y};
+    }
+    int gx = (x - viewportRect_.x) * gameWidth_  / viewportRect_.w;
+    int gy = (y - viewportRect_.y) * gameHeight_ / viewportRect_.h;
+    gx = std::clamp(gx, 0, gameWidth_  - 1);
+    gy = std::clamp(gy, 0, gameHeight_ - 1);
+    return {gx, gy};
 }
 
 /*!
@@ -368,26 +460,35 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
             }
             break;
         case SDL_MOUSEBUTTONUP:
+            {
+            Point2D p = windowToGame(evtIn.button.x, evtIn.button.y);
             evtOut.button.type = EVT_MSE_UP;
-            evtOut.button.x = evtIn.button.x;
-            evtOut.button.y = cursor_y_ = evtIn.button.y;
+            evtOut.button.x = p.x;
+            evtOut.button.y = cursor_y_ = p.y;
             evtOut.button.button = evtIn.button.button;
             evtOut.button.keyMods = keyModState_;
+            }
             break;
         case SDL_MOUSEBUTTONDOWN:
+            {
+            Point2D p = windowToGame(evtIn.button.x, evtIn.button.y);
             evtOut.button.type = EVT_MSE_DOWN;
-            evtOut.button.x = evtIn.button.x;
-            evtOut.button.y = cursor_y_ = evtIn.button.y;
+            evtOut.button.x = p.x;
+            evtOut.button.y = cursor_y_ = p.y;
             evtOut.button.button = evtIn.button.button;
             evtOut.button.keyMods = keyModState_;
+            }
             break;
         case SDL_MOUSEMOTION:
+            {
+            Point2D p = windowToGame(evtIn.motion.x, evtIn.motion.y);
             update_cursor_ = true;
             evtOut.motion.type = EVT_MSE_MOTION;
-            evtOut.motion.x = cursor_x_ = evtIn.motion.x;
-            evtOut.motion.y = cursor_y_ = evtIn.motion.y;
+            evtOut.motion.x = cursor_x_ = p.x;
+            evtOut.motion.y = cursor_y_ = p.y;
             evtOut.motion.state = evtIn.motion.state;
             evtOut.motion.keyMods = keyModState_;
+            }
             break;
         default:
             break;
@@ -599,7 +700,10 @@ bool SystemSDL::loadCursorSprites() {
  * \return See SDL_GetMouseState.
  */
 uint32_t SystemSDL::getMousePos(Point2D &point) {
-    return SDL_GetMouseState(&(point.x), &(point.y));
+    int x, y;
+    uint32_t buttons = SDL_GetMouseState(&x, &y);
+    point = windowToGame(x, y);
+    return buttons;
 }
 
 void SystemSDL::hideCursor() {
@@ -667,6 +771,20 @@ void SystemSDL::usePickupCursor() {
  * Calls SDL_StartTextInput() will tell SDL2 to send SDL_TEXTINPUT events.
  * This method is called when a textfield widget receives focus.
  */
+/*!
+ * Returns true if the given key is currently held down.
+ * Uses SDL_GetKeyboardState for polling (not event-based), so it works
+ * correctly for keys held across multiple frames (e.g. WASD panning).
+ */
+bool SystemSDL::isKeyDown(fs_eng::FS_KeyCode key) const {
+    const Uint8 *state = SDL_GetKeyboardState(nullptr);
+    if (key >= fs_eng::kKeyCode_A && key <= fs_eng::kKeyCode_Z) {
+        int letter = key - fs_eng::kKeyCode_A;  // 0 = 'a', 25 = 'z'
+        return state[SDL_SCANCODE_A + letter];
+    }
+    return false;
+}
+
 void SystemSDL::startReceiveText() {
     SDL_StartTextInput();
 }

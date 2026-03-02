@@ -180,7 +180,7 @@ const fs_eng::FrameEvent game_lost[] = {
 
 //! This defines the list of event for the menu up animation
 const fs_eng::FrameEvent menu_up[] = {
-    { 1, fs_eng::MENU_UP,   0x1, NULL },
+    { 1, fs_eng::kNoSound,   0x1, NULL },
     { -1, fs_eng::kNoSound,  0x0, NULL }
 };
 
@@ -263,7 +263,7 @@ fs_eng::Menu * GameMenuFactory::createFliMenu(const int menuId) {
         // Display the splash screen
         pMenu->addFliDesc("mtitle.dat", 66, true, true, false, title, fs_eng::kSampleIntro);
         // common fli to prepare next menu show
-        pMenu->addFliDesc("mscrenup.dat", 50, false, false, false, menu_up);
+        pMenu->addFliDesc("mscrenup.dat", 20, false, false, false, menu_up);
         pMenu->setNextMenu(fs_game_menus::kMenuIdMain);
     }
 

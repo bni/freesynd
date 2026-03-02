@@ -140,8 +140,8 @@ static bool getResourcePath(fs::path& resourcePath) {
             CFRelease(key);
             delete oldDataDirAsStr;
         } else {
-            // Sets a default dir that will be seen as to be set
-            freesyndIni.add("data_dir", "To_Be_Set");
+            // Empty string signals setOriginalDataFolder() to use the bundle Resources/data path
+            freesyndIni.add("data_dir", "");
         }
 
         // Read the freesynd_data_dir preference
@@ -357,7 +357,11 @@ static bool getResourcePath(fs::path& resourcePath) {
         } else {
 
     #if defined(__APPLE__)
-        // Under Mac, it can't be in the bundle as user should not access it
+        // Default: original data lives inside the app bundle at Resources/data
+        if (!getResourcePath(dataPath_)) {
+            FSERR(Log::k_FLG_GFX, "File", "setOriginalDataFolder", ("Unable to locate app bundle resources.\n"));
+        }
+        dataPath_ /= "data";
     #else
         // Under Windows/unix it's in the same directory as our data
         dataPath_ = ourDataPath_;
@@ -514,7 +518,8 @@ static bool getResourcePath(fs::path& resourcePath) {
                     size_t sz;
                     uint8 *data = File::loadOriginalFileToMem(flname, sz);
                     if (!data) {
-                        FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file not found \"%s\"\nLook at INSTALL/README file for possible solutions.", flname.c_str()));
+                        FSERR(Log::k_FLG_IO, "App", "testOriginalData", ("file not found \"%s\" \"%s\"\nLook at INSTALL/README file for possible solutions.", getOriginalDataFullPath(flname, false).c_str(), flname.c_str()));
+
                         rsp = false;
                         continue;
                     }

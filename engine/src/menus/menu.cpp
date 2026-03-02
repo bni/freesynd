@@ -40,6 +40,8 @@ const int Menu::kMenuIdNoMenu = -1;
 const int Menu::kMenuIdLogout = 6;
 const int Menu::kMenuIdFliTransition = 99;
 const int Menu::kMouseLeftButton = 1;
+const int Menu::kMouseMiddleButton = 2;
+const int Menu::kMouseMiddleButtonMask = 2; // SDL_BUTTON_MMASK = SDL_BUTTON(2) = 1 << (2-1)
 const int Menu::kMouseRightButton = 3;
 
 Menu::Menu(MenuManager * menuManager, int id, int parentId, bool needsBackground)

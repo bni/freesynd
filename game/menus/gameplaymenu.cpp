@@ -63,8 +63,13 @@ mm_renderer_(kMiniMapScreenPos), warningTimer_(20000)
     displayOriginPt_.y = 0;
     scroll_x_ = 0;
     scroll_y_ = 0;
+    isPanning_ = false;
+    wasd_pan_accum_x_ = 0.f;
+    wasd_pan_accum_y_ = 0.f;
     ipa_chng_.ipa_chng = -1;
     canPlayPoliceWarnSound_ = true;
+    lastAgentKeyTime_ = 0;
+    lastAgentKeyIndex_ = -1;
 }
 
 /*!
@@ -252,8 +257,8 @@ void GameplayMenu::initWorldCoords()
                                 0, 0);
     Point2D start;
     mission_->get_map()->tileToScreenPoint(leaderPos, &start);
-    start.x -= (fs_eng::kScreenWidth - 129) / 2;
-    start.y -= fs_eng::kScreenHeight / 2;
+    start.x -= (g_System.getGameWidth() - MapRenderer::kGameplayPanelWidth) / 2;
+    start.y -= g_System.getGameHeight() / 2;
 
     if (start.x < 0)
         start.x = 0;
@@ -288,10 +293,43 @@ void GameplayMenu::initWorldCoords()
 }
 
 /*!
+ * Centers the map view on the given squad agent slot.
+ * Uses the same clamping logic as initWorldCoords().
+ */
+void GameplayMenu::centerViewOnAgent(size_t agentNo) {
+    fs_knl::PedInstance *pAgent = mission_->getSquad()->member(agentNo);
+    if (!pAgent || !pAgent->isAlive())
+        return;
+
+    fs_knl::TilePoint agentPos(pAgent->tileX(), pAgent->tileY(),
+                               mission_->mmax_z_ + 1, 0, 0);
+    Point2D start;
+    mission_->get_map()->tileToScreenPoint(agentPos, &start);
+    start.x -= (g_System.getGameWidth() - MapRenderer::kGameplayPanelWidth) / 2;
+    start.y -= g_System.getGameHeight() / 2;
+
+    if (start.x < 0) start.x = 0;
+    if (start.y < 0) start.y = 0;
+
+    fs_knl::TilePoint mpt = mission_->get_map()->screenToTilePoint(start.x, start.y);
+    if (mpt.tx < mission_->minX()) mpt.tx = mission_->minX();
+    if (mpt.ty < mission_->minY()) mpt.ty = mission_->minY();
+    if (mpt.tx > mission_->maxX()) mpt.tx = mission_->maxX();
+    if (mpt.ty > mission_->maxY()) mpt.ty = mission_->maxY();
+
+    fs_knl::TilePoint newPoint(mpt.tx, mpt.ty, mission_->mmax_z_ + 1, 0, 0);
+    Point2D msp;
+    mission_->get_map()->tileToScreenPoint(newPoint, &msp);
+    displayOriginPt_.x = msp.x;
+    displayOriginPt_.y = msp.y;
+}
+
+/*!
  * Called before the menu is first shown.
  * Place to do some initializing.
  */
 bool GameplayMenu::handleBeforeShow() {
+    g_System.setNativeAspectRatio(true);
     mission_ = g_missionCtrl.mission();
     mission_->start(g_gameCtrl.weaponManager());
     // init selection to the first selectable agent
@@ -350,6 +388,29 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         canPlayPoliceWarnSound_ = true;
     }
 
+    // WASD smooth panning: accumulate sub-pixel amounts proportional to elapsed
+    // time so movement is frame-rate independent and smooth.
+    static constexpr float kWASDPanSpeed = 1.0f;  // pixels per millisecond
+    {
+        float dx = 0.f, dy = 0.f;
+        if (g_System.isKeyDown(fs_eng::kKeyCode_A)) dx -= 1.f;
+        if (g_System.isKeyDown(fs_eng::kKeyCode_D)) dx += 1.f;
+        if (g_System.isKeyDown(fs_eng::kKeyCode_W)) dy -= 1.f;
+        if (g_System.isKeyDown(fs_eng::kKeyCode_S)) dy += 1.f;
+
+        if (dx != 0.f || dy != 0.f) {
+            wasd_pan_accum_x_ += dx * kWASDPanSpeed * elapsed;
+            wasd_pan_accum_y_ += dy * kWASDPanSpeed * elapsed;
+            int ipx = static_cast<int>(wasd_pan_accum_x_);
+            int ipy = static_cast<int>(wasd_pan_accum_y_);
+            if (ipx != 0) { scroll_x_ += ipx; wasd_pan_accum_x_ -= ipx; }
+            if (ipy != 0) { scroll_y_ += ipy; wasd_pan_accum_y_ -= ipy; }
+        } else {
+            wasd_pan_accum_x_ = 0.f;
+            wasd_pan_accum_y_ = 0.f;
+        }
+    }
+
     // Scroll the map
     if (scroll_x_ != 0) {
         change = scrollOnX();
@@ -386,7 +447,10 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
 
 void GameplayMenu::handleRender() {
     map_renderer_.render(displayOriginPt_);
-    g_System.drawRect({0,0}, 129, fs_eng::kScreenHeight, menu_manager_->kMenuColorBlack);
+    // Only fill the column black where UI elements actually live.
+    // Below the minimap the map is visible through the panel column.
+    const int kPanelHeight = kMiniMapScreenPos.y + GamePlayMinimapRenderer::kMiniMapSizePx;
+    g_System.drawFillRect({0,0}, MapRenderer::kGameplayPanelWidth, kPanelHeight, menu_manager_->kMenuColorBlack);
     agt_sel_renderer_.render(selection_, mission_->getSquad(), missionPalette_);
     drawSelectAllButton();
     drawMissionHint();
@@ -452,12 +516,17 @@ void GameplayMenu::handleRender() {
     }
 
     fpsText << "FPS: " << fps; 
-    gameFont()->drawText(10, fs_eng::kScreenHeight - 15, fpsText.str().c_str(), menu_manager_->kMenuColorYellow);
+    gameFont()->drawText(10, g_System.getGameHeight() - 15, fpsText.str().c_str(), menu_manager_->kMenuColorYellow);
 #endif
 }
 
 void GameplayMenu::handleLeave()
 {
+    g_System.setNativeAspectRatio(false);
+    if (isPanning_) {
+        isPanning_ = false;
+        g_System.showCursor();
+    }
     g_MusicMgr.stopCurrentSong();
 
     // Remove handlers to prevent events coming after the end of mission
@@ -483,6 +552,46 @@ void GameplayMenu::handleLeave()
 }
 
 void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state) {
+    // Panning with CTRL + mouse or middle-mouse drag
+    bool ctrlHeld = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
+    bool middleHeld = (state & kMouseMiddleButtonMask) != 0;
+    bool shouldPan = ctrlHeld || middleHeld;
+
+    if (shouldPan && !isPanning_) {
+        isPanning_ = true;
+        g_System.hideCursor();
+    } else if (!shouldPan && isPanning_) {
+        isPanning_ = false;
+        g_System.showCursor();
+    }
+
+    if (isPanning_) {
+        int amount = 3;
+
+        if (point.x > last_motion_x_) {
+            scroll_x_ += (point.x - last_motion_x_) * amount;
+        } else if (point.x < last_motion_x_) {
+            scroll_x_ -= (last_motion_x_ - point.x) * amount;
+        }
+
+        if (point.y > last_motion_y_) {
+            scroll_y_ += (point.y - last_motion_y_) * amount;
+        } else if (point.y < last_motion_y_) {
+            scroll_y_ -= (last_motion_y_ - point.y) * amount;
+        }
+
+        // Scroll the map
+        if (scroll_x_ != 0) {
+            scrollOnX();
+            scroll_x_ = 0;
+        }
+
+        if (scroll_y_ != 0) {
+            scrollOnY();
+            scroll_y_ = 0;
+        }
+    }
+
     last_motion_x_ = point.x;
     last_motion_y_ = point.y;
     // locking mouse motion on ipa change until mouseup is recieved
@@ -509,18 +618,6 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
             ipa_chng_.ipa_chng = -1;
     }
 
-    if (last_motion_x_ < 5) {
-        scroll_x_ = - SCROLL_STEP;
-    } else if (last_motion_x_ > fs_eng::kScreenWidth - 5) {
-        scroll_x_ = SCROLL_STEP;
-    }
-
-    if (last_motion_y_ < 5) {
-        scroll_y_ = - SCROLL_STEP;
-    } else if (last_motion_y_ > fs_eng::kScreenHeight - 5) {
-        scroll_y_ = SCROLL_STEP;
-    }
-
     bool inrange = false;
     target_ = NULL;
 
@@ -534,8 +631,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
                 int py = scPt.y - (1 + p->tileZ()) * fs_eng::Tile::kTileHeight/3
                     - (p->offZ() * fs_eng::Tile::kTileHeight/3) / 128;
 
-                if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
-                    point.x - 129 + displayOriginPt_.x < px + 21 && point.y + displayOriginPt_.y < py + 34)
+                if (point.x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
+                    point.x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x < px + 21 && point.y + displayOriginPt_.y < py + 34)
                 {
                     // mouse pointer is on the object, so it's the new target
                     target_ = p;
@@ -554,8 +651,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
                 int px = scPt.x - 20;
                 int py = scPt.y - 10 - v->tileZ() * fs_eng::Tile::kTileHeight/3;
 
-                if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
-                    point.x - 129 + displayOriginPt_.x < px + 40 && point.y + displayOriginPt_.y < py + 32)
+                if (point.x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
+                    point.x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x < px + 40 && point.y + displayOriginPt_.y < py + 32)
                 {
                     target_ = v;
                     inrange = selection_.isTargetInRange(mission_, target_);
@@ -574,8 +671,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
                 int py = scPt.y + 4 - w->tileZ() * fs_eng::Tile::kTileHeight/3
                     - (w->offZ() * fs_eng::Tile::kTileHeight/3) / 128;
 
-                if (point.x - 129 + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
-                    point.x - 129 + displayOriginPt_.x < px + 20 && point.y + displayOriginPt_.y < py + 15)
+                if (point.x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x >= px && point.y + displayOriginPt_.y >= py &&
+                    point.x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x < px + 20 && point.y + displayOriginPt_.y < py + 15)
                 {
                     target_ = w;
                     break;
@@ -594,8 +691,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
                 int py = scPt.y + 4 - s->tileZ() * Tile::kTileHeight/3
                     - (s->offZ() * Tile::kTileHeight/3) / 128;
 
-                if (x - 129 + displayOriginPt_.x >= px && y + displayOriginPt_.y >= py &&
-                    x - 129 + displayOriginPt_.x < px + 20 && y + displayOriginPt_.y < py + 15)
+                if (x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x >= px && y + displayOriginPt_.y >= py &&
+                    x - MapRenderer::kGameplayPanelWidth + displayOriginPt_.x < px + 20 && y + displayOriginPt_.y < py + 15)
                 {
                     target_ = s;
                     break;
@@ -622,7 +719,7 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
             g_System.usePointerYellowCursor();
     }
 
-    if (point.x < 129 && isPlayerShooting_) {
+    if (point.x < MapRenderer::kGameplayPanelWidth && isPlayerShooting_) {
         stopShootingEvent();
     }
 
@@ -644,10 +741,16 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
 
 bool GameplayMenu::handleMouseDown(Point2D point, int button)
 {
+    if (button == kMouseMiddleButton) {
+        isPanning_ = true;
+        g_System.hideCursor();
+        return true;
+    }
+
     if (paused_)
         return true;
 
-    if (point.x < 129) {
+    if (point.x < MapRenderer::kGameplayPanelWidth) {
         // Is control button pressed
         bool ctrl = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
 
@@ -732,7 +835,7 @@ void GameplayMenu::updateIPALevelMeters(uint32_t elapsed) {
  * @param button The mouse button he clicked
  */
 void GameplayMenu::handleClickOnMap(Point2D point, int button) {
-    fs_knl::TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + point.x - 129,
+    fs_knl::TilePoint mapPt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + point.x - MapRenderer::kGameplayPanelWidth,
                     displayOriginPt_.y + point.y);
 #ifdef _DEBUG
     if (g_System.isKeyModStatePressed(fs_eng::KMD_ALT)) {
@@ -816,7 +919,7 @@ bool GameplayMenu::getAimedAt(int x, int y, fs_knl::WorldPoint *pLocWToSet) {
         locationSet = true;
     } else {
         // Player is shooting on the ground
-        fs_knl::TilePoint mapLocT = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + x - 129,
+        fs_knl::TilePoint mapLocT = mission_->get_map()->screenToTilePoint(displayOriginPt_.x + x - MapRenderer::kGameplayPanelWidth,
                     displayOriginPt_.y + y);
         mapLocT.tz = 0;
         if (mission_->getShootableTile(&mapLocT)) {
@@ -845,6 +948,14 @@ void GameplayMenu::stopShootingEvent()
 void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
 {
     ipa_chng_.ipa_chng = -1;
+
+    if (button == kMouseMiddleButton) {
+        if (!g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
+            isPanning_ = false;
+            g_System.showCursor();
+        }
+        return;
+    }
 
     if (button == kMouseRightButton && isPlayerShooting_) {
         stopShootingEvent();
@@ -900,22 +1011,23 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     // selection and all 4 agents.
     // Individual keys select the specified agent unless ctrl is pressed -
     // then they add/remove agent from current selection.
+    // Double-pressing a key (1-4) within 400ms centers the map view on that agent.
+    static constexpr uint32_t kDoublePressMs = 400;
     if (key.keyCode == fs_eng::kKeyCode_0) {
         // This code is exactly the same as for clicking on "group-button"
         // as you can see above.
         selectAllAgents();
     }
-    else if (key.keyCode == fs_eng::kKeyCode_1) {
-        selectAgent(0, ctrl);
-    }
-    else if (key.keyCode == fs_eng::kKeyCode_2) {
-        selectAgent(1, ctrl);
-    }
-    else if (key.keyCode == fs_eng::kKeyCode_3) {
-        selectAgent(2, ctrl);
-    }
-    else if (key.keyCode == fs_eng::kKeyCode_4) {
-        selectAgent(3, ctrl);
+    else if (key.keyCode >= fs_eng::kKeyCode_1 && key.keyCode <= fs_eng::kKeyCode_4) {
+        int agentIdx = key.keyCode - fs_eng::kKeyCode_1;
+        if (lastAgentKeyIndex_ == agentIdx && tick_count_ - lastAgentKeyTime_ < kDoublePressMs) {
+            centerViewOnAgent(static_cast<size_t>(agentIdx));
+            lastAgentKeyIndex_ = -1;  // consume the double-press
+        } else {
+            selectAgent(static_cast<size_t>(agentIdx), ctrl);
+            lastAgentKeyTime_ = tick_count_;
+            lastAgentKeyIndex_ = agentIdx;
+        }
     } else if (key.keyCode == fs_eng::kKeyCode_Left) { // Scroll the map to the left
         scroll_x_ = -SCROLL_STEP;
     } else if (key.keyCode == fs_eng::kKeyCode_Right) { // Scroll the map to the right
@@ -1166,9 +1278,9 @@ void GameplayMenu::drawPausePanel() {
     std::string str_paused = getMessage("GAME_PAUSED");
     fs_eng::MenuFont *font_used = getMenuFont(fs_eng::FontManager::SIZE_1);
     int txt_width = font_used->textWidth(str_paused);
-    int txt_posx = fs_eng::kScreenWidth / 2 - txt_width / 2;
+    int txt_posx = g_System.getGameWidth() / 2 - txt_width / 2;
     int txt_height = font_used->textHeight(false);
-    int txt_posy = fs_eng::kScreenHeight / 2 - txt_height / 2;
+    int txt_posy = g_System.getGameHeight() / 2 - txt_height / 2;
 
     g_System.drawFillRect({txt_posx - 10, txt_posy - 5},
         txt_width + 20, txt_height + 10, menu_manager_->kMenuColorBlack);

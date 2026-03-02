@@ -21,25 +21,25 @@
 # show up in IDEs unless they are listed in add_library.
 
 set(HEADER_LIST
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/common.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/log/log.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/dernc.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/file.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/configfile.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/portablefile.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/io/formatversion.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/misc/singleton.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/misc/seqmodel.h"
-    "${Freesynd_SOURCE_DIR}/utils/include/fs-utils/misc/timer.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/common.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/log/log.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/io/dernc.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/io/file.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/io/configfile.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/io/portablefile.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/io/formatversion.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/misc/singleton.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/misc/seqmodel.h"
+    "${FreeSynd_SOURCE_DIR}/utils/include/fs-utils/misc/timer.h"
     )
 
 set(SOURCE_LIST
-    "${Freesynd_SOURCE_DIR}/utils/src/log.cpp"
-    "${Freesynd_SOURCE_DIR}/utils/src/file.cpp"
-    "${Freesynd_SOURCE_DIR}/utils/src/configfile.cpp"
-    "${Freesynd_SOURCE_DIR}/utils/src/portablefile.cpp"
-    "${Freesynd_SOURCE_DIR}/utils/src/dernc.cpp"
-    "${Freesynd_SOURCE_DIR}/utils/src/seqmodel.cpp"
+    "${FreeSynd_SOURCE_DIR}/utils/src/log.cpp"
+    "${FreeSynd_SOURCE_DIR}/utils/src/file.cpp"
+    "${FreeSynd_SOURCE_DIR}/utils/src/configfile.cpp"
+    "${FreeSynd_SOURCE_DIR}/utils/src/portablefile.cpp"
+    "${FreeSynd_SOURCE_DIR}/utils/src/dernc.cpp"
+    "${FreeSynd_SOURCE_DIR}/utils/src/seqmodel.cpp"
     )
 
 # Definition of the fs_utils library - will be static or dynamic based on user setting

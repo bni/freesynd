@@ -65,6 +65,10 @@ public:
     static const int kMenuIdFliTransition;
     /*! Id of the mouse left button.*/
     static const int kMouseLeftButton;
+    /*! Id of the mouse middle button (scroll wheel press).*/
+    static const int kMouseMiddleButton;
+    /*! State bitmask for the middle button (matches SDL_BUTTON_MMASK).*/
+    static const int kMouseMiddleButtonMask;
     /*! Id of the mouse right button.*/
     static const int kMouseRightButton;
 

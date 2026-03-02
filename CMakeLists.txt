@@ -20,11 +20,11 @@
 cmake_minimum_required (VERSION 3.28)
 
 project(
-  Freesynd
-  VERSION 0.9
+  FreeSynd
+  VERSION 0.956
   DESCRIPTION "Cross-platform, GPLed reimplementation of the classic Bullfrog game, Syndicate."
   HOMEPAGE_URL "https://freesynd.sourceforge.io/"
-  LANGUAGES CXX)
+  LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20 CACHE STRING "The C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

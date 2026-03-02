@@ -38,6 +38,7 @@ AppContext::AppContext() {
     playIntro_ = true;
     language_ = NULL;
     soundVolume_ = 0;
+    scaleFactor_ = 0;
 }
 
 AppContext::~AppContext() {
@@ -118,10 +119,12 @@ void AppContext::readOrCreateUserConf(const std::string& userConfFolder) {
         in >> userConf;
     }
 
-    fullscreen_ = userConf.read("fullscreen", false);
+    // Fullscreen is default in this fork
+    fullscreen_ = userConf.read("fullscreen", true);
     playIntro_ = userConf.read("play_intro", true);
     test_files_ = userConf.read("test_data", true);
     soundVolume_ = userConf.read("sound_volume", 100);
+    scaleFactor_ = userConf.read("scale_factor", 0);
     const int languageID = userConf.read("language", 0);
     std::string defaultDir;
     fs_utl::File::getDefaultSaveFolder(defaultDir);

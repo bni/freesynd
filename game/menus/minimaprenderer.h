@@ -67,9 +67,10 @@ class MinimapRenderer {
     void setZoom(EZoom zoom);
      //! called when zoom changes
     virtual void updateRenderingInfos() = 0;
- protected:
+ public:
     /*! The size in pixel of the minimap. Minimap is a square.*/
     static const int kMiniMapSizePx;
+ protected:
 
     /*! Number of pixel used to draw a map tile.*/
     int pixpertile_;

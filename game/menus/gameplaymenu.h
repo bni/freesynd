@@ -124,6 +124,8 @@ protected:
     void stopShootingEvent();
     //! Centers the minimap on the selection leader
     void centerMinimapOnLeader();
+    //! Centers the map view on a specific squad agent slot
+    void centerViewOnAgent(size_t agentNo);
     //! Update the select all button state
     void updateSelectAll();
 
@@ -132,6 +134,10 @@ protected:
     static const Point2D kMiniMapScreenPos;
 
     uint32_t tick_count_, last_animate_tick_;
+    /*! Tracks the last agent key (1-4) press time for double-press detection.*/
+    uint32_t lastAgentKeyTime_;
+    /*! Tracks which agent slot (0-3) was last pressed, -1 for none.*/
+    int lastAgentKeyIndex_;
     int last_motion_x_, last_motion_y_;
     //! Text of the hint to display
     std::string hint_;
@@ -159,6 +165,11 @@ protected:
     int scroll_x_;
     /*! Holds the amount of scroll on the Y axis.*/
     int scroll_y_;
+    /*! Sub-pixel accumulators for smooth WASD panning.*/
+    float wasd_pan_accum_x_;
+    float wasd_pan_accum_y_;
+    /*! True while the map is being panned (ctrl+drag or middle-mouse drag).*/
+    bool isPanning_;
     /*! Agent selection manager.*/
     SquadSelection selection_;
     /*! Object mouse cursor is above*/

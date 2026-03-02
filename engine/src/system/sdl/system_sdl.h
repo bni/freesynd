@@ -67,6 +67,12 @@ public:
     bool setViewport(int x, int y, int width, int height) override;
     //! @copydoc System::resetViewport()
     bool resetViewport() override;
+    //! @copydoc System::setNativeAspectRatio()
+    void setNativeAspectRatio(bool native) override;
+    //! @copydoc System::getGameHeight()
+    int getGameHeight() const override { return gameHeight_; }
+    //! @copydoc System::getGameWidth()
+    int getGameWidth() const override { return gameWidth_; }
     
     //! Pumps an event from the event queue
     bool pumpEvents(FS_Event &evtOut) override;
@@ -103,6 +109,8 @@ public:
         return (keyModState_ & keyMod) != 0;
     }
 
+    bool isKeyDown(fs_eng::FS_KeyCode key) const override;
+
     //! Call this method to activate the text event
     void startReceiveText() override;
     //! Call this method to deactivate the text event
@@ -121,15 +129,21 @@ protected:
 
     //! Sets the key arguments with some key codes
     void fillKeyEvent(SDL_Keysym sym, FS_Event &evtOut);
+    //! Compute the centered 4:3 integer-scaled destination rect for the game texture
+    void calculateGameViewport();
+    //! (Re)create the offscreen game texture at 640 x gameHeight_
+    void recreateGameTexture();
+    //! Transform a window-space point to game coordinates
+    Point2D windowToGame(int x, int y) const;
 
 protected:
     /*! A constant that holds the cursor icon width and height.*/
     static const int kCursorWidth;
     /*! Cursor visibility.*/
     bool cursor_visible_;
-    /*! Cursor screen coordinates. */
+    /*! Cursor screen coordinates (in game space). */
     int32_t cursor_x_;
-    /*! Cursor screen coordinates. */
+    /*! Cursor screen coordinates (in game space). */
     int32_t cursor_y_;
     /*! Current cursor hotspot.*/
     int cursor_hs_x_;
@@ -140,6 +154,16 @@ protected:
     SDL_Window *pWindow_;
     //! The renderer is necessary to manipulate SDL_Texture and use graphic acceleration
     SDL_Renderer *pRenderer_;
+    //! Offscreen render target: all game rendering goes here (640x400)
+    SDL_Texture *pGameTexture_;
+    //! Destination rect on screen for the game texture (integer-scaled, centered)
+    SDL_Rect viewportRect_;
+    //! When true use native 8:5 scaling (gameplay); when false use 4:3 (menus)
+    bool nativeAspectRatio_;
+    //! Current game texture height: kScreenHeight in menu mode, dynamic in gameplay
+    int gameHeight_;
+    //! Current game texture width: kScreenWidth in menu mode, dynamic in gameplay
+    int gameWidth_;
 
     /*!
      * A texture that holds all cursors images.

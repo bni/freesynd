@@ -44,7 +44,7 @@ const FrameEvent transition_show_event[] = {
 
 //! This defines the list of events for the transition leave animation
 const FrameEvent transition_leave_event[] = {
-    { 1, MENU_CHANGE,   0x1, NULL },
+    { 1, kNoSound,   0x1, NULL },
     {-1, kNoSound, 0x0, NULL }
 };
 
@@ -372,11 +372,11 @@ void MenuManager::leaveCurrentMenu() {
             pTransitionFliMenu->clearFliDescList();
 
             if (pFactory_->hasLeaveAnimation(currentId)) {
-                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 66, false, false, false, transition_leave_event);
+                pTransitionFliMenu->addFliDesc(pFactory_->getLeaveAnimation(currentId), 20, false, false, false, transition_leave_event);
             }
 
             if (pFactory_->hasShowAnimation(nextMenuId_)) {
-                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 66, false, false, false, transition_show_event);
+                pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 20, false, false, false, transition_show_event);
             }
             // set next menu to be the transition menu
             nextMenuId_ = Menu::kMenuIdFliTransition;

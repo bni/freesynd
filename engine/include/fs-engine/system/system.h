@@ -104,6 +104,12 @@ public:
     virtual bool setViewport(int x, int y, int width, int height) = 0;
     // Reset to default viewport
     virtual bool resetViewport() = 0;
+    //! Switch between 4:3 stretched (menus) and native 8:5 (gameplay) scaling
+    virtual void setNativeAspectRatio(bool native) = 0;
+    //! Returns the current game texture height (400 in menu mode, dynamic in gameplay)
+    virtual int getGameHeight() const = 0;
+    //! Returns the current game texture width (640 in menu mode, dynamic in gameplay)
+    virtual int getGameWidth() const = 0;
 
     //! Pumps an event from the event queue
     virtual bool pumpEvents(FS_Event &evtOut) = 0;
@@ -158,6 +164,9 @@ public:
     virtual int getKeyModState() = 0;
 
     virtual bool isKeyModStatePressed(const int keyMod) = 0;
+
+    //! Returns true if the given key is currently held down (polled, not event-based)
+    virtual bool isKeyDown(fs_eng::FS_KeyCode key) const = 0;
 
     //! Call this method to activate the text event
     virtual void startReceiveText() = 0;
