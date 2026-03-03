@@ -11,6 +11,7 @@ Make it playable with modern controls and high-resolution screens.
 - See more of the map in a zoomed out view, pixel-perfect integer scaled.
 - Hold down CTRL or Mouse-wheel to pan the view using the mouse.
 - Smooth panning with WASD keys instead of edge-panning.
+- High framerate. If you have a 144 Hz monitor scrolling is 144 fps (for example).
 - Faster menu transitions, without the loud sound from the original.
 - Press key 1-4 to select agent. Double press key 1-4 to center on agent.
 
