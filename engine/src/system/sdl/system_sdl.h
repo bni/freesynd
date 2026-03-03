@@ -95,6 +95,7 @@ public:
 
     void hideCursor() override;
     void showCursor() override;
+    void warpMouseToCenter() override;
     void useMenuCursor() override;
     void usePointerCursor() override;
     void usePointerYellowCursor() override;

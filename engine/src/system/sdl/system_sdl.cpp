@@ -726,6 +726,15 @@ void SystemSDL::showCursor() {
     }
 }
 
+void SystemSDL::warpMouseToCenter() {
+    int cx = viewportRect_.x + viewportRect_.w / 2;
+    int cy = viewportRect_.y + viewportRect_.h / 2;
+    SDL_WarpMouseInWindow(pWindow_, cx, cy);
+    // Discard the synthetic SDL_MOUSEMOTION event that the warp generates
+    // so it doesn't corrupt the panning delta on the next frame.
+    SDL_FlushEvents(SDL_MOUSEMOTION, SDL_MOUSEMOTION);
+}
+
 void SystemSDL::useMenuCursor() {
     update_cursor_ = true;
     cursor_rect_.x = cursor_rect_.y = 0;

@@ -77,174 +77,68 @@ mm_renderer_(kMiniMapScreenPos), warningTimer_(20000)
 
 /*!
  * Scroll the map horizontally.
- * Each map has a min and max value for the world origin coords and this
- * method moves that point between those limits. If scrolling hits the
- * map border, the scrolling is made along that border.
- * \return True is a scroll is made
+ * Panning is allowed freely past the map border into the black area.
+ * Only stops when the viewport has completely left the map's horizontal extent.
+ * \return True if a scroll was made
  */
 bool GameplayMenu::scrollOnX() {
-    bool change = false;
-
     int newOriginX = displayOriginPt_.x + scroll_x_;
 
-    fs_knl::TilePoint mpt = mission_->get_map()->screenToTilePoint(newOriginX, displayOriginPt_.y);
+    // Compute the map's horizontal screen-pixel extent from corner tiles.
+    // Formula from Map::tileToScreenPoint:
+    //   screen_x = (map.maxX() + 1) * 32 + (tx - ty) * 32
+    // NE corner (rightmost x): tx=maxX, ty=minY
+    // SW corner (leftmost x):  tx=minX, ty=maxY
+    auto *pMap = mission_->get_map();
+    const int kHalfTileW = 32;  // kTileWidth / 2
+    int xOff = (pMap->maxX() + 1) * kHalfTileW;
+    int screen_x_ne = xOff + (mission_->maxX() - mission_->minY()) * kHalfTileW;
+    int screen_x_sw = xOff + (mission_->minX() - mission_->maxY()) * kHalfTileW;
 
-    // Scroll to the right
-    if (scroll_x_ > 0) {
-        if (mpt.ty < mission_->minY()) {
-            // we hit the upper right border of the map
-            // so we scroll down until the far right corner
-            int newWorldY = displayOriginPt_.y + SCROLL_STEP;
-            newOriginX += SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
+    int screenW = g_System.getGameWidth() - MapRenderer::kGameplayPanelWidth;
 
-            if (mpt.ty < mission_->minY() || mpt.tx > mission_->maxX()) {
-                // We hit the corner so don't scroll
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else if (mpt.tx > mission_->maxX()) {
-            // we hit the lower right border of the map
-            // so we scroll up until the far right corner
-            int newWorldY = displayOriginPt_.y - SCROLL_STEP;
-            newOriginX += SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
-
-            if (mpt.ty < mission_->minY() || mpt.tx > mission_->maxX()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else {
-            // This is a regular right scroll
-            displayOriginPt_.x = newOriginX;
-            change = true;
-        }
-
-    } else { // Scroll to the left
-        if (mpt.tx < mission_->minX()) {
-            // we hit the upper left border of the map
-            // so we scroll down until the far left corner
-            int newWorldY = displayOriginPt_.y + SCROLL_STEP;
-            newOriginX -= SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
-
-            if (mpt.tx < mission_->minX() || mpt.ty > mission_->maxY()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else if (mpt.ty > mission_->maxY()) {
-            // we hit the lower left border of the map
-            // so we scroll up until the far left corner
-            int newWorldY = displayOriginPt_.y - SCROLL_STEP;
-            newOriginX -= SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
-
-            if (mpt.tx < mission_->minX() || mpt.ty > mission_->maxY()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else {
-            displayOriginPt_.x = newOriginX;
-            change = true;
-        }
+    // Stop only when the viewport has zero horizontal overlap with the map
+    // (one tile-width buffer so the edge tile is fully off screen).
+    if (newOriginX > screen_x_ne + kHalfTileW * 2 ||
+        newOriginX + screenW < screen_x_sw - kHalfTileW * 2) {
+        return false;
     }
 
-    return change;
+    displayOriginPt_.x = newOriginX;
+    return true;
 }
 
 /*!
  * Scroll the map vertically.
- * Each map has a min and max value for the world origin coords and this
- * method moves that point between those limits. If scrolling hits the
- * map border, the scrolling is made along that border.
- * \return True is a scroll is made
+ * Panning is allowed freely past the map border into the black area.
+ * Only stops when the viewport has completely left the map's vertical extent.
+ * \return True if a scroll was made
  */
 bool GameplayMenu::scrollOnY() {
-    bool change = false;
-
     int newWorldY = displayOriginPt_.y + scroll_y_;
 
-    fs_knl::TilePoint mpt = mission_->get_map()->screenToTilePoint(displayOriginPt_.x, newWorldY);
+    // Compute the map's vertical screen-pixel extent from corner tiles.
+    // Formula from Map::tileToScreenPoint:
+    //   screen_y = (map.maxZ() + 1) * 16 + (tx + ty) * 16
+    // SE corner (bottommost y): tx=maxX, ty=maxY
+    // NW corner (topmost y):    tx=minX, ty=minY
+    auto *pMap = mission_->get_map();
+    const int kThirdTileH = 16;  // kTileHeight / 3
+    int yOff = (pMap->maxZ() + 1) * kThirdTileH;
+    int screen_y_se = yOff + (mission_->maxX() + mission_->maxY()) * kThirdTileH;
+    int screen_y_nw = yOff + (mission_->minX() + mission_->minY()) * kThirdTileH;
 
-    // Scroll down
-    if (scroll_y_ > 0) {
-        if (mpt.tx > mission_->maxX()) {
-            // we hit the lower right border of the map
-            // so we scroll down until the lower corner
-            int newOriginX = displayOriginPt_.x - 2*SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
+    int screenH = g_System.getGameHeight();
 
-            if (mpt.ty > mission_->maxY() || mpt.tx > mission_->maxX()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else if (mpt.ty > mission_->maxY()) {
-            // we hit the lower left border of the map
-            // so we scroll down until the lower corner
-            int newOriginX = displayOriginPt_.x + 2*SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
-
-            if (mpt.ty > mission_->maxY() || mpt.tx > mission_->maxX()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else {
-            displayOriginPt_.y = newWorldY;
-            change = true;
-        }
-
-    } else { // Scroll up
-        if (mpt.tx < mission_->minX()) {
-            // we hit the upper right border of the map
-            // so we scroll up until the upper corner
-            int newOriginX = displayOriginPt_.x + 2*SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
-
-            if (mpt.ty < mission_->minY() || mpt.tx < mission_->minX()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else if (mpt.ty < mission_->minY()) {
-            // we hit the upper left border of the map
-            // so we scroll up until the upper corner
-            int newOriginX = displayOriginPt_.x - 2*SCROLL_STEP;
-            mpt = mission_->get_map()->screenToTilePoint(newOriginX, newWorldY);
-
-            if (mpt.ty < mission_->minY() || mpt.tx < mission_->minX()) {
-                return false;
-            } else {
-                displayOriginPt_.x = newOriginX;
-                displayOriginPt_.y = newWorldY;
-                change = true;
-            }
-        } else {
-            displayOriginPt_.y = newWorldY;
-            change = true;
-        }
+    // Stop only when the viewport has zero vertical overlap with the map
+    // (one tile-height buffer so the edge tile is fully off screen).
+    if (newWorldY > screen_y_se + kThirdTileH * 3 ||
+        newWorldY + screenH < screen_y_nw - kThirdTileH * 3) {
+        return false;
     }
 
-    return change;
+    displayOriginPt_.y = newWorldY;
+    return true;
 }
 
 /*!
@@ -599,6 +493,13 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
             scrollOnY();
             scroll_y_ = 0;
         }
+
+        // Warp the hidden cursor back to the centre of the viewport so it
+        // never reaches the OS screen edge and stops generating motion events.
+        g_System.warpMouseToCenter();
+        last_motion_x_ = g_System.getGameWidth() / 2;
+        last_motion_y_ = g_System.getGameHeight() / 2;
+        return;
     }
 
     last_motion_x_ = point.x;

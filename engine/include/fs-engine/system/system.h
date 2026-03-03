@@ -153,6 +153,9 @@ public:
     virtual void hideCursor() = 0;
     //! Shows the mouse cursor.
     virtual void showCursor() = 0;
+    //! Warps the mouse pointer to the centre of the game viewport and discards
+    //! the synthetic motion event that SDL generates for the warp.
+    virtual void warpMouseToCenter() {}
     //! Use this cursor for menu screens
     virtual void useMenuCursor() = 0;
     virtual void usePointerCursor() = 0;
