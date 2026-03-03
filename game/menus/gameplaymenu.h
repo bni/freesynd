@@ -168,6 +168,9 @@ protected:
     /*! Sub-pixel accumulators for smooth WASD panning.*/
     float wasd_pan_accum_x_;
     float wasd_pan_accum_y_;
+    /*! Current panning velocity in pixels/ms, eased toward the target each tick.*/
+    float pan_vel_x_;
+    float pan_vel_y_;
     /*! True while the map is being panned (ctrl+drag or middle-mouse drag).*/
     bool isPanning_;
     /*! Agent selection manager.*/

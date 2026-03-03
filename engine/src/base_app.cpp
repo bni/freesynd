@@ -219,8 +219,7 @@ int BaseApp::run() {
         while(system_->pumpEvents(fsEvt)) {
             menus_.handleEvent(fsEvt);
         }
-        if (diff_ticks < 30) {
-            system_->delay(30 - diff_ticks);
+        if (diff_ticks == 0) {
             continue;
         }
         system_->clearScreen();

@@ -27,6 +27,7 @@
 #include "gameplaymenu.h"
 
 #include <cassert>
+#include <cmath>
 
 #include "fs-engine/gfx/animationmanager.h"
 #include "fs-engine/sound/musicmanager.h"
@@ -66,6 +67,8 @@ mm_renderer_(kMiniMapScreenPos), warningTimer_(20000)
     isPanning_ = false;
     wasd_pan_accum_x_ = 0.f;
     wasd_pan_accum_y_ = 0.f;
+    pan_vel_x_ = 0.f;
+    pan_vel_y_ = 0.f;
     ipa_chng_.ipa_chng = -1;
     canPlayPoliceWarnSound_ = true;
     lastAgentKeyTime_ = 0;
@@ -388,9 +391,10 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         canPlayPoliceWarnSound_ = true;
     }
 
-    // WASD smooth panning: accumulate sub-pixel amounts proportional to elapsed
-    // time so movement is frame-rate independent and smooth.
-    static constexpr float kWASDPanSpeed = 1.0f;  // pixels per millisecond
+    // WASD smooth panning: velocity exponentially eases toward the target speed
+    // for smooth acceleration and deceleration.
+    static constexpr float kWASDPanMaxSpeed = 1.0f;  // pixels per millisecond
+    static constexpr float kWASDPanSmooth  = 0.02f;  // smoothing rate per ms (tau ~50ms)
     {
         float dx = 0.f, dy = 0.f;
         if (g_System.isKeyDown(fs_eng::kKeyCode_A)) dx -= 1.f;
@@ -398,16 +402,21 @@ bool GameplayMenu::handleTick(uint32_t elapsed)
         if (g_System.isKeyDown(fs_eng::kKeyCode_W)) dy -= 1.f;
         if (g_System.isKeyDown(fs_eng::kKeyCode_S)) dy += 1.f;
 
-        if (dx != 0.f || dy != 0.f) {
-            wasd_pan_accum_x_ += dx * kWASDPanSpeed * elapsed;
-            wasd_pan_accum_y_ += dy * kWASDPanSpeed * elapsed;
+        float targetVx = dx * kWASDPanMaxSpeed;
+        float targetVy = dy * kWASDPanMaxSpeed;
+
+        // Exponential lerp: vel approaches target smoothly regardless of frame rate
+        float alpha = 1.f - std::exp(-kWASDPanSmooth * elapsed);
+        pan_vel_x_ += alpha * (targetVx - pan_vel_x_);
+        pan_vel_y_ += alpha * (targetVy - pan_vel_y_);
+
+        if (std::fabs(pan_vel_x_) > 0.001f || std::fabs(pan_vel_y_) > 0.001f) {
+            wasd_pan_accum_x_ += pan_vel_x_ * elapsed;
+            wasd_pan_accum_y_ += pan_vel_y_ * elapsed;
             int ipx = static_cast<int>(wasd_pan_accum_x_);
             int ipy = static_cast<int>(wasd_pan_accum_y_);
             if (ipx != 0) { scroll_x_ += ipx; wasd_pan_accum_x_ -= ipx; }
             if (ipy != 0) { scroll_y_ += ipy; wasd_pan_accum_y_ -= ipy; }
-        } else {
-            wasd_pan_accum_x_ = 0.f;
-            wasd_pan_accum_y_ = 0.f;
         }
     }
 
