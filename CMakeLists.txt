@@ -21,7 +21,7 @@ cmake_minimum_required (VERSION 3.28)
 
 project(
   FreeSynd
-  VERSION 0.956
+  VERSION 0.957
   DESCRIPTION "Cross-platform, GPLed reimplementation of the classic Bullfrog game, Syndicate."
   HOMEPAGE_URL "https://freesynd.sourceforge.io/"
   LANGUAGES C CXX)

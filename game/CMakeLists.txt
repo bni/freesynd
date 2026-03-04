@@ -140,17 +140,18 @@ if (APPLE)
 elseif (WIN32)
     install (TARGETS freesynd DESTINATION .)
 
-    # Derive the MinGW bin dir from the compiler path to locate runtime DLLs
-    get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+    # Runtime DLLs live in the target sysroot bin, not the host compiler bin.
+    # MINGW_PREFIX and MINGW_TRIPLE are defined in cmake/toolchain-mingw64.cmake.
+    set(MINGW_RUNTIME_DIR "${MINGW_PREFIX}/${MINGW_TRIPLE}/bin")
 
     add_custom_command(TARGET freesynd POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
                 "${CMAKE_SOURCE_DIR}/extern/sdl2/lib/${FREESYND_ARCH}/SDL2.dll"
                 "${CMAKE_SOURCE_DIR}/extern/SDL2_image/lib/${FREESYND_ARCH}/SDL2_image.dll"
                 "${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/${FREESYND_ARCH}/SDL2_mixer.dll"
-                "${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/${FREESYND_ARCH}/libogg-0.dll"
-                "${MINGW_BIN_DIR}/libgcc_s_seh-1.dll"
-                "${MINGW_BIN_DIR}/libstdc++-6.dll"
+                "${MINGW_RUNTIME_DIR}/libgcc_s_seh-1.dll"
+                "${MINGW_RUNTIME_DIR}/libstdc++-6.dll"
+                "${MINGW_RUNTIME_DIR}/libwinpthread-1.dll"
                 "$<TARGET_FILE_DIR:freesynd>"
         COMMENT "Copying SDL2 and MinGW runtime DLLs next to FreeSynd.exe"
         VERBATIM)
