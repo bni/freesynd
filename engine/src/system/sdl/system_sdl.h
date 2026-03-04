@@ -98,6 +98,7 @@ public:
     void warpMouseToCenter() override;
     void setRelativeMouseMode(bool enabled) override;
     void warpMouseTo(int gameX, int gameY) override;
+    void getLastMouseRelDelta(float &xrel, float &yrel) const override;
     void useMenuCursor() override;
     void usePointerCursor() override;
     void usePointerYellowCursor() override;
@@ -184,6 +185,9 @@ protected:
      * See KeyMod enumeration to know all modifier buttons.
      */
     int keyModState_;
+    //! Last relative mouse delta scaled to game coords (float, no truncation)
+    float lastRelX_ = 0.0f;
+    float lastRelY_ = 0.0f;
 };
 
 }

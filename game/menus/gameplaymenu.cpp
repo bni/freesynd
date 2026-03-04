@@ -425,6 +425,8 @@ void GameplayMenu::handleRender() {
 
 void GameplayMenu::stopPanning() {
     isPanning_ = false;
+    mouse_pan_accum_x_ = 0.0f;
+    mouse_pan_accum_y_ = 0.0f;
     g_System.setRelativeMouseMode(false);
     g_System.showCursor();
     g_System.warpMouseTo(panStartPos_.x, panStartPos_.y);
@@ -472,6 +474,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
     if (shouldPan && !isPanning_) {
         panStartPos_ = {last_motion_x_, last_motion_y_};
         isPanning_ = true;
+        mouse_pan_accum_x_ = 0.0f;
+        mouse_pan_accum_y_ = 0.0f;
         g_System.hideCursor();
         // Relative mouse mode locks the OS cursor in place and delivers raw
         // deltas, bypassing screen-edge clamping and macOS Dock friction that
@@ -487,19 +491,21 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
     }
 
     if (isPanning_) {
-        int amount = 3;
+        // Use the untruncated float delta from the system and accumulate
+        // sub-pixel remainders — same technique as WASD panning — to avoid
+        // the jitter caused by truncating fractional game-pixel deltas at
+        // higher display scales (e.g. 2× window → scale 0.5 → every other
+        // raw mouse pixel was silently dropped).
+        constexpr float kMousePanSpeed = 3.0f;
+        float rawX, rawY;
+        g_System.getLastMouseRelDelta(rawX, rawY);
+        mouse_pan_accum_x_ += rawX * kMousePanSpeed;
+        mouse_pan_accum_y_ += rawY * kMousePanSpeed;
 
-        if (point.x > last_motion_x_) {
-            scroll_x_ += (point.x - last_motion_x_) * amount;
-        } else if (point.x < last_motion_x_) {
-            scroll_x_ -= (last_motion_x_ - point.x) * amount;
-        }
-
-        if (point.y > last_motion_y_) {
-            scroll_y_ += (point.y - last_motion_y_) * amount;
-        } else if (point.y < last_motion_y_) {
-            scroll_y_ -= (last_motion_y_ - point.y) * amount;
-        }
+        scroll_x_ = static_cast<int>(mouse_pan_accum_x_);
+        scroll_y_ = static_cast<int>(mouse_pan_accum_y_);
+        mouse_pan_accum_x_ -= scroll_x_;
+        mouse_pan_accum_y_ -= scroll_y_;
 
         // Scroll the map
         if (scroll_x_ != 0) {
@@ -671,6 +677,8 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
     if (button == kMouseMiddleButton) {
         panStartPos_ = {last_motion_x_, last_motion_y_};
         isPanning_ = true;
+        mouse_pan_accum_x_ = 0.0f;
+        mouse_pan_accum_y_ = 0.0f;
         g_System.hideCursor();
         g_System.setRelativeMouseMode(true);
         last_motion_x_ = g_System.getGameWidth() / 2;

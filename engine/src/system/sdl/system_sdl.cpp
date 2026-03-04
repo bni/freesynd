@@ -501,13 +501,19 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
                 // last_motion_), and last_motion_ is reset to centre after each
                 // panning step, so this transparently delivers the raw delta
                 // without any screen-edge or Dock friction.
+                // Store the untruncated float deltas so the game can use them
+                // with a sub-pixel accumulator for perfectly smooth scrolling.
                 float scaleX = viewportRect_.w > 0
                     ? (float)gameWidth_  / (float)viewportRect_.w : 1.0f;
                 float scaleY = viewportRect_.h > 0
                     ? (float)gameHeight_ / (float)viewportRect_.h : 1.0f;
-                evtOut.motion.x = gameWidth_  / 2 + (int)(evtIn.motion.xrel * scaleX);
-                evtOut.motion.y = gameHeight_ / 2 + (int)(evtIn.motion.yrel * scaleY);
+                lastRelX_ = evtIn.motion.xrel * scaleX;
+                lastRelY_ = evtIn.motion.yrel * scaleY;
+                evtOut.motion.x = gameWidth_  / 2 + (int)lastRelX_;
+                evtOut.motion.y = gameHeight_ / 2 + (int)lastRelY_;
             } else {
+                lastRelX_ = 0.0f;
+                lastRelY_ = 0.0f;
                 Point2D p = windowToGame(evtIn.motion.x, evtIn.motion.y);
                 evtOut.motion.x = cursor_x_ = p.x;
                 evtOut.motion.y = cursor_y_ = p.y;
@@ -761,6 +767,11 @@ void SystemSDL::warpMouseToCenter() {
 
 void SystemSDL::setRelativeMouseMode(bool enabled) {
     SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
+}
+
+void SystemSDL::getLastMouseRelDelta(float &xrel, float &yrel) const {
+    xrel = lastRelX_;
+    yrel = lastRelY_;
 }
 
 void SystemSDL::warpMouseTo(int gameX, int gameY) {

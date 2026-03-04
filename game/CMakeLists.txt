@@ -140,6 +140,12 @@ if (APPLE)
 elseif (WIN32)
     install (TARGETS freesynd DESTINATION .)
 
+    # Place the exe and all accompanying files inside a FreeSynd/ subfolder,
+    # mirroring the FreeSynd.app bundle layout on macOS.
+    set_target_properties(freesynd PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/FreeSynd"
+    )
+
     # Runtime DLLs live in the target sysroot bin, not the host compiler bin.
     # MINGW_PREFIX and MINGW_TRIPLE are defined in cmake/toolchain-mingw64.cmake.
     set(MINGW_RUNTIME_DIR "${MINGW_PREFIX}/${MINGW_TRIPLE}/bin")
@@ -157,15 +163,23 @@ elseif (WIN32)
         VERBATIM)
 
     add_custom_command(TARGET freesynd POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_FILE_DIR:freesynd>/data"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:freesynd>/data"
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${CMAKE_SOURCE_DIR}/data"
+                "${CMAKE_SOURCE_DIR}/data/cursors"
+                "$<TARGET_FILE_DIR:freesynd>/data/cursors"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/data/data"
                 "$<TARGET_FILE_DIR:freesynd>/data"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/data/lang"
+                "$<TARGET_FILE_DIR:freesynd>/data/lang"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/data/ref"
+                "$<TARGET_FILE_DIR:freesynd>/data/ref"
         COMMAND ${CMAKE_COMMAND} -E copy
                 "${CMAKE_SOURCE_DIR}/data/freesynd.ini"
                 "$<TARGET_FILE_DIR:freesynd>/freesynd.ini"
-        COMMAND ${CMAKE_COMMAND} -E rm
-                "$<TARGET_FILE_DIR:freesynd>/data/CMakeLists.txt"
-                "$<TARGET_FILE_DIR:freesynd>/data/freesynd.ini"
         COMMENT "Copying data folder and freesynd.ini next to FreeSynd.exe"
         VERBATIM)
 else ()

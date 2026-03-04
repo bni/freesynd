@@ -163,6 +163,9 @@ public:
     virtual void setRelativeMouseMode([[maybe_unused]] bool enabled) {}
     //! Warp the mouse cursor to the given game-coordinate position.
     virtual void warpMouseTo([[maybe_unused]] int gameX, [[maybe_unused]] int gameY) {}
+    //! Returns the last relative mouse delta scaled to game coordinates (floats,
+    //! no truncation). Only meaningful when relative mouse mode is active.
+    virtual void getLastMouseRelDelta([[maybe_unused]] float &xrel, [[maybe_unused]] float &yrel) const { xrel = 0.0f; yrel = 0.0f; }
     //! Use this cursor for menu screens
     virtual void useMenuCursor() = 0;
     virtual void usePointerCursor() = 0;
