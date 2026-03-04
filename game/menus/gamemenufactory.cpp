@@ -180,7 +180,7 @@ const fs_eng::FrameEvent game_lost[] = {
 
 //! This defines the list of event for the menu up animation
 const fs_eng::FrameEvent menu_up[] = {
-    { 1, fs_eng::kNoSound,   0x1, NULL },
+    { 1, fs_eng::MENU_UP,   0x1, NULL },
     { -1, fs_eng::kNoSound,  0x0, NULL }
 };
 

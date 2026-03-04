@@ -370,6 +370,11 @@ void Menu::keyEvent(FS_Key key)
     }
 }
 
+void Menu::keyUpEvent(FS_Key key)
+{
+    handleKeyUp(key);
+}
+
 /*!
  * Handles the mouse motion event.
  * \param x X screen coordinate

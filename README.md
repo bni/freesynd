@@ -12,8 +12,9 @@ Make it playable with modern controls and high-resolution screens.
 - Hold down CTRL or Mouse-wheel to pan the view using the mouse.
 - Smooth panning with WASD keys instead of edge-panning.
 - High framerate. If you have a 144 Hz monitor scrolling is 144 fps (for example).
-- Faster menu transitions, without the loud sound from the original.
+- Faster menu transitions.
 - Press key 1-4 to select agent. Double press key 1-4 to center on agent.
+- Build on macOS with Windows x64 (mingw64) cross-compile.
 
 All credits to the original FreeSynd authors and Bullfrog.
 
@@ -22,7 +23,7 @@ All credits to the original FreeSynd authors and Bullfrog.
 ### Convert data files to lower case
 rename.pl -f 'y/A-Z/a-z/' *
 
-### CMake options om macOS
+### CMake options on macOS
 --preset "ninja-clang-arm64-release" -DCONAN_COMMAND=~/Library/Python/3.14/bin/conan
 
 ### Go directly to mission with cheats

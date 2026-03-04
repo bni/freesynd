@@ -109,6 +109,19 @@ if (APPLE)
 						COMMAND ${CMAKE_COMMAND} -E rm
 					  "$<TARGET_FILE_DIR:freesynd>/../Resources/CMakeLists.txt"
 					  "$<TARGET_FILE_DIR:freesynd>/../Resources/Freesynd.ini")
+
+	find_program(DYLIBBUNDLER_EXE dylibbundler REQUIRED)
+
+	add_custom_command(TARGET freesynd POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E make_directory
+				"$<TARGET_BUNDLE_DIR:freesynd>/Contents/Frameworks"
+		COMMAND ${DYLIBBUNDLER_EXE}
+				-od -b -of
+				-x "$<TARGET_BUNDLE_DIR:freesynd>/Contents/MacOS/FreeSynd"
+				-d "$<TARGET_BUNDLE_DIR:freesynd>/Contents/Frameworks/"
+				-p "@loader_path/../Frameworks/"
+		COMMENT "Bundling dylibs into FreeSynd.app/Contents/Frameworks"
+		VERBATIM)
 		
 	# Override certain properties to make the freesynd
 	# executable into an application bundle for OS X.
@@ -126,6 +139,34 @@ if (APPLE)
 	
 elseif (WIN32)
     install (TARGETS freesynd DESTINATION .)
+
+    # Derive the MinGW bin dir from the compiler path to locate runtime DLLs
+    get_filename_component(MINGW_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
+
+    add_custom_command(TARGET freesynd POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                "${CMAKE_SOURCE_DIR}/extern/sdl2/lib/${FREESYND_ARCH}/SDL2.dll"
+                "${CMAKE_SOURCE_DIR}/extern/SDL2_image/lib/${FREESYND_ARCH}/SDL2_image.dll"
+                "${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/${FREESYND_ARCH}/SDL2_mixer.dll"
+                "${CMAKE_SOURCE_DIR}/extern/SDL2_mixer/lib/${FREESYND_ARCH}/libogg-0.dll"
+                "${MINGW_BIN_DIR}/libgcc_s_seh-1.dll"
+                "${MINGW_BIN_DIR}/libstdc++-6.dll"
+                "$<TARGET_FILE_DIR:freesynd>"
+        COMMENT "Copying SDL2 and MinGW runtime DLLs next to FreeSynd.exe"
+        VERBATIM)
+
+    add_custom_command(TARGET freesynd POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/data"
+                "$<TARGET_FILE_DIR:freesynd>/data"
+        COMMAND ${CMAKE_COMMAND} -E copy
+                "${CMAKE_SOURCE_DIR}/data/freesynd.ini"
+                "$<TARGET_FILE_DIR:freesynd>/freesynd.ini"
+        COMMAND ${CMAKE_COMMAND} -E rm
+                "$<TARGET_FILE_DIR:freesynd>/data/CMakeLists.txt"
+                "$<TARGET_FILE_DIR:freesynd>/data/freesynd.ini"
+        COMMENT "Copying data folder and freesynd.ini next to FreeSynd.exe"
+        VERBATIM)
 else ()
     # We use the default installation directory
     install (TARGETS freesynd DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})

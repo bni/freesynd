@@ -72,6 +72,16 @@ void SoundManager::initialize(Audio* audio, bool disabled, bool doLoadIntroSound
     }
 
     audio_->setSoundVolume(g_Ctx.getSoundVolume());
+
+    // MENU_UP and MENU_CHANGE are UI transition sounds that are too loud
+    // relative to gameplay audio — reduce them to 25% of max volume.
+    if (!disabled_) {
+        int quietVol = audio_->getMaxVolume() / 4;
+        Sound *menuUp = soundFromInGame(MENU_UP);
+        if (menuUp) menuUp->setVolume(quietVol);
+        Sound *menuChange = soundFromInGame(MENU_CHANGE);
+        if (menuChange) menuChange->setVolume(quietVol);
+    }
 }
 
 void SoundManager::loadSounds(SampleSet set)

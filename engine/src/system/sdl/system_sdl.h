@@ -96,6 +96,8 @@ public:
     void hideCursor() override;
     void showCursor() override;
     void warpMouseToCenter() override;
+    void setRelativeMouseMode(bool enabled) override;
+    void warpMouseTo(int gameX, int gameY) override;
     void useMenuCursor() override;
     void usePointerCursor() override;
     void usePointerYellowCursor() override;

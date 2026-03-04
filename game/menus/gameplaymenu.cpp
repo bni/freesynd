@@ -423,12 +423,21 @@ void GameplayMenu::handleRender() {
 #endif
 }
 
+void GameplayMenu::stopPanning() {
+    isPanning_ = false;
+    g_System.setRelativeMouseMode(false);
+    g_System.showCursor();
+    g_System.warpMouseTo(panStartPos_.x, panStartPos_.y);
+}
+
 void GameplayMenu::handleLeave()
 {
     g_System.setNativeAspectRatio(false);
     if (isPanning_) {
         isPanning_ = false;
+        g_System.setRelativeMouseMode(false);
         g_System.showCursor();
+        // Don't restore position on leave — the menu is going away anyway
     }
     g_MusicMgr.stopCurrentSong();
 
@@ -461,11 +470,20 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
     bool shouldPan = ctrlHeld || middleHeld;
 
     if (shouldPan && !isPanning_) {
+        panStartPos_ = {last_motion_x_, last_motion_y_};
         isPanning_ = true;
         g_System.hideCursor();
+        // Relative mouse mode locks the OS cursor in place and delivers raw
+        // deltas, bypassing screen-edge clamping and macOS Dock friction that
+        // made downward panning feel sluggish.
+        g_System.setRelativeMouseMode(true);
+        last_motion_x_ = g_System.getGameWidth() / 2;
+        last_motion_y_ = g_System.getGameHeight() / 2;
+        // Skip this event: point is still an absolute position while
+        // last_motion was just set to centre, so the delta would be garbage.
+        return;
     } else if (!shouldPan && isPanning_) {
-        isPanning_ = false;
-        g_System.showCursor();
+        stopPanning();
     }
 
     if (isPanning_) {
@@ -494,9 +512,8 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
             scroll_y_ = 0;
         }
 
-        // Warp the hidden cursor back to the centre of the viewport so it
-        // never reaches the OS screen edge and stops generating motion events.
-        g_System.warpMouseToCenter();
+        // Reset to centre so the next event's delta is computed correctly
+        // (the system reports position as centre + raw delta in relative mode).
         last_motion_x_ = g_System.getGameWidth() / 2;
         last_motion_y_ = g_System.getGameHeight() / 2;
         return;
@@ -652,8 +669,12 @@ void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t st
 bool GameplayMenu::handleMouseDown(Point2D point, int button)
 {
     if (button == kMouseMiddleButton) {
+        panStartPos_ = {last_motion_x_, last_motion_y_};
         isPanning_ = true;
         g_System.hideCursor();
+        g_System.setRelativeMouseMode(true);
+        last_motion_x_ = g_System.getGameWidth() / 2;
+        last_motion_y_ = g_System.getGameHeight() / 2;
         return true;
     }
 
@@ -860,9 +881,8 @@ void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
     ipa_chng_.ipa_chng = -1;
 
     if (button == kMouseMiddleButton) {
-        if (!g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
-            isPanning_ = false;
-            g_System.showCursor();
+        if (isPanning_ && !g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
+            stopPanning();
         }
         return;
     }
@@ -871,6 +891,12 @@ void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
         stopShootingEvent();
     }
 
+}
+
+void GameplayMenu::handleKeyUp(const fs_eng::FS_Key key) {
+    if (key.keyCode == fs_eng::kKeyCode_Ctrl && isPanning_) {
+        stopPanning();
+    }
 }
 
 bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {

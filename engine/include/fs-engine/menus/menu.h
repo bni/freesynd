@@ -146,6 +146,8 @@ public:
 
     //! Handles key pressed
     void keyEvent(FS_Key key);
+    //! Handles key released (modifier keys only)
+    void keyUpEvent(FS_Key key);
     //! Handles mouse moved
     void mouseMotionEvent(Point2D point, uint32_t state);
     //! Handles mouse button pressed
@@ -194,6 +196,8 @@ protected:
     virtual void handleMouseMotion([[maybe_unused]] Point2D point, [[maybe_unused]] uint32_t state) {}
     //! Handle key that where pressed but not assigned to any actions
     virtual bool handleUnMappedKey([[maybe_unused]] const FS_Key key) { return false;}
+    //! Handle modifier key released (e.g. Ctrl released stops panning)
+    virtual void handleKeyUp([[maybe_unused]] const FS_Key key) {}
 
     //! Convenient method to return the menu font with the given size
     MenuFont * getMenuFont(FontManager::EFontSize size);

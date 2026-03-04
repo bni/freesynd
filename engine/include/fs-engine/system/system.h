@@ -44,7 +44,8 @@ enum FS_EventType {
     EVT_MSE_MOTION = 2,    // Mouse motion
     EVT_MSE_UP = 3,
     EVT_MSE_DOWN = 4,
-    EVT_KEY_DOWN = 5
+    EVT_KEY_DOWN = 5,
+    EVT_KEY_UP = 6
 };
 
 /** The "quit requested" event */
@@ -156,6 +157,12 @@ public:
     //! Warps the mouse pointer to the centre of the game viewport and discards
     //! the synthetic motion event that SDL generates for the warp.
     virtual void warpMouseToCenter() {}
+    //! Enable or disable SDL relative mouse mode for smooth panning.
+    //! In relative mode the OS cursor is locked in place and motion events
+    //! carry raw deltas unaffected by screen edges or platform dock friction.
+    virtual void setRelativeMouseMode([[maybe_unused]] bool enabled) {}
+    //! Warp the mouse cursor to the given game-coordinate position.
+    virtual void warpMouseTo([[maybe_unused]] int gameX, [[maybe_unused]] int gameY) {}
     //! Use this cursor for menu screens
     virtual void useMenuCursor() = 0;
     virtual void usePointerCursor() = 0;

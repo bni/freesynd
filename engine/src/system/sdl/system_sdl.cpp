@@ -444,9 +444,19 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
                     break;
                 case SDLK_RCTRL:
                     keyModState_ = keyModState_ & ~KMD_RCTRL;
+                    if (!(keyModState_ & KMD_CTRL)) {
+                        evtOut.key.type = EVT_KEY_UP;
+                        evtOut.key.key.keyCode = kKeyCode_Ctrl;
+                        evtOut.key.keyMods = keyModState_;
+                    }
                     break;
                 case SDLK_LCTRL:
                     keyModState_ = keyModState_ & ~KMD_LCTRL;
+                    if (!(keyModState_ & KMD_CTRL)) {
+                        evtOut.key.type = EVT_KEY_UP;
+                        evtOut.key.key.keyCode = kKeyCode_Ctrl;
+                        evtOut.key.keyMods = keyModState_;
+                    }
                     break;
                 case SDLK_RALT:
                     keyModState_ = keyModState_ & ~KMD_RALT;
@@ -481,13 +491,27 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
             break;
         case SDL_MOUSEMOTION:
             {
-            Point2D p = windowToGame(evtIn.motion.x, evtIn.motion.y);
             update_cursor_ = true;
             evtOut.motion.type = EVT_MSE_MOTION;
-            evtOut.motion.x = cursor_x_ = p.x;
-            evtOut.motion.y = cursor_y_ = p.y;
             evtOut.motion.state = evtIn.motion.state;
             evtOut.motion.keyMods = keyModState_;
+            if (SDL_GetRelativeMouseMode()) {
+                // In relative mode: report a fake absolute position = centre +
+                // scaled delta.  The game code computes delta as (point -
+                // last_motion_), and last_motion_ is reset to centre after each
+                // panning step, so this transparently delivers the raw delta
+                // without any screen-edge or Dock friction.
+                float scaleX = viewportRect_.w > 0
+                    ? (float)gameWidth_  / (float)viewportRect_.w : 1.0f;
+                float scaleY = viewportRect_.h > 0
+                    ? (float)gameHeight_ / (float)viewportRect_.h : 1.0f;
+                evtOut.motion.x = gameWidth_  / 2 + (int)(evtIn.motion.xrel * scaleX);
+                evtOut.motion.y = gameHeight_ / 2 + (int)(evtIn.motion.yrel * scaleY);
+            } else {
+                Point2D p = windowToGame(evtIn.motion.x, evtIn.motion.y);
+                evtOut.motion.x = cursor_x_ = p.x;
+                evtOut.motion.y = cursor_y_ = p.y;
+            }
             }
             break;
         default:
@@ -732,6 +756,18 @@ void SystemSDL::warpMouseToCenter() {
     SDL_WarpMouseInWindow(pWindow_, cx, cy);
     // Discard the synthetic SDL_MOUSEMOTION event that the warp generates
     // so it doesn't corrupt the panning delta on the next frame.
+    SDL_FlushEvents(SDL_MOUSEMOTION, SDL_MOUSEMOTION);
+}
+
+void SystemSDL::setRelativeMouseMode(bool enabled) {
+    SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
+}
+
+void SystemSDL::warpMouseTo(int gameX, int gameY) {
+    if (viewportRect_.w == 0 || viewportRect_.h == 0) return;
+    int wx = gameX * viewportRect_.w / gameWidth_  + viewportRect_.x;
+    int wy = gameY * viewportRect_.h / gameHeight_ + viewportRect_.y;
+    SDL_WarpMouseInWindow(pWindow_, wx, wy);
     SDL_FlushEvents(SDL_MOUSEMOTION, SDL_MOUSEMOTION);
 }
 

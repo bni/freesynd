@@ -12,9 +12,9 @@
 freesynd.ini
 
 /.vscode/
+/.idea/
 
 CMakeUserPresets.json
 .DS_Store
 
-/.idea
-/synd
+/data/data

@@ -51,6 +51,7 @@ protected:
      */
     ///@{
     bool handleUnMappedKey(const fs_eng::FS_Key key) override;
+    void handleKeyUp(const fs_eng::FS_Key key) override;
 
     void handleMouseMotion(Point2D point, uint32_t state) override;
     bool handleMouseDown(Point2D point, int button) override;
@@ -63,6 +64,8 @@ protected:
     void handleClickOnMap(Point2D point, int button);
     //! Handles the user's click on the minimap
     void handleClickOnMinimap(Point2D point);
+    //! Stop panning: disable relative mouse mode, show cursor, restore position
+    void stopPanning();
     ///@}
 
     /**
@@ -173,6 +176,8 @@ protected:
     float pan_vel_y_;
     /*! True while the map is being panned (ctrl+drag or middle-mouse drag).*/
     bool isPanning_;
+    /*! Cursor game-coordinate position when panning started; restored on stop.*/
+    Point2D panStartPos_;
     /*! Agent selection manager.*/
     SquadSelection selection_;
     /*! Object mouse cursor is above*/

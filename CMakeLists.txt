@@ -112,10 +112,12 @@ else()
     message(STATUS "Doxygen not found, not building docs")
 endif()
 
-find_package(Catch2 3 REQUIRED)
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    include(CTest)
-    include(Catch)
+if(BUILD_TESTING)
+    find_package(Catch2 3 REQUIRED)
+    if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+        include(CTest)
+        include(Catch)
+    endif()
 endif()
 
 

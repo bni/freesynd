@@ -44,7 +44,7 @@ const FrameEvent transition_show_event[] = {
 
 //! This defines the list of events for the transition leave animation
 const FrameEvent transition_leave_event[] = {
-    { 1, kNoSound,   0x1, NULL },
+    { 1, MENU_CHANGE,   0x1, NULL },
     {-1, kNoSound, 0x0, NULL }
 };
 
@@ -450,6 +450,11 @@ void MenuManager::handleEvent(const FS_Event& evt) {
     case EVT_KEY_DOWN:
         if (current_ && !drop_events_) {
             current_->keyEvent(evt.key.key);
+        }
+        break;
+    case EVT_KEY_UP:
+        if (current_ && !drop_events_) {
+            current_->keyUpEvent(evt.key.key);
         }
         break;
     case EVT_NONE:
