@@ -249,6 +249,7 @@ bool GameplayMenu::handleBeforeShow() {
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
     isLeftButtonDown_ = false;
+    isPanicModeActive_ = false;
 
     // Register event handlers
     handleAgentDied_ = EventManager::listen<fs_knl::AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
@@ -1462,19 +1463,30 @@ void GameplayMenu::handleWeaponSelection(uint8_t selectorIndex, bool ctrl) {
 }
 
 /*!
- * Panic mode: max all IPA gauges and equip the first weapon for every
- * selected agent. Mirrors the original Syndicate dual-mouse-button feature.
+ * Toggles panic mode for all selected agents.
+ * On: max all IPA gauges and equip first weapon.
+ * Off: reset IPA gauges to neutral and deselect weapons.
+ * Mirrors the original Syndicate dual-mouse-button feature.
  */
 void GameplayMenu::activatePanicMode() {
+    isPanicModeActive_ = !isPanicModeActive_;
     for (SquadSelection::Iterator it = selection_.begin(); it != selection_.end(); ++it) {
         fs_knl::PedInstance *pAgent = *it;
         if (pAgent->isDead())
             continue;
-        pAgent->setIPAAmount(IPAStim::Adrenaline, 100);
-        pAgent->setIPAAmount(IPAStim::Perception, 100);
-        pAgent->setIPAAmount(IPAStim::Intelligence, 100);
-        if (pAgent->numWeapons() > 0 && !pAgent->selectedWeapon())
-            pAgent->selectWeapon(static_cast<size_t>(0));
+        if (isPanicModeActive_) {
+            pAgent->setIPAAmount(IPAStim::Adrenaline, 100);
+            pAgent->setIPAAmount(IPAStim::Perception, 100);
+            pAgent->setIPAAmount(IPAStim::Intelligence, 100);
+            if (pAgent->numWeapons() > 0 && !pAgent->selectedWeapon())
+                pAgent->selectWeapon(static_cast<size_t>(0));
+        } else {
+            pAgent->setIPAAmount(IPAStim::Adrenaline, 50);
+            pAgent->setIPAAmount(IPAStim::Perception, 50);
+            pAgent->setIPAAmount(IPAStim::Intelligence, 50);
+            pAgent->stopUsingWeapon();
+            pAgent->deselectWeapon();
+        }
     }
 }
 
