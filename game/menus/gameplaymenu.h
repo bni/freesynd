@@ -117,6 +117,8 @@ protected:
     void selectAllAgents();
     //! Reacts to a weapon selection/deselection
     void handleWeaponSelection(uint8_t weapon_idx, bool ctrl);
+    //! Activates panic mode: max all IPA gauges and equip first weapon for each selected agent
+    void activatePanicMode();
 
     //! Deselect agent if he died
     void updateSelectionForDeadAgent(fs_knl::PedInstance *p_ped);
@@ -197,6 +199,8 @@ protected:
     bool isButtonSelectAllPressed_;
     /*! Flag to store the fact that player is currently shooting.*/
     bool isPlayerShooting_;
+    /*! Flag to track that the left mouse button is currently held down.*/
+    bool isLeftButtonDown_;
     /*! Flag to play the sound of police warning an agent.*/
     bool canPlayPoliceWarnSound_;
     /*! Delay between 2 police warnings.*/

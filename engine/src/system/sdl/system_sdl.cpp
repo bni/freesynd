@@ -367,6 +367,7 @@ void SystemSDL::fillKeyEvent(SDL_Keysym keysym, FS_Event &evtOut) {
         case SDLK_z:
             key.keyCode = static_cast < FS_KeyCode > (kKeyCode_A + (keysym.sym - SDLK_a));
             break;
+        case SDLK_TAB: key.keyCode = kKeyCode_Tab; break;
         case SDLK_KP_PLUS: key.keyCode = kKeyCode_Plus; break;
         case SDLK_KP_MINUS: key.keyCode = kKeyCode_Minus; break;
         default:
