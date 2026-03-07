@@ -248,6 +248,7 @@ bool GameplayMenu::handleBeforeShow() {
     mm_renderer_.init(mission_, mission_->getSquad()->hasScanner(), missionPalette_);
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
+    isPanicModeActive_ = false;
 
     // Register event handlers
     handleAgentDied_ = EventManager::listen<fs_knl::AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
@@ -957,6 +958,11 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     // then they add/remove agent from current selection.
     // Double-pressing a key (1-4) within 400ms centers the map view on that agent.
     static constexpr uint32_t kDoublePressMs = 400;
+    if (key.keyCode == fs_eng::kKeyCode_Tab) {
+        activatePanicMode();
+        return true;
+    }
+
     if (key.keyCode == fs_eng::kKeyCode_0) {
         // This code is exactly the same as for clicking on "group-button"
         // as you can see above.
@@ -1439,6 +1445,34 @@ void GameplayMenu::handleWeaponSelection(uint8_t selectorIndex, bool ctrl) {
         }
     }
     g_SoundMgr.play(fs_eng::SPEECH_SELECTED);
+}
+
+/*!
+ * Toggles panic mode for all selected agents.
+ * On: max all IPA gauges and equip first weapon.
+ * Off: reset IPA gauges to neutral and deselect weapons.
+ * Mirrors the original Syndicate dual-mouse-button feature.
+ */
+void GameplayMenu::activatePanicMode() {
+    isPanicModeActive_ = !isPanicModeActive_;
+    for (SquadSelection::Iterator it = selection_.begin(); it != selection_.end(); ++it) {
+        fs_knl::PedInstance *pAgent = *it;
+        if (pAgent->isDead())
+            continue;
+        if (isPanicModeActive_) {
+            pAgent->setIPAAmount(IPAStim::Adrenaline, 100);
+            pAgent->setIPAAmount(IPAStim::Perception, 100);
+            pAgent->setIPAAmount(IPAStim::Intelligence, 100);
+            if (pAgent->numWeapons() > 0 && !pAgent->selectedWeapon())
+                pAgent->selectWeapon(static_cast<size_t>(0));
+        } else {
+            pAgent->setIPAAmount(IPAStim::Adrenaline, 50);
+            pAgent->setIPAAmount(IPAStim::Perception, 50);
+            pAgent->setIPAAmount(IPAStim::Intelligence, 50);
+            pAgent->stopUsingWeapon();
+            pAgent->deselectWeapon();
+        }
+    }
 }
 
 /**

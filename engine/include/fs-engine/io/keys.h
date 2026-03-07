@@ -105,7 +105,8 @@ enum FS_KeyCode {
     kKeyCode_Plus,
     kKeyCode_Minus,
 
-    kKeyCode_Ctrl = 100
+    kKeyCode_Ctrl = 100,
+    kKeyCode_Tab = 109
 };
 
 //! Valid key modifiers
