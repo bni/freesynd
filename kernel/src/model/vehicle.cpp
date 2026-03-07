@@ -52,8 +52,11 @@ void Vehicle::draw(const Point2D &screenPos)
     posWithOffs.y += fs_eng::Tile::kTileHeight / 3;
     posWithOffs = addOffs(posWithOffs);
 
-    // ensure on map
-    if (posWithOffs.x < 90 || posWithOffs.y < -20)
+    // ensure on map; skip objects hidden behind the side panel (x<90, y<kScreenHeight)
+    // but allow drawing in the area below the panel that becomes visible at larger game heights
+    if (posWithOffs.y < -20)
+        return;
+    if (posWithOffs.x < 90 && posWithOffs.y < fs_eng::kScreenHeight)
         return;
 
     //offset anim depends on direction

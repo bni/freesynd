@@ -161,7 +161,7 @@ SDL_Window * SystemSDL::createWindow(bool fullscreen) {
         sdlWindow = SDL_CreateWindow("Freesynd",
                           SDL_WINDOWPOS_UNDEFINED,
                           SDL_WINDOWPOS_UNDEFINED,
-                          fs_eng::kScreenWidth, fs_eng::kScreenHeight,
+                          fs_eng::kScreenWidth * 2, fs_eng::kScreenWidth * 3 / 2,
                           SDL_WINDOW_SHOWN
                           );
     }
@@ -231,10 +231,16 @@ void SystemSDL::calculateGameViewport() {
         // gameWidth = winW / N, gameHeight = winH / N (both >= their respective kScreen* minimums).
         int n = g_Ctx.getScaleFactor();
         if (n <= 0) {
-            // Default to ~2x at 1440p: use 1.5x native resolution as base unit
-            // (960×600), yielding n=1 at 720p/1080p, n=2 at 1440p, n=3 at 4K.
-            n = std::min(winW / (fs_eng::kScreenWidth * 3 / 2),
-                         winH / (fs_eng::kScreenHeight * 3 / 2));
+            bool isFullscreen = (SDL_GetWindowFlags(pWindow_) &
+                (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
+            if (isFullscreen) {
+                // Default to ~2x at 1440p: use 1.5x native resolution as base unit
+                // (960×600), yielding n=1 at 720p/1080p, n=2 at 1440p, n=3 at 4K.
+                n = std::min(winW / (fs_eng::kScreenWidth * 3 / 2),
+                             winH / (fs_eng::kScreenHeight * 3 / 2));
+            } else {
+                n = 2; // Default 2x scale in windowed mode
+            }
         }
         if (n < 1) n = 1;
         gameWidth_  = winW / n;

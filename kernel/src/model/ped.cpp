@@ -751,8 +751,11 @@ void PedInstance::playPersuadedAnimation() {
 
 void PedInstance::draw(const Point2D &screenPos) {
 
-    // ensure on map
-    if (screenPos.x < 110 || screenPos.y < 0 || !isDrawable())
+    // ensure on map; skip objects hidden behind the side panel (x<110, y<kScreenHeight)
+    // but allow drawing in the area below the panel that becomes visible at larger game heights
+    if (screenPos.y < 0 || !isDrawable())
+        return;
+    if (screenPos.x < 110 && screenPos.y < fs_eng::kScreenHeight)
         return;
 
     Weapon::WeaponAnimIndex weapon_idx =

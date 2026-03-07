@@ -218,7 +218,7 @@ bool MapRenderer::isObjectInsideDrawingArea(fs_knl::MapObject *pObject, const Po
     // Limits are larger than screen size in order to have a smooth display
     // of appearance/disappearance of objects on screen. Otherwise they popup when
     // entering the display screen.
-    return  objectViewport.x > (viewport.x - fs_eng::Tile::kTileWidth / 2) && objectViewport.y > viewport.y &&
+    return  objectViewport.x > (viewport.x - kGameplayPanelWidth - fs_eng::Tile::kTileWidth / 2) && objectViewport.y > viewport.y &&
             objectViewport.x <= (viewport.x + g_System.getGameWidth() - kGameplayPanelWidth + 10) &&
             objectViewport.y <= (viewport.y + g_System.getGameHeight() + pObject->position().tz * 48);
 }
