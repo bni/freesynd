@@ -248,7 +248,6 @@ bool GameplayMenu::handleBeforeShow() {
     mm_renderer_.init(mission_, mission_->getSquad()->hasScanner(), missionPalette_);
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
-    isLeftButtonDown_ = false;
     isPanicModeActive_ = false;
 
     // Register event handlers
@@ -688,17 +687,6 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
         return true;
     }
 
-    if (button == kMouseLeftButton)
-        isLeftButtonDown_ = true;
-
-    // Both mouse buttons held simultaneously triggers panic mode
-    if ((button == kMouseRightButton && isLeftButtonDown_) ||
-        (button == kMouseLeftButton && isPlayerShooting_)) {
-        stopShootingEvent();
-        activatePanicMode();
-        return true;
-    }
-
     if (paused_)
         return true;
 
@@ -900,9 +888,6 @@ void GameplayMenu::stopShootingEvent()
 void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
 {
     ipa_chng_.ipa_chng = -1;
-
-    if (button == kMouseLeftButton)
-        isLeftButtonDown_ = false;
 
     if (button == kMouseMiddleButton) {
         if (isPanning_ && !g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
