@@ -28,3 +28,6 @@ rename.pl -f 'y/A-Z/a-z/' *
 
 ### Go directly to mission with cheats
 ./FreeSynd -m 8 -c "COOPER TEAM"
+
+### Start with lots of cash and all weapons and mods unlocked
+./FreeSynd -c "STACKED"

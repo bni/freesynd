@@ -88,6 +88,7 @@ bool GameController::reset() {
  * - TO THE TOP : Puts $100 000 000 in funds and activates all missions
  * - COOPER TEAM : $100 000 000 in funds, select any mission, all weapons
  *   and mods
+ * - STACKED : $100 000 000 in funds, all weapons and mods
  * - WATCH THE CLOCK : Accelerates time
  *
  * \param name The name of a cheat code.
@@ -124,6 +125,12 @@ void GameController::setCheatCode(const char *name) {
         cheatWeaponsAndMods();
         cheatEquipAllMods();
         cheatEquipFancyWeapons();
+    }
+    else if (!strcmp(name, "STACKED")) {
+        // All weapons and mods
+        cheatFunds();
+        cheatWeaponsAndMods();
+        cheatEquipAllMods();
     }
     else if (!strcmp(name, "WATCH THE CLOCK")) {
         // Accelerate time for faster research completion
