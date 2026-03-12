@@ -31,3 +31,9 @@ rename.pl -f 'y/A-Z/a-z/' *
 
 ### Start with lots of cash and all weapons and mods unlocked
 ./FreeSynd -c "STACKED"
+
+### Missing implementation in FreeSynd
+Enemy agent AI (React to player actions and seek out player agents).
+Player agent AI (Reacts acoording to IPA levels, defend themselves).
+Be able to sort gear in the agent equip screen.
+Panic mode ☑️
