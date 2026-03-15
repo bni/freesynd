@@ -248,7 +248,7 @@ bool GameplayMenu::handleBeforeShow() {
     mm_renderer_.init(mission_, mission_->getSquad()->hasScanner(), missionPalette_);
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
-    isPanicModeActive_ = false;
+    isLeftButtonDown_ = false;
 
     // Register event handlers
     handleAgentDied_ = EventManager::listen<fs_knl::AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
@@ -725,6 +725,18 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
             handleClickOnMinimap(point);
         }
     } else {
+        // Track left button state for dual-button panic detection
+        if (button == kMouseLeftButton)
+            isLeftButtonDown_ = true;
+
+        // Both mouse buttons held simultaneously triggers panic mode
+        if ((button == kMouseRightButton && isLeftButtonDown_) ||
+            (button == kMouseLeftButton && isPlayerShooting_)) {
+            stopShootingEvent();
+            activatePanicMode();
+            return true;
+        }
+
         // User clicked on the map
         handleClickOnMap(point, button);
     }
@@ -889,6 +901,9 @@ void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
 {
     ipa_chng_.ipa_chng = -1;
 
+    if (button == kMouseLeftButton)
+        isLeftButtonDown_ = false;
+
     if (button == kMouseMiddleButton) {
         if (isPanning_ && !g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
             stopPanning();
@@ -958,11 +973,6 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
     // then they add/remove agent from current selection.
     // Double-pressing a key (1-4) within 400ms centers the map view on that agent.
     static constexpr uint32_t kDoublePressMs = 400;
-    if (key.keyCode == fs_eng::kKeyCode_Tab) {
-        activatePanicMode();
-        return true;
-    }
-
     if (key.keyCode == fs_eng::kKeyCode_0) {
         // This code is exactly the same as for clicking on "group-button"
         // as you can see above.
@@ -1448,30 +1458,16 @@ void GameplayMenu::handleWeaponSelection(uint8_t selectorIndex, bool ctrl) {
 }
 
 /*!
- * Toggles panic mode for all selected agents.
- * On: max all IPA gauges and equip first weapon.
- * Off: reset IPA gauges to neutral and deselect weapons.
- * Mirrors the original Syndicate dual-mouse-button feature.
+ * Maxes all IPA gauges for selected agents.
  */
 void GameplayMenu::activatePanicMode() {
-    isPanicModeActive_ = !isPanicModeActive_;
     for (SquadSelection::Iterator it = selection_.begin(); it != selection_.end(); ++it) {
         fs_knl::PedInstance *pAgent = *it;
         if (pAgent->isDead())
             continue;
-        if (isPanicModeActive_) {
-            pAgent->setIPAAmount(IPAStim::Adrenaline, 100);
-            pAgent->setIPAAmount(IPAStim::Perception, 100);
-            pAgent->setIPAAmount(IPAStim::Intelligence, 100);
-            if (pAgent->numWeapons() > 0 && !pAgent->selectedWeapon())
-                pAgent->selectWeapon(static_cast<size_t>(0));
-        } else {
-            pAgent->setIPAAmount(IPAStim::Adrenaline, 50);
-            pAgent->setIPAAmount(IPAStim::Perception, 50);
-            pAgent->setIPAAmount(IPAStim::Intelligence, 50);
-            pAgent->stopUsingWeapon();
-            pAgent->deselectWeapon();
-        }
+        pAgent->setIPAAmount(IPAStim::Adrenaline, 100);
+        pAgent->setIPAAmount(IPAStim::Perception, 100);
+        pAgent->setIPAAmount(IPAStim::Intelligence, 100);
     }
 }
 

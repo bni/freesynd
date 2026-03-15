@@ -199,8 +199,8 @@ protected:
     bool isButtonSelectAllPressed_;
     /*! Flag to store the fact that player is currently shooting.*/
     bool isPlayerShooting_;
-    /*! True while panic mode is active (IPA maxed, weapons drawn).*/
-    bool isPanicModeActive_;
+    /*! Flag to track that the left mouse button is currently held down on the map.*/
+    bool isLeftButtonDown_;
     /*! Flag to play the sound of police warning an agent.*/
     bool canPlayPoliceWarnSound_;
     /*! Delay between 2 police warnings.*/
