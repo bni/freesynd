@@ -288,6 +288,32 @@ private:
 };
 
 /*!
+ * Defensive behaviour for player agents.
+ * Each scan period, checks for nearby armed hostile peds within a
+ * Perception-scaled radius. If the agent already has a weapon drawn,
+ * fires at the closest threat without moving.
+ * Agents never auto-equip weapons and never move toward threats.
+ */
+class AgentDefenseBehaviourComponent : public BehaviourComponent {
+public:
+    AgentDefenseBehaviourComponent();
+
+    void execute(const Behaviour::BehaviourParam &param) override;
+
+private:
+    //! Base detection range (same as other scout distances)
+    static const int kBaseDefenseRange;
+
+    //! Find the nearest armed hostile ped within the given range
+    PedInstance * findNearestArmedHostile(Mission *pMission, PedInstance *pPed, int range);
+
+    /*! Timer to throttle the hostile scan to avoid scanning every frame.*/
+    fs_utl::Timer scoutTimer_;
+    /*! The ped currently being engaged, checked every frame for death.*/
+    PedInstance *pTarget_;
+};
+
+/*!
  * This behaviour is for peds that fight only player's agents.
  */
 class PlayerHostileBehaviourComponent : public BehaviourComponent {

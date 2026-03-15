@@ -576,9 +576,12 @@ void PedInstance::updateShootingTarget(const WorldPoint &aimedPt) {
  * \return Time to wait
  */
 int PedInstance::getTimeBetweenShoots(WeaponInstance *pWeapon) {
-    // TODO : Add IPA and mods influence
-    return kDefaultShootReactionTime +
-            pWeapon->getClass()->reloadTime();
+    // Adrenaline speeds up reaction: multiplier > 1 means boosted, so divide.
+    // Intelligence provides a smaller bonus on top.
+    double reaction = static_cast<double>(kDefaultShootReactionTime)
+        / adrenaline_.getMultiplier()
+        / (1.0 + 0.2 * (intelligence_.getMultiplier() - 1.0));
+    return static_cast<int>(reaction) + pWeapon->getClass()->reloadTime();
 }
 
 /*!
@@ -966,6 +969,15 @@ bool PedInstance::takeDamage(DamageToInflict &damage) {
  * \param d Damage description
  */
 void PedInstance::handleHit(DamageToInflict &d) {
+    // Original Syndicate: same-group members never damage each other.
+    // Self-damage (suicide/explosion) is still allowed.
+    if (d.d_owner != NULL && d.d_owner != this &&
+            d.d_owner->is(MapObject::kNaturePed)) {
+        PedInstance *pShooter = static_cast<PedInstance *>(d.d_owner);
+        if (pShooter->objGroupID() == objGroupID()) {
+            return;
+        }
+    }
     if (canTakeAction(fs_knl::Action::kActTypeHit)) {
         insertHitAction(d);
 

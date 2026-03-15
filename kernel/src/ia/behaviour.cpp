@@ -35,6 +35,7 @@ namespace fs_knl {
 // Constant definition
 //*************************************
 const int CommonAgentBehaviourComponent::kRegeratesHealthStep = 1;
+const int AgentDefenseBehaviourComponent::kBaseDefenseRange = 1500;
 const int PanicComponent::kScoutDistance = 1500;
 const int PanicComponent::kDistanceToRun = 500;
 const double PersuadedBehaviourComponent::kMaxRangeForSearchingWeapon = 500.0;
@@ -126,6 +127,71 @@ void CommonAgentBehaviourComponent::handleBehaviourEvent(const Behaviour::Behavi
         break;
     }
 }
+
+AgentDefenseBehaviourComponent::AgentDefenseBehaviourComponent():
+        BehaviourComponent(), scoutTimer_(200), pTarget_(nullptr) {
+}
+
+void AgentDefenseBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
+    PedInstance *pPed = param.pPed;
+
+    if (pTarget_ != nullptr) {
+        if (!pTarget_->isAlive() ||
+                pTarget_->isState(PedInstance::pa_smDying | PedInstance::pa_smWalkingBurning)) {
+            // Target permanently incapacitated — stop shooting and forget
+            pPed->destroyUseWeaponAction();
+            pTarget_ = nullptr;
+        } else if (pTarget_->isState(PedInstance::pa_smHit)) {
+            // Target is in hit/recoil
+            // Do not fire while target is recoiling.
+            // Pause burst and wait — do not advance scan timer so we re-engage
+            // as soon as the target stands up again.
+            pPed->destroyUseWeaponAction();
+            return;
+        }
+    }
+
+    if (!scoutTimer_.update(param.elapsed))
+        return;
+
+    // Only fire back if the player has already drawn a weapon — never auto-equip
+    if (!pPed->isArmed())
+        return;
+
+    int range = static_cast<int>(kBaseDefenseRange * pPed->perception().getMultiplier());
+    PedInstance *pHostile = findNearestArmedHostile(param.pMission, pPed, range);
+    if (pHostile) {
+        pPed->destroyUseWeaponAction();
+        pPed->setDirectionTowardObject(*pHostile);
+        WorldPoint targetPos(pHostile->position());
+        pPed->addActionShootAt(targetPos);
+        pTarget_ = pHostile;
+    } else {
+        pPed->destroyUseWeaponAction();
+        pTarget_ = nullptr;
+    }
+}
+
+PedInstance * AgentDefenseBehaviourComponent::findNearestArmedHostile(Mission *pMission, PedInstance *pPed, int range) {
+    // Scan all peds: police are excluded from armedPedsVec_ by design so
+    // we check all live armed peds directly. Skip our own agents and
+    // persuaded peds (friendlies who happen to be armed).
+    for (size_t i = 0; i < pMission->numPeds(); i++) {
+        PedInstance *pOther = pMission->ped(i);
+        if (!pOther->isAlive() || !pOther->isArmed())
+            continue;
+        // Skip peds already incapacitated — dying animation or walk-burning
+        if (pOther->isState(PedInstance::pa_smDying | PedInstance::pa_smWalkingBurning))
+            continue;
+        // Never shoot friendlies: our agents or persuaded peds
+        if (pOther->isOurAgent() || pOther->isPersuaded())
+            continue;
+        if (pPed->isCloseTo(pOther, range))
+            return pOther;
+    }
+    return NULL;
+}
+
 
 PersuaderBehaviourComponent::PersuaderBehaviourComponent():
         BehaviourComponent() {

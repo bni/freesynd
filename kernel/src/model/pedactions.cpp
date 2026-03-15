@@ -266,6 +266,9 @@ void PedInstance::destroyAllActions(bool includeScripted) {
  */
 void PedInstance::destroyUseWeaponAction() {
     if (pUseWeaponAction_ != NULL) {
+        // Ensure firing animation is stopped before the action is deleted,
+        // since leaveState() is normally called inside the action's stop()/execute() flow.
+        leaveState(pa_smFiring);
         delete pUseWeaponAction_;
         pUseWeaponAction_ = NULL;
     }

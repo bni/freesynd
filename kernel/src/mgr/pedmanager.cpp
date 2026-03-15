@@ -186,13 +186,15 @@ void PedManager::initOurAgent(Agent *pAgent, unsigned int obj_group_id, PedInsta
     pPed->setObjGroupDef(PedInstance::og_dmAgent);
     pPed->addEnemyGroupDef(2);
     pPed->addEnemyGroupDef(3);
-    pPed->setSightRange(7 * 256);
+    // Scale sight range by Perception IPA (multiplier range 0.5–2.0)
+    pPed->setSightRange(static_cast<int>(7 * 256 * pPed->perception().getMultiplier()));
     pPed->setTimeBeforeCheck(400);
     pPed->setBaseModAcc(0.5);
 
     // Set components of behaviour for our agent
     pPed->behaviour().addComponent(new CommonAgentBehaviourComponent(pPed));
     pPed->behaviour().addComponent(new PersuaderBehaviourComponent());
+    pPed->behaviour().addComponent(new AgentDefenseBehaviourComponent());
 }
 
 /*!
