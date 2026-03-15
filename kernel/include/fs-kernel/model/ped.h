@@ -141,7 +141,8 @@ public:
     //! Tells the ped not to panic
     void setPanicImmuned() { panicImmuned_ = true; }
     //! Return true if the ped is currently in panic
-    bool isInPanic();
+    bool isInPanic() { return inPanic_; }
+    void setInPanic(bool val) { inPanic_ = val; }
 
     //! MapObject::state_
     enum pedActionStateMasks {
@@ -707,6 +708,8 @@ protected:
     std::set <PedInstance *> persuadedSet_;
     //! Tells whether the panic can react to panic or not
     bool panicImmuned_;
+    //! True when ped is actively panicking (set by PanicComponent)
+    bool inPanic_ = false;
     //! This field is used to select a weapon after medikit was used
     WeaponInstance *pSelectedWeaponBeforeMedikit_;
 

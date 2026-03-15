@@ -30,11 +30,11 @@ rename.pl -f 'y/A-Z/a-z/' *
 ./FreeSynd -m 8 -c "COOPER TEAM"
 
 ### Start with lots of cash and all weapons and mods unlocked
-./FreeSynd -c "STACKED"
+./FreeSynd -m 9 -c "STACKED"
 
 ### List of missing implementation
-- Enemy agent AI (React to player actions and seek out player agents).
-- Player agent AI (Reacts acoording to IPA levels, defend themselves). PARTLY DONE
+- Enemy agent AI (React to player actions and seek out player agents). IN PROGRESS
+- Player agent AI (Reacts acoording to IPA levels, defend themselves). DONE
 - Be able to sort gear in the agent equip screen. DONE
 - Panic mode. DONE
 - Reintroduce edge-panning in addition to WASD.
@@ -43,3 +43,4 @@ rename.pl -f 'y/A-Z/a-z/' *
 - If NPC get in the line of fire agent will spray a lot until NPC fall down completely.
 - Player agent will try to fire / defend themselves even though there is a wall between them and the enemy.
 - Player agent can't hit enemy agent that is on another level or up the stairs ?
+- Enemy agaent or Police will keep firing in the same place until ammo run out, instead of where you moved.

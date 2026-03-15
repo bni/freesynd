@@ -30,7 +30,7 @@
 
 namespace fs_eng {
 LogoutMenu::LogoutMenu(MenuManager * m):Menu(m, kMenuIdLogout, kMenuIdNoMenu, true),
-timerLogout_(500)
+timerLogout_(750)
 {
     isCachable_ = false;
     addStatic(0, 180, fs_eng::kScreenWidth, "#LGOUT_TITLE", FontManager::SIZE_4, true);

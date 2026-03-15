@@ -42,6 +42,7 @@ const double PersuadedBehaviourComponent::kMaxRangeForSearchingWeapon = 500.0;
 const int PoliceBehaviourComponent::kPoliceScoutDistance = 1500;
 const int PoliceBehaviourComponent::kPolicePendingTime = 1500;
 const int PlayerHostileBehaviourComponent::kEnemyScoutDistance = 1500;
+const int PlayerHostileBehaviourComponent::kAllyAlertRange = 2048;
 
 Behaviour::~Behaviour() {
     destroyComponents();
@@ -92,6 +93,17 @@ void Behaviour::execute(uint32_t elapsed, Mission *pMission) {
         if (pComp->isEnabled()) {
             Behaviour::BehaviourParam param {elapsed, pMission, pThisPed_};
             pComp->execute(param);
+        }
+    }
+}
+
+void Behaviour::alertToEnemy(PedInstance *pOwner, PedInstance *pTarget) {
+    for (auto *pComp : compLst_) {
+        PlayerHostileBehaviourComponent *pHostile =
+            dynamic_cast<PlayerHostileBehaviourComponent *>(pComp);
+        if (pHostile) {
+            pHostile->alertToEnemy(pOwner, pTarget);
+            return;
         }
     }
 }
@@ -369,9 +381,11 @@ void PanicComponent::execute(const Behaviour::BehaviourParam &param) {
         pArmedPed_ = findNearbyArmedPed(param.pMission, param.pPed);
         if (pArmedPed_) {
             runAway(param.pPed);
+            param.pPed->setInPanic(true);
             status_ = kPanicStatusInPanic;
         } else if (backFromPanic_) {
             backFromPanic_ = false;
+            param.pPed->setInPanic(false);
             param.pPed->setCurrentActionWithSource(Action::kActionDefault);
             status_ = kPanicStatusCalm;
         }
@@ -394,6 +408,7 @@ void PanicComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event
     case Behaviour::kBehvEvtWeaponCleared:
         if (g_missionCtrl.mission()->numArmedPeds() == 0) {
             setEnabled(false);
+            event.pPed->setInPanic(false);
             if (!event.pPed->isCurrentActionFromSource(Action::kActionDefault)) {
                 event.pPed->setCurrentActionWithSource(Action::kActionDefault);
                 status_ = kPanicStatusCalm;
@@ -404,6 +419,7 @@ void PanicComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event
         if (!event.pPed->isCloseTo(pArmedPed_, kScoutDistance)) {
             // Ped is far from armed guy,
             pArmedPed_ = NULL;
+            event.pPed->setInPanic(false);
             // so next time check if there another enemy around
             status_ = kPanicStatusCalm;
             scoutTimer_.setToMax();
@@ -605,17 +621,21 @@ void PoliceBehaviourComponent::followAndShootTarget(PedInstance *pPed, PedInstan
 }
 
 PlayerHostileBehaviourComponent::PlayerHostileBehaviourComponent():
-        BehaviourComponent() {
+        BehaviourComponent(), scoutTimer_(200) {
     status_ = kHostileStatusDefault;
+    pTarget_ = NULL;
 }
 
 void PlayerHostileBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
     if (status_ == kHostileStatusDefault) {
+        if (!scoutTimer_.update(param.elapsed))
+            return;
         // In this mode, ped is looking for an enemy
         PedInstance *pArmedGuy = findPlayerAgent(param.pMission, param.pPed);
         if (pArmedGuy != NULL) {
             status_ = kHostileStatusFollowAndShoot;
             followAndShootTarget(param.pPed, pArmedGuy);
+            alertNearbyAllies(param.pMission, param.pPed, pArmedGuy);
         }
     } else if (status_ == kHostileStatusFollowAndShoot && pTarget_->isDead()) {
         status_ = kHostileStatusPendingEndFollow;
@@ -656,6 +676,28 @@ PedInstance * PlayerHostileBehaviourComponent::findPlayerAgent(Mission *pMission
         }
     }
     return NULL;
+}
+
+void PlayerHostileBehaviourComponent::alertToEnemy(PedInstance *pOwner, PedInstance *pTarget) {
+    if (status_ != kHostileStatusDefault)
+        return;
+    followAndShootTarget(pOwner, pTarget);
+    status_ = kHostileStatusFollowAndShoot;
+}
+
+void PlayerHostileBehaviourComponent::alertNearbyAllies(
+        Mission *pMission, PedInstance *pPed, PedInstance *pTarget)
+{
+    for (size_t i = 0; i < pMission->numPeds(); i++) {
+        PedInstance *pOther = pMission->ped(i);
+        if (!pOther->isAlive() || pOther == pPed)
+            continue;
+        if (!pPed->isFriendWith(pOther))
+            continue;
+        if (!pPed->isCloseTo(pOther, kAllyAlertRange))
+            continue;
+        pOther->behaviour().alertToEnemy(pOther, pTarget);
+    }
 }
 
 void PlayerHostileBehaviourComponent::followAndShootTarget(PedInstance *pPed, PedInstance *pArmedGuy) {

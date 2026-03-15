@@ -387,6 +387,18 @@ void MenuManager::leaveCurrentMenu() {
             delete current_;
             current_ = nullptr;
         }
+    } else if (pFactory_->hasShowAnimation(nextMenuId_)) {
+        // No current menu (e.g. starting directly via -m flag), but the
+        // next menu has a show animation whose final frame must be captured
+        // as the background texture — run it through the transition FLI.
+        // Use transition_leave_event so MENU_CHANGE sound plays at frame 1,
+        // matching what a normal leave-animation would have triggered.
+        g_System.hideCursor();
+        FliMenu *pTransitionFliMenu = getFliTransitionMenu();
+        pTransitionFliMenu->setNextMenu(nextMenuId_);
+        pTransitionFliMenu->clearFliDescList();
+        pTransitionFliMenu->addFliDesc(pFactory_->getShowAnimation(nextMenuId_), 20, false, false, false, transition_leave_event);
+        nextMenuId_ = Menu::kMenuIdFliTransition;
     }
 }
 

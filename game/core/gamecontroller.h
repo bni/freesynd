@@ -113,6 +113,7 @@ private:
     void cheatAccelerateTime();
     void cheatFemaleRecruits();
     void cheatEquipFancyWeapons();
+    void cheatEquipMiniguns();
 
 private:
     /*!

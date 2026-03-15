@@ -90,6 +90,9 @@ public:
     virtual void execute(uint32_t elapsed, Mission *pMission);
 
     virtual void handleBehaviourEvent(BehaviourEventType evtType, void *pCtxt = NULL);
+
+    //! Alert this behaviour's PlayerHostileBehaviourComponent to a new enemy target
+    void alertToEnemy(PedInstance *pOwner, PedInstance *pTarget);
 protected:
     void destroyComponents();
 protected:
@@ -318,16 +321,24 @@ private:
  */
 class PlayerHostileBehaviourComponent : public BehaviourComponent {
 public:
+    //! Range within which allies are alerted when this ped spots an enemy
+    static const int kAllyAlertRange;
+
     PlayerHostileBehaviourComponent();
 
     void execute(const Behaviour::BehaviourParam &param) override;
 
     void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
 
+    //! Force this component to engage pTarget immediately (called by ally alerting)
+    void alertToEnemy(PedInstance *pOwner, PedInstance *pTarget);
+
 private:
     //! looking for the nearest player agent
     PedInstance * findPlayerAgent(Mission *pMission, PedInstance *pPed);
     void followAndShootTarget(PedInstance *pPed, PedInstance *pArmedGuy);
+    //! Alert nearby allies of the same group to engage pTarget
+    void alertNearbyAllies(Mission *pMission, PedInstance *pPed, PedInstance *pTarget);
 private:
     static const int kEnemyScoutDistance;
 
@@ -346,6 +357,8 @@ private:
     };
 
     PlayerHostileStatus status_;
+    /*! This timer throttles the enemy scan to avoid checking every frame.*/
+    fs_utl::Timer scoutTimer_;
     /*! The ped that the owner has targeted and potentially is shooting at.*/
     PedInstance *pTarget_;
 };

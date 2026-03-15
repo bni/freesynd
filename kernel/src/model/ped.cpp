@@ -92,11 +92,6 @@ bool PedInstance::isImmunedToPanic() {
     return panicImmuned_ || isInVehicle() || isPersuaded();
 }
 
-bool PedInstance::isInPanic() {
-    // TODO : find a way to know if he's panicking
-    return false;
-}
-
 bool PedInstance::switchActionStateTo(uint32_t as) {
     uint32_t prevState = state_;
     switch(as) {

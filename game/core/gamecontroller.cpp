@@ -131,6 +131,7 @@ void GameController::setCheatCode(const char *name) {
         cheatFunds();
         cheatWeaponsAndMods();
         cheatEquipAllMods();
+        cheatEquipMiniguns();
     }
     else if (!strcmp(name, "WATCH THE CLOCK")) {
         // Accelerate time for faster research completion
@@ -555,3 +556,16 @@ void GameController::cheatEquipFancyWeapons() {
     }
 }
 
+void GameController::cheatEquipMiniguns() {
+    for (uint8_t i = 0; i < fs_knl::AgentManager::MAX_AGENT; i++) {
+        if (agents().agent(i)) {
+        agents().agent(i)->destroyAllWeapons();
+
+        agents().agent(i)->addWeapon(
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::Minigun)));
+        agents().agent(i)->addWeapon(
+                fs_knl::WeaponInstance::createInstance(weaponManager().getWeapon(fs_knl::Weapon::MediKit)));
+
+        }
+    }
+}
