@@ -513,9 +513,9 @@ void SelectMenu::handleMouseUp(Point2D point, int button)
                     }
                 }
             }
-            fs_knl::Agent *reciever = hasClickedOnTarget ? 
+            fs_knl::Agent *reciever = hasClickedOnTarget ?
                                         g_gameCtrl.agents().squadMember(target) : nullptr;
-            if (target != cur_agent_ && reciever
+            if (hasClickedOnTarget && target != cur_agent_ && reciever
                 && reciever->numWeapons() < 8)
             {
                 selected->removeWeapon(weapon_dragged_);
@@ -523,6 +523,10 @@ void SelectMenu::handleMouseUp(Point2D point, int button)
 
                 pSelectedWeap_ = NULL;
                 pSelectedWInstance_ = nullptr;
+                showItemList();
+            } else {
+                selected->removeWeapon(weapon_dragged_);
+                selected->addWeapon(weapon_dragged_);
                 showItemList();
             }
             weapon_dragged_ = NULL;

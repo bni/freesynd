@@ -58,7 +58,7 @@ void SdlMixerSound::play(int channel, int loops) const
 {
     int ret = Mix_PlayChannel(channel, sound_data_, loops);
     if (ret < 0) {
-        FSERR(Log::k_FLG_SND, "SdlMixerSound", "play", ("Failed to play sound on channel 0."));
+        FSERR(Log::k_FLG_SND, "SdlMixerSound", "play", ("Failed to play sound on channel %d.", channel));
     }
 }
 

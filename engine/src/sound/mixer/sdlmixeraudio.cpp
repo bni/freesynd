@@ -150,6 +150,8 @@ bool SdlMixerAudio::init(EFrequency freq, EFormat fmt, EChannel chan, int chunks
         return false;
     }
 
+    Mix_AllocateChannels(16);
+
     // We set a hook so that we don't use SDL_Mixer built-in music playback but libADLMidi
     Mix_HookMusic(fs_audio_callback, pMidiPlayer);
 

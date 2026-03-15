@@ -35,5 +35,5 @@ rename.pl -f 'y/A-Z/a-z/' *
 ### Missing implementation in FreeSynd
 - Enemy agent AI (React to player actions and seek out player agents).
 - Player agent AI (Reacts acoording to IPA levels, defend themselves). PARTLY DONE
-- Be able to sort gear in the agent equip screen.
+- Be able to sort gear in the agent equip screen. DONE
 - Panic mode. DONE
