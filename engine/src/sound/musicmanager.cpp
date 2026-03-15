@@ -73,9 +73,11 @@ void MusicManager::playSong(MusicSong song, bool loopForEver) {
         int songNb;
 
         MusicFile fileToOpen = (song == kMusicSongIntro) ? kMusicFileIntro : kMusicFileGame;
-        std::string fullFilename = fs_utl::File::getOriginalDataFullPath(
-                                                    (song == kMusicSongIntro) ? "INTRO.XMI" : "SYNGAME.XMI", 
-                                                    true);
+        const std::string xmiName = (song == kMusicSongIntro) ? "intro.xmi" : "syngame.xmi";
+        // Try lowercase first, then uppercase if that fails.
+        std::string fullFilename = fs_utl::File::getOriginalDataFullPath(xmiName, false);
+        if (!std::filesystem::exists(fullFilename))
+            fullFilename = fs_utl::File::getOriginalDataFullPath(xmiName, true);
 
         if (currentFile_ != fileToOpen && !audio_->openFile(fullFilename)) {
             FSERR(Log::k_FLG_SND, "MusicManager", "playSong", ("Cannot open file %s\n", fullFilename.c_str()))

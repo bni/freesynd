@@ -32,14 +32,14 @@ rename.pl -f 'y/A-Z/a-z/' *
 ### Start with lots of cash and all weapons and mods unlocked
 ./FreeSynd -c "STACKED"
 
-### List of missing implementation, and fix state
+### List of missing implementation
 - Enemy agent AI (React to player actions and seek out player agents).
 - Player agent AI (Reacts acoording to IPA levels, defend themselves). PARTLY DONE
 - Be able to sort gear in the agent equip screen. DONE
 - Panic mode. DONE
-- Reintorduce edge-panning in addition to WASD.
+- Reintroduce edge-panning in addition to WASD.
 
 ### Bugs
-- If NPC get in the line of fire agent will spray a lot unitil NPC fall down completely.
-- Player agent will try to fire / defend themselves even though there is awall between them and the threath.
+- If NPC get in the line of fire agent will spray a lot until NPC fall down completely.
+- Player agent will try to fire / defend themselves even though there is a wall between them and the enemy.
 - Player agent can't hit enemy agent that is on another level or up the stairs ?
