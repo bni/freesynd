@@ -150,15 +150,12 @@ void AgentDefenseBehaviourComponent::execute(const Behaviour::BehaviourParam &pa
     if (pTarget_ != nullptr) {
         if (!pTarget_->isAlive() ||
                 pTarget_->isState(PedInstance::pa_smDying | PedInstance::pa_smWalkingBurning)) {
-            // Target permanently incapacitated — stop shooting and forget
-            pPed->destroyUseWeaponAction();
+            // Target permanently incapacitated — stop shooting and forget.
+            pPed->stopShooting();
             pTarget_ = nullptr;
         } else if (pTarget_->isState(PedInstance::pa_smHit)) {
-            // Target is in hit/recoil
-            // Do not fire while target is recoiling.
-            // Pause burst and wait — do not advance scan timer so we re-engage
-            // as soon as the target stands up again.
-            pPed->destroyUseWeaponAction();
+            // Target is in hit/recoil — pause burst, don't advance scan timer.
+            pPed->stopShooting();
             return;
         }
     }
@@ -173,13 +170,17 @@ void AgentDefenseBehaviourComponent::execute(const Behaviour::BehaviourParam &pa
     int range = static_cast<int>(kBaseDefenseRange * pPed->perception().getMultiplier());
     PedInstance *pHostile = findNearestArmedHostile(param.pMission, pPed, range);
     if (pHostile) {
-        pPed->destroyUseWeaponAction();
-        pPed->setDirectionTowardObject(*pHostile);
-        WorldPoint targetPos(pHostile->position());
-        pPed->addActionShootAt(targetPos);
+        if (!pPed->isUsingWeapon()) {
+            pPed->setDirectionTowardObject(*pHostile);
+            WorldPoint targetPos(pHostile->position());
+            pPed->addActionShootAt(targetPos);
+        } else {
+            WorldPoint targetPos(pHostile->position());
+            pPed->updateShootingTarget(targetPos);
+        }
         pTarget_ = pHostile;
     } else {
-        pPed->destroyUseWeaponAction();
+        pPed->stopShooting();
         pTarget_ = nullptr;
     }
 }
@@ -188,6 +189,7 @@ PedInstance * AgentDefenseBehaviourComponent::findNearestArmedHostile(Mission *p
     // Scan all peds: police are excluded from armedPedsVec_ by design so
     // we check all live armed peds directly. Skip our own agents and
     // persuaded peds (friendlies who happen to be armed).
+    WorldPoint pedPosW(pPed->position());
     for (size_t i = 0; i < pMission->numPeds(); i++) {
         PedInstance *pOther = pMission->ped(i);
         if (!pOther->isAlive() || !pOther->isArmed())
@@ -198,7 +200,13 @@ PedInstance * AgentDefenseBehaviourComponent::findNearestArmedHostile(Mission *p
         // Never shoot friendlies: our agents or persuaded peds
         if (pOther->isOurAgent() || pOther->isPersuaded())
             continue;
-        if (pPed->isCloseTo(pOther, range))
+        if (!pPed->isCloseTo(pOther, range))
+            continue;
+        // Only shoot if there is a clear line of sight — no walls, no other
+        // floors. checkBlockedByTile does a 3D ray trace so floor/ceiling
+        // tiles block cross-level shots
+        WorldPoint targetPosW(pOther->position());
+        if (pMission->checkBlockedByTile(pedPosW, &targetPosW, false, range) == 1)
             return pOther;
     }
     return NULL;

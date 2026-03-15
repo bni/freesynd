@@ -476,15 +476,21 @@ MovementAction(kActTypeFollowToShoot) {
  * \param pMission Mission data
  * \param pPed The ped executing the action.
  */
-void FollowToShootAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
+void FollowToShootAction::doStart(Mission *pMission, PedInstance *pPed) {
     if (pPed->selectedWeapon() == NULL) {
         setFailed();
         return;
-    } else {
-        followDistance_ = (pPed->selectedWeapon()->range() / 3 ) *2;
     }
+    followDistance_ = (pPed->selectedWeapon()->range() / 3) * 2;
+    targetLastPosW_.convertFromTilePoint(pTarget_->position());
 
-    targetLastPosW_.reset();
+    if (!pPed->isCloseTo(pTarget_, followDistance_)) {
+        if (!pPed->initMovementToDestination(pMission, pTarget_->position())) {
+            setFailed();
+        }
+    } else {
+        targetState_ = PedInstance::pa_smNone;
+    }
 }
 
 bool FollowToShootAction::doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
@@ -503,6 +509,11 @@ bool FollowToShootAction::doExecute(uint32_t elapsed, Mission *pMission, PedInst
             if (!pPed->initMovementToDestination(pMission, pTarget_->position())) {
                 setFailed();
                 return true;
+            }
+            // Ensure walking animation plays if we were previously standing in range
+            if (targetState_ != PedInstance::pa_smWalking) {
+                targetState_ = PedInstance::pa_smWalking;
+                pPed->goToState(targetState_);
             }
         }
 
@@ -751,9 +762,28 @@ void FireWeaponAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *
     }
 }
 
-bool FireWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, [[maybe_unused]] Mission *pMission, PedInstance *pPed) {
+bool FireWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (!pPed->isUsingWeapon()) {
         setSucceeded();
+    } else if (pTarget_->isDead()) {
+        pPed->stopShooting();
+        setSucceeded();
+    } else {
+        WorldPoint targetLocW(pTarget_->position());
+        int followDistance = (pPed->selectedWeapon()->range() / 3) * 2;
+        WorldPoint pedPosW(pPed->position());
+
+        // Stop shooting if target moved out of range or behind cover,
+        // matching original game's per-frame i_can_see_and_shoot_person check.
+        // FollowToShootAction will re-engage once the enemy closes in.
+        if (!pPed->isCloseTo(pTarget_, followDistance) ||
+            pMission->checkBlockedByTile(pedPosW, &targetLocW, false, followDistance) != 1) {
+            pPed->stopShooting();
+            setSucceeded();
+        } else {
+            // Target still in range and visible: track their current position
+            pPed->updateShootingTarget(targetLocW);
+        }
     }
 
     return true;
