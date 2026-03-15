@@ -424,14 +424,17 @@ void PanicComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event
         }
         break;
     case Behaviour::kBehvEvtActionEnded:
-        if (!event.pPed->isCloseTo(pArmedPed_, kScoutDistance)) {
-            // Ped is far from armed guy,
+        if (pArmedPed_ != NULL && !event.pPed->isCloseTo(pArmedPed_, kScoutDistance)) {
+            // Ped is far from armed guy, stop panicking
             pArmedPed_ = NULL;
             event.pPed->setInPanic(false);
             // so next time check if there another enemy around
             status_ = kPanicStatusCalm;
             scoutTimer_.setToMax();
             backFromPanic_ = true;
+        } else {
+            // Still in range of threat — re-evaluate on next timer tick
+            status_ = kPanicStatusCalm;
         }
         break;
     default:
@@ -464,8 +467,8 @@ void  PanicComponent::runAway(PedInstance *pPed) {
     WorldPoint thisPedLocW(pPed->position());
     WorldPoint otherLocW(pArmedPed_->position());
 
-    pPed->setDirection(otherLocW.x - thisPedLocW.x,
-        otherLocW.y - thisPedLocW.y);
+    pPed->setDirection(thisPedLocW.x - otherLocW.x,
+        thisPedLocW.y - otherLocW.y);
     if (pPed->altAction() == NULL) {
         // Adds the action of running away
         WalkToDirectionAction *pAction =
