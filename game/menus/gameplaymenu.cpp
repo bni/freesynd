@@ -65,6 +65,7 @@ mm_renderer_(kMiniMapScreenPos), warningTimer_(20000)
     scroll_x_ = 0;
     scroll_y_ = 0;
     isPanning_ = false;
+    tabHeld_ = false;
     wasd_pan_accum_x_ = 0.f;
     wasd_pan_accum_y_ = 0.f;
     pan_vel_x_ = 0.f;
@@ -249,6 +250,7 @@ bool GameplayMenu::handleBeforeShow() {
     centerMinimapOnLeader();
     isPlayerShooting_ = false;
     isLeftButtonDown_ = false;
+    tabHeld_ = false;
 
     // Register event handlers
     handleAgentDied_ = EventManager::listen<fs_knl::AgentDiedEvent>(this, &GameplayMenu::onAgentDiedEvent);
@@ -467,10 +469,9 @@ void GameplayMenu::handleLeave()
 }
 
 void GameplayMenu::handleMouseMotion(Point2D point, [[maybe_unused]] uint32_t state) {
-    // Panning with CTRL + mouse or middle-mouse drag
-    bool ctrlHeld = g_System.isKeyModStatePressed(fs_eng::KMD_CTRL);
+    // Panning with Tab + mouse or middle-mouse drag
     bool middleHeld = (state & kMouseMiddleButtonMask) != 0;
-    bool shouldPan = ctrlHeld || middleHeld;
+    bool shouldPan = tabHeld_ || middleHeld;
 
     if (shouldPan && !isPanning_) {
         panStartPos_ = {last_motion_x_, last_motion_y_};
@@ -905,7 +906,7 @@ void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
         isLeftButtonDown_ = false;
 
     if (button == kMouseMiddleButton) {
-        if (isPanning_ && !g_System.isKeyModStatePressed(fs_eng::KMD_CTRL)) {
+        if (isPanning_ && !tabHeld_) {
             stopPanning();
         }
         return;
@@ -918,8 +919,11 @@ void GameplayMenu::handleMouseUp([[maybe_unused]] Point2D point, int button)
 }
 
 void GameplayMenu::handleKeyUp(const fs_eng::FS_Key key) {
-    if (key.keyCode == fs_eng::kKeyCode_Ctrl && isPanning_) {
-        stopPanning();
+    if (key.keyCode == fs_eng::kKeyCode_Tab) {
+        tabHeld_ = false;
+        if (isPanning_) {
+            stopPanning();
+        }
     }
 }
 
@@ -935,6 +939,11 @@ bool GameplayMenu::handleUnMappedKey(const fs_eng::FS_Key key) {
         } else {
             g_MusicMgr.resume();
         }
+        return true;
+    }
+
+    if (key.keyCode == fs_eng::kKeyCode_Tab) {
+        tabHeld_ = true;
         return true;
     }
 

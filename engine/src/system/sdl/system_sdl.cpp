@@ -472,6 +472,8 @@ bool SystemSDL::pumpEvents(FS_Event &evtOut) {
                     keyModState_ = keyModState_ & ~KMD_LALT;
                     break;
                 default:
+                    fillKeyEvent(evtIn.key.keysym, evtOut);
+                    evtOut.type = EVT_KEY_UP;
                     break;
             }
             }
