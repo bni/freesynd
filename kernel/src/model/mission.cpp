@@ -2609,7 +2609,14 @@ MapObject * Mission::checkBlockedByObject(WorldPoint * pStartPt, WorldPoint * pE
     }
 
     for (PedInstance *pPed : peds_) {
-        if (pPed->isAlive() && pPed != pOrigin && !pPed->isInVehicle()) {
+        // Skip same-group peds: bullets pass through friendlies.
+        bool isFriendly = false;
+        if (pOrigin && pOrigin->is(MapObject::kNaturePed)) {
+            PedInstance *pShooterPed = const_cast<PedInstance *>(
+                static_cast<const PedInstance *>(pOrigin));
+            isFriendly = (pShooterPed->objGroupID() == pPed->objGroupID());
+        }
+        if (pPed->isAlive() && pPed != pOrigin && !pPed->isInVehicle() && !isFriendly) {
             if (pPed->isBlocker(&copyStartPt, &copyEndPt, inc_xyz)) {
                 int cx = pStartPt->x - copyStartPt.x;
                 int cy = pStartPt->y - copyStartPt.y;

@@ -557,7 +557,7 @@ void PedInstance::stopShooting() {
  * \param aimedPt New target position
  */
 void PedInstance::updateShootingTarget(const WorldPoint &aimedPt) {
-    if (pUseWeaponAction_->type() == Action::kActTypeShoot) {
+    if (pUseWeaponAction_ != NULL && pUseWeaponAction_->type() == Action::kActTypeShoot) {
         ShootAction *pShoot = dynamic_cast<ShootAction *>(pUseWeaponAction_);
         pShoot->setAimedAt(aimedPt);
     }
@@ -954,8 +954,26 @@ void PedInstance::leaveVehicle() {
  * @return True if Ped has died due to damage received
  */
 bool PedInstance::takeDamage(DamageToInflict &damage) {
-    // TODO : reduce damage based on Mod protection
-    decreaseHealth(damage.dvalue);
+    int finalDamage = damage.dvalue;
+
+    // Chest mod provides damage reduction (matches original affect_person armor check)
+    if (obj_group_def_ == PedInstance::og_dmAgent) {
+        Mod *pChest = slots_[Mod::MOD_CHEST];
+        if (pChest) {
+            // v1: 10% reduction, v2: 25% reduction, v3: 40% reduction
+            double reduction = 0.0;
+            switch (pChest->getVersion()) {
+                case Mod::MOD_V1: reduction = 0.10; break;
+                case Mod::MOD_V2: reduction = 0.25; break;
+                case Mod::MOD_V3: reduction = 0.40; break;
+            }
+            finalDamage = static_cast<int>(finalDamage * (1.0 - reduction));
+            if (finalDamage < 1)
+                finalDamage = 1;
+        }
+    }
+
+    decreaseHealth(finalDamage);
     return isDead();
 }
 
@@ -1203,7 +1221,11 @@ int PedInstance::applySpeedModifier(int speed) {
     if (isInPanic()) {
         return 256;
     }
-    
+
+    // Original uses different base speeds: 0x10 (16) on foot, 0xc (12) in vehicle
+    bool inCar = isInVehicle();
+    int minSpeed = inCar ? 12 : 16;
+
     float speed_new = static_cast<float>(speed) * getSpeedMultiplier();
 
     int weight_max = getMaxWeight();
@@ -1216,6 +1238,10 @@ int PedInstance::applySpeedModifier(int speed) {
             speed_new /= 2;
     }
 
+    // Enforce minimum speed after weight penalty (original: minimum 0x10 on foot)
+    if (speed_new < minSpeed)
+        speed_new = minSpeed;
+
     if (obj_group_def_ == PedInstance::og_dmAgent)
     {
         // See the comments in the IPAStim class for details on the multiplier
@@ -1225,8 +1251,11 @@ int PedInstance::applySpeedModifier(int speed) {
 
     if (isPersuaded()) {
         speed_new *= owner_->getSpeedOwnerBoost();
-        //speed_new >>= 1;
     }
+
+    // Final minimum speed clamp (original enforces this after adrenaline)
+    if (speed_new < minSpeed)
+        speed_new = minSpeed;
 
     return static_cast<int>(speed_new);
 }
@@ -1256,6 +1285,10 @@ int PedInstance::getSpeedOwnerBoost()
  */
 void PedInstance::adjustAimedPtWithRangeAndAccuracy(Weapon *pWeaponClass, WorldPoint *pAimedLocW) {
     // 1- Adjust Range
+    // Original game (person_use_weapon @ 0x31ec0) uses getrdist() which is
+    // 2D distance: sqrt(dx^2 + dy^2). Using 3D distance causes shots at
+    // different Z levels to be incorrectly range-clipped toward the shooter,
+    // making agents appear to shoot at their own feet.
     WorldPoint originLocW(pos_);
     if (originLocW.z > (pMap_->maxZ() - 1) * 128)
         return;
@@ -1263,24 +1296,26 @@ void PedInstance::adjustAimedPtWithRangeAndAccuracy(Weapon *pWeaponClass, WorldP
     if (pAimedLocW->z > (pMap_->maxZ() - 1) * 128)
         return;
 
-    double d = distanceToPosition(*pAimedLocW);
+    double dx = pAimedLocW->x - originLocW.x;
+    double dy = pAimedLocW->y - originLocW.y;
+    double d = sqrt(dx * dx + dy * dy);
 
     if (d == 0)
         return;
 
     double maxr = (double) pWeaponClass->range();
     if (d >= maxr) {
-        // weapon's range is less than the distance to aimed point
-        // so compute new aimed point that is clipped by the range
+        // weapon's 2D range is less than the distance to aimed point
         double dist_k = maxr / d;
-        pAimedLocW->x = originLocW.x + (int)((pAimedLocW->x - originLocW.x) * dist_k);
-        pAimedLocW->y = originLocW.y + (int)((pAimedLocW->y - originLocW.y) * dist_k);
-        pAimedLocW->z = originLocW.z + (int)((pAimedLocW->z - originLocW.z) * dist_k);
+        pAimedLocW->x = originLocW.x + (int)(dx * dist_k);
+        pAimedLocW->y = originLocW.y + (int)(dy * dist_k);
     }
 
     // 2- Adjust Accuracy
-    // TODO Add imprecision and accuracy
-    //double accuracy = pWeaponClass->shotAcurracy();
+    // The original game uses deterministic angle-based aiming via arctan()
+    // rather than random scatter. Accuracy from mods and IPA affects the
+    // weapon's effective range and shot angle, not random displacement.
+    // The shotAngle property on weapons handles cone-of-fire spread already.
 }
 
 void PedInstance::getAccuracy(double &base_acc)
@@ -1377,7 +1412,11 @@ uint16_t PedInstance::getRequiredPointsToPersuade(PedType aType) {
  * Return true if this agent can persuade the given ped.
  * A ped can be persuaded if he's not already persuaded or
  * if its persuasion points are less or equal than the agent
- * total persuasion points.
+ * total persuasion points plus a perception-based bonus.
+ *
+ * The original game (can_i_persuad_you @ 0x302a0) counts all nearby
+ * peds' cybermod bits in the same sector and multiplies by a perception
+ * factor. We approximate by adding a perception bonus to the point total.
  * \param pOtherPed Ped to persuade.
  * \param persuadotronRange Distance under which a ped can be persuaded
  */
@@ -1391,7 +1430,12 @@ bool PedInstance::canPersuade(PedInstance *pOtherPed, const int persuadotronRang
     if (!pOtherPed->isPersuaded() && pOtherPed->isAlive() &&
             isCloseTo(pOtherPed, persuadotronRange)) {
         uint16_t points = getRequiredPointsToPersuade(pOtherPed->type());
-        return points <= totalPersuasionPoints_;
+        // Perception bonus: brain mod + perception IPA boost effective persuasion power.
+        // Original uses offset 0x3c bits >> 9 as a persuasion power multiplier.
+        float perceptionBonus = perception_.getMultiplier();  // 0.5 to 2.0
+        uint16_t effectivePoints = static_cast<uint16_t>(
+            totalPersuasionPoints_ * perceptionBonus);
+        return points <= effectivePoints;
     }
 
     return false;

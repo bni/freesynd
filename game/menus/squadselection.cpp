@@ -331,6 +331,45 @@ void SquadSelection::shootAt(const fs_knl::WorldPoint &aimedLocW) {
     }
 }
 
+/*!
+ * Aggressive move: agents walk to destination while shooting at target.
+ * Agents start shooting and then walk — shooting continues during movement.
+ * \param mapPt Destination to walk to
+ * \param aimedLocW Where to shoot
+ */
+void SquadSelection::moveAndShoot(fs_knl::TilePoint &mapPt,
+                                   const fs_knl::WorldPoint &aimedLocW) {
+    size_t i = 0;
+    for (SquadSelection::Iterator it = begin(); it != end(); ++it, i++) {
+        fs_knl::PedInstance *pAgent = *it;
+
+        // Start shooting first (weapon action runs in parallel with movement)
+        pAgent->addActionShootAt(aimedLocW);
+
+        // Then move to destination (movement doesn't cancel shooting)
+        fs_knl::Vehicle *pVehicle = pAgent->inVehicle();
+        if (pVehicle) {
+            if (pVehicle->isCar()) {
+                fs_knl::GenericCar *pCar = dynamic_cast<fs_knl::GenericCar *>(pVehicle);
+                if (pCar->isDriver(pAgent)) {
+                    int stx = mapPt.tx * 256 + mapPt.ox + 128 * (pVehicle->tileZ() - 1);
+                    stx = stx / 256;
+                    int sty = mapPt.ty * 256 + mapPt.oy + 128 * (pVehicle->tileZ() - 1);
+                    sty = sty / 256;
+                    fs_knl::TilePoint posT = fs_knl::TilePoint(stx, sty, 0, 128, 128);
+                    pAgent->addActionDriveVehicle(pCar, posT, false);
+                }
+            }
+        } else {
+            fs_knl::TilePoint tmpPosT = mapPt;
+            if (size() > 1) {
+                pSquad_->getPositionInSquadFormation(i, &tmpPosT);
+            }
+            pAgent->addActionWalk(tmpPosT, false);
+        }
+    }
+}
+
 
 /**
  * Return true if the given object is in the line of fire of at least

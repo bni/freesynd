@@ -106,29 +106,46 @@ public:
         if (pMod) {
             switch(pMod->getVersion()) {
                 case Mod::MOD_V1:
-                    return 1.25;
+                    return 1.10f;
                 case Mod::MOD_V2:
-                    return 1.50;
+                    return 1.20f;
                 case Mod::MOD_V3:
-                    return 1.75;
+                    return 1.30f;
             }
         }
-        return 1.0;
+        return 1.0f;
     }
 
+    /*!
+     * Maximum weight capacity. Original game uses both arm AND leg mods:
+     * - Arms determine base carry capacity
+     * - Legs provide additional weight capacity (original's main leg mod effect)
+     * The original formula in get_person_speed uses leg mod bits to compute
+     * a polynomial capacity value (1000 base, up to ~26000 with v3 legs).
+     */
     int getMaxWeight() {
+        int capacity = 5;  // base capacity with no mods
+
         Mod *pMod = slots_[Mod::MOD_ARMS];
         if (pMod) {
             switch(pMod->getVersion()) {
-                case Mod::MOD_V1:
-                    return 10;
-                case Mod::MOD_V2:
-                    return 20;
-                case Mod::MOD_V3:
-                    return 200;
+                case Mod::MOD_V1: capacity = 10; break;
+                case Mod::MOD_V2: capacity = 20; break;
+                case Mod::MOD_V3: capacity = 200; break;
             }
         }
-        return 5;
+
+        // Leg mods increase weight capacity (original's primary leg mod effect)
+        Mod *pLegMod = slots_[Mod::MOD_LEGS];
+        if (pLegMod) {
+            switch(pLegMod->getVersion()) {
+                case Mod::MOD_V1: capacity = capacity * 3 / 2; break;   // 1.5x
+                case Mod::MOD_V2: capacity *= 2; break;                 // 2.0x
+                case Mod::MOD_V3: capacity *= 3; break;                 // 3.0x
+            }
+        }
+
+        return capacity;
     }
 
     void transferMods(ModOwner &modOwner) {

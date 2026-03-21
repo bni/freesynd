@@ -25,8 +25,12 @@
 
 #include "fs-kernel/ia/behaviour.h"
 
+#include <algorithm>
+
 #include "fs-kernel/model/ped.h"
 #include "fs-kernel/model/squad.h"
+#include "fs-kernel/model/weapon.h"
+#include "fs-kernel/model/mission.h"
 #include "fs-kernel/mgr/missionmanager.h"
 #include "fs-kernel/mgr/weaponmanager.h"
 
@@ -37,11 +41,11 @@ namespace fs_knl {
 const int CommonAgentBehaviourComponent::kRegeratesHealthStep = 1;
 const int AgentDefenseBehaviourComponent::kBaseDefenseRange = 1500;
 const int PanicComponent::kScoutDistance = 1500;
-const int PanicComponent::kDistanceToRun = 500;
+const int PanicComponent::kBaseDistanceToRun = 800;
 const double PersuadedBehaviourComponent::kMaxRangeForSearchingWeapon = 500.0;
 const int PoliceBehaviourComponent::kPoliceScoutDistance = 1500;
 const int PoliceBehaviourComponent::kPolicePendingTime = 1500;
-const int PlayerHostileBehaviourComponent::kEnemyScoutDistance = 1500;
+const int PlayerHostileBehaviourComponent::kMaxIntelRange = 3584;
 const int PlayerHostileBehaviourComponent::kAllyAlertRange = 2048;
 
 Behaviour::~Behaviour() {
@@ -103,6 +107,12 @@ void Behaviour::alertToEnemy(PedInstance *pOwner, PedInstance *pTarget) {
             dynamic_cast<PlayerHostileBehaviourComponent *>(pComp);
         if (pHostile) {
             pHostile->alertToEnemy(pOwner, pTarget);
+            return;
+        }
+        GuardAreaBehaviourComponent *pGuard =
+            dynamic_cast<GuardAreaBehaviourComponent *>(pComp);
+        if (pGuard) {
+            pGuard->alertToEnemy(pOwner, pTarget);
             return;
         }
     }
@@ -386,6 +396,16 @@ PanicComponent::PanicComponent():
 
 void PanicComponent::execute(const Behaviour::BehaviourParam &param) {
     if (status_ == kPanicStatusCalm && scoutTimer_.update(param.elapsed)) {
+        // Check if threat is dead — immediately calm down
+        if (pArmedPed_ != nullptr && !pArmedPed_->isAlive()) {
+            pArmedPed_ = nullptr;
+            backFromPanic_ = false;
+            param.pPed->setInPanic(false);
+            param.pPed->setCurrentActionWithSource(Action::kActionDefault);
+            status_ = kPanicStatusCalm;
+            return;
+        }
+
         pArmedPed_ = findNearbyArmedPed(param.pMission, param.pPed);
         if (pArmedPed_) {
             runAway(param.pPed);
@@ -469,12 +489,17 @@ void  PanicComponent::runAway(PedInstance *pPed) {
 
     pPed->setDirection(thisPedLocW.x - otherLocW.x,
         thisPedLocW.y - otherLocW.y);
+
+    // Scale escape distance by perception
+    int escapeDistance = static_cast<int>(kBaseDistanceToRun *
+        pPed->perception().getMultiplier());
+
     if (pPed->altAction() == NULL) {
         // Adds the action of running away
         WalkToDirectionAction *pAction =
             new WalkToDirectionAction();
-        // walk for a certain distance
-        pAction->setMaxDistanceToWalk(kDistanceToRun);
+        // walk for a perception-scaled distance
+        pAction->setMaxDistanceToWalk(escapeDistance);
         pAction->setWarnBehaviour(true);
         pPed->addToAltActions(pAction);
         pPed->addToAltActions(new ResetScriptedAction(Action::kActionAlt));
@@ -490,6 +515,16 @@ PoliceBehaviourComponent::PoliceBehaviourComponent():
 }
 
 void PoliceBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
+    // While actively shooting, track the target's current position.
+    // FireWeaponAction can't do this because the movement action chain
+    // is suspended during automatic weapon fire.
+    if (status_ == kPoliceStatusFollowAndShootTarget && pTarget_ != NULL
+        && pTarget_->isAlive() && param.pPed->isUsingWeapon()) {
+        WorldPoint targetPosW(pTarget_->position());
+        param.pPed->updateShootingTarget(targetPosW);
+        param.pPed->setDirectionTowardObject(*pTarget_);
+    }
+
     if (status_ == kPoliceStatusAlert && scoutTimer_.update(param.elapsed)) {
         findAndEngageNewTarget(param.pMission, param.pPed);
     } else if (status_ == kPoliceStatusCheckReengageOrDefault) {
@@ -641,25 +676,36 @@ void PlayerHostileBehaviourComponent::execute(const Behaviour::BehaviourParam &p
     if (status_ == kHostileStatusDefault) {
         if (!scoutTimer_.update(param.elapsed))
             return;
-        // In this mode, ped is looking for an enemy
-        PedInstance *pArmedGuy = findPlayerAgent(param.pMission, param.pPed);
+
+        // Intelligence gate: low-intelligence enemies may fail to scan.
+        float intel = param.pPed->intelligence().getMultiplier();
+        if (intel < 0.6f)
+            return;
+
+        // Persistent threat scanning with LOS check
+        PedInstance *pArmedGuy = findVisiblePlayerAgent(param.pMission, param.pPed);
         if (pArmedGuy != NULL) {
             status_ = kHostileStatusFollowAndShoot;
             followAndShootTarget(param.pPed, pArmedGuy);
             alertNearbyAllies(param.pMission, param.pPed, pArmedGuy);
         }
-    } else if (status_ == kHostileStatusFollowAndShoot && pTarget_->isDead()) {
-        status_ = kHostileStatusPendingEndFollow;
-        pTarget_ = NULL;
-        param.pPed->stopShooting();
-        // just wait a few time before engaging another target or simply
-        // continue with default behavior
-        WaitAction *pWait = new WaitAction(WaitAction::kWaitWeapon);
-        pWait->setWarnBehaviour(true);
-        param.pPed->addMovementAction(pWait, false);
+    } else if (status_ == kHostileStatusFollowAndShoot) {
+        if (pTarget_ == NULL || pTarget_->isDead()) {
+            status_ = kHostileStatusPendingEndFollow;
+            pTarget_ = NULL;
+            param.pPed->stopShooting();
+            WaitAction *pWait = new WaitAction(WaitAction::kWaitWeapon);
+            pWait->setWarnBehaviour(true);
+            param.pPed->addMovementAction(pWait, false);
+        } else if (param.pPed->isUsingWeapon()) {
+            // While actively shooting, keep tracking the target's current position.
+            WorldPoint targetPosW(pTarget_->position());
+            param.pPed->updateShootingTarget(targetPosW);
+            param.pPed->setDirectionTowardObject(*pTarget_);
+        }
     } else if (status_ == kHostileStatusCheckForDefault) {
         // check if there is a nearby enemy
-        PedInstance *pArmedGuy = findPlayerAgent(param.pMission, param.pPed);
+        PedInstance *pArmedGuy = findVisiblePlayerAgent(param.pMission, param.pPed);
         if (pArmedGuy != NULL) {
             status_ = kHostileStatusFollowAndShoot;
             followAndShootTarget(param.pPed, pArmedGuy);
@@ -674,17 +720,44 @@ void PlayerHostileBehaviourComponent::execute(const Behaviour::BehaviourParam &p
 void PlayerHostileBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
     if (event.evtType == Behaviour::kBehvEvtActionEnded) {
         // We are at the end of waiting period so check if we need to engage right now
-        // of if we can go back to default
+        // or if we can go back to default
         status_ = kHostileStatusCheckForDefault;
     }
 }
 
-PedInstance * PlayerHostileBehaviourComponent::findPlayerAgent(Mission *pMission, PedInstance *pPed) {
+/*!
+ * Compute effective detection range based on weapon type and perception IPA.
+ * We approximate by using weapon range as the weapon-type factor, scaled by perception.
+ */
+int PlayerHostileBehaviourComponent::computeDetectionRange(PedInstance *pPed) {
+    int baseRange = kMaxIntelRange;
+    WeaponInstance *pWeapon = pPed->selectedWeapon();
+    if (pWeapon) {
+        // Use weapon range as scaling factor: longer-range weapons increase detection
+        int weaponRange = pWeapon->range();
+        baseRange = std::min(kMaxIntelRange, weaponRange * 2);
+    }
+    // Scale by perception IPA (0.5x to 2.0x)
+    return static_cast<int>(baseRange * pPed->perception().getMultiplier());
+}
+
+/*!
+ * Find a visible player agent within perception-scaled range.
+ */
+PedInstance * PlayerHostileBehaviourComponent::findVisiblePlayerAgent(Mission *pMission, PedInstance *pPed) {
+    int detectionRange = computeDetectionRange(pPed);
+    WorldPoint pedPosW(pPed->position());
+
     for (size_t i = 0; i < pMission->getSquad()->size(); i++) {
         PedInstance *pAgent = pMission->getSquad()->member(i);
-        if (pAgent && pAgent->isAlive() && pPed->isCloseTo(pAgent, kEnemyScoutDistance)) {
+        if (!pAgent || !pAgent->isAlive())
+            continue;
+        if (!pPed->isCloseTo(pAgent, detectionRange))
+            continue;
+        // Line-of-sight check: must have clear path to target
+        WorldPoint targetPosW(pAgent->position());
+        if (pMission->checkBlockedByTile(pedPosW, &targetPosW, false, detectionRange) == 1)
             return pAgent;
-        }
     }
     return NULL;
 }
@@ -692,6 +765,7 @@ PedInstance * PlayerHostileBehaviourComponent::findPlayerAgent(Mission *pMission
 void PlayerHostileBehaviourComponent::alertToEnemy(PedInstance *pOwner, PedInstance *pTarget) {
     if (status_ != kHostileStatusDefault)
         return;
+    // Skip the warning state when alerted by ally — engage immediately
     followAndShootTarget(pOwner, pTarget);
     status_ = kHostileStatusFollowAndShoot;
 }
@@ -751,6 +825,120 @@ void PlayerHostileBehaviourComponent::followAndShootTarget(PedInstance *pPed, Pe
         }
     }
     pPed->setCurrentActionWithSource(Action::kActionAlt);
+}
+
+//*************************************
+// GuardAreaBehaviourComponent
+//*************************************
+
+GuardAreaBehaviourComponent::GuardAreaBehaviourComponent():
+        BehaviourComponent(), scoutTimer_(200) {
+    status_ = kGuardStatusDefault;
+    pTarget_ = NULL;
+}
+
+void GuardAreaBehaviourComponent::execute(const Behaviour::BehaviourParam &param) {
+    if (status_ == kGuardStatusDefault) {
+        if (!scoutTimer_.update(param.elapsed))
+            return;
+
+        // Intelligence gate (original: get_person_intelligence() > 0)
+        float intel = param.pPed->intelligence().getMultiplier();
+        if (intel < 0.6f)
+            return;
+
+        PedInstance *pEnemy = findVisibleEnemy(param.pMission, param.pPed);
+        if (pEnemy != NULL) {
+            pTarget_ = pEnemy;
+            status_ = kGuardStatusShooting;
+
+            // Guard stays in place and shoots — no FollowToShootAction
+            WorldPoint targetLocW(pEnemy->position());
+            param.pPed->setDirectionTowardObject(*pEnemy);
+            param.pPed->addActionShootAt(targetLocW);
+        }
+    } else if (status_ == kGuardStatusShooting) {
+        if (pTarget_ == NULL || pTarget_->isDead()) {
+            // Target down — pause briefly then re-scan
+            param.pPed->stopShooting();
+            pTarget_ = NULL;
+            status_ = kGuardStatusPendingRescan;
+            return;
+        }
+
+        // Check if target is still visible and in range
+        int range = computeDetectionRange(param.pPed);
+        WorldPoint pedPosW(param.pPed->position());
+        WorldPoint targetPosW(pTarget_->position());
+
+        if (!param.pPed->isCloseTo(pTarget_, range) ||
+            param.pMission->checkBlockedByTile(pedPosW, &targetPosW, false, range) != 1) {
+            // Lost sight of target
+            param.pPed->stopShooting();
+            pTarget_ = NULL;
+            status_ = kGuardStatusDefault;
+        } else if (param.pPed->isUsingWeapon()) {
+            // Still shooting — track target position
+            param.pPed->setDirectionTowardObject(*pTarget_);
+            param.pPed->updateShootingTarget(targetPosW);
+        } else {
+            // Weapon action finished (single shot done or reload complete)
+            // — fire again to maintain continuous shooting
+            param.pPed->setDirectionTowardObject(*pTarget_);
+            param.pPed->addActionShootAt(targetPosW);
+        }
+    } else if (status_ == kGuardStatusPendingRescan) {
+        // Brief pause, then back to scanning
+        if (scoutTimer_.update(param.elapsed)) {
+            status_ = kGuardStatusDefault;
+        }
+    }
+}
+
+void GuardAreaBehaviourComponent::handleBehaviourEvent(const Behaviour::BehaviourEvent &event) {
+    if (event.evtType == Behaviour::kBehvEvtActionEnded) {
+        // Weapon action ended — go back to scanning
+        pTarget_ = NULL;
+        status_ = kGuardStatusDefault;
+    }
+}
+
+void GuardAreaBehaviourComponent::alertToEnemy(PedInstance *pOwner, PedInstance *pTarget) {
+    if (status_ != kGuardStatusDefault)
+        return;
+    pTarget_ = pTarget;
+    status_ = kGuardStatusShooting;
+    WorldPoint targetLocW(pTarget->position());
+    pOwner->setDirectionTowardObject(*pTarget);
+    pOwner->addActionShootAt(targetLocW);
+}
+
+int GuardAreaBehaviourComponent::computeDetectionRange(PedInstance *pPed) {
+    int baseRange = PlayerHostileBehaviourComponent::kMaxIntelRange;
+    WeaponInstance *pWeapon = pPed->selectedWeapon();
+    if (pWeapon) {
+        int weaponRange = pWeapon->range();
+        baseRange = std::min(PlayerHostileBehaviourComponent::kMaxIntelRange, weaponRange * 2);
+    }
+    return static_cast<int>(baseRange * pPed->perception().getMultiplier());
+}
+
+PedInstance * GuardAreaBehaviourComponent::findVisibleEnemy(Mission *pMission, PedInstance *pPed) {
+    int detectionRange = computeDetectionRange(pPed);
+    WorldPoint pedPosW(pPed->position());
+
+    // Scan player squad members (like PlayerHostileBehaviourComponent)
+    for (size_t i = 0; i < pMission->getSquad()->size(); i++) {
+        PedInstance *pAgent = pMission->getSquad()->member(i);
+        if (!pAgent || !pAgent->isAlive())
+            continue;
+        if (!pPed->isCloseTo(pAgent, detectionRange))
+            continue;
+        WorldPoint targetPosW(pAgent->position());
+        if (pMission->checkBlockedByTile(pedPosW, &targetPosW, false, detectionRange) == 1)
+            return pAgent;
+    }
+    return NULL;
 }
 
 }

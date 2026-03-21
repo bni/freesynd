@@ -91,7 +91,7 @@ public:
 
     virtual void handleBehaviourEvent(BehaviourEventType evtType, void *pCtxt = NULL);
 
-    //! Alert this behaviour's PlayerHostileBehaviourComponent to a new enemy target
+    //! Alert this behaviour's hostile component (PlayerHostile or GuardArea) to a new enemy target
     void alertToEnemy(PedInstance *pOwner, PedInstance *pTarget);
 protected:
     void destroyComponents();
@@ -212,8 +212,8 @@ class PanicComponent : public BehaviourComponent {
 public:
     //! Range for looking for armed ped
     static const int kScoutDistance;
-    //! The distance a panicking ped walks before calming down
-    static const int kDistanceToRun;
+    //! Base escape distance — scaled by perception in runAway()
+    static const int kBaseDistanceToRun;
 
     PanicComponent();
 
@@ -227,7 +227,7 @@ private:
     void  runAway(PedInstance *pPed);
 private:
     /*!
-     * Status of police behaviour.
+     * Status of panic behaviour.
      */
     enum PanicStatus {
         //! Default status : not panicking
@@ -323,6 +323,8 @@ class PlayerHostileBehaviourComponent : public BehaviourComponent {
 public:
     //! Range within which allies are alerted when this ped spots an enemy
     static const int kAllyAlertRange;
+    //! Maximum detection range
+    static const int kMaxIntelRange;
 
     PlayerHostileBehaviourComponent();
 
@@ -334,13 +336,13 @@ public:
     void alertToEnemy(PedInstance *pOwner, PedInstance *pTarget);
 
 private:
-    //! looking for the nearest player agent
-    PedInstance * findPlayerAgent(Mission *pMission, PedInstance *pPed);
+    //! Find a visible player agent within perception-scaled range with LOS check
+    PedInstance * findVisiblePlayerAgent(Mission *pMission, PedInstance *pPed);
     void followAndShootTarget(PedInstance *pPed, PedInstance *pArmedGuy);
     //! Alert nearby allies of the same group to engage pTarget
     void alertNearbyAllies(Mission *pMission, PedInstance *pPed, PedInstance *pTarget);
-private:
-    static const int kEnemyScoutDistance;
+    //! Compute effective detection range based on weapon and perception IPA
+    int computeDetectionRange(PedInstance *pPed);
 
    /*!
      * Status for behavior.
@@ -360,6 +362,40 @@ private:
     /*! This timer throttles the enemy scan to avoid checking every frame.*/
     fs_utl::Timer scoutTimer_;
     /*! The ped that the owner has targeted and potentially is shooting at.*/
+    PedInstance *pTarget_;
+};
+
+/*!
+ * Guard area behaviour: enemy stays in place and shoots at visible threats.
+ */
+class GuardAreaBehaviourComponent : public BehaviourComponent {
+public:
+    GuardAreaBehaviourComponent();
+
+    void execute(const Behaviour::BehaviourParam &param) override;
+
+    void handleBehaviourEvent(const Behaviour::BehaviourEvent &event) override;
+
+    //! Force this component to engage pTarget immediately (called by ally alerting)
+    void alertToEnemy(PedInstance *pOwner, PedInstance *pTarget);
+
+private:
+    //! Find a visible enemy within perception-scaled range
+    PedInstance * findVisibleEnemy(Mission *pMission, PedInstance *pPed);
+    //! Compute detection range based on weapon and perception
+    int computeDetectionRange(PedInstance *pPed);
+
+    enum GuardAreaStatus {
+        //! Default: scanning for enemies
+        kGuardStatusDefault,
+        //! Actively shooting at a target (stationary)
+        kGuardStatusShooting,
+        //! Target dead or lost, brief pause before re-scanning
+        kGuardStatusPendingRescan
+    };
+
+    GuardAreaStatus status_;
+    fs_utl::Timer scoutTimer_;
     PedInstance *pTarget_;
 };
 

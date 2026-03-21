@@ -40,6 +40,7 @@ namespace fs_knl {
 // Constant definition
 //*************************************
 const int FollowAction::kFollowDistance = 192;
+const int FollowToShootAction::kMeleeAvoidDistance = 128;
 const int WalkBurnHitAction::kTimeToWalkBurning = 1000;
 const uint8 ShootAction::kShootActionNotAdded = 0;
 const uint8 ShootAction::kShootActionAutomaticShoot = 1;
@@ -501,34 +502,48 @@ bool FollowToShootAction::doExecute(uint32_t elapsed, Mission *pMission, PedInst
         pPed->clearDestination();
         setFailed();
     } else {
-        // target has moved: we check if target is not too far to give time to ped
-        // to walk away else animation is buggy
-        if (!pTarget_->isCloseTo(targetLastPosW_, 128)) {
-            // resetting target position
-            targetLastPosW_.convertFromTilePoint(pTarget_->position());
-            if (!pPed->initMovementToDestination(pMission, pTarget_->position())) {
-                setFailed();
-                return true;
-            }
-            // Ensure walking animation plays if we were previously standing in range
-            if (targetState_ != PedInstance::pa_smWalking) {
-                targetState_ = PedInstance::pa_smWalking;
-                pPed->goToState(targetState_);
-            }
-        }
-
-        WorldPoint pedPosW(pPed->position());
-        // Ped stops walking if the target is in range of fire (ie close enough and not
-        // hiding behing something)
-        if (pPed->isCloseTo(pTarget_, followDistance_) &&
-            pMission->checkBlockedByTile(pedPosW, &targetLastPosW_, true, followDistance_) == 1) {
-            // We reached the target so stop moving
-            setSucceeded();
+        // Distance-band behavior
+        if (pPed->isCloseTo(pTarget_, kMeleeAvoidDistance)) {
+            // Too close — back away
             pPed->clearDestination();
+            WorldPoint pedPosW(pPed->position());
+            WorldPoint targetPosW(pTarget_->position());
+            // Set direction AWAY from target
+            pPed->setDirection(pedPosW.x - targetPosW.x,
+                               pedPosW.y - targetPosW.y);
+            pPed->setSpeedToMax();
+            targetState_ = PedInstance::pa_smWalking;
+            pPed->goToState(targetState_);
+            updated = true;
         } else {
-            updated = pPed->doMove(elapsed, pMission);
-        }
+            // target has moved: we check if target is not too far to give time to ped
+            // to walk away else animation is buggy
+            if (!pTarget_->isCloseTo(targetLastPosW_, 128)) {
+                // resetting target position
+                targetLastPosW_.convertFromTilePoint(pTarget_->position());
+                if (!pPed->initMovementToDestination(pMission, pTarget_->position())) {
+                    setFailed();
+                    return true;
+                }
+                // Ensure walking animation plays if we were previously standing in range
+                if (targetState_ != PedInstance::pa_smWalking) {
+                    targetState_ = PedInstance::pa_smWalking;
+                    pPed->goToState(targetState_);
+                }
+            }
 
+            WorldPoint pedPosW(pPed->position());
+            // Ped stops walking if the target is in range of fire (ie close enough and not
+            // hiding behind something)
+            if (pPed->isCloseTo(pTarget_, followDistance_) &&
+                pMission->checkBlockedByTile(pedPosW, &targetLastPosW_, true, followDistance_) == 1) {
+                // We reached the target so stop moving
+                setSucceeded();
+                pPed->clearDestination();
+            } else {
+                updated = pPed->doMove(elapsed, pMission);
+            }
+        }
     }
     return updated;
 }
@@ -724,8 +739,8 @@ bool WaitBeforeShootingAction::doExecute(uint32_t elapsed, [[maybe_unused]] Miss
     pPed->setDirectionTowardObject(*pTarget_);
 
     if (waitTimer_.update(elapsed)) {
-        if (pPed->type() == PedInstance::kPedTypeAgent && pTarget_->isOurAgent()) {
-            // Warn only for player agents
+        if (pPed->type() == PedInstance::kPedTypePolice && pTarget_->isOurAgent()) {
+            // Police warns player agents to put down weapons
             EventManager::fire<PoliceWarningEmittedEvent>(0);
         }
         setSucceeded();
@@ -741,7 +756,11 @@ MovementAction(kActTypeFire) {
 }
 
 void FireWeaponAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *pPed) {
-    if (pTarget_->isDead()) {
+    if (pTarget_->isDead() ||
+        pTarget_->isState(PedInstance::pa_smDying | PedInstance::pa_smWalkingBurning)) {
+        setFailed();
+    } else if (pPed->isState(PedInstance::pa_smHit)) {
+        // Shooter is staggered — delay start until recoil finishes
         setFailed();
     } else if (pPed->type() == PedInstance::kPedTypePolice && pTarget_->selectedWeapon() == NULL) {
         // Police man don't shoot on peds that don't have gun out
@@ -751,13 +770,13 @@ void FireWeaponAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *
         setFailed();
     } else {
         WorldPoint targetLocW(pTarget_->position());
+        // Face the target before starting to shoot
+        pPed->setDirectionTowardPosition(targetLocW);
 
         shootType_ = pPed->addActionShootAt(targetLocW);
         if (shootType_ == ShootAction::kShootActionNotAdded) {
             // failed to shoot because weapon has no ammo
             setFailed();
-        } else if (shootType_ == ShootAction::kShootActionAutomaticShoot) {
-            // todo :set a timer to controle time shooting
         }
     }
 }
@@ -765,24 +784,49 @@ void FireWeaponAction::doStart([[maybe_unused]] Mission *pMission, PedInstance *
 bool FireWeaponAction::doExecute([[maybe_unused]] uint32_t elapsed, Mission *pMission, PedInstance *pPed) {
     if (!pPed->isUsingWeapon()) {
         setSucceeded();
-    } else if (pTarget_->isDead()) {
+    } else if (pTarget_->isDead() ||
+               pTarget_->isState(PedInstance::pa_smDying | PedInstance::pa_smWalkingBurning)) {
         pPed->stopShooting();
         setSucceeded();
+    } else if (pTarget_->isState(PedInstance::pa_smHit)) {
+        pPed->stopShooting();
+        return true;
+    } else if (pPed->isState(PedInstance::pa_smHit)) {
+        // Shooter is staggered — can't fire while in recoil
+        pPed->stopShooting();
+        return true;
     } else {
-        WorldPoint targetLocW(pTarget_->position());
-        int followDistance = (pPed->selectedWeapon()->range() / 3) * 2;
+        // If target is in a vehicle, shoot the vehicle position instead
+        WorldPoint targetLocW;
+        Vehicle *pVehicle = pTarget_->inVehicle();
+        if (pVehicle) {
+            targetLocW.convertFromTilePoint(pVehicle->position());
+        } else {
+            targetLocW.convertFromTilePoint(pTarget_->position());
+        }
+
+        WeaponInstance *pWeapon = pPed->selectedWeapon();
+        if (!pWeapon) {
+            pPed->stopShooting();
+            setSucceeded();
+            return true;
+        }
+
+        int followDistance = (pWeapon->range() / 3) * 2;
         WorldPoint pedPosW(pPed->position());
 
-        // Stop shooting if target moved out of range or behind cover,
-        // matching original game's per-frame i_can_see_and_shoot_person check.
-        // FollowToShootAction will re-engage once the enemy closes in.
+        // Stop shooting if target moved out of range or behind cover
         if (!pPed->isCloseTo(pTarget_, followDistance) ||
             pMission->checkBlockedByTile(pedPosW, &targetLocW, false, followDistance) != 1) {
             pPed->stopShooting();
             setSucceeded();
         } else {
-            // Target still in range and visible: track their current position
-            pPed->updateShootingTarget(targetLocW);
+            // Target still in range and visible: track position and face target.
+            // Always update direction so the ped visually aims at the target.
+            pPed->setDirectionTowardObject(*pTarget_);
+            if (pPed->isUsingWeapon()) {
+                pPed->updateShootingTarget(targetLocW);
+            }
         }
     }
 
@@ -1040,7 +1084,8 @@ bool ShootAction::execute(uint32_t elapsed, Mission *pMission, PedInstance *pPed
     } else if (status_ == kActStatusRunning) {
         // Shooting animation is finished
         pPed->leaveState(PedInstance::pa_smFiring);
-        if (pPed->isCurrentActionOfType(Action::kActTypeWalk)) {
+        // Resume any suspended movement action (walk, fire, etc.)
+        if (pPed->currentAction() != nullptr && pPed->currentAction()->isSuspended()) {
             pPed->currentAction()->resume(pMission, pPed);
         }
 
@@ -1160,8 +1205,11 @@ void AutomaticShootAction::stop() {
         PedInstance *pPed = pWeapon_->owner();
         // Shooting animation is finished
         pPed->leaveState(PedInstance::pa_smFiring);
-        // If ped was moving before starting shooting, then resume walking
-        if (pPed->isCurrentActionOfType(Action::kActTypeWalk)) {
+        // If current movement action was suspended by us, resume it.
+        // This must handle all action types that can be suspended during
+        // automatic fire — not just kActTypeWalk but also kActTypeFire
+        // (used by enemy AI's FireWeaponAction).
+        if (pPed->currentAction() != nullptr && pPed->currentAction()->isSuspended()) {
             pPed->currentAction()->resume(g_missionCtrl.mission(), pPed);
         }
         // The action is complete only after a certain laps of time to

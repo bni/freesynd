@@ -177,6 +177,8 @@ class SquadSelection {
     void moveTo(fs_knl::TilePoint &mapPt, bool addAction);
     //! Every selected armed agent shoot at location
     void shootAt(const fs_knl::WorldPoint &aimedLocW);
+    //! Move selected agents to destination while shooting at target (aggressive move)
+    void moveAndShoot(fs_knl::TilePoint &mapPt, const fs_knl::WorldPoint &aimedLocW);
     //! Return true if target is in range of at least one agent
     bool isTargetInRange(fs_knl::Mission *pMission, fs_knl::ShootableMapObject *pTarget);
  private:

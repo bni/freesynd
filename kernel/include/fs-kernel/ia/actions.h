@@ -383,7 +383,7 @@ protected:
 };
 
 /*!
- * This action is used for a policeman to follow a target and when
+ * This action is used for a policeman or enemy to follow a target and when
  * the target is in shooting range, the action is finished.
  * The shooting range is 2/3 of the currently selected weapon range.
  */
@@ -397,6 +397,9 @@ protected:
     bool doExecute(uint32_t elapsed, Mission *pMission, PedInstance *pPed) override;
 
 protected:
+    //! Distance below which ped backs away
+    static const int kMeleeAvoidDistance;
+
     /*! The ped to follow.*/
     PedInstance *pTarget_;
     /*! To keep track of target position and see if it has moved.*/

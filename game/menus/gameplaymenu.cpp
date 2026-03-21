@@ -730,11 +730,23 @@ bool GameplayMenu::handleMouseDown(Point2D point, int button)
         if (button == kMouseLeftButton)
             isLeftButtonDown_ = true;
 
-        // Both mouse buttons held simultaneously triggers panic mode
+        // Both mouse buttons held simultaneously triggers aggressive move
         if ((button == kMouseRightButton && isLeftButtonDown_) ||
             (button == kMouseLeftButton && isPlayerShooting_)) {
             stopShootingEvent();
             activatePanicMode();
+
+            // Aggressive move: move toward click point while shooting
+            fs_knl::WorldPoint aimedAtLocW;
+            if (getAimedAt(point.x, point.y, &aimedAtLocW)) {
+                fs_knl::TilePoint mapPt = mission_->get_map()->screenToTilePoint(
+                    displayOriginPt_.x + point.x - MapRenderer::kGameplayPanelWidth,
+                    displayOriginPt_.y + point.y);
+                if (mission_->getWalkable(mapPt)) {
+                    isPlayerShooting_ = true;
+                    selection_.moveAndShoot(mapPt, aimedAtLocW);
+                }
+            }
             return true;
         }
 
